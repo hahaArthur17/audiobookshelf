@@ -1,13 +1,42 @@
-const { Request, Response } = require('express')
+import type { ProviderOption } from '../types/MetadataContracts'
+
 const Logger = require('../Logger')
 const BookFinder = require('../finders/BookFinder')
 const PodcastFinder = require('../finders/PodcastFinder')
 const AuthorFinder = require('../finders/AuthorFinder')
 const Database = require('../Database')
-const { isValidASIN, getQueryParamAsString, ValidationError, NotFoundError } = require('../utils')
+const { isValidASIN, getQueryParamAsString, ValidationError, NotFoundError } = require('../utils') as {
+  isValidASIN(value: string): boolean
+  getQueryParamAsString(query: Record<string, unknown>, key: string, defaultValue?: string, required?: boolean): string
+  ValidationError: new (paramName: string, reason: string) => Error & { status: number; paramName: string }
+  NotFoundError: new (message: string) => Error & { status: number }
+}
+
+interface SearchRequest {
+  query: Record<string, unknown>
+}
+
+interface SearchResponse {
+  status(code: number): SearchResponse
+  json(payload: unknown): SearchResponse
+}
+
+interface SearchLibraryItem {
+  media?: { duration?: number }
+}
+
+interface CustomProviderOption {
+  mediaType: string
+  name: string
+  getSlug(): string
+}
+
+function caughtMessage(error: unknown): string {
+  return error !== null && typeof error === 'object' && 'message' in error ? String(error.message) : 'undefined'
+}
 
 // Provider name mappings for display purposes
-const providerMap = {
+const providerMap: Record<string, string> = {
   all: 'All',
   best: 'Best',
   google: 'Google Books',
@@ -44,8 +73,8 @@ class SearchController {
    * @param {string} methodName - Name of the calling method for logging
    * @returns {Promise<import('../models/LibraryItem').LibraryItemExpanded>}
    */
-  static async fetchLibraryItem(id) {
-    const libraryItem = await Database.libraryItemModel.getExpandedById(id)
+  static async fetchLibraryItem(id: string): Promise<SearchLibraryItem> {
+    const libraryItem: SearchLibraryItem | null = await Database.libraryItemModel.getExpandedById(id)
     if (!libraryItem) {
       throw new NotFoundError(`library item "${id}" not found`)
     }
@@ -57,7 +86,7 @@ class SearchController {
    * @param {Array} providers - Array of custom provider objects
    * @returns {Array<{value: string, text: string}>}
    */
-  static mapCustomProviders(providers) {
+  static mapCustomProviders(providers: CustomProviderOption[]): ProviderOption[] {
     return providers.map((provider) => ({
       value: provider.getSlug(),
       text: provider.name
@@ -69,7 +98,7 @@ class SearchController {
    * @param {string} providerValue - Provider identifier
    * @returns {{value: string, text: string}}
    */
-  static formatProvider(providerValue) {
+  static formatProvider(providerValue: string): ProviderOption {
     return {
       value: providerValue,
       text: providerMap[providerValue] || providerValue
@@ -82,7 +111,7 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findBooks(req, res) {
+  async findBooks(req: SearchRequest, res: SearchResponse): Promise<void | SearchResponse> {
     try {
       const query = req.query
       const provider = getQueryParamAsString(query, 'provider', 'google')
@@ -96,7 +125,7 @@ class SearchController {
       const results = await BookFinder.search(libraryItem, provider, title, author)
       res.json(results)
     } catch (error) {
-      Logger.error(`[SearchController] findBooks: ${error.message}`)
+      Logger.error(`[SearchController] findBooks: ${caughtMessage(error)}`)
       if (error instanceof ValidationError || error instanceof NotFoundError) {
         return res.status(error.status).json({ error: error.message })
       }
@@ -110,7 +139,7 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findCovers(req, res) {
+  async findCovers(req: SearchRequest, res: SearchResponse): Promise<void | SearchResponse> {
     try {
       const query = req.query
       const podcast = query.podcast === '1' || query.podcast === 1
@@ -123,7 +152,7 @@ class SearchController {
       else results = await BookFinder.findCovers(provider, title, author)
       res.json({ results })
     } catch (error) {
-      Logger.error(`[SearchController] findCovers: ${error.message}`)
+      Logger.error(`[SearchController] findCovers: ${caughtMessage(error)}`)
       if (error instanceof ValidationError) {
         return res.status(error.status).json({ error: error.message })
       }
@@ -138,7 +167,7 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findPodcasts(req, res) {
+  async findPodcasts(req: SearchRequest, res: SearchResponse): Promise<void | SearchResponse> {
     try {
       const query = req.query
       const term = getQueryParamAsString(query, 'term', '', true)
@@ -147,7 +176,7 @@ class SearchController {
       const results = await PodcastFinder.search(term, { country })
       res.json(results)
     } catch (error) {
-      Logger.error(`[SearchController] findPodcasts: ${error.message}`)
+      Logger.error(`[SearchController] findPodcasts: ${caughtMessage(error)}`)
       if (error instanceof ValidationError) {
         return res.status(error.status).json({ error: error.message })
       }
@@ -162,14 +191,14 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findAuthor(req, res) {
+  async findAuthor(req: SearchRequest, res: SearchResponse): Promise<void | SearchResponse> {
     try {
       const query = getQueryParamAsString(req.query, 'q', '', true)
 
       const author = await AuthorFinder.findAuthorByName(query)
       res.json(author)
     } catch (error) {
-      Logger.error(`[SearchController] findAuthor: ${error.message}`)
+      Logger.error(`[SearchController] findAuthor: ${caughtMessage(error)}`)
       if (error instanceof ValidationError) {
         return res.status(error.status).json({ error: error.message })
       }
@@ -183,7 +212,7 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findChapters(req, res) {
+  async findChapters(req: SearchRequest, res: SearchResponse): Promise<void | SearchResponse> {
     try {
       const query = req.query
       const asin = getQueryParamAsString(query, 'asin', '', true)
@@ -197,7 +226,7 @@ class SearchController {
       }
       res.json(chapterData)
     } catch (error) {
-      Logger.error(`[SearchController] findChapters: ${error.message}`)
+      Logger.error(`[SearchController] findChapters: ${caughtMessage(error)}`)
       if (error instanceof ValidationError) {
         if (error.paramName === 'asin') {
           return res.json({ error: 'Invalid ASIN', stringKey: 'MessageInvalidAsin' })
@@ -217,22 +246,22 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async getAllProviders(req, res) {
-    const customProviders = await Database.customMetadataProviderModel.findAll()
+  async getAllProviders(_req: SearchRequest, res: SearchResponse): Promise<void> {
+    const customProviders: CustomProviderOption[] = await Database.customMetadataProviderModel.findAll()
 
-    const customBookProviders = customProviders.filter((p) => p.mediaType === 'book')
-    const customPodcastProviders = customProviders.filter((p) => p.mediaType === 'podcast')
+    const customBookProviders = customProviders.filter((p: CustomProviderOption) => p.mediaType === 'book')
+    const customPodcastProviders = customProviders.filter((p: CustomProviderOption) => p.mediaType === 'podcast')
 
-    const bookProviders = BookFinder.providers.filter((p) => p !== 'audiobookcovers')
+    const bookProviders: string[] = BookFinder.providers.filter((p: string) => p !== 'audiobookcovers')
 
     // Build minimized payload with custom providers merged in
     const providers = {
-      books: [...bookProviders.map((p) => SearchController.formatProvider(p)), ...SearchController.mapCustomProviders(customBookProviders)],
-      booksCovers: [SearchController.formatProvider('best'), ...BookFinder.providers.map((p) => SearchController.formatProvider(p)), ...SearchController.mapCustomProviders(customBookProviders), SearchController.formatProvider('all')],
+      books: [...bookProviders.map((p: string) => SearchController.formatProvider(p)), ...SearchController.mapCustomProviders(customBookProviders)],
+      booksCovers: [SearchController.formatProvider('best'), ...BookFinder.providers.map((p: string) => SearchController.formatProvider(p)), ...SearchController.mapCustomProviders(customBookProviders), SearchController.formatProvider('all')],
       podcasts: [SearchController.formatProvider('itunes'), ...SearchController.mapCustomProviders(customPodcastProviders)]
     }
 
     res.json({ providers })
   }
 }
-module.exports = new SearchController()
+export = new SearchController()

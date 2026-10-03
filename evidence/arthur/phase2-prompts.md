@@ -1,0 +1,15 @@
+# Phase 2 prompts and context
+
+The initiating human request was: “请阅读这一个附件，然后对 audio博客shift这一个本地项目做相应的内容。记住，要留一些证据，你可以开一些 Markdown的文件。我相信这个附件已经列明了所有的要求。” The attached plan was `agentic development report/Arthur-Phase1-Phase2-Contract-First-Subagent-Plan-2026-10-03.md` outside this repository. It was used as the requested task scope; code and tests were checked for actual contracts.
+
+Main Agent surveyed the baseline provider/Finder/Controller flow, wrote `phase2-context.md`, `phase2-contract.md`, and shared types before dispatch, and independently migrated Finder/Controller files from the fixed baseline. There was no separate model prompt for this read-only survey.
+
+## Sub-Agent A dispatch
+
+> Phase 2 sub-agent A. Worktree: /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2, branch arthur/phase2-contract-agents, independent base 7d10b8fc4abe57a4e777a07b7b462ca32c33371c. Read evidence/arthur/phase2-context.md, phase2-contract.md, server/types/MetadataContracts.ts, target sources, Finder consumers. Your exclusive edit scope: migrate server/providers/OpenLibrary.js, GoogleBooks.js, FantLab.js, AudiobookCovers.js, CustomProviderAdapter.js to corresponding .ts files and remove the .js originals. Do not edit any other files, shared types, config, tests or lockfile. Preserve exported CommonJS constructors, provider response/error behavior, timeout behavior. Use useful explicit types, no explicit any, @ts-ignore, double assertions, or tests changes/skips. Report exact shared-contract changes needed to main agent, not edit shared types. Build may show errors from concurrently edited files; report errors attributable to yours. Report summary, unresolved risks, start/end times, model/reasoning, token/fee only if actually available. Do not commit.
+
+## Sub-Agent B dispatch
+
+> Phase 2 sub-agent B. Worktree: /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2, branch arthur/phase2-contract-agents, independent base 7d10b8fc4abe57a4e777a07b7b462ca32c33371c. Read evidence/arthur/phase2-context.md, phase2-contract.md, server/types/MetadataContracts.ts, target sources and Finder consumers. Your exclusive edit scope: migrate server/providers/Audible.js, Audnexus.js, iTunes.js, MusicBrainz.js to corresponding .ts files and remove the .js originals. Do not edit any other files, shared types, config, tests or lockfile. Preserve exported CommonJS constructors, nullable/array behavior, 429 retry, timeouts and shape. Use useful explicit types, no explicit any, @ts-ignore, double assertions, or tests changes/skips. Report exact shared-contract gaps to main agent; do not edit shared types. Build may show errors from concurrently edited files; report errors attributable to yours. Report summary, unresolved risks, start/end times, configured model/reasoning, token/fee only if actually available. Do not commit.
+
+The main agent's follow-up messages only disclosed shared type additions (`edition`, `artistId`, OpenLibrary keys) and current compile diagnostics; no provider agent was asked to edit another role's file.

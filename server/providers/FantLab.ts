@@ -1,5 +1,59 @@
-const axios = require('axios')
-const Logger = require('../Logger')
+import axios from 'axios'
+import Logger from '../Logger'
+import type { BookMetadata } from '../types/MetadataContracts'
+
+interface FantLabSearchItem {
+  work_id: number | string
+  work_type_id: number
+}
+
+interface FantLabAuthor {
+  name?: string
+}
+
+interface FantLabGenre {
+  label: string
+  genre?: FantLabGenre[]
+}
+
+interface FantLabGenreGroup {
+  genre_group_id?: number | string
+  genre?: FantLabGenre[]
+}
+
+interface FantLabClassificatory {
+  genre_group?: FantLabGenreGroup[]
+}
+
+interface FantLabEdition {
+  edition_id?: number
+  isbn?: string | null
+}
+
+interface FantLabEditionBlock {
+  list?: FantLabEdition[]
+}
+
+interface FantLabWorkResponse {
+  authors: FantLabAuthor[]
+  work_name_alts?: string[] | null
+  work_id?: number | string
+  work_name?: string
+  work_year?: string | number | null
+  work_description?: string
+  image?: string | null
+  classificatory?: FantLabClassificatory | null
+  editions_blocks?: Record<string, FantLabEditionBlock | undefined> | null
+}
+
+interface FantLabEditionImage {
+  image?: string | null
+}
+
+interface FantLabImageAndIsbn {
+  imageUrl: string | null
+  isbn: string | null
+}
 
 class FantLab {
   #responseTimeout = 10000
@@ -31,7 +85,7 @@ class FantLab {
    * @param {number} [timeout] response timeout in ms
    * @returns {Promise<Object[]>}
    **/
-  async search(title, author, timeout = this.#responseTimeout) {
+  async search(title: string, author: string, timeout = this.#responseTimeout): Promise<BookMetadata[]> {
     if (!timeout || isNaN(timeout)) timeout = this.#responseTimeout
 
     let searchString = encodeURIComponent(title)
@@ -41,18 +95,19 @@ class FantLab {
     const url = `${this._baseUrl}/search-works?q=${searchString}&page=1&onlymatches=1`
     Logger.debug(`[FantLab] Search url: ${url}`)
     const items = await axios
-      .get(url, {
+      .get<FantLabSearchItem[]>(url, {
         timeout
       })
       .then((res) => {
         return res.data || []
       })
-      .catch((error) => {
-        Logger.error('[FantLab] search error', error.message)
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error)
+        Logger.error('[FantLab] search error', message)
         return []
       })
 
-    return Promise.all(items.map(async (item) => await this.getWork(item, timeout))).then((resArray) => resArray.filter(Boolean))
+    return Promise.all(items.map((item) => this.getWork(item, timeout))).then((resArray) => resArray.filter((item): item is BookMetadata => Boolean(item)))
   }
 
   /**
@@ -60,7 +115,7 @@ class FantLab {
    * @param {number} [timeout] response timeout in ms
    * @returns {Promise<Object>}
    **/
-  async getWork(item, timeout = this.#responseTimeout) {
+  async getWork(item: FantLabSearchItem, timeout = this.#responseTimeout): Promise<BookMetadata | null> {
     if (!timeout || isNaN(timeout)) timeout = this.#responseTimeout
     const { work_id, work_type_id } = item
 
@@ -70,14 +125,15 @@ class FantLab {
 
     const url = `${this._baseUrl}/work/${work_id}/extended`
     const bookData = await axios
-      .get(url, {
+      .get<FantLabWorkResponse>(url, {
         timeout
       })
       .then((resp) => {
         return resp.data || null
       })
-      .catch((error) => {
-        Logger.error(`[FantLab] work info request for url "${url}" error`, error.message)
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error)
+        Logger.error(`[FantLab] work info request for url "${url}" error`, message)
         return null
       })
 
@@ -94,11 +150,11 @@ class FantLab {
    * @param {number} [timeout]
    * @returns {Promise<Object>}
    */
-  async cleanBookData(bookData, timeout = this.#responseTimeout) {
-    let { authors, work_name_alts, work_id, work_name, work_year, work_description, image, classificatory, editions_blocks } = bookData
+  async cleanBookData(bookData: FantLabWorkResponse, timeout = this.#responseTimeout): Promise<BookMetadata> {
+    const { authors, work_name_alts, work_id, work_name, work_year, work_description, image, classificatory, editions_blocks } = bookData
 
     const subtitle = Array.isArray(work_name_alts) ? work_name_alts[0] : null
-    const authorNames = authors.map((au) => (au.name || '').trim()).filter((au) => au)
+    const authorNames = authors.map((author) => (author.name || '').trim()).filter((author) => author)
 
     const imageAndIsbn = await this.tryGetCoverFromEditions(editions_blocks, timeout)
 
@@ -118,7 +174,7 @@ class FantLab {
     }
   }
 
-  tryGetGenres(classificatory) {
+  tryGetGenres(classificatory?: FantLabClassificatory | null): string[] {
     if (!classificatory || !classificatory.genre_group) return []
 
     const genresGroup = classificatory.genre_group.find((group) => group.genre_group_id == 1) // genres and subgenres
@@ -139,9 +195,9 @@ class FantLab {
     return [label].concat(this.tryGetSubGenres(rootGenre))
   }
 
-  tryGetSubGenres(rootGenre) {
+  tryGetSubGenres(rootGenre: FantLabGenre): string[] {
     if (!rootGenre.genre || !rootGenre.genre.length) return []
-    return rootGenre.genre.map((g) => g.label).filter((g) => g)
+    return rootGenre.genre.map((genre) => genre.label).filter((genre): genre is string => Boolean(genre))
   }
 
   /**
@@ -150,7 +206,7 @@ class FantLab {
    * @param {number} [timeout]
    * @returns {Promise<{imageUrl: string, isbn: string}>
    */
-  async tryGetCoverFromEditions(editions, timeout = this.#responseTimeout) {
+  async tryGetCoverFromEditions(editions?: Record<string, FantLabEditionBlock | undefined> | null, timeout = this.#responseTimeout): Promise<FantLabImageAndIsbn | null> {
     if (!editions) {
       return null
     }
@@ -162,10 +218,10 @@ class FantLab {
       return null
     }
 
-    const lastEdition = bookEditions.list.pop()
+    const lastEdition = bookEditions.list.pop()!
 
-    const editionId = lastEdition['edition_id']
-    const isbn = lastEdition['isbn'] || null // get only from paper edition
+    const editionId = lastEdition.edition_id
+    const isbn = lastEdition.isbn || null // get only from paper edition
 
     return {
       imageUrl: await this.getCoverFromEdition(editionId, timeout),
@@ -179,21 +235,22 @@ class FantLab {
    * @param {number} [timeout]
    * @returns {Promise<string>}
    */
-  async getCoverFromEdition(editionId, timeout = this.#responseTimeout) {
+  async getCoverFromEdition(editionId?: number, timeout = this.#responseTimeout): Promise<string | null> {
     if (!editionId) return null
     if (!timeout || isNaN(timeout)) timeout = this.#responseTimeout
 
     const url = `${this._baseUrl}/edition/${editionId}`
 
     const editionInfo = await axios
-      .get(url, {
+      .get<FantLabEditionImage>(url, {
         timeout
       })
       .then((resp) => {
         return resp.data || null
       })
-      .catch((error) => {
-        Logger.error(`[FantLab] search cover from edition with url "${url}" error`, error.message)
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error)
+        Logger.error(`[FantLab] search cover from edition with url "${url}" error`, message)
         return null
       })
 
