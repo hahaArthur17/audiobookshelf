@@ -1,0 +1,8 @@
+[2026-10-03 21:35:26.623] DEBUG: [BookFinder] Duration diff: 0, durationScore: 1
+[2026-10-03 21:35:26.624] DEBUG: [BookFinder] keepSubtitle: false, normBookTitle: the great book, normTitleQuery: the great book, titleSimilarity: 1
+[2026-10-03 21:35:26.624] DEBUG: [BookFinder] normAuthorQuery: jane smith, normBookAuthor: jane smith, similarity: 1
+[2026-10-03 21:35:26.624] DEBUG: [BookFinder] Duration score: 1, Title score: 1, Author score: 1
+[2026-10-03 21:35:26.624] DEBUG: [BookFinder] Confidence: 0.9999999999999999
+[2026-10-03 21:35:26.624] ERROR: OpenLib Search Error 404
+[2026-10-03 21:35:26.624] ERROR: [SearchController] findChapters: Query parameter "asin" is invalid
+BEHAVIOR_JSON={"exports":{"book":"function","bookNested":"function","author":"function","podcast":"function","controller":"function"},"emptyBookSearch":[],"emptyAuthorAsin":null,"emptyPodcastSearch":null,"emptyPodcastCovers":null,"scoredBooks":[{"title":"The Great Book","author":"Jane Smith","cover":"cover.jpg","cleanedTitle":"the great book","titleDistance":0,"totalPossibleDistance":24,"cleanedAuthor":"jane smith","authorDistance":0,"includesAuthor":"jane smith","totalDistance":0,"includesTitle":"the great book"}],"confidence":0.9999999999999999,"openLibraryError":[],"booksApi":{"statusCode":200,"body":[{"title":"Mock Book","cover":"mock-cover"}]},"invalidAsinApi":{"statusCode":200,"body":{"error":"Invalid ASIN","stringKey":"MessageInvalidAsin"}},"googleMissingVolume":[{"title":"Good"},null]}

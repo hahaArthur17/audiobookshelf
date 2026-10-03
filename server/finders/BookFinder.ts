@@ -1,3 +1,60 @@
+import type { BookMetadata, BookProviderResult, FinderSearchOptions, ProviderError } from '../types/MetadataContracts'
+
+type SearchText = string | null | undefined
+type IsbnArgument = SearchText | FinderSearchOptions
+
+interface LibraryItemWithDuration {
+  media?: {
+    duration?: number | null
+  } | null
+}
+
+interface ScoredBook extends BookMetadata {
+  cleanedTitle: string
+  cleanedAuthor?: string
+  titleDistance: number
+  authorDistance?: number
+  totalPossibleDistance: number
+  totalDistance: number
+  includesTitle?: string
+  includesAuthor?: string
+}
+
+interface AuthorSearchResult {
+  asin: string
+  name: string
+}
+
+interface OpenLibraryProvider {
+  isbnLookup(isbn: string): Promise<BookMetadata | ProviderError>
+  searchTitle(title: string, timeout: number): Promise<BookProviderResult>
+}
+
+interface BookSearchProvider {
+  search(title: string, author: SearchText, timeout: number): Promise<BookProviderResult>
+}
+
+interface AudibleProvider {
+  search(title: string, author: SearchText, asin: SearchText, region: string, timeout: number): Promise<BookMetadata[] | null>
+}
+
+interface ITunesProvider {
+  searchAudiobooks(title: string, timeout: number): Promise<BookMetadata[]>
+}
+
+interface AudnexusProvider {
+  authorASINsRequest(name: string, region?: string): Promise<AuthorSearchResult[]>
+  getChaptersByASIN(asin: string, region?: string): Promise<unknown>
+}
+
+interface AudiobookCoversProvider {
+  search(search: string, timeout: number): Promise<BookMetadata[] | null>
+}
+
+interface CustomProvider {
+  search(title: SearchText, author: SearchText, isbn: IsbnArgument, providerSlug: string, mediaType: 'book', timeout: number): Promise<BookMetadata[]>
+}
+
 const OpenLibrary = require('../providers/OpenLibrary')
 const GoogleBooks = require('../providers/GoogleBooks')
 const Audible = require('../providers/Audible')
@@ -7,11 +64,30 @@ const FantLab = require('../providers/FantLab')
 const AudiobookCovers = require('../providers/AudiobookCovers')
 const CustomProviderAdapter = require('../providers/CustomProviderAdapter')
 const Logger = require('../Logger')
-const { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN } = require('../utils/index')
 const htmlSanitizer = require('../utils/htmlSanitizer')
 
+const levenshteinDistance: (first: string, second: string, caseSensitive?: boolean) => number = require('../utils/index').levenshteinDistance
+const levenshteinSimilarity: (first: string, second: string, caseSensitive?: boolean) => number = require('../utils/index').levenshteinSimilarity
+const escapeRegExp: (value: string) => string = require('../utils/index').escapeRegExp
+const isValidASIN: (value: string) => boolean = require('../utils/index').isValidASIN
+
+function isBookList(value: BookProviderResult): value is BookMetadata[] {
+  return Array.isArray(value)
+}
+
 class BookFinder {
-  #providerResponseTimeout = 10000
+  #providerResponseTimeout: number = 10000
+
+  openLibrary: OpenLibraryProvider
+  googleBooks: BookSearchProvider
+  audible: AudibleProvider
+  iTunesApi: ITunesProvider
+  audnexus: AudnexusProvider
+  fantLab: BookSearchProvider
+  audiobookCovers: AudiobookCoversProvider
+  customProviderAdapter: CustomProvider
+  providers: string[]
+  verbose: boolean
 
   constructor() {
     this.openLibrary = new OpenLibrary()
@@ -28,50 +104,55 @@ class BookFinder {
     this.verbose = false
   }
 
-  async findByISBN(isbn) {
+  async findByISBN(isbn: string): Promise<BookMetadata | ProviderError> {
     var book = await this.openLibrary.isbnLookup(isbn)
-    if (book.errorCode) {
+    if ('errorCode' in book && book.errorCode) {
       Logger.error('Book not found')
     }
     return book
   }
 
-  filterSearchResults(books, title, author, maxTitleDistance, maxAuthorDistance) {
+  filterSearchResults(books: BookMetadata[], title: string, author: SearchText, maxTitleDistance: number, maxAuthorDistance: number): ScoredBook[] {
     var searchTitle = cleanTitleForCompares(title)
     var searchAuthor = cleanAuthorForCompares(author)
     return books
-      .map((b) => {
-        b.cleanedTitle = cleanTitleForCompares(b.title)
-        b.titleDistance = levenshteinDistance(b.cleanedTitle, title)
+      .map((b): ScoredBook => {
+        const bookTitle = typeof b.title === 'string' ? b.title : ''
+        const cleanedTitle = cleanTitleForCompares(bookTitle)
+        const scoredBook = Object.assign(b, {
+          cleanedTitle,
+          titleDistance: levenshteinDistance(cleanedTitle, title),
+          totalPossibleDistance: bookTitle.length
+        })
 
         // Total length of search (title or both title & author)
-        b.totalPossibleDistance = b.title.length
-
         if (author) {
-          if (!b.author) {
-            b.authorDistance = author.length
+          if (!scoredBook.author) {
+            scoredBook.authorDistance = author.length
           } else {
-            b.totalPossibleDistance += b.author.length
-            b.cleanedAuthor = cleanAuthorForCompares(b.author)
+            scoredBook.totalPossibleDistance += scoredBook.author.length
+            scoredBook.cleanedAuthor = cleanAuthorForCompares(scoredBook.author)
 
-            var cleanedAuthorDistance = levenshteinDistance(b.cleanedAuthor, searchAuthor)
-            var authorDistance = levenshteinDistance(b.author || '', author)
+            var cleanedAuthorDistance = levenshteinDistance(scoredBook.cleanedAuthor, searchAuthor)
+            var authorDistance = levenshteinDistance(scoredBook.author || '', author)
 
             // Use best distance
-            b.authorDistance = Math.min(cleanedAuthorDistance, authorDistance)
+            scoredBook.authorDistance = Math.min(cleanedAuthorDistance, authorDistance)
 
             // Check book author contains searchAuthor
-            if (searchAuthor.length > 4 && b.cleanedAuthor.includes(searchAuthor)) b.includesAuthor = searchAuthor
-            else if (author.length > 4 && b.author.includes(author)) b.includesAuthor = author
+            if (searchAuthor.length > 4 && scoredBook.cleanedAuthor.includes(searchAuthor)) scoredBook.includesAuthor = searchAuthor
+            else if (author.length > 4 && scoredBook.author.includes(author)) scoredBook.includesAuthor = author
           }
         }
-        b.totalDistance = b.titleDistance + (b.authorDistance || 0)
+        const scoredBookWithDistance = Object.assign(scoredBook, {
+          totalDistance: scoredBook.titleDistance + (scoredBook.authorDistance || 0)
+        })
 
         // Check book title contains the searchTitle
-        if (searchTitle.length > 4 && b.cleanedTitle.includes(searchTitle)) b.includesTitle = searchTitle
-        else if (title.length > 4 && b.title.includes(title)) b.includesTitle = title
+        if (searchTitle.length > 4 && scoredBookWithDistance.cleanedTitle.includes(searchTitle)) scoredBookWithDistance.includesTitle = searchTitle
+        else if (title.length > 4 && bookTitle.includes(title)) scoredBookWithDistance.includesTitle = title
 
-        return b
+        return scoredBookWithDistance
       })
       .filter((b) => {
         if (b.includesTitle) {
@@ -86,7 +167,7 @@ class BookFinder {
           if (b.includesAuthor) {
             // If search author was found in result author then skip over leven distance check
             if (this.verbose) Logger.debug(`Exact author was included in "${b.author}", Search: "${b.includesAuthor}"`)
-          } else if (b.authorDistance > maxAuthorDistance) {
+          } else if (b.authorDistance !== undefined && b.authorDistance > maxAuthorDistance) {
             if (this.verbose) Logger.debug(`Filtering out search result "${b.author}", author distance = ${b.authorDistance}: "${b.author}"/"${author}"`)
             return false
           }
@@ -106,10 +187,10 @@ class BookFinder {
    * @param {number} maxAuthorDistance
    * @returns {Promise<Object[]>}
    */
-  async getOpenLibResults(title, author, maxTitleDistance, maxAuthorDistance) {
+  async getOpenLibResults(title: string, author: SearchText, maxTitleDistance: number, maxAuthorDistance: number): Promise<BookMetadata[]> {
     var books = await this.openLibrary.searchTitle(title, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`OpenLib Book Search Results: ${books.length || 0}`)
-    if (books.errorCode) {
+    if (this.verbose) Logger.debug(`OpenLib Book Search Results: ${isBookList(books) ? books.length || 0 : 0}`)
+    if (!isBookList(books)) {
       Logger.error(`OpenLib Search Error ${books.errorCode}`)
       return []
     }
@@ -130,10 +211,10 @@ class BookFinder {
    * @param {string} author
    * @returns {Promise<Object[]>}
    */
-  async getGoogleBooksResults(title, author) {
+  async getGoogleBooksResults(title: string, author: SearchText): Promise<BookMetadata[]> {
     var books = await this.googleBooks.search(title, author, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`GoogleBooks Book Search Results: ${books.length || 0}`)
-    if (books.errorCode) {
+    if (this.verbose) Logger.debug(`GoogleBooks Book Search Results: ${isBookList(books) ? books.length || 0 : 0}`)
+    if (!isBookList(books)) {
       Logger.error(`GoogleBooks Search Error ${books.errorCode}`)
       return []
     }
@@ -147,10 +228,10 @@ class BookFinder {
    * @param {string} author
    * @returns {Promise<Object[]>}
    */
-  async getFantLabResults(title, author) {
+  async getFantLabResults(title: string, author: SearchText): Promise<BookMetadata[]> {
     var books = await this.fantLab.search(title, author, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`FantLab Book Search Results: ${books.length || 0}`)
-    if (books.errorCode) {
+    if (this.verbose) Logger.debug(`FantLab Book Search Results: ${isBookList(books) ? books.length || 0 : 0}`)
+    if (!isBookList(books)) {
       Logger.error(`FantLab Search Error ${books.errorCode}`)
       return []
     }
@@ -163,9 +244,9 @@ class BookFinder {
    * @param {string} search
    * @returns {Promise<Object[]>}
    */
-  async getAudiobookCoversResults(search) {
+  async getAudiobookCoversResults(search: string): Promise<BookMetadata[]> {
     const covers = await this.audiobookCovers.search(search, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`AudiobookCovers Search Results: ${covers.length || 0}`)
+    if (this.verbose) Logger.debug(`AudiobookCovers Search Results: ${covers?.length || 0}`)
     return covers || []
   }
 
@@ -174,7 +255,7 @@ class BookFinder {
    * @param {string} title
    * @returns {Promise<Object[]>}
    */
-  async getiTunesAudiobooksResults(title) {
+  async getiTunesAudiobooksResults(title: string): Promise<BookMetadata[]> {
     return this.iTunesApi.searchAudiobooks(title, this.#providerResponseTimeout)
   }
 
@@ -186,10 +267,10 @@ class BookFinder {
    * @param {string} provider
    * @returns {Promise<Object[]>}
    */
-  async getAudibleResults(title, author, asin, provider) {
-    const region = provider.includes('.') ? provider.split('.').pop() : ''
+  async getAudibleResults(title: string, author: SearchText, asin: SearchText, provider: string): Promise<BookMetadata[]> {
+    const region = provider.includes('.') ? provider.split('.').pop() || '' : ''
     const books = await this.audible.search(title, author, asin, region, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`Audible Book Search Results: ${books.length || 0}`)
+    if (this.verbose) Logger.debug(`Audible Book Search Results: ${books?.length || 0}`)
     if (!books) return []
     return books
   }
@@ -202,7 +283,7 @@ class BookFinder {
    * @param {string} providerSlug
    * @returns {Promise<Object[]>}
    */
-  async getCustomProviderResults(title, author, isbn, providerSlug) {
+  async getCustomProviderResults(title: SearchText, author: SearchText, isbn: IsbnArgument, providerSlug: string): Promise<BookMetadata[]> {
     try {
       const books = await this.customProviderAdapter.search(title, author, isbn, providerSlug, 'book', this.#providerResponseTimeout)
       if (this.verbose) Logger.debug(`Custom provider '${providerSlug}' Search Results: ${books.length || 0}`)
@@ -214,19 +295,25 @@ class BookFinder {
   }
 
   static TitleCandidates = class {
-    constructor(cleanAuthor) {
-      this.candidates = new Set()
+    candidates: Set<string>
+    cleanAuthor: SearchText
+    priorities: Record<string, number>
+    positions: Record<string, number>
+    currentPosition: number
+
+    constructor(cleanAuthor: SearchText) {
+      this.candidates = new Set<string>()
       this.cleanAuthor = cleanAuthor
       this.priorities = {}
       this.positions = {}
       this.currentPosition = 0
     }
 
-    add(title) {
+    add(title: string): void {
       // if title contains the author, remove it
       title = this.#removeAuthorFromTitle(title)
 
-      const titleTransformers = [
+      const titleTransformers: Array<[RegExp, string]> = [
         [/(: |[,;_]| by ).*/g, ''], // Remove subtitle
         [/(^| )\d+k(bps)?( |$)/, ' '], // Remove bitrate
         [/ (2nd|3rd|\d+th)\s+ed(\.|ition)?/g, ''], // Remove edition
@@ -245,7 +332,7 @@ class BookFinder {
 
       let candidate = cleanTitle
 
-      for (const transformer of titleTransformers) candidate = candidate.replace(transformer[0], transformer[1]).trim()
+      for (const [pattern, replacement] of titleTransformers) candidate = candidate.replace(pattern, replacement).trim()
 
       if (candidate != cleanTitle) {
         if (candidate) {
@@ -262,12 +349,12 @@ class BookFinder {
       return this.candidates.size
     }
 
-    getCandidates() {
+    getCandidates(): string[] {
       var candidates = [...this.candidates]
       candidates.sort((a, b) => {
         // Candidates that include only digits are also likely low quality
         const onlyDigits = /^\d+$/
-        const includesOnlyDigitsDiff = onlyDigits.test(a) - onlyDigits.test(b)
+        const includesOnlyDigitsDiff = Number(onlyDigits.test(a)) - Number(onlyDigits.test(b))
         if (includesOnlyDigitsDiff) return includesOnlyDigitsDiff
         // transformed candidates receive higher priority
         const priorityDiff = this.priorities[a] - this.priorities[b]
@@ -281,11 +368,11 @@ class BookFinder {
       return candidates
     }
 
-    delete(title) {
+    delete(title: string): boolean {
       return this.candidates.delete(title)
     }
 
-    #removeAuthorFromTitle(title) {
+    #removeAuthorFromTitle(title: string): string {
       if (!this.cleanAuthor) return title
       const authorRe = new RegExp(`(^| | by |)${escapeRegExp(this.cleanAuthor)}(?= |$)`, 'g')
       const authorCleanedTitle = cleanAuthorForCompares(title)
@@ -298,14 +385,18 @@ class BookFinder {
   }
 
   static AuthorCandidates = class {
-    constructor(cleanAuthor, audnexus) {
+    audnexus: AudnexusProvider
+    candidates: Set<string>
+    cleanAuthor: SearchText
+
+    constructor(cleanAuthor: SearchText, audnexus: AudnexusProvider) {
       this.audnexus = audnexus
-      this.candidates = new Set()
+      this.candidates = new Set<string>()
       this.cleanAuthor = cleanAuthor
       if (cleanAuthor) this.candidates.add(cleanAuthor)
     }
 
-    validateAuthor(name, region = '', maxLevenshtein = 2) {
+    validateAuthor(name: string, region = '', maxLevenshtein = 2): Promise<string> {
       return this.audnexus.authorASINsRequest(name, region).then((asins) => {
         for (const [i, asin] of asins.entries()) {
           if (i > 10) break
@@ -319,7 +410,7 @@ class BookFinder {
       })
     }
 
-    add(author) {
+    add(author: string): void {
       const cleanAuthor = cleanAuthorForCompares(author).trim()
       if (!cleanAuthor) return
       this.candidates.add(cleanAuthor)
@@ -337,7 +428,7 @@ class BookFinder {
       return ''
     }
 
-    async getCandidates() {
+    async getCandidates(): Promise<string[]> {
       var filteredCandidates = []
       var promises = []
       for (const candidate of this.candidates) {
@@ -354,7 +445,7 @@ class BookFinder {
       return filteredCandidates
     }
 
-    delete(author) {
+    delete(author: string): boolean {
       return this.candidates.delete(author)
     }
   }
@@ -371,11 +462,19 @@ class BookFinder {
    * @param {{titleDistance:number, authorDistance:number, maxFuzzySearches:number}} options
    * @returns {Promise<Object[]>}
    */
-  async search(libraryItem, provider, title, author, isbn, asin, options = {}) {
-    let books = []
-    const maxTitleDistance = !isNaN(options.titleDistance) ? Number(options.titleDistance) : 4
-    const maxAuthorDistance = !isNaN(options.authorDistance) ? Number(options.authorDistance) : 4
-    const maxFuzzySearches = !isNaN(options.maxFuzzySearches) ? Number(options.maxFuzzySearches) : 5
+  async search(
+    libraryItem: LibraryItemWithDuration | null,
+    provider: string,
+    title: SearchText,
+    author: SearchText,
+    isbn: IsbnArgument = undefined,
+    asin: SearchText = undefined,
+    options: FinderSearchOptions = {}
+  ): Promise<BookMetadata[]> {
+    let books: BookMetadata[] = []
+    const maxTitleDistance = options.titleDistance !== undefined && !isNaN(options.titleDistance) ? Number(options.titleDistance) : 4
+    const maxAuthorDistance = options.authorDistance !== undefined && !isNaN(options.authorDistance) ? Number(options.authorDistance) : 4
+    const maxFuzzySearches = options.maxFuzzySearches !== undefined && !isNaN(options.maxFuzzySearches) ? Number(options.maxFuzzySearches) : 5
     let numFuzzySearches = 0
 
     // Custom providers are assumed to be correct
@@ -404,7 +503,7 @@ class BookFinder {
       const cleanAuthor = cleanAuthorForCompares(author)
 
       // Now run up to maxFuzzySearches fuzzy searches
-      let authorCandidates = new BookFinder.AuthorCandidates(cleanAuthor, this.audnexus)
+      const authorCandidates = new BookFinder.AuthorCandidates(cleanAuthor, this.audnexus)
 
       // Remove underscores and parentheses with their contents, and replace with a separator
       // Use negated character classes to prevent ReDoS vulnerability (input length validated at entry point)
@@ -412,12 +511,11 @@ class BookFinder {
       // Split title into hypen-separated parts
       const titleParts = cleanTitle.split(/ - | -|- /)
       for (const titlePart of titleParts) authorCandidates.add(titlePart)
-      authorCandidates = await authorCandidates.getCandidates()
-      loop_author: for (const authorCandidate of authorCandidates) {
-        let titleCandidates = new BookFinder.TitleCandidates(authorCandidate)
+      const authorNames = await authorCandidates.getCandidates()
+      loop_author: for (const authorCandidate of authorNames) {
+        const titleCandidates = new BookFinder.TitleCandidates(authorCandidate)
         for (const titlePart of titleParts) titleCandidates.add(titlePart)
-        titleCandidates = titleCandidates.getCandidates()
-        for (const titleCandidate of titleCandidates) {
+        for (const titleCandidate of titleCandidates.getCandidates()) {
           if (titleCandidate == actualTitleQuery && authorCandidate == actualAuthorQuery) continue // We already tried this
           if (++numFuzzySearches > maxFuzzySearches) break loop_author
           actualTitleQuery = titleCandidate
@@ -459,7 +557,13 @@ class BookFinder {
    * @param {boolean} isTitleAsin - Whether the title is an ASIN
    * @returns {number|null} - Match confidence score or null if not applicable
    */
-  calculateMatchConfidence(book, libraryItemDurationMinutes, actualTitleQuery, actualAuthorQuery, isTitleAsin) {
+  calculateMatchConfidence(
+    book: BookMetadata,
+    libraryItemDurationMinutes: number | null,
+    actualTitleQuery: string,
+    actualAuthorQuery: SearchText,
+    isTitleAsin: boolean
+  ): number {
     // ASIN results are always a match
     if (isTitleAsin) return 1.0
 
@@ -502,7 +606,7 @@ class BookFinder {
       durationScore = 0.1
     }
 
-    const calculateTitleScore = (titleQuery, book, keepSubtitle = false) => {
+    const calculateTitleScore = (titleQuery: string, book: BookMetadata, keepSubtitle = false): number => {
       const cleanTitle = cleanTitleForCompares(book.title || '', keepSubtitle)
       const cleanSubtitle = keepSubtitle && book.subtitle ? `: ${book.subtitle}` : ''
       const normBookTitle = `${cleanTitle}${cleanSubtitle}`
@@ -575,7 +679,14 @@ class BookFinder {
    * @param {number} maxAuthorDistance only used for openlibrary provider
    * @returns {Promise<Object[]>}
    */
-  async runSearch(title, author, provider, asin, maxTitleDistance, maxAuthorDistance) {
+  async runSearch(
+    title: string,
+    author: SearchText,
+    provider: string,
+    asin: SearchText,
+    maxTitleDistance: number,
+    maxAuthorDistance: number
+  ): Promise<BookMetadata[]> {
     Logger.debug(`Book Search: title: "${title}", author: "${author || ''}", provider: ${provider}`)
 
     let books = []
@@ -605,7 +716,7 @@ class BookFinder {
     return books
   }
 
-  async findCovers(provider, title, author, options = {}) {
+  async findCovers(provider: string, title: SearchText, author: SearchText, options: FinderSearchOptions = {}): Promise<string[]> {
     let searchResults = []
 
     if (provider === 'all') {
@@ -627,7 +738,7 @@ class BookFinder {
     }
     Logger.debug(`[BookFinder] FindCovers search results: ${searchResults.length}`)
 
-    const covers = []
+    const covers: string[] = []
     searchResults.forEach((result) => {
       if (result.covers && result.covers.length) {
         covers.push(...result.covers)
@@ -639,16 +750,16 @@ class BookFinder {
     return [...new Set(covers)]
   }
 
-  findChapters(asin, region) {
+  findChapters(asin: string, region?: string): Promise<unknown> {
     return this.audnexus.getChaptersByASIN(asin, region)
   }
 }
 module.exports = new BookFinder()
 
-function hasSubtitle(title) {
+function hasSubtitle(title: string): boolean {
   return title.includes(': ') || title.includes(' - ')
 }
-function stripSubtitle(title) {
+function stripSubtitle(title: string): string {
   if (title.includes(': ')) {
     return title.split(': ')[0].trim()
   } else if (title.includes(' - ')) {
@@ -657,7 +768,7 @@ function stripSubtitle(title) {
   return title
 }
 
-function replaceAccentedChars(str) {
+function replaceAccentedChars(str: string): string {
   try {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   } catch (error) {
@@ -666,7 +777,7 @@ function replaceAccentedChars(str) {
   }
 }
 
-function cleanTitleForCompares(title, keepSubtitle = false) {
+function cleanTitleForCompares(title: SearchText, keepSubtitle = false): string {
   if (!title) return ''
   title = stripRedundantSpaces(title)
 
@@ -683,7 +794,7 @@ function cleanTitleForCompares(title, keepSubtitle = false) {
   return replaceAccentedChars(cleaned).toLowerCase()
 }
 
-function cleanAuthorForCompares(author) {
+function cleanAuthorForCompares(author: SearchText): string {
   if (!author) return ''
   author = stripRedundantSpaces(author)
 
@@ -697,6 +808,6 @@ function cleanAuthorForCompares(author) {
   return cleanAuthor
 }
 
-function stripRedundantSpaces(str) {
+function stripRedundantSpaces(str: string): string {
   return str.replace(/\s+/g, ' ').trim()
 }
