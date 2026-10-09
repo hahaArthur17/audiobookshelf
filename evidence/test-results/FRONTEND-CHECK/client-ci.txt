@@ -1,0 +1,49 @@
+npm warn deprecated @types/localforage@0.0.34: This is a stub types definition for localforage (https://github.com/localForage/localForage). localforage provides its own type definitions, so you don't need @types/localforage installed!
+npm warn deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+npm warn deprecated @babel/plugin-proposal-private-methods@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-methods instead.
+npm warn deprecated @babel/plugin-proposal-nullish-coalescing-operator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-nullish-coalescing-operator instead.
+npm warn deprecated @babel/plugin-proposal-class-properties@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
+npm warn deprecated source-map-url@0.4.1: See https://github.com/lydell/source-map-url#deprecated
+npm warn deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
+npm warn deprecated figgy-pudding@3.5.2: This module is no longer supported.
+npm warn deprecated consolidate@0.15.1: Please upgrade to consolidate v1.0.0+ as it has been modernized with several long-awaited fixes implemented. Maintenance is supported by Forward Email at https://forwardemail.net ; follow/watch https://github.com/ladjs/consolidate for updates and release changelog
+npm warn deprecated @babel/plugin-proposal-private-property-in-object@7.21.11: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-property-in-object instead.
+npm warn deprecated urix@0.1.0: Please see https://github.com/lydell/urix#deprecated
+npm warn deprecated @babel/plugin-proposal-optional-chaining@7.21.0: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-chaining instead.
+npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated nuxt@2.18.1: Nuxt 2 has reached EOL and is no longer actively maintained. See https://nuxt.com/blog/nuxt2-eol for more details.
+npm warn deprecated glob@8.1.0: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated resolve-url@0.2.1: https://github.com/lydell/resolve-url#deprecated
+npm warn deprecated chokidar@2.1.8: Chokidar 2 does not receive security updates since 2019. Upgrade to chokidar 3 with 15x fewer dependencies
+npm warn deprecated source-map-resolve@0.5.3: See https://github.com/lydell/source-map-resolve#deprecated
+npm warn deprecated vue@2.7.16: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
+
+added 1536 packages, and audited 1537 packages in 5m
+
+247 packages are looking for funding
+  run `npm fund` for details
+
+105 vulnerabilities (12 low, 26 moderate, 59 high, 8 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+npm warn install-scripts 5 packages have install scripts not yet covered by allowScripts:
+npm warn install-scripts   @parcel/watcher@2.5.1 (install: node scripts/build-from-source.js)
+npm warn install-scripts   core-js@3.38.1 (postinstall: node -e "try{require('./postinstall')}catch(e){}")
+npm warn install-scripts   cypress@13.7.3 (postinstall: node index.js --exec install)
+npm warn install-scripts   es5-ext@0.10.62 (postinstall:  node -e "try{require('./_postinstall')}catch(e){}" || exit 0)
+npm warn install-scripts   nuxt@2.18.1 (postinstall: opencollective || exit 0)
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.

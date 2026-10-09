@@ -1,0 +1,303 @@
+
+> audiobookshelf-client@2.37.0 generate
+> nuxt generate
+
+[36mℹ[39m Production build
+[36mℹ[39m Bundling only for client side
+[36mℹ[39m Target: static
+i Using components loader to optimize imports
+i Discovered Components: node_modules/.cache/nuxt/components/readme.md
+[32m✔[39m Builder initialized
+[32m✔[39m Nuxt files generated
+
+[43m[30m WARN [39m[49m Please use [36mbuild.postcss[39m in your nuxt.config.js instead of an external config file. Support for such files will be removed in Nuxt 3 as they remove all defaults set by Nuxt and can cause severe problems with features like alias resolving inside your CSS.
+
+[90m[[90mwebpackbar[90m][39m [36mℹ[39m Compiling Client
+[90m[[90mwebpackbar[90m][39m [32m✔[39m Client: Compiled successfully in 1.27m
+
+Hash: [1m70020789ecb1c07d5f5a[39m[22m
+Version: webpack [1m4.47.0[39m[22m
+Time: [1m76404[39m[22mms
+Built at: 10/10/2026 [1m1:49:15 AM[39m[22m
+                                     [1mAsset[39m[22m       [1mSize[39m[22m                                                   [1mChunks[39m[22m  [1m[39m[22m                       [1m[39m[22m       [1mChunk Names[39m[22m
+            [1m[32m../server/client.manifest.json[39m[22m    151 KiB                                                         [1m[39m[22m  [1m[32m[emitted][39m[22m                     
+                                [1m[32m010953f.js[39m[22m   4.47 KiB                                                      [1m106[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-remove-episode
+                                [1m[33m06a3613.js[39m[22m    [1m[33m247 KiB[39m[22m                                                       [1m58[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  commons/app
+                                [1m[32m07f077c.js[39m[22m   44.1 KiB                                                       [1m54[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m08cef0d.js[39m[22m     81 KiB  [1m191, 60, 73, 81, 123, 125, 129, 130, 131, 132, 139, 151[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/item/_id/index
+                                [1m[32m0a815be.js[39m[22m   19.1 KiB                                         [1m183, 62, 71, 102[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/notifications
+            [1m[33m0b45c967e6c44cadc19e.worker.js[39m[22m    [1m[33m887 KiB[39m[22m                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  
+                                [1m[32m0eda4b4.js[39m[22m   2.97 KiB                                                 [1m137, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-podcast-download-queue-table
+                                [1m[32m0fbfcad.js[39m[22m   98.4 KiB                                                       [1m16[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m114d79f.js[39m[22m   69.7 KiB                                                       [1m51[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m1249f1c.js[39m[22m   33.4 KiB                                    [1m205, 60, 66, 140, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/upload/index
+                                [1m[32m1409c99.js[39m[22m   3.82 KiB                                                       [1m68[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-lazy-playlist-card
+                                [1m[32m1447fde.js[39m[22m   68.9 KiB                                                       [1m33[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m149e1c9.js[39m[22m   5.65 KiB                                                       [1m97[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-library-scanner-settings
+                                [1m[32m14af710.js[39m[22m   68.7 KiB                                                       [1m49[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m1572272.js[39m[22m   65.3 KiB                                                       [1m42[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m162e834.js[39m[22m  658 bytes                                                      [1m190[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/index
+                                [1m[32m172c85e.js[39m[22m    3.5 KiB                                                       [1m78[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-add-custom-metadata-provider-modal
+                                [1m[32m18d252a.js[39m[22m   69.2 KiB                                                       [1m36[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m1a5c62c.js[39m[22m   69.7 KiB                                                        [1m5[39m[22m  [1m[32m[emitted] [immutable][39m[22m         vendors/components/modals-libraries-library-scanner-settings/components/tables-collection-books-tabl/902d0233
+                                [1m[32m1c369f1.js[39m[22m   2.26 KiB                                                      [1m145[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-media-icon-picker
+                                [1m[32m1db888a.js[39m[22m   9.48 KiB                                                  [1m83, 144[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-edit-series-input-inner-modal
+                                [1m[32m1de5dd4.js[39m[22m   10.7 KiB                                            [1m124, 111, 143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-backups-table
+                                [1m[32m1f44738.js[39m[22m   9.15 KiB                                                      [1m161[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-podcast-details-edit
+                                [1m[32m1fa2772.js[39m[22m   10.5 KiB                                             [1m134, 82, 133[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-library-libraries-table
+                                [1m[32m217cdd8.js[39m[22m   10.1 KiB                                                 [1m138, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-podcast-lazy-episode-row
+                                [1m[32m236ac82.js[39m[22m   1.08 KiB                                                      [1m149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-rich-text-editor
+                                [1m[32m244feba.js[39m[22m   13.1 KiB                                             [1m196, 60, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/podcast/latest
+                                [1m[32m24c5e60.js[39m[22m   69.1 KiB                                                       [1m28[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m25deb4e.js[39m[22m     69 KiB                                                       [1m20[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m263e6a4.js[39m[22m   17.5 KiB                                              [1m87, 60, 143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-cover
+                                [1m[32m270d3e6.js[39m[22m   23.4 KiB                                                        [1m7[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-details/components/modals-item-tabs-match/components/widgets-book-detail/5a2d5026
+                                [1m[32m2881cfa.js[39m[22m     20 KiB                                                       [1m59[39m[22m  [1m[32m[emitted] [immutable][39m[22m         commons/components/readers-mobi-reader
+                                [1m[32m28c0647.js[39m[22m   70.2 KiB                                                       [1m47[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m2acbbc4.js[39m[22m   97.9 KiB                                                       [1m46[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m2c0cfcf.js[39m[22m   6.16 KiB                                                       [1m80[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-api-key-modal
+                                [1m[33m2c96a53.js[39m[22m    [1m[33m353 KiB[39m[22m                                                  [1m208, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  vendors/components/readers-epub-reader
+                                [1m[32m2d48016.js[39m[22m   3.87 KiB                                                      [1m125[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-chapters-table
+                                [1m[32m2e16212.js[39m[22m   2.12 KiB                                                      [1m155[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-cover-size-widget
+                                [1m[32m308ba11.js[39m[22m  105 bytes                                                       [1m26[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m31318a7.js[39m[22m   4.03 KiB                                                      [1m105[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-opml-feeds-modal
+                                [1m[32m34b905f.js[39m[22m   1.98 KiB                                                       [1m79[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-api-key-created-modal
+                                [1m[32m358c69a.js[39m[22m    1.1 KiB                                                      [1m143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-file-input
+                                [1m[32m35ffe4c.js[39m[22m   11.3 KiB                                                 [1m127, 126[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-collection-books-table
+                                [1m[32m3601324.js[39m[22m   11.3 KiB                                                 [1m136, 135[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-playlist-items-table
+                                [1m[32m372ddb3.js[39m[22m  105 bytes                                                       [1m40[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m380ba9b.js[39m[22m   9.04 KiB                                        [1m195, 60, 137, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/podcast/download-queue
+                                [1m[32m398cff8.js[39m[22m    3.1 KiB                                                  [1m179, 62[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/item-metadata-utils/index
+                                [1m[32m3b05d66.js[39m[22m   1.91 KiB                                                       [1m70[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-narrator-card
+                                [1m[32m3b8a4ed.js[39m[22m    223 KiB                                                        [1m4[39m[22m  [1m[32m[emitted] [immutable][39m[22m         vendors/components/modals-item-tabs-details/components/modals-item-tabs-match/components/modals-podc/60e85b4a
+                                [1m[32m3d171d7.js[39m[22m   79.6 KiB                                                       [1m37[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m3f0c56d.js[39m[22m   21.4 KiB                            [1m181, 60, 62, 82, 95, 133, 134[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/libraries
+                                [1m[32m433f37f.js[39m[22m   26.2 KiB                                    [1m8, 60, 63, 65, 69, 70[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-book-shelf-row
+                                [1m[32m43a3646.js[39m[22m   8.38 KiB                                                  [1m171, 61[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config
+                                [1m[32m43f7e75.js[39m[22m   7.96 KiB                                                   [1m95, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-edit-modal
+                                [1m[32m4459f14.js[39m[22m   12.6 KiB                                             [1m139, 81, 123[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-tracks-table
+                                [1m[32m44edd98.js[39m[22m   30.8 KiB                                                       [1m45[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m46ac9a8.js[39m[22m   61.2 KiB                                                       [1m31[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m46d66fb.js[39m[22m   75.3 KiB                                                       [1m29[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m476c8a3.js[39m[22m   19.4 KiB                                         [1m94, 96, 142, 145[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-edit-library
+                                [1m[32m47e23d7.js[39m[22m   9.33 KiB                                                       [1m98[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-library-settings
+                                [1m[32m4960e6b.js[39m[22m     68 KiB                                                       [1m41[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m4c8c655.js[39m[22m   37.3 KiB                                                   [1m2, 159[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-lazy-book-card
+                                [1m[32m4cd90a9.js[39m[22m   21.6 KiB                                   [1m174, 62, 111, 124, 143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/backups
+                                [1m[32m50105b8.js[39m[22m     11 KiB                                        [1m189, 62, 141, 160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/users/index
+                                [1m[32m505b72f.js[39m[22m   2.48 KiB                                                      [1m132[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-library-files-table-row
+                                [1m[32m50681ed.js[39m[22m     19 KiB                                                       [1m23[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m51797a2.js[39m[22m   5.76 KiB                                                       [1m73[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/content-library-item-details
+                                [1m[32m531722a.js[39m[22m   38.6 KiB                                                       [1m56[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m53f6fac.js[39m[22m   39.5 KiB                                                       [1m25[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m540ec3b.js[39m[22m   94.2 KiB                                                       [1m52[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m54c4d4b.js[39m[22m   3.68 KiB                                                       [1m74[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/controls-filter-select
+                                [1m[32m5b61fee.js[39m[22m   7.05 KiB                                                 [1m129, 130[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-ebook-files-table
+                                [1m[32m5c1cfe3.js[39m[22m   5.74 KiB                                                   [1m85, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-emails-user-e-reader-device-modal
+                                [1m[32m5dd4c3b.js[39m[22m   10.7 KiB                                                  [1m163, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-series-input-widget
+                                [1m[32m5fc0507.js[39m[22m   5.13 KiB                                                      [1m210[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m5fc10db.js[39m[22m    5.4 KiB                                                      [1m150[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-time-picker
+                                [1m[32m620b2d0.js[39m[22m   16.5 KiB                                            [1m100, 146, 156[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-schedule-scan
+                                [1m[32m624b359.js[39m[22m   19.9 KiB                                            [1m170, 126, 127[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/collection/_id
+                                [1m[32m6354017.js[39m[22m   5.12 KiB                                                  [1m93, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-tools
+                                [1m[32m639d602.js[39m[22m   22.3 KiB                                              [1m9, 155, 158[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-book-shelf-categorized
+                                [1m[32m6466bf6.js[39m[22m   4.66 KiB                                                      [1m146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-multi-select-dropdown
+                                [1m[32m67d5e09.js[39m[22m   15.2 KiB                                                 [1m201, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/login
+                                [1m[33m690fae4.js[39m[22m   [1m[33m1.32 MiB[39m[22m                                                      [1m207[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  vendors/app
+                                [1m[32m6947aaa.js[39m[22m   3.71 KiB                                                      [1m109[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-rssfeed-view-feed-modal
+                                [1m[32m6a7db7d.js[39m[22m   61.4 KiB                                                       [1m55[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m6ed53f2.js[39m[22m   9.09 KiB                                                      [1m104[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-new-modal
+                                [1m[32m70331b0.js[39m[22m    139 KiB                                                       [1m50[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m7039af4.js[39m[22m   7.82 KiB                                                      [1m157[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-encoder-options-card
+                                [1m[32m784a3c9.js[39m[22m     21 KiB                                          [1m164, 60, 62, 85[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/account
+                                [1m[32m7a114e4.js[39m[22m   8.38 KiB                                                  [1m182, 62[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/log
+                                [1m[32m7a406f8.js[39m[22m   43.6 KiB                                                [1m1, 75, 77[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-book-shelf-toolbar/pages/library/_library/bookshelf/_id/pages/library/_library/index//996ae1f3
+                                [1m[32m7b1c8ae.js[39m[22m   10.8 KiB                                                      [1m113[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/readers-epub-reader
+                                [1m[32m7b74bef.js[39m[22m   4.16 KiB                                                       [1m67[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-lazy-collection-card
+                                [1m[32m7b87953.js[39m[22m   7.69 KiB                                                       [1m96[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-lazy-folder-chooser
+                                [1m[32m7e00277.js[39m[22m   2.89 KiB                                                      [1m142[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-editable-text
+                                [1m[32m7f5ddf5.js[39m[22m   6.42 KiB                                                      [1m102[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-notification-edit-modal
+                                [1m[32m7f9adc3.js[39m[22m   12.9 KiB                                                       [1m75[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/controls-library-filter-select
+                                [1m[32m817fe11.js[39m[22m   2.72 KiB                                                       [1m65[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-group-card
+                                [1m[32m829fbe6.js[39m[22m   33.1 KiB                                             [1m185, 62, 101[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/sessions
+                                [1m[32m836a584.js[39m[22m    5.1 KiB                                                       [1m71[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-notification-card
+                                [1m[32m8575601.js[39m[22m   27.3 KiB                                            [1m167, 152, 157[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/audiobook/_id/manage
+                                [1m[32m86eb5cc.js[39m[22m   68.5 KiB                                                       [1m48[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m8851dcc.js[39m[22m   26.8 KiB                                                        [1m3[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-vue-trix
+                                [1m[32m88b25fa.js[39m[22m   17.7 KiB                                            [1m203, 135, 136[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/playlist/_id
+                                [1m[32m8c26765.js[39m[22m   2.84 KiB                                                      [1m123[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-audio-tracks-table-row
+                                [1m[32m8d929c9.js[39m[22m  805 bytes                                                      [1m162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-podcast-type-indicator
+                                [1m[32m8f38ed6.js[39m[22m   1.88 KiB                                                       [1m72[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-podcast-feed-summary-card
+                                [1m[32m9028881.js[39m[22m   14.1 KiB                                                        [1m6[39m[22m  [1m[32m[emitted] [immutable][39m[22m         commons/components/modals-item-tabs-cover/components/modals-upload-image-modal/components/readers-ep/3ee30da1
+                                [1m[32m907e30a.js[39m[22m      5 KiB                                                       [1m64[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-book-match-card
+                                [1m[32m91596c4.js[39m[22m   17.1 KiB                                             [1m12, 146, 156[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-backup-schedule-modal
+                                [1m[32m91b2b45.js[39m[22m   5.61 KiB                                                      [1m158[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-item-slider
+                                [1m[32m920d971.js[39m[22m   71.4 KiB                                                       [1m24[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m92adb54.js[39m[22m   72.2 KiB                                                       [1m22[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m942db2f.js[39m[22m     42 KiB                                       [1m169, 149, 154, 161[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/batch/index
+                                [1m[32m945925a.js[39m[22m   21.3 KiB                                               [1m0, 60, 163[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-multi-select
+                                [1m[32m954e442.js[39m[22m   12.2 KiB                                                       [1m30[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m9581de8.js[39m[22m  105 bytes                                                       [1m53[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m95b1773.js[39m[22m   2.29 KiB                                                       [1m99[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-library-tools
+                                [1m[32m9616876.js[39m[22m   98.2 KiB                                                       [1m17[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m9639d9d.js[39m[22m     38 KiB                                [1m14, 74, 77, 106, 138, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-podcast-lazy-episodes-table
+                                [1m[32m96d088b.js[39m[22m     13 KiB                                                 [1m154, 149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-book-details-edit
+                                [1m[32m97db8b0.js[39m[22m   55.2 KiB                              [1m10, 60, 63, 67, 68, 69, 155[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-lazy-bookshelf
+                                [1m[32m9878294.js[39m[22m   3.08 KiB                                                      [1m159[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-more-menu
+                                [1m[32m9b36e65.js[39m[22m   17.1 KiB                                                      [1m204[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/share/_slug
+                                [1m[32m9b8080f.js[39m[22m   6.36 KiB                                                       [1m32[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32m9c04545.js[39m[22m   1.14 KiB                                                      [1m193[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/index
+                                [1m[32m9c4b5d3.js[39m[22m   5.02 KiB                                                      [1m178[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/item-metadata-utils/genres
+                                [1m[32m9d3a0e3.js[39m[22m    7.6 KiB                                                 [1m107, 149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-tabs-episode-details
+                                [1m[32m9e7792b.js[39m[22m   1.59 KiB                                                      [1m192[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/bookshelf/_id
+                                  [1m[32mLICENSES[39m[22m   3.58 KiB                                                         [1m[39m[22m  [1m[32m[emitted][39m[22m                     
+                                [1m[32ma1a723c.js[39m[22m   11.8 KiB                                              [1m84, 60, 146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-emails-e-reader-device-modal
+                                [1m[32ma1c880f.js[39m[22m   61.9 KiB                                                       [1m19[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32ma2f61c8.js[39m[22m   3.04 KiB                                                      [1m151[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-abridged-indicator
+                                [1m[32ma3698d2.js[39m[22m   3.55 KiB                                                      [1m130[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-ebook-files-table-row
+                                [1m[32ma698d3a.js[39m[22m   5.09 KiB                                                      [1m122[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-api-keys-table
+                                [1m[32ma71d01f.js[39m[22m   29.1 KiB                                    [1m13, 60, 119, 120, 121[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-year-in-review-banner
+                                [1m[32ma7af8af.js[39m[22m   73.5 KiB                                                       [1m34[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32ma82b54a.js[39m[22m   11.9 KiB                                                 [1m168, 158[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/author/_id
+                                [1m[32ma8382a8.js[39m[22m   7.03 KiB                                                      [1m135[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-playlist-item-table-row
+                                [1m[32ma8d00db.js[39m[22m    7.7 KiB                                                   [1m69, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-lazy-series-card
+                                [1m[32mab1a19e.js[39m[22m   11.8 KiB                                         [1m66, 60, 140, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-item-upload-card
+                                [1m[32mabdab17.js[39m[22m  447 bytes                                                       [1m60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-book-shelf-toolbar
+                                [1m[32mac4f83f.js[39m[22m   6.74 KiB                                                      [1m115[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/readers-pdf-reader
+                                [1m[32mac75858.js[39m[22m   12.4 KiB                                         [1m184, 60, 62, 109[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/rss-feeds
+                                [1m[32mae329ac.js[39m[22m   9.01 KiB                                                      [1m101[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-listening-session-modal
+                                [1m[32mb04a508.js[39m[22m   5.37 KiB                                                      [1m144[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-input-dropdown
+                                [1m[32mb17039b.js[39m[22m   1.79 KiB                                                      [1m199[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/series/_id
+                                [1m[32mb4c9ad8.js[39m[22m   52.8 KiB                                            [1m165, 150, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/audiobook/_id/chapters
+                                [1m[32mb65ab82.js[39m[22m   25.6 KiB                                                      [1m114[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/readers-mobi-reader
+                                [1m[32mb9b4c86.js[39m[22m   4.88 KiB                                                      [1m180[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/item-metadata-utils/tags
+                                [1m[32mba6d879.js[39m[22m   1.87 KiB                                                      [1m140[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-uploaded-files-table
+                                [1m[32mc15cc55.js[39m[22m   5.94 KiB                                                 [1m108, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-tabs-episode-match
+                                [1m[32mc1e4161.js[39m[22m    123 KiB                                                       [1m18[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32mc1f5e06.js[39m[22m   6.05 KiB                                                  [1m194, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/narrators
+                                [1m[32mc507d5e.js[39m[22m     71 KiB                                                       [1m43[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32mc536a15.js[39m[22m  898 bytes                                                       [1m27[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32mc59c1af.js[39m[22m   70.3 KiB                                                       [1m44[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32mc6552a9.js[39m[22m   20.7 KiB                                        [1m186, 62, 116, 117[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/stats
+                                [1m[32mc6d8edd.js[39m[22m   25.8 KiB                                     [1m175, 60, 62, 84, 146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/email
+                                [1m[32mc91944b.js[39m[22m   1.81 KiB                                                       [1m82[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-dialog
+                                [1m[32mc9340db.js[39m[22m   16.2 KiB                                                      [1m112[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/readers-comic-reader
+                                [1m[32mca02cd4.js[39m[22m   1.68 KiB                                                      [1m111[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/prompt-dialog
+                                [1m[32mca2e458.js[39m[22m   11.1 KiB                                             [1m200, 60, 118[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/stats
+                                [1m[32mccb8f72.js[39m[22m   5.28 KiB                                                  [1m86, 125[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-chapters
+                                [1m[32mce9f684.js[39m[22m   26.5 KiB                                             [1m176, 62, 111[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/index
+                                [1m[32md26ae9f.js[39m[22m   1.24 KiB                                                       [1m35[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32md2c11e6.js[39m[22m   13.1 KiB                                         [1m90, 81, 131, 132[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-files
+                                [1m[32md3c8fae.js[39m[22m   12.1 KiB                                             [1m131, 81, 132[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-library-files-table
+                                [1m[32md3e3a97.js[39m[22m   23.1 KiB                                        [1m92, 146, 152, 156[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-schedule
+                                [1m[32md625cd2.js[39m[22m    3.5 KiB                                                      [1m128[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-custom-metadata-provider-table
+                                [1m[33md77730e.js[39m[22m    [1m[33m603 KiB[39m[22m                                                       [1m57[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  app
+                                [1m[33md7ad387.js[39m[22m    [1m[33m514 KiB[39m[22m                                                      [1m209[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  vendors/components/readers-pdf-reader
+                                [1m[32md8dd6c8.js[39m[22m  823 bytes                                                      [1m160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-online-indicator
+                                [1m[32md97f87d.js[39m[22m   1.45 KiB                                                       [1m62[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-settings-content
+                                [1m[32mdb47acd.js[39m[22m   4.97 KiB                                                       [1m61[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-config-side-nav
+                                [1m[32mdbe8b1e.js[39m[22m   19.7 KiB                                              [1m11, 60, 146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-account-modal
+                                [1m[32mdc450fb.js[39m[22m   5.94 KiB                                                       [1m81[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-audio-file-data-modal
+                                [1m[32mddf4c1f.js[39m[22m   84.6 KiB                                                       [1m15[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32mde048b0.js[39m[22m     29 KiB                                        [1m88, 149, 154, 161[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-details
+                                [1m[32mde156d3.js[39m[22m   7.74 KiB                                                 [1m141, 160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-users-table
+                                [1m[32mdefe9ba.js[39m[22m   3.46 KiB                                                      [1m118[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-preview-icons
+                                [1m[32mdfd5b50.js[39m[22m   9.16 KiB                                                 [1m187, 160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/users/_id/index
+                                [1m[32me1102a4.js[39m[22m   1.04 KiB                                                      [1m152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-alert
+                                [1m[32me14f122.js[39m[22m   2.82 KiB                                                       [1m77[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/controls-sort-select
+                                [1m[32me1c2cf7.js[39m[22m   9.81 KiB                                                      [1m166[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/audiobook/_id/edit
+                                [1m[32me1cb93b.js[39m[22m   8.52 KiB                                                  [1m119, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-year-in-review
+                                [1m[32me2ef396.js[39m[22m   6.65 KiB                                                      [1m116[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-daily-listening-chart
+                                [1m[32me33fbb0.js[39m[22m     25 KiB                                  [1m197, 104, 105, 143, 153[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/podcast/search
+                                [1m[32me4e750b.js[39m[22m  567 bytes                                                      [1m202[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/oops
+                                [1m[32me57083a.js[39m[22m   21.5 KiB                                             [1m173, 62, 149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/authentication
+                                [1m[32me6b9a1c.js[39m[22m      6 KiB                                                  [1m121, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-year-in-review-short
+                                [1m[32me719e76.js[39m[22m   65.3 KiB                                                       [1m21[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32me7e073c.js[39m[22m   5.02 KiB                                                      [1m206[39m[22m  [1m[32m[emitted] [immutable][39m[22m         runtime
+                                [1m[32me8128c7.js[39m[22m   6.84 KiB                                                  [1m133, 82[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-library-item
+                                [1m[32meb8cee4.js[39m[22m   7.44 KiB                                                      [1m126[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-collection-book-table-row
+                                [1m[32med6eb6b.js[39m[22m   14.8 KiB                                                 [1m156, 146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-cron-expression-builder
+                                [1m[32medc4053.js[39m[22m  566 bytes                                                      [1m153[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-already-in-library-indicator
+                                [1m[32medd2a44.js[39m[22m   4.64 KiB                                                      [1m148[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-query-input
+                                [1m[32mf105e39.js[39m[22m   7.83 KiB                                                      [1m117[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-heatmap
+                                [1m[32mf26e572.js[39m[22m   5.17 KiB                                                       [1m89[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-episodes
+                                [1m[32mf7dc594.js[39m[22m   11.1 KiB                                         [1m177, 62, 78, 128[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/item-metadata-utils/custom-metadata-providers
+                                [1m[32mf84b7d8.js[39m[22m   7.48 KiB                                                      [1m120[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-year-in-review-server
+                                [1m[32mf954108.js[39m[22m   72.9 KiB                                                       [1m38[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32mf99c6ad.js[39m[22m   22.5 KiB                                             [1m147, 60, 163[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-multi-select-query-input
+                                [1m[32mfa5d093.js[39m[22m   17.3 KiB                                     [1m172, 62, 79, 80, 122[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/api-keys/index
+                                [1m[32mfd15ba4.js[39m[22m    5.9 KiB                                                   [1m76, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/controls-library-sort-select
+                                [1m[32mfdcaab0.js[39m[22m   4.67 KiB                                                 [1m110, 143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-upload-image-modal
+                                [1m[32mfe6092b.js[39m[22m   13.9 KiB                                             [1m103, 60, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-episode-feed
+                                [1m[32mfe6fa1c.js[39m[22m      3 KiB                                                      [1m198[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/search
+                                [1m[32mfecb31a.js[39m[22m   37.8 KiB                                                       [1m39[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                                [1m[32mfeef5e1.js[39m[22m   19.7 KiB                                            [1m188, 101, 160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/users/_id/sessions
+                                [1m[32mff44cd5.js[39m[22m   39.7 KiB                                              [1m91, 64, 149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-match
+                                [1m[32mff6d74d.js[39m[22m   5.73 KiB                                                       [1m63[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-author-card
+[1m[33mfonts/MaterialSymbolsRounded.dae4c83.woff2[39m[22m    [1m[33m417 KiB[39m[22m                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  
+     [1m[32mfonts/SourceSansPro-Light.e7208e0.ttf[39m[22m    241 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+   [1m[32mfonts/SourceSansPro-Regular.47dbe58.ttf[39m[22m    242 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+  [1m[32mfonts/SourceSansPro-SemiBold.c1b4f41.ttf[39m[22m    242 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+      [1m[32mfonts/UbuntuMono-Regular.c8ca9c5.ttf[39m[22m    185 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                [1m[32mfonts/absicons.25aa078.ttf[39m[22m   5.22 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+               [1m[32mfonts/absicons.b1a6dd1.woff[39m[22m    5.3 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                [1m[32mfonts/absicons.d8367ca.eot[39m[22m   5.39 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                  [1m[32mimg/absicons.298f782.svg[39m[22m   12.9 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+                      [1m[32mimg/icon.c2bc5a0.svg[39m[22m   2.44 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+              [1m[32mimg/wood_default.6d366e7.jpg[39m[22m    114 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+ + 1 hidden asset
+Entrypoint [1mapp[39m[22m [1m[33m[big][39m[22m = [1m[32me7e073c.js[39m[22m [1m[32m06a3613.js[39m[22m [1m[32m690fae4.js[39m[22m [1m[32md77730e.js[39m[22m
+
+[1m[33mWARNING in asset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
+This can impact web performance.
+Assets: 
+  0b45c967e6c44cadc19e.worker.js (887 KiB)
+  fonts/MaterialSymbolsRounded.dae4c83.woff2 (417 KiB)
+  d77730e.js (603 KiB)
+  06a3613.js (247 KiB)
+  690fae4.js (1.32 MiB)
+  2c96a53.js (353 KiB)
+  d7ad387.js (514 KiB)[39m[22m
+
+[1m[33mWARNING in entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (1000 KiB). This can impact web performance.
+Entrypoints:
+  app (2.16 MiB)
+      e7e073c.js
+      06a3613.js
+      690fae4.js
+      d77730e.js
+[39m[22m
+[36mℹ[39m [HPM] Proxy created: /audiobookshelf/api/  -> /
+[36mℹ[39m [HPM] Proxy created: /audiobookshelf/public/  -> /
+[36mℹ[39m [HPM] Proxy created: /audiobookshelf/hls/  -> /
+[36mℹ[39m [HPM] Proxy created: /audiobookshelf/auth/  -> /
+[36mℹ[39m [HPM] Proxy created: /audiobookshelf/feed/  -> /
+[36mℹ[39m [HPM] Proxy created: /audiobookshelf/status  -> /
+[36mℹ[39m [HPM] Proxy created: /audiobookshelf/login  -> /
+[36mℹ[39m [HPM] Proxy created: /audiobookshelf/logout  -> /
+[36mℹ[39m [HPM] Proxy created: /audiobookshelf/init  -> /
+[36mℹ[39m Generating output directory: dist/
+[36mℹ[39m Generating pages
+[32m✔[39m Generated route "/account"
+[32m✔[39m Generated route "/config/api-keys"
+[32m✔[39m Generated route "/batch"
+[32m✔[39m Generated route "/config"
+[32m✔[39m Generated route "/config/backups"
+[32m✔[39m Generated route "/config/email"
+[32m✔[39m Generated route "/config/authentication"
+[32m✔[39m Generated route "/config/item-metadata-utils"
+[32m✔[39m Generated route "/config/libraries"
+[32m✔[39m Generated route "/config/log"
+[32m✔[39m Generated route "/config/notifications"
+[32m✔[39m Generated route "/config/rss-feeds"
+[32m✔[39m Generated route "/config/sessions"
+[32m✔[39m Generated route "/config/stats"
+[32m✔[39m Generated route "/config/item-metadata-utils/genres"
+[32m✔[39m Generated route "/config/item-metadata-utils/custom-metadata-providers"
+[32m✔[39m Generated route "/config/users"
+[32m✔[39m Generated route "/config/item-metadata-utils/tags"
+[32m✔[39m Generated route "/login"
+[32m✔[39m Generated route "/upload"
+[32m✔[39m Generated route "/oops"
+[32m✔[39m Generated route "/"
+[32m✔[39m Client-side fallback created: [36m200.html[39m
