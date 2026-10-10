@@ -1,12 +1,24 @@
+interface ComicInfoMetadataXmlValue {
+  Series?: string[]
+  Number?: string[]
+  Summary?: string[]
+}
+
+interface ComicInfoMetadataXmlDocument {
+  ComicInfo?: ComicInfoMetadataXmlValue | null
+}
+
+interface ComicInfoMetadataResult {
+  title: string | null
+  series: Array<{ name: string; sequence: string | null }>
+  description: string | null
+}
 
 /**
  * TODO: Add more fields
  * @see https://anansi-project.github.io/docs/comicinfo/intro
- * 
- * @param {Object} comicInfoJson 
- * @returns {import('../../scanner/BookScanner').BookMetadataObject}
  */
-module.exports.parse = (comicInfoJson) => {
+module.exports.parse = (comicInfoJson: ComicInfoMetadataXmlDocument | null | undefined): ComicInfoMetadataResult | null => {
   if (!comicInfoJson?.ComicInfo) return null
 
   const ComicSeries = comicInfoJson.ComicInfo.Series?.[0]?.trim() || null
@@ -14,7 +26,7 @@ module.exports.parse = (comicInfoJson) => {
   const ComicSummary = comicInfoJson.ComicInfo.Summary?.[0]?.trim() || null
 
   let title = null
-  const series = []
+  const series: Array<{ name: string; sequence: string | null }> = []
   if (ComicSeries) {
     series.push({
       name: ComicSeries,
