@@ -1,7 +1,14 @@
-const { DataTypes, Model, fn, col } = require('sequelize')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model, fn, col } = sequelizeModule
+import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
 
 class BookAuthor extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare bookId: string
+  declare authorId: string
+  declare createdAt: Date
+
+  constructor(values?: CreationAttributes<BookAuthor>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -14,8 +21,8 @@ class BookAuthor extends Model {
     this.createdAt
   }
 
-  static removeByIds(authorId = null, bookId = null) {
-    const where = {}
+  static removeByIds(authorId: string | null = null, bookId: string | null = null) {
+    const where: { authorId?: string; bookId?: string } = {}
     if (authorId) where.authorId = authorId
     if (bookId) where.bookId = bookId
     return this.destroy({
@@ -29,7 +36,7 @@ class BookAuthor extends Model {
    * @param {string} authorId
    * @returns {Promise<number>}
    */
-  static getCountForAuthor(authorId) {
+  static getCountForAuthor(authorId: string) {
     return this.count({
       where: {
         authorId
@@ -43,7 +50,7 @@ class BookAuthor extends Model {
    * @param {string[]} authorIds
    * @returns {Promise<Record<string, number>>}
    */
-  static async getCountsForAuthors(authorIds) {
+  static async getCountsForAuthors(authorIds: string[]): Promise<Record<string, number>> {
     if (!authorIds.length) return {}
 
     const rows = await this.findAll({
@@ -53,21 +60,23 @@ class BookAuthor extends Model {
       },
       group: ['authorId'],
       raw: true
-    })
+    }) as (BookAuthor & { count: number })[] // boundary cast: with raw: true the rows also carry the COUNT alias, which Sequelize's findAll typing leaves out
 
     /** @type {Record<string, number>} */
-    const counts = {}
+    const counts: Record<string, number> = {}
     for (const row of rows) {
       counts[row.authorId] = Number(row.count)
     }
     return counts
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -107,4 +116,4 @@ class BookAuthor extends Model {
     BookAuthor.belongsTo(author)
   }
 }
-module.exports = BookAuthor
+export = BookAuthor

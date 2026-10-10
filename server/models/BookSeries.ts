@@ -1,7 +1,15 @@
-const { DataTypes, Model } = require('sequelize')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model } = sequelizeModule
+import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
 
 class BookSeries extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare sequence: string | null // nullable column in init(); Book.updateSeriesFromRequest() stores null when the request has no sequence
+  declare bookId: string
+  declare seriesId: string
+  declare createdAt: Date
+
+  constructor(values?: CreationAttributes<BookSeries>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -16,8 +24,8 @@ class BookSeries extends Model {
     this.createdAt
   }
 
-  static removeByIds(seriesId = null, bookId = null) {
-    const where = {}
+  static removeByIds(seriesId: string | null = null, bookId: string | null = null) {
+    const where: { seriesId?: string; bookId?: string } = {}
     if (seriesId) where.seriesId = seriesId
     if (bookId) where.bookId = bookId
     return this.destroy({
@@ -25,11 +33,13 @@ class BookSeries extends Model {
     })
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -75,4 +85,4 @@ class BookSeries extends Model {
   }
 }
 
-module.exports = BookSeries
+export = BookSeries
