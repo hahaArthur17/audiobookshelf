@@ -61,6 +61,12 @@ Status: in progress. This file records observed events, not planned outcomes.
 - Fresh `npm run build:server` exited 0 with zero errors (`logs/batch-06-final-clean-build.log`), `npm run coverage` exited 0 with 356 passing (`logs/batch-06-final-coverage.log`), and independent `check-batch-06.cjs` baseline/candidate outputs matched exactly. The offline sample captures query options and ordering, receiver-based decode, series projection, tag/genre/narrator/largest item results and delegated searches. Batches 01–05 and 07 samples also matched stored baselines (`logs/batch-06-prior-*.log`). No original test, config, lockfile or caller changed.
 - Accepted at approximately 2026-10-10 07:02 UTC. Account snapshot: five-hour window 62% used, weekly window 30% used. Twenty-two of 46 Stage 1 targets migrated; 24 remain. Exact tokens/fee unavailable. The offline mock does not prove live SQLite query behavior or every filter/permission branch.
 
+## Batch 09 — nested equivalence helper
+
+- Owner: main Agent. One direct CommonJS function export migrated from JS to TS under `batch-09-contract.md`. Type assertions are erased, preserving all original comparisons; the only emitted JS change is a pair of local aliases around unary-plus Date coercion because TypeScript disallows direct `Date`→`number` assertion. The same Date objects are coerced with unary plus.
+- Strict no-emit check, fresh `npm run build:server` (0 errors; `logs/batch-09-clean-build.log`), and `npm run coverage` (356 passing; `logs/batch-09-coverage.log`) succeeded. `check-batch-09.cjs` compared primitives, numeric-string coercion, functions, dates, arrays, objects, circular error and external stack side effects; baseline and candidate output files matched. Batches 01–07 samples were rerun and matched stored baselines (`logs/batch-09-prior-*.log`). No original tests, callers, config or lockfiles changed.
+- Accepted at approximately 2026-10-10 07:05 UTC. Account snapshot: five-hour window 67% used, weekly window 31% used. Twenty-three of 46 Stage 1 targets migrated; 23 remain. Exact tokens/fee unavailable. This fixed sample does not cover arbitrary proxy objects or user-defined Date subclasses.
+
 Record subsequent batches with exact file ownership and prompt, model requested versus verified, context/contract version, start/end time, code commit, clean build exit/error count, coverage result, baseline/previous-commit behavior samples and differences, repair work, current usage snapshot, migrated and remaining count.
 
 ## Known limits
