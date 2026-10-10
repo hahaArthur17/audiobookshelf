@@ -1,0 +1,126 @@
+--- /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2/dist-server/server/utils/podcastUtils.js	2026-10-03 21:34:39
++++ dist-server/server/utils/podcastUtils.js	2026-10-11 10:03:01
+@@ -1,10 +1,11 @@
+ "use strict";
+ const axios = require('axios');
+ const ssrfFilter = require('ssrf-req-filter');
+-const Logger = require('../Logger');
++const PodcastLogger = require('../Logger');
+ const { xmlToJSON, timestampToSeconds } = require('./index');
+ const htmlSanitizer = require('../utils/htmlSanitizer');
+ const Fuse = require('../libs/fusejs');
++const podcastLexicalExports = module.exports;
+ /**
+  * @typedef RssPodcastChapter
+  * @property {number} id
+@@ -156,7 +157,7 @@
+         enclosure = item['media:content'].find((c) => (c['$']?.type ?? '').startsWith('audio'))['$'];
+     }
+     else {
+-        Logger.error(`[podcastUtils] Invalid podcast episode data`);
++        PodcastLogger.error(`[podcastUtils] Invalid podcast episode data`);
+         return null;
+     }
+     const episode = {
+@@ -189,7 +190,7 @@
+             episode.pubDate = pubDate._;
+         }
+         else {
+-            Logger.error(`[podcastUtils] Invalid pubDate ${item['pubDate']} for ${episode.enclosure.url}`);
++            PodcastLogger.error(`[podcastUtils] Invalid pubDate ${item['pubDate']} for ${episode.enclosure.url}`);
+         }
+     }
+     if (item['guid']) {
+@@ -201,7 +202,7 @@
+             episode.guid = guidItem._;
+         }
+         else {
+-            Logger.error(`[podcastUtils] Invalid guid for ${episode.enclosure.url}`, item['guid']);
++            PodcastLogger.error(`[podcastUtils] Invalid guid for ${episode.enclosure.url}`, item['guid']);
+         }
+     }
+     const arrayFields = ['title', 'itunes:episodeType', 'itunes:season', 'itunes:episode', 'itunes:author', 'itunes:duration', 'itunes:explicit', 'itunes:subtitle'];
+@@ -232,7 +233,7 @@
+             };
+         });
+         if (cleanedChapters.some((chapter) => !chapter)) {
+-            Logger.warn(`[podcastUtils] Invalid chapter data for ${episode.enclosure.url}`);
++            PodcastLogger.warn(`[podcastUtils] Invalid chapter data for ${episode.enclosure.url}`);
+         }
+         else {
+             episode.chapters = cleanedChapters.map((chapter, index) => {
+@@ -285,12 +286,12 @@
+ }
+ function cleanPodcastJson(rssJson, excludeEpisodeMetadata) {
+     if (!rssJson.channel?.length) {
+-        Logger.error(`[podcastUtil] Invalid podcast no channel object`);
++        PodcastLogger.error(`[podcastUtil] Invalid podcast no channel object`);
+         return null;
+     }
+     const channel = rssJson.channel[0];
+     if (!channel.item?.length) {
+-        Logger.error(`[podcastUtil] Invalid podcast no episodes`);
++        PodcastLogger.error(`[podcastUtil] Invalid podcast no episodes`);
+         return null;
+     }
+     const podcast = {
+@@ -309,7 +310,7 @@
+         return null;
+     const json = await xmlToJSON(xml);
+     if (!json?.rss) {
+-        Logger.error('[podcastUtils] Invalid XML or RSS feed');
++        PodcastLogger.error('[podcastUtils] Invalid XML or RSS feed');
+         return null;
+     }
+     const podcast = cleanPodcastJson(json.rss, excludeEpisodeMetadata);
+@@ -336,7 +337,7 @@
+  * @returns {Promise<RssPodcast|null>}
+  */
+ module.exports.getPodcastFeed = (feedUrl, excludeEpisodeMetadata = false) => {
+-    Logger.debug(`[podcastUtils] getPodcastFeed for "${feedUrl}"`);
++    PodcastLogger.debug(`[podcastUtils] getPodcastFeed for "${feedUrl}"`);
+     let userAgent = 'audiobookshelf (+https://audiobookshelf.org; like iTMS)';
+     // Workaround for CBC RSS feeds rejecting our user agent string
+     // See: https://github.com/advplyr/audiobookshelf/issues/3322
+@@ -367,11 +368,11 @@
+             data.data = data.data.toString();
+         }
+         if (!data?.data) {
+-            Logger.error(`[podcastUtils] getPodcastFeed: Invalid podcast feed request response (${feedUrl})`);
++            PodcastLogger.error(`[podcastUtils] getPodcastFeed: Invalid podcast feed request response (${feedUrl})`);
+             return null;
+         }
+-        Logger.debug(`[podcastUtils] getPodcastFeed for "${feedUrl}" success - parsing xml`);
+-        const payload = await this.parsePodcastRssFeedXml(data.data, excludeEpisodeMetadata);
++        PodcastLogger.debug(`[podcastUtils] getPodcastFeed for "${feedUrl}" success - parsing xml`);
++        const payload = await podcastLexicalExports.parsePodcastRssFeedXml(data.data, excludeEpisodeMetadata);
+         if (!payload) {
+             return null;
+         }
+@@ -383,21 +384,21 @@
+         // Check for failures due to redirecting from http to https. If original url was http, upgrade to https and try again
+         if (error.code === 'ERR_FR_REDIRECTION_FAILURE' && error.cause.code === 'ERR_INVALID_PROTOCOL') {
+             if (feedUrl.startsWith('http://') && error.request._options.protocol === 'https:') {
+-                Logger.info('Redirection from http to https detected. Upgrading Request', error.request._options.href);
++                PodcastLogger.info('Redirection from http to https detected. Upgrading Request', error.request._options.href);
+                 feedUrl = feedUrl.replace('http://', 'https://');
+-                return this.getPodcastFeed(feedUrl, excludeEpisodeMetadata);
++                return podcastLexicalExports.getPodcastFeed(feedUrl, excludeEpisodeMetadata);
+             }
+         }
+-        Logger.error('[podcastUtils] getPodcastFeed Error', error);
++        PodcastLogger.error('[podcastUtils] getPodcastFeed Error', error);
+         return null;
+     });
+ };
+ // Return array of episodes ordered by closest match using fuse.js
+ module.exports.findMatchingEpisodes = async (feedUrl, searchTitle) => {
+-    const feed = await this.getPodcastFeed(feedUrl).catch(() => {
++    const feed = await podcastLexicalExports.getPodcastFeed(feedUrl).catch(() => {
+         return null;
+     });
+-    return this.findMatchingEpisodesInFeed(feed, searchTitle);
++    return podcastLexicalExports.findMatchingEpisodesInFeed(feed, searchTitle);
+ };
+ /**
+  *
