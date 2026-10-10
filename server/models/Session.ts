@@ -1,7 +1,23 @@
-const { DataTypes, Model, Op } = require('sequelize')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model, Op } = sequelizeModule
+import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
+
+type User = import('./User')
 
 class Session extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare ipAddress: string
+  declare userAgent: string
+  declare createdAt: Date
+  declare updatedAt: Date
+  declare userId: string
+  declare expiresAt: Date
+  declare lastRefreshToken: string | null // init() sets allowNull: true
+  declare lastRefreshTokenExpiresAt: Date | null // init() sets allowNull: true
+  declare user: User
+  declare refreshToken: string // a column in init(), set by createSession(), but not listed in the constructor
+
+  constructor(values?: CreationAttributes<Session>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -29,7 +45,7 @@ class Session extends Model {
     this.user
   }
 
-  static async createSession(userId, ipAddress, userAgent, refreshToken, expiresAt) {
+  static async createSession(userId: string, ipAddress: string, userAgent: string, refreshToken: string, expiresAt: Date) {
     const session = await Session.create({ userId, ipAddress, userAgent, refreshToken, expiresAt })
     return session
   }
@@ -49,11 +65,13 @@ class Session extends Model {
     return deletedCount
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -97,4 +115,4 @@ class Session extends Model {
   }
 }
 
-module.exports = Session
+export = Session
