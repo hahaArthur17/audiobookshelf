@@ -1,0 +1,303 @@
+PO-S07 post-run checks, 2026-10-10 21:53:00
+== Commits since the plan commit f2d8a805 (hash, time, subject) ==
+b1b3c68d 20:40 [PO-S07] Author: fix getAllLibraryItemsForAuthor throwing for an unknown author id (test added)
+7f72174c 20:43 [PO-S07] Author: migrate to TypeScript
+16c6d9e0 20:51 [PO-S07] FeedEpisode: migrate to TypeScript
+265b6757 20:54 [PO-S07] Collection: fix the permission filter of getOldCollectionsJsonExpanded being stored on the class (test added)
+21af7d9c 20:57 [PO-S07] Collection: migrate to TypeScript
+c076ac4d 21:00 [PO-S07] PlaybackSession: migrate to TypeScript
+1b801241 21:03 [PO-S07] Playlist: fix checkHasMediaItem throwing for a podcast-episode item when no episodeId is given (test added)
+3ca5e5ff 21:04 [PO-S07] Playlist: fix the re-order update of removeMediaItemsFromPlaylists not being awaited (test added)
+3377dfc7 21:07 [PO-S07] Playlist: migrate to TypeScript
+42357df4 21:10 [PO-S07] Feed: fix updateFeedForEntity throwing when the entity of the feed no longer exists (test added)
+c1793a94 21:11 [PO-S07] Feed: fix getFeedObjForSeries throwing when no book of the series has audio tracks (test added)
+b2423021 21:17 [PO-S07] Feed: migrate to TypeScript
+034b2135 21:26 [PO-S07] User: migrate to TypeScript
+ed903cc1 21:34 [PO-S07] Library: fix getMaxDisplayOrder returning null for an empty table (test added)
+a5b21570 21:39 [PO-S07] evidence: probes for the two unconfirmed bugs, LibraryItem skip errors, SQL captures, final build and test
+== Working tree (empty = clean) ==
+?? evidence/test-results/PO-S07/post-run-checks.txt
+?? evidence/test-results/PO-S07/run-log.txt
+?? evidence/test-results/PO-S07/usage-end.txt
+?? evidence/test-results/PO-S07/usage-start.txt
+== Changes outside evidence/ and test/ (status, path) ==
+R066	server/models/Author.js	server/models/Author.ts
+R068	server/models/Collection.js	server/models/Collection.ts
+R068	server/models/Feed.js	server/models/Feed.ts
+R072	server/models/FeedEpisode.js	server/models/FeedEpisode.ts
+M	server/models/Library.ts
+M	server/models/MediaProgress.ts
+R065	server/models/PlaybackSession.js	server/models/PlaybackSession.ts
+R063	server/models/Playlist.js	server/models/Playlist.ts
+R073	server/models/User.js	server/models/User.ts
+== Changes in test/ (every line should start with A) ==
+lines: 7   not starting with A: 0
+A	test/server/bugfix/Author.getAllLibraryItemsForAuthor.test.js
+A	test/server/bugfix/Collection.getOldCollectionsJsonExpanded.test.js
+A	test/server/bugfix/Feed.getFeedObjForSeries.test.js
+A	test/server/bugfix/Feed.updateFeedForEntity.test.js
+A	test/server/bugfix/Library.getMaxDisplayOrder.test.js
+A	test/server/bugfix/Playlist.checkHasMediaItem.test.js
+A	test/server/bugfix/Playlist.removeMediaItemsFromPlaylists.test.js
+== Protected paths (empty = unchanged) ==
+
+== Banned tokens ==
+count: 0
+
+== Non-null assertions (the pattern also matches some text in strings) ==
+count: 0
+
+== Casts with as (the pattern also matches some comments) ==
+count: 2
+server\models\FeedEpisode.ts:10: const date = dateAndTime as typeof dateAndTime & { format(dateObj: Date, formatString: string): string } // boundary: the minified UMD libs/dateAndTime is inferred as an object with only a res property, without format()
+server\models\Playlist.ts:421: const podcastWithOptionalItem: { libraryItem?: LibraryItem } = pmi.mediaItem.podcast // the same object, seen with libraryItem optional (TS2790, as above)
+== Index signatures ==
+count: 4
+server\models\User.ts:60: [key: string]: unknown // updatePermissionsFromExternalJSON() reads and writes a permission by a dynamic key (this.permissions[userPermKey])
+server\models\User.ts:83: [key: string]: unknown // updatePermissionsFromExternalJSON() reads every key of the claim by a dynamic key (absPermissions[absKey])
+server\models\User.ts:277: static permissionMapping: { [absKey: string]: string } = { // index signature: updatePermissionsFromExternalJSON() reads the mapping by a dynamic key (User.permissionMapping[absKey])
+server\models\User.ts:300: const samplePermissions = Object.keys(User.permissionMapping).reduce((acc: { [key: string]: boolean | string[] }, key) => { // index signature: the sample is filled by a dynamic key (acc[key])
+== declare ... sequelize lines ==
+count: 9
+server\models\Author.ts:20: declare static readonly sequelize: Sequelize // set by init() before any query runs (optional in Sequelize's typings)
+server\models\Collection.ts:33: declare static readonly sequelize: sequelizeModule.Sequelize // set by init() before any query runs (optional in Sequelize's typings). Written with the module name because Sequelize is a runtime value in this file
+server\models\PlaybackSession.ts:40: declare static readonly sequelize: Sequelize // set by init() before any query runs (optional in Sequelize's typings)
+server\models\PlaybackSession.ts:41: declare readonly sequelize: Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> } // Database.js adds uppercaseFirst to the Sequelize instance before any model is used
+server\models\Playlist.ts:51: declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entry this file reads
+server\models\Feed.ts:136: declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entries this file reads
+server\models\Feed.ts:137: declare readonly sequelize: Sequelize & { models: RegisteredModels; uppercaseFirst<T extends string>(str: T): Capitalize<T> } // the same on the instance; Database.js adds uppercaseFirst to the Sequelize instance before any model is used
+server\models\User.ts:232: declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entries this file reads
+server\models\User.ts:233: declare readonly sequelize: Sequelize & { models: RegisteredModels } // the same on the instance
+== The seven bug-fix commits: changes to server/ only ==
+--- b1b3c68d
+[PO-S07] Author: fix getAllLibraryItemsForAuthor throwing for an unknown author id (test added)
+
+ server/models/Author.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/server/models/Author.js b/server/models/Author.js
+index 65561e21..69b8fbda 100644
+--- a/server/models/Author.js
++++ b/server/models/Author.js
+@@ -95,7 +95,7 @@ class Author extends Model {
+     })
+ 
+     const libraryItems = []
+-    if (author.books) {
++    if (author?.books) {
+       for (const book of author.books) {
+         const libraryItem = book.libraryItem
+         libraryItem.media = book
+--- 265b6757
+[PO-S07] Collection: fix the permission filter of getOldCollectionsJsonExpanded being stored on the class (test added)
+
+ server/models/Collection.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/server/models/Collection.js b/server/models/Collection.js
+index d5f36ba9..ff5c5452 100644
+--- a/server/models/Collection.js
++++ b/server/models/Collection.js
+@@ -96,7 +96,7 @@ class Collection extends Model {
+           return null
+         }
+ 
+-        this.books = books
++        c.books = books
+ 
+         const collectionExpanded = c.toOldJSONExpanded()
+ 
+--- 1b801241
+[PO-S07] Playlist: fix checkHasMediaItem throwing for a podcast-episode item when no episodeId is given (test added)
+
+ server/models/Playlist.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/server/models/Playlist.js b/server/models/Playlist.js
+index 35bd6c99..660e47c3 100644
+--- a/server/models/Playlist.js
++++ b/server/models/Playlist.js
+@@ -329,7 +329,7 @@ class Playlist extends Model {
+     if (episodeId) {
+       return this.playlistMediaItems.some((pmi) => pmi.mediaItemId === episodeId)
+     }
+-    return this.playlistMediaItems.some((pmi) => pmi.mediaItem.libraryItem.id === libraryItemId)
++    return this.playlistMediaItems.some((pmi) => pmi.mediaItem.libraryItem?.id === libraryItemId)
+   }
+ 
+   toOldJSON() {
+--- 3ca5e5ff
+[PO-S07] Playlist: fix the re-order update of removeMediaItemsFromPlaylists not being awaited (test added)
+
+ server/models/Playlist.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/server/models/Playlist.js b/server/models/Playlist.js
+index 660e47c3..3b2bfe6f 100644
+--- a/server/models/Playlist.js
++++ b/server/models/Playlist.js
+@@ -187,7 +187,7 @@ class Playlist extends Model {
+           numMediaItems--
+         } else {
+           if (playlistMediaItem.order !== order) {
+-            playlistMediaItem.update({
++            await playlistMediaItem.update({
+               order
+             })
+           }
+--- 42357df4
+[PO-S07] Feed: fix updateFeedForEntity throwing when the entity of the feed no longer exists (test added)
+
+ server/models/Feed.js | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+diff --git a/server/models/Feed.js b/server/models/Feed.js
+index 577dedfb..85481e7e 100644
+--- a/server/models/Feed.js
++++ b/server/models/Feed.js
+@@ -486,6 +486,10 @@ class Feed extends Model {
+       const libraryItemModel = this.sequelize.models.libraryItem
+ 
+       const itemExpanded = await libraryItemModel.getExpandedById(this.entityId)
++      if (!itemExpanded) {
++        Logger.error(`[Feed] Library item ${this.entityId} not found for feed ${this.id}`)
++        return null
++      }
+       feedObj = Feed.getFeedObjForLibraryItem(this.userId, itemExpanded, this.slug, this.serverAddress)
+ 
+       feedEpisodeCreateFuncEntity = itemExpanded
+@@ -499,6 +503,10 @@ class Feed extends Model {
+       const collectionModel = this.sequelize.models.collection
+ 
+       const collectionExpanded = await collectionModel.getExpandedById(this.entityId)
++      if (!collectionExpanded) {
++        Logger.error(`[Feed] Collection ${this.entityId} not found for feed ${this.id}`)
++        return null
++      }
+       const feedObjData = Feed.getFeedObjForCollection(this.userId, collectionExpanded, this.slug, this.serverAddress)
+       feedObj = feedObjData.feedObj
+       feedEpisodeCreateFuncEntity = feedObjData.booksWithTracks
+@@ -508,6 +516,10 @@ class Feed extends Model {
+       const seriesModel = this.sequelize.models.series
+ 
+       const seriesExpanded = await seriesModel.getExpandedById(this.entityId)
++      if (!seriesExpanded) {
++        Logger.error(`[Feed] Series ${this.entityId} not found for feed ${this.id}`)
++        return null
++      }
+       const feedObjData = Feed.getFeedObjForSeries(this.userId, seriesExpanded, this.slug, this.serverAddress)
+       feedObj = feedObjData.feedObj
+       feedEpisodeCreateFuncEntity = feedObjData.booksWithTracks
+--- c1793a94
+[PO-S07] Feed: fix getFeedObjForSeries throwing when no book of the series has audio tracks (test added)
+
+ server/models/Feed.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/server/models/Feed.js b/server/models/Feed.js
+index 85481e7e..4f0884cd 100644
+--- a/server/models/Feed.js
++++ b/server/models/Feed.js
+@@ -302,7 +302,7 @@ class Feed extends Model {
+       serverAddress,
+       feedURL: `/feed/${slug}`,
+       imageURL: firstBookWithCover?.coverPath ? `/feed/${slug}/cover${Path.extname(firstBookWithCover.coverPath)}` : `/Logo.png`,
+-      siteURL: `/library/${booksWithTracks[0].libraryItem.libraryId}/series/${seriesExpanded.id}`,
++      siteURL: `/library/${booksWithTracks[0]?.libraryItem.libraryId || seriesExpanded.libraryId}/series/${seriesExpanded.id}`,
+       title: seriesExpanded.name,
+       description: seriesExpanded.description || '',
+       author,
+--- ed903cc1
+[PO-S07] Library: fix getMaxDisplayOrder returning null for an empty table (test added)
+
+ server/models/Library.ts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+diff --git a/server/models/Library.ts b/server/models/Library.ts
+index b2761d64..214a887f 100644
+--- a/server/models/Library.ts
++++ b/server/models/Library.ts
+@@ -165,8 +165,8 @@ class Library extends Model {
+    * Used for setting a new libraries display order
+    * @returns {Promise<number>}
+    */
+-  static getMaxDisplayOrder() {
+-    return this.max<number, Library>('displayOrder') || 0
++  static async getMaxDisplayOrder() {
++    return (await this.max<number, Library>('displayOrder')) || 0
+   }
+ 
+   /**
+== FeedEpisode.js before (33931ea9), around earliestLibraryItemCreatedAt ==
+
+     * @param {string} slug
+     * @param {import('sequelize').Transaction} transaction
+     * @returns {Promise<FeedEpisode[]>}
+     */
+    static async createFromBooks(books, feed, slug, transaction) {
+      // This is never null unless the books array is empty, as this method is not invoked when no books. Reduce needs an initial item
+>     const earliestLibraryItemCreatedAt =
+        books.length > 0
+          ? books.reduce((earliest, book) => {
+              return book.libraryItem.createdAt < earliest.libraryItem.createdAt ? book : earliest
+            }).libraryItem.createdAt
+          : null
+  
+      const feedEpisodeObjs = []
+      let numExisting = 0
+      let offsetIndex = 0
+      for (const book of books) {
+          // Check for existing episode by filepath
+          const existingEpisode = feed.feedEpisodes?.find((episode) => {
+            return episode.filePath === track.metadata.path
+          })
+          numExisting = existingEpisode ? numExisting + 1 : numExisting
+  
+>         feedEpisodeObjs.push(this.getFeedEpisodeObjFromAudiobookTrack(book, earliestLibraryItemCreatedAt, feed, slug, track, useChapterTitles, offsetIndex++, existingEpisode?.id))
+        }
+      }
+      Logger.info(`[FeedEpisode] Upserting ${feedEpisodeObjs.length} episodes for feed ${feed.id} (${numExisting} existing)`)
+      return this.bulkCreate(feedEpisodeObjs, { transaction, updateOnDuplicate: ['title', 'author', 'description', 'siteURL', 'enclosureURL', 'enclosureType', 'enclosureSize', 'pubDate', 'season', 'episode', 'episodeType', 'duration', 'filePath', 'explicit'] })
+    }
+  
+    /**
+     * Initialize model
+     * @param {import('../Database').sequelize} sequelize
+     */
+
+
+== FeedEpisode.ts after (HEAD), around earliestLibraryItemCreatedAt ==
+
+     * @param {string} slug
+     * @param {import('sequelize').Transaction} transaction
+     * @returns {Promise<FeedEpisode[]>}
+     */
+    static async createFromBooks(books: BookExpandedWithLibraryItem[], feed: Feed, slug: string, transaction: Transaction) {
+      // This is never null unless the books array is empty, as this method is not invoked when no books. Reduce needs an initial item
+>     const earliestLibraryItemCreatedAt =
+        books.length > 0
+          ? books.reduce((earliest, book) => {
+              return book.libraryItem.createdAt < earliest.libraryItem.createdAt ? book : earliest
+            }).libraryItem.createdAt
+          : null
+  
+      const feedEpisodeObjs = []
+      let numExisting = 0
+      let offsetIndex = 0
+      for (const book of books) {
+>       if (earliestLibraryItemCreatedAt === null) break // never taken: the value is null only when books is empty, and then this loop does not run. It narrows the type to Date for the call below
+        const trackList = book.getTracklist(book.libraryItem.id)
+        const useChapterTitles = this.checkUseChapterTitlesForEpisodes(trackList, book)
+        for (const track of trackList) {
+          // Check for existing episode by filepath
+          const existingEpisode = feed.feedEpisodes?.find((episode) => {
+            return episode.filePath === track.metadata.path
+          })
+          numExisting = existingEpisode ? numExisting + 1 : numExisting
+  
+>         feedEpisodeObjs.push(this.getFeedEpisodeObjFromAudiobookTrack(book, earliestLibraryItemCreatedAt, feed, slug, track, useChapterTitles, offsetIndex++, existingEpisode?.id))
+        }
+      }
+      Logger.info(`[FeedEpisode] Upserting ${feedEpisodeObjs.length} episodes for feed ${feed.id} (${numExisting} existing)`)
+      return this.bulkCreate(feedEpisodeObjs, { transaction, updateOnDuplicate: ['title', 'author', 'description', 'siteURL', 'enclosureURL', 'enclosureType', 'enclosureSize', 'pubDate', 'season', 'episode', 'episodeType', 'duration', 'filePath', 'explicit'] })
+    }
+  
+    static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+    static init(sequelize: Sequelize): void
+    /**
+     * Initialize model
+
+

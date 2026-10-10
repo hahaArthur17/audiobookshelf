@@ -1,0 +1,25 @@
+[PO-S07] evidence: probes for the two unconfirmed bugs, LibraryItem skip errors, SQL captures, final build and test
+
+Evidence only. No source or test file changes.
+
+- User-explicit-old-shape-probe.txt: the reported bug User.js:678 is NOT CONFIRMED.
+  Five probe cases pass on the unchanged code; no input was found for which
+  checkCanAccessLibraryItem() gives a wrong answer. No code change, no test added.
+- Book-bookSeries-sequence-probe.txt: the reported bug in Book.ts (651-653 and 686)
+  is NOT CONFIRMED as a bug to fix. Both places do throw when a series is loaded
+  without its join row, but the code does not say what they should do instead, and
+  no caller reaches them today. No code change, no test added.
+- LibraryItem-skip-errors.txt: LibraryItem was SKIPPED and fully restored. The file
+  has the 74 compiler errors of the first conversion pass, in groups, with the three
+  groups (22 errors) that have no fix within the rules of this run.
+- sql-capture.js, sql-capture-before.txt, sql-capture-after.txt: the SQL of every query
+  touched by an edit of point 1(b) (where left out when null, a nested include given
+  as an array, silent removed from upsert), before and after. The two outputs are
+  identical.
+- final-build.txt and final-test.txt: npm run build:server (exit 0), the full no-emit
+  check (exit 0) and npm test at ed903cc1: 375 passing (356 + 19 new), 0 failing.
+
+The two probes and the capture script were run from outside the repo against the
+compiled server, so they are not part of the test suite and do not change the count.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

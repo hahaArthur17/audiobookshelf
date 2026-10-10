@@ -1,0 +1,312 @@
+PO-S07 per-commit checks, started 2026-10-10 21:57:18. Each run: dist-server removed first, then npm test (build + mocha), in a separate worktree.
+BEFORE THE FIX, parent of b1b3c68d plus its new test file(s) test/server/bugfix/Author.getAllLibraryItemsForAuthor.test.js | error TS: 0 | passing: 357 | failing: 1
+  1 failing
+
+  1) Author.getAllLibraryItemsForAuthor
+       returns an empty array for an unknown author id:
+     TypeError: Cannot read properties of null (reading 'books')
+      at author.getAllLibraryItemsForAuthor (dist-server\server\models\Author.js:93:20)
+      at async Context.<anonymous> (dist-server\test\server\bugfix\Author.getAllLibraryItemsForAuthor.test.js:45:30)
+
+
+
+b1b3c68d | [PO-S07] Author: fix getAllLibraryItemsForAuthor throwing for an unknown author id (test added) | error TS: 0 | passing: 358 | failing: 0 | dist files: 465 | 34s
+7f72174c | [PO-S07] Author: migrate to TypeScript | error TS: 0 | passing: 358 | failing: 0 | dist files: 465 | 32s
+   compiled Author.js against the previous commit: 8 differing lines
+   + const sequelizeModule = require("sequelize");
+   + const { DataTypes, Model, where, fn, col } = sequelizeModule;
+   + const parseNameString = require("../utils/parsers/parseNameString");
+   + const bookWithOptionalItem = book; // the same object, seen with libraryItem optional: TypeScript only allows delete on an optional property (TS2790)
+   + delete bookWithOptionalItem.libraryItem;
+   - const { DataTypes, Model, where, fn, col } = require('sequelize');
+   - const parseNameString = require('../utils/parsers/parseNameString');
+   - delete book.libraryItem;
+   modules required, same list in the same order: True
+16c6d9e0 | [PO-S07] FeedEpisode: migrate to TypeScript | error TS: 0 | passing: 358 | failing: 0 | dist files: 465 | 32s
+   compiled FeedEpisode.js against the previous commit: 27 differing lines
+   + /// <reference path="../types/untypedModules.d.ts" />
+   + const Path = require("path");
+   + const sequelizeModule = require("sequelize");
+   + const { DataTypes, Model } = sequelizeModule;
+   + const uuid = require("uuid");
+   + const uuidv4 = uuid.v4;
+   + const Logger = require("../Logger");
+   + const dateAndTime = require("../libs/dateAndTime");
+   + const date = dateAndTime; // boundary: the minified UMD libs/dateAndTime is inferred as an object with only a res property, without format()
+   + const utils = require("../utils");
+   + const { secondsToTimestamp } = utils;
+   + libraryItemExpanded.media.podcastEpisodes.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
+   + libraryItemExpanded.media.podcastEpisodes.sort((a, b) => new Date(a.pubDate).getTime() - new Date(b.pubDate).getTime());
+   + if (Math.abs(chapters[i].start - Number(trackList[i].startOffset)) >= 1) {
+   + const matchingChapter = book.chapters.find((ch) => Math.abs(ch.start - Number(audioTrack.startOffset)) < 1);
+   + if (earliestLibraryItemCreatedAt === null)
+   + break; // never taken: the value is null only when books is empty, and then this loop does not run. It narrows the type to Date for the call below
+   - const Path = require('path');
+   - const { DataTypes, Model } = require('sequelize');
+   - const uuidv4 = require('uuid').v4;
+   - const Logger = require('../Logger');
+   - const date = require('../libs/dateAndTime');
+   - const { secondsToTimestamp } = require('../utils');
+   - libraryItemExpanded.media.podcastEpisodes.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+   - libraryItemExpanded.media.podcastEpisodes.sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
+   - if (Math.abs(chapters[i].start - trackList[i].startOffset) >= 1) {
+   - const matchingChapter = book.chapters.find((ch) => Math.abs(ch.start - audioTrack.startOffset) < 1);
+   modules required, same list in the same order: True
+BEFORE THE FIX, parent of 265b6757 plus its new test file(s) test/server/bugfix/Collection.getOldCollectionsJsonExpanded.test.js | error TS: 0 | passing: 359 | failing: 2
+  2 failing
+
+  1) Collection.getOldCollectionsJsonExpanded
+       leaves out the books that the user is not allowed to access:
+
+      AssertionError: expected [ …(2) ] to deeply equal [ Array(1) ]
+      + expected - actual
+
+       [
+         "3f66ecd2-df11-448b-b7f6-b45f5a705d45"
+      -  "9ea92f18-5e8b-43df-9722-8ebab64a8a83"
+       ]
+      
+      at Context.<anonymous> (dist-server\test\server\bugfix\Collection.getOldCollectionsJsonExpanded.test.js:68:65)
+
+  2) Collection.getOldCollectionsJsonExpanded
+       does not store the filtered books on the Collection class:
+
+      AssertionError: expected true to be false
+      + expected - actual
+
+      -true
+      +false
+      
+      at Context.<anonymous> (dist-server\test\server\bugfix\Collection.getOldCollectionsJsonExpanded.test.js:72:94)
+
+
+
+265b6757 | [PO-S07] Collection: fix the permission filter of getOldCollectionsJsonExpanded being stored on the class (test added) | error TS: 0 | passing: 361 | failing: 0 | dist files: 466 | 33s
+21af7d9c | [PO-S07] Collection: migrate to TypeScript | error TS: 0 | passing: 361 | failing: 0 | dist files: 466 | 35s
+   compiled Collection.js against the previous commit: 8 differing lines
+   + const sequelizeModule = require("sequelize");
+   + const { DataTypes, Model, Sequelize } = sequelizeModule;
+   + ...(collectionWhere && { where: collectionWhere }), // where is left out when there is no libraryId: Sequelize's typings reject where: null, which it treats like no where
+   + const bookWithOptionalItem = book; // the same object, seen with libraryItem optional: TypeScript only allows delete on an optional property (TS2790)
+   + delete bookWithOptionalItem.libraryItem;
+   - const { DataTypes, Model, Sequelize } = require('sequelize');
+   - where: collectionWhere,
+   - delete book.libraryItem;
+   modules required, same list in the same order: True
+c076ac4d | [PO-S07] PlaybackSession: migrate to TypeScript | error TS: 0 | passing: 361 | failing: 0 | dist files: 466 | 35s
+   compiled PlaybackSession.js against the previous commit: 11 differing lines
+   + const sequelizeModule = require("sequelize");
+   + const { DataTypes, Model } = sequelizeModule;
+   + const oldPlaybackSession = require("../objects/PlaybackSession");
+   + ...(where && { where }), // where is left out when it is null: Sequelize's typings reject where: null, which it treats like no where
+   + return this.upsert(playbackSession);
+   - const { DataTypes, Model } = require('sequelize');
+   - const oldPlaybackSession = require('../objects/PlaybackSession');
+   - where,
+   - return this.upsert(playbackSession, {
+   - silent: true
+   - });
+   modules required, same list in the same order: True
+BEFORE THE FIX, parent of 1b801241 plus its new test file(s) test/server/bugfix/Playlist.checkHasMediaItem.test.js | error TS: 0 | passing: 363 | failing: 1
+  1 failing
+
+  1) Playlist.checkHasMediaItem
+       returns false for a book when the playlist holds a podcast episode:
+     TypeError: Cannot read properties of undefined (reading 'id')
+      at D:\SEM-2\574\Project\po-s07-verify\dist-server\server\models\Playlist.js:313:80
+      at Array.some (<anonymous>)
+      at Playlist.checkHasMediaItem (dist-server\server\models\Playlist.js:313:40)
+      at Context.<anonymous> (dist-server\test\server\bugfix\Playlist.checkHasMediaItem.test.js:78:25)
+
+
+
+1b801241 | [PO-S07] Playlist: fix checkHasMediaItem throwing for a podcast-episode item when no episodeId is given (test added) | error TS: 0 | passing: 364 | failing: 0 | dist files: 467 | 35s
+BEFORE THE FIX, parent of 3ca5e5ff plus its new test file(s) test/server/bugfix/Playlist.removeMediaItemsFromPlaylists.test.js | error TS: 0 | passing: 365 | failing: 1
+  1 failing
+
+  1) Playlist.removeMediaItemsFromPlaylists
+       waits until the new order of each remaining item is saved before it reports the playlist:
+
+      AssertionError: expected [ 'playlist_updated' ] to deeply equal [ 'order saved', 'order saved', …(1) ]
+      + expected - actual
+
+       [
+      -  "playlist_updated"
+         "order saved"
+         "order saved"
+      +  "playlist_updated"
+       ]
+      
+      at Context.<anonymous> (dist-server\test\server\bugfix\Playlist.removeMediaItemsFromPlaylists.test.js:66:36)
+
+
+
+3ca5e5ff | [PO-S07] Playlist: fix the re-order update of removeMediaItemsFromPlaylists not being awaited (test added) | error TS: 0 | passing: 366 | failing: 0 | dist files: 468 | 36s
+3377dfc7 | [PO-S07] Playlist: migrate to TypeScript | error TS: 0 | passing: 366 | failing: 0 | dist files: 468 | 36s
+   compiled Playlist.js against the previous commit: 49 differing lines
+   + const sequelizeModule = require("sequelize");
+   + const { DataTypes, Model, Op } = sequelizeModule;
+   + const Logger = require("../Logger");
+   + const SocketAuthority = require("../SocketAuthority");
+   + model: this.sequelize.models.podcast,
+   + include: [this.sequelize.models.libraryItem]
+   + model: this.sequelize.models.playlistMediaItem,
+   + include: [
+   + {
+   + model: this.sequelize.models.book,
+   + include: [this.sequelize.models.libraryItem]
+   + },
+   + {
+   + model: this.sequelize.models.podcastEpisode,
+   + include: [
+   + {
+   + model: this.sequelize.models.podcast,
+   + include: [this.sequelize.models.libraryItem]
+   + }
+   + ]
+   + ]
+   + include: [
+   + {
+   + include: [this.sequelize.models.libraryItem]
+   + ]
+   + const bookWithOptionalItem = pmi.mediaItem; // the same object, seen with libraryItem optional: TypeScript only allows delete on an optional property (TS2790)
+   + delete bookWithOptionalItem.libraryItem;
+   + const podcastWithOptionalItem = pmi.mediaItem.podcast; // the same object, seen with libraryItem optional (TS2790, as above)
+   + delete podcastWithOptionalItem.libraryItem;
+   - const { DataTypes, Model, Op } = require('sequelize');
+   - const Logger = require('../Logger');
+   - const SocketAuthority = require('../SocketAuthority');
+   - include: {
+   - include: this.sequelize.models.libraryItem
+   - include: {
+   - model: this.sequelize.models.playlistMediaItem,
+   - model: this.sequelize.models.book,
+   - include: this.sequelize.models.libraryItem
+   - },
+   - {
+   - model: this.sequelize.models.podcastEpisode,
+   - include: {
+   - model: this.sequelize.models.podcast,
+   - include: this.sequelize.models.libraryItem
+   - }
+   - model: this.sequelize.models.podcast,
+   - include: this.sequelize.models.libraryItem
+   - delete pmi.mediaItem.libraryItem;
+   - delete pmi.mediaItem.podcast.libraryItem;
+   modules required, same list in the same order: True
+BEFORE THE FIX, parent of 42357df4 plus its new test file(s) test/server/bugfix/Feed.updateFeedForEntity.test.js | error TS: 0 | passing: 367 | failing: 3
+  3 failing
+
+  1) Feed.updateFeedForEntity
+       returns null when the library item of the feed no longer exists:
+     TypeError: Cannot read properties of null (reading 'media')
+      at feed.getFeedObjForLibraryItem (dist-server\server\models\Feed.js:91:35)
+      at Feed.updateFeedForEntity (dist-server\server\models\Feed.js:438:28)
+      at async Context.<anonymous> (dist-server\test\server\bugfix\Feed.updateFeedForEntity.test.js:70:16)
+
+  2) Feed.updateFeedForEntity
+       returns null when the collection of the feed no longer exists:
+     TypeError: Cannot read properties of null (reading 'books')
+      at feed.getFeedObjForCollection (dist-server\server\models\Feed.js:171:52)
+      at Feed.updateFeedForEntity (dist-server\server\models\Feed.js:451:38)
+      at async Context.<anonymous> (dist-server\test\server\bugfix\Feed.updateFeedForEntity.test.js:74:16)
+
+  3) Feed.updateFeedForEntity
+       returns null when the series of the feed no longer exists:
+     TypeError: Cannot read properties of null (reading 'books')
+      at feed.getFeedObjForSeries (dist-server\server\models\Feed.js:250:48)
+      at Feed.updateFeedForEntity (dist-server\server\models\Feed.js:460:38)
+      at async Context.<anonymous> (dist-server\test\server\bugfix\Feed.updateFeedForEntity.test.js:78:16)
+
+
+
+42357df4 | [PO-S07] Feed: fix updateFeedForEntity throwing when the entity of the feed no longer exists (test added) | error TS: 0 | passing: 370 | failing: 0 | dist files: 469 | 37s
+BEFORE THE FIX, parent of c1793a94 plus its new test file(s) test/server/bugfix/Feed.getFeedObjForSeries.test.js | error TS: 0 | passing: 371 | failing: 2
+  2 failing
+
+  1) Feed.getFeedObjForSeries
+       does not throw when no book of the series has audio tracks:
+     TypeError: Cannot read properties of undefined (reading 'libraryItem')
+      at feed.getFeedObjForSeries (dist-server\server\models\Feed.js:272:53)
+      at Context.<anonymous> (dist-server\test\server\bugfix\Feed.getFeedObjForSeries.test.js:58:65)
+
+  2) Feed.getFeedObjForSeries
+       lets updateFeedForEntity empty a series feed whose books lost their audio tracks:
+     TypeError: Cannot read properties of undefined (reading 'libraryItem')
+      at feed.getFeedObjForSeries (dist-server\server\models\Feed.js:272:53)
+      at Feed.updateFeedForEntity (dist-server\server\models\Feed.js:472:38)
+      at async Context.<anonymous> (dist-server\test\server\bugfix\Feed.getFeedObjForSeries.test.js:67:29)
+
+
+
+c1793a94 | [PO-S07] Feed: fix getFeedObjForSeries throwing when no book of the series has audio tracks (test added) | error TS: 0 | passing: 373 | failing: 0 | dist files: 470 | 38s
+b2423021 | [PO-S07] Feed: migrate to TypeScript | error TS: 0 | passing: 373 | failing: 0 | dist files: 470 | 38s
+   compiled Feed.js against the previous commit: 9 differing lines
+   + const Path = require("path");
+   + const sequelizeModule = require("sequelize");
+   + const { DataTypes, Model } = sequelizeModule;
+   + const Logger = require("../Logger");
+   + const RSS = require("../libs/rss");
+   - const Path = require('path');
+   - const { DataTypes, Model } = require('sequelize');
+   - const Logger = require('../Logger');
+   - const RSS = require('../libs/rss');
+   modules required, same list in the same order: True
+034b2135 | [PO-S07] User: migrate to TypeScript | error TS: 0 | passing: 373 | failing: 0 | dist files: 470 | 37s
+   compiled User.js against the previous commit: 41 differing lines
+   + /// <reference path="../types/untypedModules.d.ts" />
+   + const uuid = require("uuid");
+   + const uuidv4 = uuid.v4;
+   + const sequelize = require("sequelize");
+   + const lruCache = require("lru-cache");
+   + const { LRUCache } = lruCache;
+   + const Logger = require("../Logger");
+   + const SocketAuthority = require("../SocketAuthority");
+   + const utils = require("../utils");
+   + const { isNullOrNaN } = utils;
+   + const TokenManager = require("../auth/TokenManager");
+   + include: [
+   + {
+   + model: this.sequelize.models.libraryItem,
+   + attributes: ['id']
+   + }
+   + ]
+   + include: [
+   + {
+   + model: this.sequelize.models.mediaProgress,
+   + where: { userId: this.id },
+   + required: false
+   + ]
+   + const updatedMediaProgress = mediaProgress; // the same object under a const: inside the callback below TypeScript forgets that the let is not null
+   + this.mediaProgresses = this.mediaProgresses.map((mp) => (mp.id === updatedMediaProgress.id ? updatedMediaProgress : mp));
+   - const uuidv4 = require('uuid').v4;
+   - const sequelize = require('sequelize');
+   - const { LRUCache } = require('lru-cache');
+   - const Logger = require('../Logger');
+   - const SocketAuthority = require('../SocketAuthority');
+   - const { isNullOrNaN } = require('../utils');
+   - const TokenManager = require('../auth/TokenManager');
+   - include: {
+   - model: this.sequelize.models.libraryItem,
+   - attributes: ['id']
+   - include: {
+   - model: this.sequelize.models.mediaProgress,
+   - where: { userId: this.id },
+   - required: false
+   - }
+   - this.mediaProgresses = this.mediaProgresses.map((mp) => (mp.id === mediaProgress.id ? mediaProgress : mp));
+   modules required, same list in the same order: True
+BEFORE THE FIX, parent of ed903cc1 plus its new test file(s) test/server/bugfix/Library.getMaxDisplayOrder.test.js | error TS: 0 | passing: 374 | failing: 1
+  1 failing
+
+  1) Library.getMaxDisplayOrder
+       returns 0 when there is no library:
+     AssertionError: expected null to equal +0
+      at Context.<anonymous> (dist-server\test\server\bugfix\Library.getMaxDisplayOrder.test.js:21:69)
+
+
+
+ed903cc1 | [PO-S07] Library: fix getMaxDisplayOrder returning null for an empty table (test added) | error TS: 0 | passing: 375 | failing: 0 | dist files: 471 | 37s
+a5b21570 | [PO-S07] evidence: probes for the two unconfirmed bugs, LibraryItem skip errors, SQL captures, final build and test | error TS: 0 | passing: 375 | failing: 0 | dist files: 471 | 37s
+worktree removed
+finished 22:10:55
