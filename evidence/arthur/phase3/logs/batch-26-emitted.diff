@@ -1,0 +1,16 @@
+--- /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2/dist-server/server/utils/queries/libraryFilters.js	2026-10-03 21:34:39
++++ dist-server/server/utils/queries/libraryFilters.js	2026-10-11 10:14:08
+@@ -9,7 +9,7 @@
+ const naturalSort = createNewSortInstance({
+     comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+ });
+-module.exports = {
++const libraryFilters = {
+     decode(text) {
+         try {
+             return Buffer.from(decodeURIComponent(text), 'base64').toString();
+@@ -659,3 +659,4 @@
+         return data;
+     }
+ };
++module.exports = libraryFilters;
