@@ -1,13 +1,41 @@
-const uuidv4 = require('uuid').v4
+// uuid has no type declarations here (it is only a transitive dependency and @types/uuid is not installed), so `import uuid = require('uuid')` fails with TS7016. A plain require() is typed any by @types/node, hence the annotation.
+const uuidv4: () => string = require('uuid').v4
 
-/**
- * @typedef TaskString
- * @property {string} text
- * @property {string} key
- * @property {string[]} [subs]
- */
+/** A message for the client: the English text, its translation key and the values substituted into the translation */
+interface TaskString {
+  text: string
+  key: string
+  subs?: string[]
+}
 
 class Task {
+  // Nullable fields start as null in the constructor; setData(), setFailed() and setFinished() fill them in
+  declare id: string | null
+  declare action: string | null
+  declare data: Record<string, unknown> | null
+
+  declare title: string | null
+  declare titleKey: string | null
+  declare titleSubs: string[] | null
+
+  declare description: string | null
+  declare descriptionKey: string | null
+  declare descriptionSubs: string[] | null
+
+  declare error: string | null
+  declare errorKey: string | null
+  declare errorSubs: string[] | null
+
+  declare showSuccess: boolean
+
+  declare isFailed: boolean
+  declare isFinished: boolean
+
+  declare startedAt: number | null
+  declare finishedAt: number | null
+  /** Only assigned by setFailed(); not initialised by the constructor and not part of toJSON() */
+  declare failedAt?: number
+
   constructor() {
     /** @type {string} */
     this.id = null
@@ -80,9 +108,9 @@ class Task {
    * @param {TaskString} titleString
    * @param {TaskString|null} descriptionString
    * @param {boolean} showSuccess
-   * @param {Object} [data]
+   * @param {Object} [data] null is stored as an empty object (PodcastManager passes null for opml-import)
    */
-  setData(action, titleString, descriptionString, showSuccess, data = {}) {
+  setData(action: string, titleString: TaskString, descriptionString: TaskString | null, showSuccess: boolean, data: Record<string, unknown> | null = {}): void {
     this.id = uuidv4()
     this.action = action
     this.data = { ...data }
@@ -101,7 +129,7 @@ class Task {
    *
    * @param {TaskString} messageString
    */
-  setFailed(messageString) {
+  setFailed(messageString: TaskString): void {
     this.error = messageString.text
     this.errorKey = messageString.key || null
     this.errorSubs = messageString.subs || null
@@ -116,7 +144,7 @@ class Task {
    * @param {TaskString} [newDescriptionString] update description
    * @param {boolean} [clearDescription] clear description
    */
-  setFinished(newDescriptionString = null, clearDescription = false) {
+  setFinished(newDescriptionString: TaskString | null = null, clearDescription = false): void {
     if (newDescriptionString) {
       this.description = newDescriptionString.text
       this.descriptionKey = newDescriptionString.key || null
@@ -130,4 +158,4 @@ class Task {
     this.finishedAt = Date.now()
   }
 }
-module.exports = Task
+export = Task
