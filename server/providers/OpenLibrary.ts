@@ -87,8 +87,12 @@ class OpenLibrary {
       })
   }
 
-  async isbnLookup(isbn: string): Promise<Record<string, unknown> | OpenLibraryRequestError> {
-    var lookupData = await this.get<Record<string, unknown>>(`/isbn/${isbn}`)
+  /**
+   * The URL has no ".json" suffix, and OpenLibrary answers it with the book's HTML page, so in practice this resolves to that page as a string rather than to a JSON record.
+   * Left as it was, since changing the URL would change behaviour. Its only caller is BookFinder.findByISBN(), which nothing calls at the time of writing.
+   */
+  async isbnLookup(isbn: string): Promise<Record<string, unknown> | string | OpenLibraryRequestError> {
+    var lookupData = await this.get<Record<string, unknown> | string>(`/isbn/${isbn}`)
     if (!lookupData) {
       return {
         errorCode: 404
