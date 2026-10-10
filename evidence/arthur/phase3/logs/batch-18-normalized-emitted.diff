@@ -1,0 +1,13 @@
+--- /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2/dist-server/server/utils/comicBookExtractors.js	2026-10-03 21:34:39
++++ evidence/arthur/phase3/logs/batch-18-normalized-emitted.js	2026-10-11 00:42:47
+@@ -6,8 +6,8 @@
+ const fs = require('../libs/fsExtra');
+ const StreamZip = require('../libs/nodeStreamZip');
+ const Archive = require('../libs/libarchive/archive');
+-const { isWritable } = require('./fileUtils');
+-const { sanitizePath } = require('../libs/archiver/archiverUtils');
++const { isWritable: isWritable } = require('./fileUtils');
++const { sanitizePath: sanitizePath } = require('../libs/archiver/archiverUtils');
+ /**
+  * Sanitize a path from an archive
+  *

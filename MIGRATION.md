@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) resumed on 2026-10-11 Auckland time from accepted commit `54bd5be7`; Batches 01–17 and 19 accepted, **36/46 migrated, 10 remaining**. Batch 18 (comic extractors) is ready for main-agent integration and independent verification. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
+Status: Stage 1 (`server/utils/`) resumed on 2026-10-11 Auckland time from accepted commit `54bd5be7`; Batches 01–19 accepted, **37/46 migrated, 9 remaining**. This session paused at a green batch boundary with 74% of the five-hour Codex account window used. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
 
 ## Starting point
 
@@ -48,14 +48,14 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 15 | `absMetadataMigration` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline file/model/pagination sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-15-*` |
 | 16 | `parseFullName` | Fresh strict build 0 errors; unchanged tests 356/356; fixed 37-case name sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-16-*` |
 | 17 | `utils/index` | Fresh strict build 0 errors; unchanged tests 356/356; fixed shared-utility/XML/query sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-17-*` |
+| 18 | `comicBookExtractors` | Fresh strict build 0 errors; unchanged tests 356/356; independent offline CBR/CBZ side-effect sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-18-*` |
 | 19 | `oldDbFiles` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline legacy-db stream/archive sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-19-*` |
 
-Next: independently verify Batch 18, then pause at a green Stage 1 boundary before selecting another small batch according to quota. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
+Next: on explicit continuation, check the account quota and accepted commit, then freeze the contract for another small Stage 1 batch. Nine targets remain. Do not start Stage 2 automatically.
 
 Remaining Stage 1 targets:
 
 ```text
-server/utils/comicBookExtractors.js
 server/utils/ffmpegHelpers.js
 server/utils/fileUtils.js
 server/utils/libraryHelpers.js

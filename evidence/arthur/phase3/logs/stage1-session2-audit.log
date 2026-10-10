@@ -1,0 +1,17 @@
+{
+  "targets": 46,
+  "converted": 37,
+  "remaining": 9,
+  "unknown": [],
+  "remainingPaths": [
+    "server/utils/ffmpegHelpers.js",
+    "server/utils/fileUtils.js",
+    "server/utils/libraryHelpers.js",
+    "server/utils/migrations/dbMigration.js",
+    "server/utils/podcastUtils.js",
+    "server/utils/prober.js",
+    "server/utils/queries/libraryFilters.js",
+    "server/utils/queries/libraryItemsBookFilters.js",
+    "server/utils/scandir.js"
+  ]
+}

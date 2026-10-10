@@ -1,0 +1,246 @@
+{
+  "exports": [
+    "createComicBookExtractor"
+  ],
+  "factory": {
+    ".CBR": {
+      "value": {
+        "className": "CbrComicBookExtractor",
+        "keys": [
+          "comicPath",
+          "archive",
+          "tmpDir"
+        ],
+        "methods": [
+          "constructor",
+          "open",
+          "getFilePaths",
+          "removeEmptyParentDirs",
+          "getExtractedFilePath",
+          "extractToBuffer",
+          "extractToFile",
+          "close"
+        ],
+        "path": "/books/book.CBR"
+      }
+    },
+    ".CbZ": {
+      "value": {
+        "className": "CbzStreamZipComicBookExtractor",
+        "keys": [
+          "comicPath",
+          "archive"
+        ],
+        "methods": [
+          "constructor",
+          "open",
+          "getFilePaths",
+          "extractToBuffer",
+          "extractToFile",
+          "close"
+        ],
+        "path": "/books/book.CbZ"
+      }
+    },
+    ".pdf": {
+      "error": {
+        "name": "Error",
+        "message": "Unsupported comic book format \".pdf\""
+      }
+    }
+  },
+  "rarBefore": [
+    null,
+    null,
+    false
+  ],
+  "rarOpen": {},
+  "rarFiles": [
+    "images/cover.jpg"
+  ],
+  "rarBuffer": "comic bytes",
+  "rarFile": true,
+  "rarNotWritable": {
+    "error": {
+      "name": "Error",
+      "message": "[CbrComicBookExtractor] Temp directory \"/metadata/tmp\" is not writable"
+    }
+  },
+  "zipBefore": [
+    null,
+    null,
+    false
+  ],
+  "zipOpen": {},
+  "zipFiles": [
+    "a.jpg",
+    "b.jpg"
+  ],
+  "zipBuffer": "image",
+  "zipFile": true,
+  "zipFailure": false,
+  "events": [
+    [
+      "mkdir",
+      "/metadata/tmp"
+    ],
+    [
+      "writable",
+      "/metadata/tmp"
+    ],
+    [
+      "unrar",
+      "/books/book.cbr",
+      "/metadata/tmp"
+    ],
+    [
+      "sanitize",
+      "cover.jpg",
+      "cover.jpg"
+    ],
+    [
+      "sanitizeError",
+      "../bad.jpg",
+      "[CbrComicBookExtractor] Unsafe archive path \"../bad.jpg\""
+    ],
+    [
+      "sanitizeError",
+      "/root/bad.jpg",
+      "[CbrComicBookExtractor] Unsafe archive path \"/root/bad.jpg\""
+    ],
+    [
+      "sanitize",
+      "a/../b.jpg",
+      "b.jpg"
+    ],
+    [
+      "debug",
+      "[CbrComicBookExtractor] Opened comic book \"/books/book.cbr\". Using temp directory \"/metadata/tmp\" for extraction."
+    ],
+    [
+      "rarFiles"
+    ],
+    [
+      "debug",
+      "[CbrComicBookExtractor] Found 1 files in comic book \"/books/book.cbr\""
+    ],
+    [
+      "rarExtract",
+      [
+        "images/cover.jpg"
+      ]
+    ],
+    [
+      "read",
+      "/metadata/tmp/images/cover.jpg"
+    ],
+    [
+      "remove",
+      "/metadata/tmp/images/cover.jpg"
+    ],
+    [
+      "readdir",
+      "/metadata/tmp/images"
+    ],
+    [
+      "remove",
+      "/metadata/tmp/images"
+    ],
+    [
+      "debug",
+      "[CbrComicBookExtractor] Extracted file \"images/cover.jpg\" from comic book \"/books/book.cbr\" to buffer, size: 11"
+    ],
+    [
+      "rarExtract",
+      [
+        "images/cover.jpg"
+      ]
+    ],
+    [
+      "move",
+      "/metadata/tmp/images/cover.jpg",
+      "/output/cover.jpg",
+      {
+        "overwrite": true
+      }
+    ],
+    [
+      "readdir",
+      "/metadata/tmp/images"
+    ],
+    [
+      "remove",
+      "/metadata/tmp/images"
+    ],
+    [
+      "debug",
+      "[CbrComicBookExtractor] Extracted file \"images/cover.jpg\" from comic book \"/books/book.cbr\" to \"/output/cover.jpg\""
+    ],
+    [
+      "debug",
+      "[CbrComicBookExtractor] Closed comic book \"/books/book.cbr\""
+    ],
+    [
+      "mkdir",
+      "/metadata/tmp"
+    ],
+    [
+      "writable",
+      "/metadata/tmp"
+    ],
+    [
+      "zipNew",
+      {
+        "file": "/books/book.cbz"
+      }
+    ],
+    [
+      "debug",
+      "[CbzStreamZipComicBookExtractor] Opened comic book \"/books/book.cbz\""
+    ],
+    [
+      "zipEntries"
+    ],
+    [
+      "debug",
+      "[CbzStreamZipComicBookExtractor] Found 2 files in comic book \"/books/book.cbz\""
+    ],
+    [
+      "zipData",
+      "a.jpg"
+    ],
+    [
+      "debug",
+      "[CbzStreamZipComicBookExtractor] Extracted file \"a.jpg\" from comic book \"/books/book.cbz\" to buffer, size: 5"
+    ],
+    [
+      "zipExtract",
+      "a.jpg",
+      "/output/a.jpg"
+    ],
+    [
+      "debug",
+      "[CbzStreamZipComicBookExtractor] Extracted file \"a.jpg\" from comic book \"/books/book.cbz\" to \"/output/a.jpg\""
+    ],
+    [
+      "zipExtract",
+      "b.jpg",
+      "/output/b.jpg"
+    ],
+    [
+      "error",
+      "[CbzStreamZipComicBookExtractor] Failed to extract file \"b.jpg\" to \"/output/b.jpg\"",
+      {
+        "name": "Error",
+        "message": "zip failed"
+      }
+    ],
+    [
+      "zipClose"
+    ],
+    [
+      "debug",
+      "[CbzStreamZipComicBookExtractor] Closed comic book \"/books/book.cbz\""
+    ]
+  ]
+}
