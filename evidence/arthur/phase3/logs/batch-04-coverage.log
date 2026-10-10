@@ -1,0 +1,1036 @@
+
+> audiobookshelf@2.37.0 coverage
+> npm run build:server && nyc mocha dist-server/test
+
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+
+
+  Logger
+    logging methods
+      ✔ should have a method for each log level defined in the static block
+      ✔ should call console.trace for trace logging
+      ✔ should call console.debug for debug logging
+      ✔ should call console.info for info logging
+      ✔ should call console.warn for warn logging
+      ✔ should call console.error for error logging
+      ✔ should call console.error for fatal logging
+      ✔ should call console.log for note logging
+    #log
+      ✔ should log to console and file if level is high enough
+      ✔ should not log if log level is too low
+      ✔ should emit log to all connected sockets with appropriate log level
+      ✔ should log fatal messages to console and file regardless of log level
+      ✔ should log note messages to console and file regardless of log level
+      ✔ should log util.inspect(arg) for non-string objects
+    socket listeners
+      ✔ should add and remove socket listeners
+    setLogLevel
+      ✔ should change the log level and log the new level
+
+  OidcAuthStrategy - isValidWebCallbackUrl
+    ✔ accepts a same-origin relative path when router base path is empty
+    ✔ accepts a same-origin absolute https URL
+    ✔ rejects protocol-relative URLs
+    ✔ rejects backslash-prefixed URLs
+    ✔ rejects absolute external URLs
+    ✔ rejects encoded protocol-relative path segments
+    ✔ rejects same-origin URLs outside router base path
+    ✔ rejects empty and malformed callback URLs
+    ✔ uses x-forwarded-proto when determining same-origin https URLs
+
+  TokenManager
+    validateAccessToken
+      ✔ accepts access tokens
+    jwtAuthCheck
+      ✔ rejects refresh tokens for API auth
+      ✔ allows access tokens for active users
+    invalidateJwtSessionsForUser
+      ✔ self password change: keeps current session, deletes others
+      ✔ admin password reset: deletes all target sessions
+
+  LibraryController.downloadMultiple
+    ✔ returns 403 for bulk download of an explicit item
+    ✔ returns 403 for bulk download of a tag-restricted item
+    ✔ returns 403 when bulk download includes both allowed and forbidden items
+    ✔ starts zip download for allowed items only
+
+  LibraryItemController
+    checkRemoveAuthorsAndSeries
+      ✔ should remove authors and series with no books on library item delete
+      ✔ should remove authors and series with no books on library item batch delete
+      ✔ should remove authors and series with no books on library item update media
+    batch item access control
+      ✔ batchGet returns 403 for a library item the user cannot access
+      ✔ batchGet returns items when the user can access them
+      ✔ batchUpdate returns 403 for a library item the user cannot access
+[2026-10-10 19:53:04.859] WARN: [LibraryItemController] User "limited" attempted to batch update without permission
+      ✔ batchUpdate returns 403 when the user lacks canUpdate
+      ✔ batchDelete returns 403 for a library item the user cannot access
+
+  UserController - delete
+    ✔ rejects deleting the root user by UUID
+
+  TitleCandidates
+    cleanAuthor non-empty
+      no adds
+        ✔ returns no candidates
+      single add
+        ✔ adds candidate
+        ✔ adds lowercased candidate
+        ✔ adds candidate, removing redundant spaces
+        ✔ adds candidate, removing author
+        ✔ does not add empty candidate after removing author
+        ✔ adds candidate, removing subtitle
+        ✔ adds candidate, not stripping subtitle for bare colon in title
+        ✔ adds candidate, not stripping subtitle for colon between words without space
+        ✔ adds candidate + variant, removing "by ..."
+        ✔ adds candidate + variant, removing "by ..." when title has bare colon
+        ✔ adds candidate + variant, removing bitrate
+        ✔ adds candidate + variant, removing edition 1
+        ✔ adds candidate + variant, removing edition 2
+        ✔ adds candidate + variant, removing fie type
+        ✔ adds candidate + variant, removing "a novel"
+        ✔ adds candidate + variant, removing "abridged"
+        ✔ adds candidate + variant, removing "unabridged"
+        ✔ adds candidate + variant, removing preceding/trailing numbers
+        ✔ does not add empty candidate
+        ✔ does not add spaces-only candidate
+        ✔ does not add empty variant
+      multiple adds
+        ✔ demotes digits-only candidates
+        ✔ promotes transformed variants
+        ✔ orders by position
+        ✔ dedupes candidates
+    cleanAuthor empty
+      single add
+        ✔ adds a candidate
+
+  AuthorCandidates
+    cleanAuthor is null
+      no adds
+        ✔ returns empty author candidate
+      single add
+        ✔ adds recognized candidate
+        ✔ does not add unrecognized candidate
+        ✔ adds recognized author if candidate is a superstring
+        ✔ adds candidate if it is a substring of recognized author
+        ✔ adds recognized author if edit distance from candidate is small
+        ✔ does not add candidate if edit distance from any recognized author is large
+        ✔ adds normalized recognized candidate (contains redundant spaces)
+        ✔ adds normalized recognized candidate (et al removed)
+        ✔ adds normalized recognized candidate (normalized initials)
+      multi add
+        ✔ adds recognized author candidates
+        ✔ dedupes author candidates
+    cleanAuthor is a recognized author
+      no adds
+        ✔ adds cleanAuthor as candidate
+      single add
+        ✔ adds recognized candidate
+        ✔ does not add candidate if it is a dupe of cleanAuthor
+    cleanAuthor is an unrecognized author
+      no adds
+        ✔ adds cleanAuthor as candidate
+      single add
+        ✔ adds recognized candidate and removes cleanAuthor
+        ✔ does not add unrecognized candidate
+    cleanAuthor is unrecognized and dirty
+      no adds
+        ✔ adds aggressively cleaned cleanAuthor
+        ✔ adds cleanAuthor if aggresively cleaned cleanAuthor is empty
+      single add
+        ✔ adds recognized candidate and removes cleanAuthor
+
+  search
+    search title is empty
+      ✔ returns empty result
+    search title is a recognized title and search author is a recognized author
+      ✔ returns non-empty result (no fuzzy searches)
+    search title contains recognized title and search author is a recognized author
+      ✔ search('title -', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title - author', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('author - title', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title- author', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title -author', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title author', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('author - title (unabridged)', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('author - title (subtitle) - mp3', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title {narrator} - series-01 64kbps 10:00:00', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('author - title (2006) narrated by narrator [unabridged]', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title - author 2022 mp3', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('01 title', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('2022_title_HQ', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('s-01 - title (narrator) 64kbps 10:00:00', 'author') returns non-empty result (with 2 fuzzy searches)
+      ✔ search('author - series 01 - title', 'author') returns non-empty result (with 2 fuzzy searches)
+      ✔ search('title-author', 'author') returns an empty result
+      ✔ search('title junk', 'author') returns an empty result
+      maxFuzzySearches = 0
+        ✔ search('title - author', 'author') returns an empty result (with no fuzzy searches)
+      maxFuzzySearches = 1
+        ✔ search('s-01 - title (narrator) 64kbps 10:00:00', 'author') returns an empty result (1 fuzzy search)
+        ✔ search('author - series 01 - title', 'author') returns an empty result (1 fuzzy search)
+    search title contains recognized title and search author is empty
+      ✔ search('title - author', '') returns a non-empty result (1 fuzzy search)
+      ✔ search('author - title', '') returns a non-empty result (1 fuzzy search)
+      ✔ search('title', '') returns an empty result
+      ✔ search('title - unrecognized', '') returns an empty result
+      ✔ search('unrecognized - title', '') returns an empty result
+    search title contains recognized title and search author is an unrecognized author
+      ✔ search('title - unrecognized', 'unrecognized') returns a non-empty result (1 fuzzy search)
+      ✔ search('unrecognized - title', 'unrecognized') returns a non-empty result (1 fuzzy search)
+      ✔ search('title', 'unrecognized') returns a non-empty result (no fuzzy search)
+    search provider results have duration
+      ✔ returns results sorted by library item duration diff
+      ✔ returns unsorted results if library item is null
+      ✔ returns unsorted results if library item duration is undefined
+      ✔ returns unsorted results if library item media is undefined
+      ✔ should return a result last if it has no duration
+    matchConfidence score
+      for audible provider
+        ✔ should be 1.0 for perfect duration, title, and author match
+        ✔ should correctly score a large duration mismatch
+        ✔ should correctly score a medium duration mismatch
+        ✔ should correctly score a minor duration mismatch
+        ✔ should correctly score a tiny duration mismatch
+        ✔ should use default duration score if libraryItem duration is missing
+        ✔ should use default duration score if book duration is missing
+        ✔ should correctly score a partial title match
+        ✔ should correctly score a partial author match (comma-separated)
+        ✔ should give authorScore 0 if query has author but book does not
+        ✔ should give authorScore 1.0 if query has no author
+        ✔ handles book author string that is only commas correctly (score 0)
+        ✔ should return 1.0 for ASIN results
+        ✔ should return 1.0 when author matches one of the book authors
+        ✔ should return 1.0 when author query and multiple book authors are the same
+        ✔ should correctly score against a book with a subtitle when the query has a subtitle
+        ✔ should correctly score against a book with a subtitle when the query does not have a subtitle
+        after fuzzy searches
+          ✔ should return 1.0 for a title candidate match
+          ✔ should return 1.0 for an author candidate match
+      for non-audible provider (e.g., google)
+        ✔ should have not have matchConfidence
+
+  ApiCacheManager
+    middleware
+      ✔ should send cached data if available
+      ✔ should cache and send response if data is not cached
+      ✔ should cache personalized response with 30 minutes TTL
+    clear on mediaProgress
+      ✔ should remove recent-episodes cache entries
+
+  BinaryManager
+    init
+      ✔ should not install binaries if they are already found
+      ✔ should install missing binaries
+      ✔ exit if binaries are not found after installation
+      ✔ should not exit if binaries are not found but not required
+    findRequiredBinaries
+      ✔ should put found paths in the correct environment variables
+      ✔ should add missing binaries to result
+    install
+      ✔ should not install binaries if no binaries are passed
+      ✔ should install binaries in main install path if has access
+      ✔ should install binaries in alt install path if has no access to main
+
+  Binary
+    find
+      ✔ should return the defaultPath if it exists and is a good binary
+      ✔ should return the whichPath if it exists and is a good binary
+      ✔ should return the mainInstallPath if it exists and is a good binary
+      ✔ should return the altInstallPath if it exists and is a good binary
+      ✔ should return null if no good binary is found
+    isGood
+      ✔ should return false if binaryPath is falsy
+      ✔ should return false if binaryPath does not exist
+[2026-10-10 19:53:04.951] ERROR: [Binary] Failed to check version of /path/to/binary Error: Failed to execute command
+    at Context.<anonymous> (/Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase3/dist-server/test/server/managers/BinaryManager.test.js:294:30)
+    at callFn (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:366:21)
+    at Runnable.run (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:354:5)
+    at Runner.runTest (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:666:10)
+    at /Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:789:12
+    at next (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:581:14)
+    at /Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:591:7
+    at next (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:474:14)
+    at cbHookRun (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:539:7)
+    at done (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:310:5)
+    at callFn (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:389:7)
+    at Runnable.run (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:354:5)
+    at next (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:498:10)
+    at Immediate.<anonymous> (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:559:5)
+    at process.processImmediate (node:internal/timers:505:21)
+      ✔ should return false if failed to check version of binary
+      ✔ should return false if version is not found
+      ✔ should return false if version is found but does not match a good version
+      ✔ should return true if version is found and matches a good version
+      ✔ should check library version file
+      ✔ should return false if library version file does not exist
+      ✔ should return false if library version does not match a valid version
+    getFileName
+      ✔ should return the executable file name with .exe extension on Windows
+      ✔ should return the executable file name without extension on linux
+      ✔ should return the library file name with .dll extension on Windows
+      ✔ should return the library file name with .so extension on linux
+      ✔ should return the file name without extension for other types
+    download
+      ✔ should call downloadBinary with the correct parameters
+      ✔ should write a version file for libraries
+
+  MigrationManager
+    init
+      ✔ should initialize the MigrationManager
+      ✔ should throw error if serverVersion is not provided
+    runMigrations
+      ✔ should run up migrations successfully
+      ✔ should run down migrations successfully
+      ✔ should log that migrations will be skipped if database is new
+      ✔ should log that no migrations are needed if serverVersion equals databaseVersion
+      ✔ should handle migration failure and restore the original database
+    fetchVersionsFromDatabase
+      ✔ should fetch versions from the migrationsMeta table
+      ✔ should create the migrationsMeta table if it does not exist and fetch versions from it
+      ✔ should create the migrationsMeta with databaseVersion=serverVersion if database is new
+[2026-10-10 19:53:04.992] WARN: [MigrationManager] migrationsMeta table already exists. Dropping it...
+      ✔ should re-create the migrationsMeta table if it existed and database is new (Database force=true)
+      ✔ should throw an error if the database query fails
+    updateMaxVersion
+      ✔ should update the maxVersion in the database
+    extractVersionFromTag
+      ✔ should return null if tag is not provided
+      ✔ should return null if tag does not match the version format
+      ✔ should extract the version from the tag
+    copyMigrationsToConfigDir
+      ✔ should copy migrations to the config directory
+      ✔ should throw an error if copying the migrations fails
+    findMigrationsToRun
+      ✔ should return migrations to run when direction is "up"
+      ✔ should return migrations to run when direction is "down"
+      ✔ should return empty array when no migrations to run up
+      ✔ should return empty array when no migrations to run down
+      ✔ should return down migrations to run when direction is "down" and up migration was not executed
+      ✔ should return empty array when direction is "down" and server version is higher than database version
+      ✔ should return empty array when direction is "up" and server version is lower than database version
+      ✔ should return up migrations to run when server version is between migrations
+      ✔ should return down migrations to run when server version is between migrations
+    initUmzug
+      ✔ should initialize the umzug instance with migrations in the proper order
+
+  migration_example
+    up
+      ✔ should create example_table
+    down
+      ✔ should drop example_table
+
+  migration-v2.15.0-series-column-unique
+    up
+      ✔ upgrade with no duplicate series
+      ✔ upgrade with duplicate series and no sequence
+      ✔ upgrade with same series name in different libraries
+      ✔ upgrade with one book in two of the same series, both sequence are null
+      ✔ upgrade with one book in two of the same series, one sequence is null
+      ✔ upgrade with one book in two of the same series, both sequence are not null
+    down
+      ✔ should not have unique constraint on series name and libraryId
+
+  migration-v2.17.3-fk-constraints
+    up
+      ✔ should fix table foreign key constraints
+      ✔ should keep correct table foreign key constraints
+
+  Migration v2.17.4-use-subfolder-for-oidc-redirect-uris
+    up
+      ✔ should add authOpenIDSubfolderForRedirectURLs if OIDC is enabled
+      ✔ should not add authOpenIDSubfolderForRedirectURLs if OIDC is not enabled
+      ✔ should throw an error if server settings cannot be parsed
+      ✔ should throw an error if server settings are not found
+    down
+      ✔ should remove authOpenIDSubfolderForRedirectURLs if it exists
+      ✔ should not remove authOpenIDSubfolderForRedirectURLs if it does not exist
+
+  Migration v2.17.4-use-subfolder-for-oidc-redirect-uris
+    up
+      ✔ should remove serverAddress from URLs in Feeds and FeedEpisodes tables
+      ✔ should handle null URLs in Feeds and FeedEpisodes tables
+      ✔ should handle null serverAddress in Feeds table
+    down
+      ✔ should add serverAddress back to URLs in Feeds and FeedEpisodes tables
+      ✔ should handle null URLs in Feeds and FeedEpisodes tables
+      ✔ should handle null serverAddress in Feeds table
+
+  Migration v2.17.6-share-add-isDownloadable
+    up
+      ✔ should add the isDownloadable column to mediaItemShares table
+    down
+      ✔ should remove the isDownloadable column from mediaItemShares table
+
+  Migration v2.19.1-copy-title-to-library-items
+    up
+      ✔ should copy title and titleIgnorePrefix to libraryItems
+      ✔ should add index on title to libraryItems
+      ✔ should add trigger to books.title to update libraryItems.title
+      ✔ should add index on titleIgnorePrefix to libraryItems
+      ✔ should add trigger to books.titleIgnorePrefix to update libraryItems.titleIgnorePrefix
+      ✔ should add index on createdAt to libraryItems
+    down
+      ✔ should remove title and titleIgnorePrefix from libraryItems
+      ✔ should remove title trigger from books
+      ✔ should remove titleIgnorePrefix trigger from books
+      ✔ should remove index on titleIgnorePrefix from libraryItems
+      ✔ should remove index on title from libraryItems
+      ✔ should remove index on createdAt from libraryItems
+
+  Migration v2.19.4-improve-podcast-queries
+    up
+      ✔ should add numEpisodes column to podcasts
+      ✔ should add podcastId column to mediaProgresses
+      ✔ should copy title and titleIgnorePrefix from podcasts to libraryItems
+      ✔ should add trigger to update title in libraryItems
+      ✔ should add trigger to update titleIgnorePrefix in libraryItems
+      ✔ should be idempotent
+    down
+      ✔ should remove numEpisodes column from podcasts
+      ✔ should remove podcastId column from mediaProgresses
+      ✔ should remove trigger to update title in libraryItems
+      ✔ should remove trigger to update titleIgnorePrefix in libraryItems
+      ✔ should be idempotent
+
+  Migration v2.20.0-improve-author-sort-queries
+    up
+      ✔ should add the authorNamesFirstLast and authorNamesLastFirst columns to the libraryItems table
+      ✔ should populate the authorNamesFirstLast and authorNamesLastFirst columns with the author names for each libraryItem
+      ✔ should create triggers to update the authorNamesFirstLast and authorNamesLastFirst columns when the corresponding bookAuthors and authors records are updated
+      ✔ should create indexes on the authorNamesFirstLast and authorNamesLastFirst columns
+      ✔ should trigger after update on authors
+      ✔ should trigger after insert on bookAuthors
+      ✔ should trigger after delete on bookAuthors
+      ✔ should add an index on publishedAt to the podcastEpisodes table
+      ✔ should be idempotent
+    down
+      ✔ should remove the authorNamesFirstLast and authorNamesLastFirst columns from the libraryItems table
+      ✔ should remove the triggers from the libraryItems table
+      ✔ should remove the indexes from the libraryItems table
+      ✔ should remove the index on publishedAt from the podcastEpisodes table
+      ✔ should be idempotent
+
+  old JSON serialization
+    Book
+      ✔ toOldJSONExpanded is a strict superset of toOldJSONMinified
+    Podcast
+      ✔ toOldJSONExpanded is a strict superset of toOldJSONMinified
+    LibraryItem
+      ✔ book library item expanded is a strict superset of minified
+      ✔ podcast library item expanded is a strict superset of minified
+
+  TrackProgressMonitor
+    ✔ should initialize correctly
+    ✔ should update the progress
+    ✔ should update the progress multiple times on the same track
+    ✔ should update the progress multiple times on different tracks
+    ✔ should finish all tracks
+
+  Audible
+    cleanSeriesSequence
+      ✔ should return an empty string if sequence is falsy
+      ✔ should return the sequence as is if it does not contain a number
+      ✔ should return the sequence as is if contains just a number
+      ✔ should return the sequence as is if contains just a number with decimals
+      ✔ should extract and return the first number from the sequence
+      ✔ should extract and return the number with decimals from the sequence
+      ✔ should extract and return the number even if it has no leading zero
+    cleanResult
+      ✔ should set explicit to true when isAdult is true
+      ✔ should set explicit to false when isAdult is false
+      ✔ should set explicit to false when isAdult is not present
+
+  generateFFMetadata
+    ✔ should generate ffmetadata content with chapters
+    ✔ should generate ffmetadata content without chapters
+    ✔ should handle chapters with no title
+    ✔ should handle metadata escaping special characters (=, ;, #,  and a newline)
+
+  addCoverAndMetadataToFile
+    ✔ should add cover image and metadata to audio file
+    ✔ should handle missing cover image
+[2026-10-10 19:53:05.313] ERROR: Error adding cover image and metadata: Error: FFmpeg error
+    at EventEmitter.<anonymous> (/Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase3/dist-server/test/server/utils/ffmpegHelpers.test.js:143:38)
+    at Object.invoke (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/sinon/lib/sinon/behavior.js:177:32)
+    at EventEmitter.functionStub (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/sinon/lib/sinon/stub.js:44:43)
+    at functionStub.invoke (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/sinon/lib/sinon/proxy-invoke.js:53:47)
+    at EventEmitter.functionStub [as run] (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/sinon/lib/sinon/proxy.js:265:26)
+    at /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase3/dist-server/server/utils/ffmpegHelpers.js:57:2086
+    at new Promise (<anonymous>)
+    at addCoverAndMetadataToFile (/Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase3/dist-server/server/utils/ffmpegHelpers.js:44:811)
+    at Context.<anonymous> (/Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase3/dist-server/test/server/utils/ffmpegHelpers.test.js:147:19)
+    at callFn (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:366:21)
+    at Runnable.run (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:354:5)
+    at Runner.runTest (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:666:10)
+    at /Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:789:12
+    at next (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:581:14)
+    at /Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:591:7
+    at next (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:474:14)
+    at cbHookRun (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:539:7)
+    at done (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:310:5)
+    at callFn (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:389:7)
+    at Runnable.run (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runnable.js:354:5)
+    at next (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:498:10)
+    at Immediate._onImmediate (/Users/miao/Documents/B学期574/Open Project/audiobookshelf/node_modules/mocha/lib/runner.js:559:5)
+    at process.processImmediate (node:internal/timers:505:21)
+[2026-10-10 19:53:05.313] ERROR: ffmpeg stdout: undefined
+[2026-10-10 19:53:05.313] ERROR: ffmpeg stderr: undefined
+    ✔ should handle error during ffmpeg execution
+    ✔ should handle m4b embedding
+
+  fileUtils
+    ✔ shouldIgnoreFile
+    recurseFiles
+      ✔ should return filtered file list
+
+  parseNameString
+    parse
+      ✔ returns null if nameString is empty
+      ✔ parses single name in First Last format
+      ✔ parses single name in Last, First format
+      ✔ parses multiple names separated by &
+      ✔ parses multiple names separated by "and"
+      ✔ parses multiple names separated by comma and "and"
+      ✔ parses multiple names separated by semicolon
+      ✔ parses multiple names in Last, First format
+      ✔ parses multiple names with single word name
+      ✔ parses multiple names with single word name listed first (semicolon separator)
+      ✔ handles names with suffixes
+      ✔ handles compound last names
+      ✔ handles Chinese/Japanese/Korean names
+      ✔ removes duplicate names
+      ✔ filters out empty names
+    nameToLastFirst
+      ✔ converts First Last to Last, First format
+      ✔ returns last name only when no first name
+      ✔ handles names with middle names
+
+  parseNfoMetadata
+    ✔ returns null if nfoText is empty
+    ✔ parses title
+    ✔ parses title with subtitle
+    ✔ does not split title on bare colon without space
+    ✔ does not split title on colon between words without space
+    ✔ parses authors
+    ✔ parses multiple authors
+    ✔ parses narrators
+    ✔ parses multiple narrators
+    ✔ parses series name
+    ✔ parses genre
+    ✔ parses multiple genres
+    ✔ parses tags
+    ✔ parses year from various date fields
+    ✔ parses position in series
+    ✔ parses abridged flag
+    ✔ parses publisher
+    ✔ parses ASIN
+    ✔ parses language
+    ✔ parses description
+    ✔ no value
+    ✔ no year value
+
+  parseOpfMetadata - test series
+    ✔ test one series
+    ✔ test more then 1 series - in correct order
+    ✔ test messed order of series content and index
+    ✔ test different values of series content and index
+    ✔ test empty series content
+    ✔ test series and index using an xml namespace
+    ✔ test series and series index not directly underneath
+    ✔ test author is parsed from refines meta
+
+  requestUtils
+    ✔ isRequestSecure uses req.secure
+    ✔ isRequestSecure uses x-forwarded-proto
+    ✔ getRequestProtocol returns https or http
+    ✔ getRequestOrigin builds origin from protocol and host
+
+  scanUtils
+    ✔ should properly group files into potential book library items
+
+  stringifySequelizeQuery
+    ✔ should stringify a sequelize query containing an op
+    ✔ should stringify a sequelize query containing a literal
+    ✔ should stringify a sequelize query containing a class
+    ✔ should ignore non-class functions
+
+
+  356 passing (964ms)
+
+---------------------------------------|---------|----------|---------|---------|-------------------
+File                                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------------------------|---------|----------|---------|---------|-------------------
+All files                              |    18.8 |     7.78 |   12.88 |   18.96 |                   
+ server                                |   16.45 |      5.8 |   17.95 |   17.01 |                   
+  Auth.js                              |   10.52 |        0 |    3.03 |   10.65 | 32-439            
+  Database.js                          |   16.95 |     3.08 |    19.6 |    17.8 | ...82-856,860-900 
+  Logger.js                            |   97.91 |    86.36 |     100 |   97.77 | 36                
+  SocketAuthority.js                   |    6.09 |     1.12 |     7.5 |    6.31 | ...5,55-87,98-411 
+  Watcher.js                           |   10.75 |        0 |    1.96 |   12.04 | 40-392            
+ server/auth                           |   20.08 |    18.87 |   21.27 |   20.17 |                   
+  LocalAuthStrategy.js                 |   12.85 |        0 |    9.09 |   12.85 | 21-168            
+  OidcAuthStrategy.js                  |   16.83 |    13.11 |   10.52 |   17.01 | 25-458            
+  TokenManager.js                      |   26.37 |    36.47 |   41.17 |   26.37 | ...16,459,473-503 
+ server/controllers                    |    8.61 |     2.59 |    8.19 |    8.72 |                   
+  ApiKeyController.js                  |    6.49 |        0 |   14.28 |    6.49 | 21-185            
+  AuthorController.js                  |    6.59 |        0 |    5.55 |    6.73 | 36-382            
+  BackupController.js                  |    13.2 |        0 |    8.33 |   13.46 | 25-156            
+  CacheController.js                   |   27.27 |        0 |   33.33 |   27.27 | 19-36             
+  CollectionController.js              |    4.37 |        0 |    4.16 |    4.67 | 30-410            
+  CustomMetadataProviderController.js  |   17.64 |        0 |      20 |   17.64 | 22-99             
+  EmailController.js                   |    12.5 |        0 |   14.28 |    12.5 | 21-122            
+  FileSystemController.js              |    12.3 |        0 |   14.28 |    12.3 | 23-139            
+  LibraryController.js                 |    6.28 |     2.03 |    4.05 |    6.33 | ...1332,1339-1368 
+  LibraryItemController.js             |   21.15 |    13.87 |      20 |   21.08 | ...9,663,683-1108 
+  MeController.js                      |    4.03 |        0 |     2.5 |    4.23 | 26-572            
+  MiscController.js                    |    4.68 |        0 |    2.56 |    4.84 | 34-710            
+  NotificationController.js            |   13.15 |        0 |      10 |   13.15 | 24-139            
+  PlaylistController.js                |    2.29 |        0 |     2.7 |    2.53 | 28-530            
+  PodcastController.js                 |    5.66 |        0 |       0 |    5.85 | 37-519            
+  RSSFeedController.js                 |    6.41 |        0 |    9.09 |    6.57 | 23-174            
+  SearchController.js                  |    8.88 |        0 |    5.88 |     9.3 | 9,47-223          
+  SeriesController.js                  |      14 |        0 |   11.11 |      14 | 32-107            
+  SessionController.js                 |    6.61 |        0 |    5.26 |    6.76 | 27-340            
+  ShareController.js                   |    6.45 |        0 |    8.33 |    6.55 | 32-356            
+  StatsController.js                   |   22.22 |        0 |      25 |   22.22 | 21-65             
+  ToolsController.js                   |    5.97 |        0 |   16.66 |    5.97 | 28-154            
+  UserController.js                    |    5.47 |     1.08 |      10 |    5.66 | ...39-340,348-467 
+ server/finders                        |   57.73 |    39.73 |   48.33 |   57.74 |                   
+  AuthorFinder.js                      |   24.13 |        0 |   16.66 |   24.13 | 13-57             
+  BookFinder.js                        |   62.07 |    43.86 |    55.1 |   61.84 | ...53,664,673-674 
+  PodcastFinder.js                     |   21.05 |        0 |      20 |   23.52 | 16-34             
+ server/libs/archiver                  |      50 |    41.66 |      25 |      50 |                   
+  index.js                             |      50 |    41.66 |      25 |      50 | ...49,52,55,66-69 
+ server/libs/archiver/archiverUtils    |   17.58 |        0 |       0 |   17.58 |                   
+  file.js                              |   14.28 |        0 |       0 |   14.28 | ...89-131,135-204 
+  index.js                             |   21.42 |        0 |       0 |   21.42 | ...,96,99,102-135 
+ ...chiver/archiverUtils/balancedMatch |    6.06 |        0 |       0 |    6.06 |                   
+  index.js                             |    6.06 |        0 |       0 |    6.06 | 8-27,37-68        
+ ...hiver/archiverUtils/braceExpansion |    6.93 |        0 |       0 |    7.29 |                   
+  index.js                             |    6.93 |        0 |       0 |    7.29 | 12-208            
+ .../archiver/archiverUtils/fsRealpath |   37.03 |        0 |       0 |   37.03 |                   
+  index.js                             |   37.03 |        0 |       0 |   37.03 | 13-46             
+ ...r/libs/archiver/archiverUtils/glob |    9.65 |        0 |       0 |    9.87 |                   
+  common.js                            |    8.33 |        0 |       0 |    8.51 | 10,18-205         
+  index.js                             |   10.16 |        0 |       0 |    10.4 | ...93-638,643-657 
+  sync.js                              |    9.54 |        0 |       0 |    9.76 | ...48-396,399,402 
+ ...bs/archiver/archiverUtils/inflight |   14.28 |        0 |       0 |   15.38 |                   
+  index.js                             |   14.28 |        0 |       0 |   15.38 | 7-52              
+ .../archiver/archiverUtils/lazystream |   18.51 |        0 |       0 |   18.51 |                   
+  index.js                             |   18.51 |        0 |       0 |   18.51 | 17-45             
+ ...erUtils/lazystream/readable-stream |   55.55 |       50 |     100 |   55.55 |                   
+  passthrough.js                       |     100 |      100 |     100 |     100 |                   
+  readable.js                          |   52.94 |       50 |     100 |   52.94 | 4-11              
+ ...ils/lazystream/readable-stream/lib |    9.91 |     2.36 |    0.79 |    9.86 |                   
+  _stream_duplex.js                    |   34.04 |     9.37 |       0 |    32.6 | ...95-109,113-115 
+  _stream_passthrough.js               |   55.55 |        0 |       0 |   55.55 | 33-35,38          
+  _stream_readable.js                  |    6.95 |     1.08 |       0 |    7.01 | ...33,841,852-986 
+  _stream_transform.js                 |   13.04 |        0 |       0 |   13.04 | ...59-167,171-188 
+  _stream_writable.js                  |    9.48 |     4.14 |    2.27 |    9.48 | ...97-610,616-617 
+ ...adable-stream/lib/internal/streams |   15.46 |      7.4 |    6.66 |   15.46 |                   
+  BufferList.js                        |   19.67 |    19.04 |    9.09 |   19.67 | ...56,59-71,77-78 
+  destroy.js                           |    5.71 |        0 |       0 |    5.71 | 8-58              
+  stream.js                            |     100 |      100 |     100 |     100 |                   
+ ...er/archiverUtils/lodash.difference |   25.49 |    14.04 |   16.07 |   25.67 |                   
+  index.js                             |   25.49 |    14.04 |   16.07 |   25.67 | ...0-938,990,1047 
+ ...hiver/archiverUtils/lodash.flatten |    32.6 |    12.28 |       0 |    28.2 |                   
+  index.js                             |    32.6 |    12.28 |       0 |    28.2 | ...59-128,181-318 
+ ...archiverUtils/lodash.isplainobject |   41.66 |        0 |      20 |   39.13 |                   
+  index.js                             |   41.66 |        0 |      20 |   39.13 | 22-29,41,85-125   
+ ...rchiver/archiverUtils/lodash.union |   28.07 |    15.21 |   19.29 |   27.43 |                   
+  index.js                             |   28.07 |    15.21 |   19.29 |   27.43 | ...4-932,984,1041 
+ ...s/archiver/archiverUtils/minimatch |    8.02 |     1.65 |    4.34 |    8.46 |                   
+  index.js                             |    8.02 |     1.65 |    4.34 |    8.46 | ...19-124,131-785 
+ ...hiver/archiverUtils/readableStream |   68.36 |     37.5 |       0 |   68.36 |                   
+  index.js                             |   55.55 |       75 |       0 |   55.55 | 4-27,54           
+  stream.js                            |   79.24 |        0 |       0 |   79.24 | ...00,106,111,114 
+ ...hiverUtils/readableStream/internal |   19.79 |        0 |       0 |      20 |                   
+  validators.js                        |   19.79 |        0 |       0 |      20 | ...68-169,172-173 
+ ...ls/readableStream/internal/streams |    8.48 |     0.21 |       0 |    8.51 |                   
+  add-abort-signal.js                  |   26.08 |        0 |       0 |   27.27 | 8-13,16-20,23-38  
+  buffer_list.js                       |       3 |        0 |       0 |    3.03 | 6-155             
+  compose.js                           |    7.31 |        0 |       0 |     7.4 | 8-132             
+  destroy.js                           |    3.68 |        0 |       0 |    3.68 | 8-267             
+  duplex.js                            |   34.78 |     8.33 |       0 |   33.33 | ...97,100,104-107 
+  end-of-stream.js                     |    7.25 |        0 |       0 |    7.25 | 11,16-195         
+  from.js                              |    6.12 |        0 |       0 |    6.25 | 6-88              
+  legacy.js                            |   11.32 |        0 |       0 |   11.32 | 5,10-80           
+  operators.js                         |    5.58 |     0.49 |       0 |    5.64 | 12-387            
+  passthrough.js                       |      60 |        0 |       0 |      60 | 31-33,36          
+  pipeline.js                          |    6.35 |      0.7 |       0 |     6.5 | 17-329            
+  readable.js                          |    8.37 |        0 |       0 |     8.4 | ...1128,1132-1142 
+  state.js                             |      25 |        0 |       0 |      25 | 5-19              
+  transform.js                         |   19.64 |        0 |       0 |   19.64 | ...27-146,151-154 
+  utils.js                             |    5.26 |        0 |       0 |    5.26 | 9-221             
+  writable.js                          |    8.39 |        0 |       0 |    8.51 | ...09-715,718,721 
+ .../archiverUtils/readableStream/ours |    18.8 |     2.75 |   13.79 |   18.95 |                   
+  errors.js                            |    20.6 |     1.86 |    12.5 |   20.73 | ...47-265,268-283 
+  primordials.js                       |      24 |      100 |   20.83 |      24 | 11-39,65-96       
+  util.js                              |   11.66 |     5.26 |    5.55 |   11.86 | 9-27,33-61,70-122 
+ ...rchiverUtils/readableStream/stream |   33.33 |        0 |       0 |   33.33 |                   
+  promises.js                          |   33.33 |        0 |       0 |   33.33 | 7-21              
+ .../archiver/archiverUtils/safeBuffer |   36.36 |    27.77 |   16.66 |   36.36 |                   
+  index.js                             |   36.36 |    27.77 |   16.66 |   36.36 | ...48,51-54,57-60 
+ ...libs/archiver/archiverUtils/wrappy |   35.71 |       40 |      25 |   35.71 |                   
+  index.js                             |   35.71 |       40 |      25 |   35.71 | 10,12,14,18-25    
+ server/libs/archiver/buffer-crc32     |   21.87 |     6.25 |       0 |   22.58 |                   
+  index.js                             |   21.87 |     6.25 |       0 |   22.58 | 65-103,106,109    
+ server/libs/archiver/compress-commons |     100 |      100 |     100 |     100 |                   
+  index.js                             |     100 |      100 |     100 |     100 |                   
+ ...rchiver/compress-commons/archivers |   34.42 |        0 |       0 |   34.42 |                   
+  archive-entry.js                     |     100 |      100 |       0 |     100 |                   
+  archive-output-stream.js             |   28.57 |        0 |       0 |   28.57 | ...81-85,88,91-94 
+ ...ver/compress-commons/archivers/zip |   24.05 |        0 |       0 |   24.05 |                   
+  constants.js                         |     100 |      100 |     100 |     100 |                   
+  general-purpose-bit.js               |    41.5 |        0 |       0 |    41.5 | ...67,70,73,76,79 
+  unix-stat.js                         |     100 |      100 |     100 |     100 |                   
+  util.js                              |    30.3 |        0 |       0 |    30.3 | ...48,51-53,56,59 
+  zip-archive-entry.js                 |   36.06 |        0 |       0 |   36.06 | ...31,339,349,357 
+  zip-archive-output-stream.js         |   11.21 |        0 |       0 |   11.21 | ...29,332,335,338 
+ ...ibs/archiver/compress-commons/util |   33.33 |        0 |       0 |   33.33 |                   
+  index.js                             |   33.33 |        0 |       0 |   33.33 | 13,16-27          
+ server/libs/archiver/crc32            |      55 |    55.26 |      50 |   50.66 |                   
+  index.js                             |      55 |    55.26 |      50 |   50.66 | 13-25,68-114      
+ server/libs/archiver/crc32-stream     |   17.94 |        0 |       0 |   17.94 |                   
+  crc32-stream.js                      |   18.75 |        0 |       0 |   18.75 | 13-34             
+  deflate-crc32-stream.js              |   13.63 |        0 |       0 |   13.63 | 13-45             
+  index.js                             |     100 |      100 |     100 |     100 |                   
+ server/libs/archiver/lib              |   11.73 |        0 |       0 |   11.73 |                   
+  core.js                              |   10.89 |        0 |       0 |   10.89 | ...81,789,799-800 
+  error.js                             |      50 |        0 |       0 |      50 | 29-33             
+ server/libs/archiver/lib/plugins      |   37.03 |        0 |       0 |   37.03 |                   
+  json.js                              |   31.42 |        0 |       0 |   31.42 | ...50,61-77,86-87 
+  zip.js                               |   47.36 |        0 |       0 |   47.36 | ...52,58,64,70,76 
+ server/libs/archiver/normalize-path   |    5.55 |        0 |       0 |    5.55 |                   
+  index.js                             |    5.55 |        0 |       0 |    5.55 | 9-32              
+ server/libs/archiver/readdir-glob     |    4.91 |        0 |       0 |    5.35 |                   
+  index.js                             |    4.91 |        0 |       0 |    5.35 | 12-225            
+ server/libs/archiver/zip-stream       |   13.63 |        0 |       0 |   13.63 |                   
+  index.js                             |   13.63 |        0 |       0 |   13.63 | ...-78,96-135,144 
+ server/libs/async                     |    9.34 |     2.53 |    1.82 |   10.82 |                   
+  index.js                             |    9.34 |     2.53 |    1.82 |   10.82 | ...50-251,256-257 
+ server/libs/bcryptjs                  |   10.89 |    11.03 |     7.6 |   12.82 |                   
+  index.js                             |   10.89 |    11.03 |     7.6 |   12.82 | ...05-506,509-518 
+ server/libs/dateAndTime               |   32.07 |     9.55 |   19.27 |   53.26 |                   
+  index.js                             |   32.07 |     9.55 |   19.27 |   53.26 | ...99-100,102-107 
+ server/libs/fastSort                  |   22.07 |     4.54 |      20 |   23.18 |                   
+  index.js                             |   22.07 |     4.54 |      20 |   23.18 | ...89-100,106-114 
+ server/libs/fluentFfmpeg              |     8.3 |        0 |    1.88 |    8.36 |                   
+  capabilities.js                      |    11.4 |        0 |    1.85 |    11.4 | ...64-496,509-593 
+  ffprobe.js                           |    2.45 |        0 |       5 |    2.47 | 4-55,83-220       
+  index.js                             |      36 |        0 |       0 |      36 | ...75,179,184-185 
+  processor.js                         |    4.42 |        0 |    1.81 |    4.44 | ...06-533,545-551 
+  recipes.js                           |    5.84 |        0 |    3.03 |    5.95 | ...97-354,371-397 
+  utils.js                             |    3.93 |        0 |       0 |       4 | 17-31,44-396      
+ server/libs/fluentFfmpeg/options      |   17.42 |        0 |   14.58 |   17.42 |                   
+  audio.js                             |   31.03 |        0 |    12.5 |   31.03 | ...,95-96,149-156 
+  custom.js                            |   11.36 |        0 |   14.28 |   11.36 | ...90-108,176-190 
+  inputs.js                            |   17.77 |        0 |    12.5 |   17.77 | ...27-131,143-150 
+  misc.js                              |   23.07 |        0 |      50 |   23.07 | 19-37             
+  output.js                            |    18.6 |        0 |   11.11 |    18.6 | ...25-126,139-140 
+  video.js                             |   27.58 |        0 |   14.28 |   27.58 | ...41-142,157-158 
+  videosize.js                         |    8.19 |        0 |   14.28 |    8.19 | ...16-229,252-263 
+ server/libs/fsExtra                   |     100 |      100 |     100 |     100 |                   
+  index.js                             |     100 |      100 |     100 |     100 |                   
+ server/libs/fsExtra/copy              |    6.32 |        0 |       0 |    6.35 |                   
+  copy-sync.js                         |    6.74 |        0 |       0 |    6.81 | 8-154             
+  copy.js                              |    4.79 |        0 |       0 |    4.79 | 9-235             
+  index.js                             |     100 |      100 |     100 |     100 |                   
+ server/libs/fsExtra/empty             |   38.88 |      100 |       0 |   41.17 |                   
+  index.js                             |   38.88 |      100 |       0 |   41.17 | 9-27              
+ server/libs/fsExtra/ensure            |   19.07 |        0 |       0 |   19.07 |                   
+  file.js                              |   13.15 |        0 |       0 |   13.15 | 8-66              
+  index.js                             |     100 |      100 |     100 |     100 |                   
+  link.js                              |   16.66 |        0 |       0 |   16.66 | 10-59             
+  symlink-paths.js                     |   11.11 |        0 |       0 |   11.11 | 27-91             
+  symlink-type.js                      |   11.76 |        0 |       0 |   11.76 | 4-25              
+  symlink.js                           |   26.31 |        0 |       0 |   26.31 | 17-77             
+ server/libs/fsExtra/fs                |      35 |    11.11 |   15.38 |      35 |                   
+  index.js                             |      35 |    11.11 |   15.38 |      35 | ...90,100-107,117 
+ server/libs/fsExtra/mkdirs            |      44 |        0 |       0 |      44 |                   
+  index.js                             |     100 |      100 |     100 |     100 |                   
+  make-dir.js                          |   38.46 |        0 |       0 |   38.46 | 5-8,11-12,18-19   
+  utils.js                             |      25 |        0 |       0 |      25 | 11-16             
+ server/libs/fsExtra/move              |   19.31 |        0 |       0 |   19.31 |                   
+  index.js                             |     100 |      100 |     100 |     100 |                   
+  move-sync.js                         |   21.21 |        0 |       0 |   21.21 | 9-49              
+  move.js                              |   15.09 |        0 |       0 |   15.09 | 10-73             
+ server/libs/fsExtra/path-exists       |      50 |      100 |       0 |      75 |                   
+  index.js                             |      50 |      100 |       0 |      75 | 5                 
+ server/libs/fsExtra/remove            |    6.28 |        0 |       0 |    6.36 |                   
+  index.js                             |      40 |        0 |       0 |      40 | 7-15              
+  rimraf.js                            |    4.02 |        0 |       0 |    4.08 | 7-281             
+ server/libs/fsExtra/util              |    6.06 |        0 |       0 |    6.25 |                   
+  stat.js                              |    4.59 |        0 |       0 |    4.76 | 6-139             
+  utimes.js                            |   16.66 |        0 |       0 |   16.66 | 5-19              
+ server/libs/fusejs                    |    8.36 |     4.37 |   12.03 |   17.57 |                   
+  index.js                             |    8.36 |     4.37 |   12.03 |   17.57 | ...66-175,178-196 
+ server/libs/imageType                 |    5.76 |        0 |    12.5 |    5.28 |                   
+  fileType.js                          |    3.83 |        0 |   13.33 |    3.26 | ...17-764,772-787 
+  index.js                             |      75 |        0 |       0 |      75 | 24-25             
+ server/libs/isexe                     |   15.55 |     6.12 |       0 |   15.55 |                   
+  index.js                             |   14.81 |       10 |       0 |   14.81 | 8,16-56           
+  mode.js                              |   16.66 |        0 |       0 |   16.66 | 6-32              
+ server/libs/jsonwebtoken              |   56.69 |    43.04 |   53.84 |   56.69 |                   
+  decode.js                            |      60 |    33.33 |     100 |      60 | 7,12-15,30        
+  index.js                             |     100 |      100 |     100 |     100 |                   
+  sign.js                              |   58.51 |    47.72 |   47.36 |   58.51 | ...71-174,179-187 
+  verify.js                            |   53.98 |    40.65 |   66.66 |   53.98 | ...61-169,173-174 
+ server/libs/jsonwebtoken/lib          |   52.63 |       25 |      25 |   52.63 |                   
+  JsonWebTokenError.js                 |   36.36 |        0 |       0 |   36.36 | 3-10              
+  NotBeforeError.js                    |    62.5 |      100 |       0 |    62.5 | 4-6               
+  TokenExpiredError.js                 |    62.5 |      100 |       0 |    62.5 | 4-6               
+  timespan.js                          |   54.54 |     37.5 |     100 |   54.54 | 6-10,16           
+ server/libs/jwa                       |   31.09 |    18.18 |   31.03 |   31.35 |                   
+  index.js                             |   31.09 |    18.18 |   31.03 |   31.35 | ...05,124-194,214 
+ ...ibs/jwa/buffer-equal-constant-time |      70 |    66.66 |      25 |   68.42 |                   
+  index.js                             |      70 |    66.66 |      25 |   68.42 | 9,15,25-26,32-33  
+ server/libs/jwa/ecdsa-sig-formatter   |   12.96 |     4.76 |   14.28 |       8 |                   
+  index.js                             |      10 |        0 |       0 |    4.34 | 6-137             
+  param-bytes-for-alg.js               |      50 |       50 |      50 |      50 | 12-16             
+ server/libs/jws                       |   83.33 |      100 |       0 |   83.33 |                   
+  index.js                             |   83.33 |      100 |       0 |   83.33 | 21,24             
+ server/libs/jws/lib                   |   47.79 |    29.03 |      52 |   47.79 |                   
+  data-stream.js                       |   20.58 |        0 |       0 |   20.58 | 7-33,37-38,41-46  
+  sign-stream.js                       |      50 |    13.33 |   42.85 |      50 | 34-47,52-68       
+  tostring.js                          |   85.71 |    83.33 |     100 |   85.71 | 8                 
+  verify-stream.js                     |   55.55 |    35.48 |   69.23 |   55.55 | ...0,71-85,90-102 
+ server/libs/libarchive                |    2.88 |        0 |       0 |    2.97 |                   
+  archive.js                           |    2.88 |        0 |       0 |    2.97 | 12-235            
+ server/libs/lodash.once               |   26.53 |        0 |       0 |   23.91 |                   
+  index.js                             |   26.53 |        0 |       0 |   23.91 | 56-271            
+ server/libs/nodeCron                  |   16.89 |     1.69 |    3.03 |      17 |                   
+  index.js                             |   31.25 |        0 |       0 |   31.25 | 22-52             
+  pattern-validation.js                |    8.82 |        0 |       0 |    8.82 | 11-96             
+  scheduled-task.js                    |   22.72 |        0 |       0 |   22.72 | 8-37              
+  scheduler.js                         |   10.71 |        0 |       0 |   11.11 | 6-38              
+  storage.js                           |      40 |       25 |   33.33 |      40 | 8-16              
+  task.js                              |   13.33 |        0 |       0 |   13.33 | 5-26              
+  time-matcher.js                      |   13.04 |        0 |       0 |   13.04 | 5-43              
+ ...nodeCron/background-scheduled-task |   20.68 |        0 |       0 |   20.68 |                   
+  index.js                             |   20.68 |        0 |       0 |   20.68 | 9-54              
+ ...r/libs/nodeCron/convert-expression |      20 |        0 |      30 |   21.64 |                   
+  asterisk-to-range-conversion.js      |   16.66 |        0 |   33.33 |   16.66 | 4-16              
+  index.js                             |      25 |        0 |      20 |   26.92 | 11-56             
+  month-names-conversion.js            |   36.36 |      100 |   33.33 |      40 | 8-16              
+  range-conversion.js                  |    9.09 |        0 |      25 |      10 | 4-29              
+  step-values-conversion.js            |    9.52 |        0 |      50 |   10.52 | 4-25              
+  week-day-names-conversion.js         |   36.36 |      100 |   33.33 |      40 | 7-15              
+ server/libs/nodeFfprobe               |   15.78 |        0 |   14.28 |   16.66 |                   
+  index.js                             |   15.78 |        0 |   14.28 |   16.66 | 9-27              
+ server/libs/nodeStreamZip             |    2.52 |        0 |       0 |    2.58 |                   
+  index.js                             |    2.52 |        0 |       0 |    2.58 | ...1-613,620-1093 
+ server/libs/passportLocal             |   15.38 |        0 |       0 |      16 |                   
+  index.js                             |     100 |      100 |     100 |     100 |                   
+  strategy.js                          |    10.2 |        0 |       0 |   10.63 | 8-70,83-114       
+ server/libs/readChunk                 |   39.02 |    34.28 |   14.28 |   40.54 |                   
+  index.js                             |      40 |        0 |       0 |   44.44 | 8-14,21-26        
+  pify.js                              |   47.22 |    41.37 |   44.44 |   44.11 | 4-35,46,55        
+  withOpenFile.js                      |   26.92 |        0 |       0 |   31.81 | ...14,19-22,25-31 
+ server/libs/recursiveReaddirAsync     |   68.91 |     62.3 |    75.6 |   69.44 |                   
+  index.js                             |   68.91 |     62.3 |    75.6 |   69.44 | ...55-357,377,399 
+ server/libs/requestIp                 |   40.95 |    11.76 |    7.56 |   24.28 |                   
+  index.js                             |    3.17 |        0 |       0 |    3.27 | 3-8,17-129        
+  isJs.js                              |   46.96 |    14.65 |    8.18 |    40.5 | ...,79-82,100-101 
+ server/libs/rss                       |    4.59 |        0 |       0 |    4.59 |                   
+  index.js                             |    4.59 |        0 |       0 |    4.59 | 9-160             
+ server/libs/sanitizeHtml              |     2.4 |        0 |       0 |    2.41 |                   
+  index.js                             |     2.4 |        0 |       0 |    2.41 | ...88-646,694-706 
+ server/libs/uaParser                  |   39.42 |    10.63 |    9.52 |   32.85 |                   
+  index.js                             |   39.42 |    10.63 |    9.52 |   32.85 | ...,91-95,100-104 
+ server/libs/umzug                     |   27.09 |    27.23 |   18.42 |   29.73 |                   
+  index.js                             |   84.21 |       75 |      75 |   84.21 | 19-21             
+  templates.js                         |     100 |      100 |     100 |     100 |                   
+  types.js                             |     100 |      100 |     100 |     100 |                   
+  umzug.js                             |   20.37 |    22.31 |   15.27 |    22.5 | ...16-343,376-423 
+ server/libs/umzug/storage             |   48.09 |    33.83 |    22.5 |      50 |                   
+  contract.js                          |   88.88 |    83.33 |     100 |   88.88 | 13                
+  index.js                             |   85.71 |    66.66 |      75 |      85 | 11-13             
+  json.js                              |   53.33 |    53.33 |      20 |   58.53 | 11-13,18,22,38-63 
+  memory.js                            |      60 |      100 |      20 |   66.66 | 8-13              
+  mongodb.js                           |   21.42 |        0 |       0 |   23.07 | 5-27              
+  sequelize.js                         |    12.5 |        0 |       0 |    12.5 | 15-81             
+ server/libs/universalify              |   28.57 |        0 |   28.57 |   33.33 |                   
+  index.js                             |   28.57 |        0 |   28.57 |   33.33 | 8-12,19-23        
+ server/libs/watcher                   |   11.83 |     6.99 |    4.29 |   12.53 |                   
+  are-shallow-equal.js                 |   27.77 |        0 |       0 |   27.77 | 7-19              
+  constants.js                         |     100 |    77.77 |     100 |     100 | 4-22              
+  debounce.js                          |    6.06 |        0 |       0 |    6.06 | 18-61             
+  is-primitive.js                      |      25 |        0 |       0 |      25 | 9-12              
+  promise-concurrency-limiter.js       |      25 |        0 |   14.28 |   26.08 | 13-36             
+  string-indexes.js                    |      25 |        0 |       0 |   27.27 | 4-11              
+  tiny-readdir.js                      |    8.69 |        0 |       0 |   10.38 | 11-98             
+  utils.js                             |   28.94 |       28 |    6.25 |   28.94 | 20-81             
+  watcher.js                           |    5.11 |     3.64 |    1.96 |    5.51 | 20-390            
+  watcher_handler.js                   |    4.69 |     5.14 |    3.33 |    4.96 | 14-238            
+  watcher_locker.js                    |   12.12 |       24 |    5.88 |   12.12 | 14-120            
+  watcher_locks_resolver.js            |   14.28 |        0 |       0 |   14.28 | 13-39             
+  watcher_poller.js                    |    8.21 |     9.09 |   11.11 |    8.45 | 13-107            
+  watcher_stats.js                     |   14.28 |      100 |       0 |   14.28 | 9-27              
+ server/libs/watcher/aborter           |   42.85 |        0 |      20 |   44.11 |                   
+  controller.js                        |   77.77 |      100 |   33.33 |   77.77 | 8,12              
+  signal.js                            |   30.76 |        0 |   14.28 |      32 | ...20,23-27,31-34 
+ server/libs/watcher/atomically        |     100 |       50 |       0 |     100 |                   
+  consts.js                            |     100 |       50 |       0 |     100 | 21                
+ server/libs/watcher/atomically/utils  |      33 |        5 |   14.81 |   34.69 |                   
+  attemptify.js                        |   69.23 |      100 |      50 |   69.23 | 11,17-21          
+  fs.js                                |     100 |      100 |     100 |     100 |                   
+  fs_handlers.js                       |   23.52 |        0 |       0 |   23.52 | 8-24              
+  retryify.js                          |   28.12 |        0 |   18.18 |   31.03 | 9-22,31-40        
+  retryify_queue.js                    |   12.12 |        0 |       0 |    12.9 | 13-53             
+ server/libs/watcher/ripstat           |   47.05 |        0 |       0 |   47.05 |                   
+  consts.js                            |     100 |      100 |     100 |     100 |                   
+  index.js                             |   41.66 |        0 |       0 |   41.66 | 14-35             
+  stats.js                             |   18.51 |        0 |       0 |   18.51 | 12-51             
+ server/libs/which                     |   14.08 |     5.47 |       0 |   15.38 |                   
+  index.js                             |   14.08 |     5.47 |       0 |   15.38 | ...2,39-72,75-102 
+ server/libs/xml                       |    4.89 |        0 |       0 |    5.22 |                   
+  escapeForXML.js                      |      50 |        0 |       0 |      50 | 10-12             
+  index.js                             |    3.59 |        0 |       0 |    3.84 | 9-228             
+ server/managers                       |   33.16 |    22.68 |   30.96 |   33.39 |                   
+  ApiCacheManager.js                   |   73.97 |    51.61 |   61.53 |   77.14 | ...40,61-70,80-81 
+  BinaryManager.js                     |   54.32 |     51.2 |      50 |   53.36 | ...30,333,354-373 
+  CacheManager.js                      |   14.95 |      4.1 |   15.78 |   14.95 | ...5-80,86,91-168 
+  CoverManager.js                      |    6.66 |        0 |       5 |    6.79 | 15-308            
+  CoverSearchManager.js                |    6.89 |        0 |    6.25 |    7.01 | 32-229            
+  MigrationManager.js                  |   89.24 |    77.96 |     100 |   89.17 | ...00,235,281,293 
+  NotificationManager.js               |     8.6 |        0 |    5.88 |    8.69 | 13-213            
+  RssFeedManager.js                    |    9.84 |     1.51 |      15 |    9.92 | ...27,343,356-364 
+  ShareManager.js                      |    9.52 |        0 |    4.54 |   10.52 | 21-171            
+  TaskManager.js                       |      20 |        0 |   14.28 |   22.22 | 21-63             
+ server/migrations                     |   95.16 |    78.87 |    98.5 |   95.07 |                   
+  v2.15.0-series-column-unique.js      |   91.42 |       50 |     100 |   91.17 | 26-28             
+  v2.17.3-fk-constraints.js            |   91.11 |    92.59 |      90 |   91.01 | ...03-107,218,223 
+  ...bfolder-for-oidc-redirect-uris.js |     100 |      100 |     100 |     100 |                   
+  ...7.5-remove-host-from-feed-urls.js |     100 |      100 |     100 |     100 |                   
+  v2.17.6-share-add-isdownloadable.js  |   83.33 |       50 |     100 |   83.33 | 33-37,57-61       
+  ....1-copy-title-to-library-items.js |   93.44 |     37.5 |     100 |   93.22 | 72-76,102         
+  v2.19.4-improve-podcast-queries.js   |     100 |      100 |     100 |     100 |                   
+  ....0-improve-author-sort-queries.js |   99.03 |    91.66 |     100 |      99 | 210               
+ server/models                         |   28.49 |    11.08 |   26.31 |   29.15 |                   
+  ApiKey.js                            |   16.25 |        0 |   11.11 |   16.45 | ...43-181,223-232 
+  Author.js                            |   53.65 |        0 |      50 |   53.65 | 32-34,53-118,188  
+  Book.js                              |   61.34 |    41.22 |   61.11 |   62.38 | ...93,616,619,622 
+  BookAuthor.js                        |   75.86 |       25 |      80 |   75.86 | 45-60             
+  BookSeries.js                        |     100 |    33.33 |     100 |     100 | 17-21             
+  Collection.js                        |    8.69 |        0 |    7.14 |    8.69 | 5-140,173-257     
+  CollectionBook.js                    |    62.5 |      100 |      50 |    62.5 | 5-15              
+  CustomMetadataProvider.js            |   13.04 |        0 |   14.28 |   13.63 | 12-57,81-88       
+  Device.js                            |   13.72 |        0 |    12.5 |   13.72 | 6-69,110-144      
+  Feed.js                              |    9.32 |      2.7 |     5.4 |    9.86 | ...15,394,396-601 
+  FeedEpisode.js                       |   10.78 |        0 |    5.55 |   11.34 | 10-228,266-308    
+  Library.js                           |   45.23 |        0 |   17.64 |    47.5 | ...09-136,167-191 
+  LibraryFolder.js                     |    92.3 |      100 |   66.66 |    92.3 | 43                
+  LibraryItem.js                       |      30 |    15.09 |   26.31 |   31.38 | ...32-908,915,948 
+  MediaItemShare.js                    |   22.44 |        0 |   16.66 |   22.44 | 32-99,144-161     
+  MediaProgress.js                     |   17.59 |     2.73 |      30 |   17.59 | ...20,129,137-247 
+  PlaybackSession.js                   |   21.91 |        0 |    8.33 |   22.22 | 6-158,215-232     
+  Playlist.js                          |   16.66 |     5.76 |      15 |   17.39 | ...69-195,224-351 
+  PlaylistMediaItem.js                 |   36.84 |    14.28 |      50 |   36.84 | 5-26,67,69,71-83  
+  Podcast.js                           |   27.84 |     5.51 |      25 |   29.09 | ...87-399,436,439 
+  PodcastEpisode.js                    |    72.3 |    33.33 |   61.53 |    74.6 | ...55-161,179,183 
+  Series.js                            |   56.66 |        0 |   33.33 |   56.66 | 41-72,133-167     
+  Session.js                           |   28.57 |      100 |      25 |   28.57 | 5-44              
+  Setting.js                           |   28.57 |      100 |    12.5 |   35.29 | 8-31              
+  User.js                              |   14.44 |    10.24 |   16.88 |   14.82 | ...42-954,961-962 
+ server/objects                        |   13.06 |      3.5 |    9.75 |   12.85 |                   
+  DeviceInfo.js                        |     4.7 |        0 |       0 |    4.76 | 8-137             
+  Notification.js                      |    2.89 |        0 |       0 |    2.89 | 5-114             
+  PlaybackSession.js                   |    4.23 |        0 |       0 |    4.23 | 8-224             
+  Task.js                              |    4.25 |        0 |       0 |    4.25 | 12-120            
+  TrackProgressMonitor.js              |     100 |      100 |     100 |     100 |                   
+ server/objects/files                  |   14.59 |     4.76 |      16 |   14.83 |                   
+  AudioFile.js                         |    3.53 |        0 |       0 |    3.63 | 7-182             
+  EBookFile.js                         |    7.14 |        0 |       0 |    7.14 | 5-49              
+  LibraryFile.js                       |   47.72 |       25 |   44.44 |   47.72 | 35,39,42-70       
+ server/objects/metadata               |   12.63 |     0.75 |   17.39 |   12.76 |                   
+  AudioMetaTags.js                     |    0.64 |        0 |       0 |    0.65 | 4-239             
+  FileMetadata.js                      |   65.71 |       20 |      50 |   65.71 | 41,45,49-64       
+ server/objects/settings               |    4.98 |        0 |       0 |    5.14 |                   
+  EmailSettings.js                     |     3.4 |        0 |       0 |    3.52 | 14-167            
+  NotificationSettings.js              |    6.06 |        0 |       0 |    6.77 | 7-102             
+  ServerSettings.js                    |    5.38 |        0 |       0 |    5.38 | 33-338            
+ server/providers                      |   17.58 |    16.52 |   14.51 |   18.81 |                   
+  Audible.js                           |   29.62 |    33.33 |      20 |   32.43 | ...5,63-64,69-151 
+  AudiobookCovers.js                   |   38.88 |     37.5 |   33.33 |   41.17 | 18-33             
+  Audnexus.js                          |   17.28 |       16 |    9.52 |   18.18 | 11-21,45-137      
+  CustomProviderAdapter.js             |   11.62 |     7.69 |   14.28 |   12.04 | 25-156            
+  FantLab.js                           |   11.11 |     7.14 |    8.69 |   12.32 | 37-183            
+  GoogleBooks.js                       |   16.27 |    11.76 |      20 |    17.5 | 12-76             
+  OpenLibrary.js                       |   12.28 |    13.95 |   14.28 |    13.2 | 14-100            
+  iTunes.js                            |   19.04 |    13.33 |    12.5 |      20 | 16-109            
+ server/routers                        |      88 |    21.87 |   66.66 |    88.5 |                   
+  ApiRouter.js                         |      88 |    21.87 |   66.66 |    88.5 | ...18,430,472-526 
+ server/scanner                        |    6.19 |        0 |    3.28 |    6.54 |                   
+  AbsMetadataFileScanner.js            |   13.04 |        0 |   33.33 |   13.04 | 18-76             
+  AudioFileScanner.js                  |    3.78 |        0 |    2.43 |    4.08 | 19-577            
+  BookScanner.js                       |    5.22 |        0 |    1.78 |    5.53 | 59-666,679-988    
+  LibraryItemScanData.js               |     2.9 |        0 |       0 |    3.49 | 14-325            
+  LibraryItemScanner.js                |   19.54 |        0 |   14.28 |   19.76 | 29-199            
+  LibraryScan.js                       |   11.66 |        0 |       0 |   11.66 | 10-125            
+  LibraryScanner.js                    |    5.89 |        0 |    3.57 |    6.08 | 32-575,580-644    
+  MediaProbeData.js                    |    4.54 |        0 |       0 |    4.54 | 5-54              
+  NfoFileScanner.js                    |    12.5 |        0 |      50 |    12.5 | 13-50             
+  OpfFileScanner.js                    |    12.5 |        0 |      50 |    12.5 | 13-45             
+  PodcastScanner.js                    |    6.78 |        0 |       4 |    7.31 | 45-435            
+  ScanLogger.js                        |      12 |        0 |       0 |      12 | 6-51              
+  Scanner.js                           |     4.3 |        0 |    3.44 |    4.47 | 34-509            
+ server/utils                          |   23.39 |    10.81 |   14.86 |   23.39 |                   
+  areEquivalent.js                     |    1.72 |        0 |       0 |    1.85 | 22-136            
+  comicBookExtractors.js               |    7.51 |        0 |       0 |    7.75 | 18-224            
+  constants.js                         |     100 |      100 |     100 |     100 |                   
+  ffmpegHelpers.js                     |   27.82 |    15.74 |   17.07 |   27.94 | ...78-399,415-483 
+  fileUtils.js                         |   32.67 |    30.85 |    20.4 |   31.72 | ...42-465,477-533 
+  globals.js                           |     100 |      100 |     100 |     100 |                   
+  htmlEntities.js                      |     100 |      100 |     100 |     100 |                   
+  htmlSanitizer.js                     |   31.57 |        0 |       0 |   31.57 | 9-21,25-32,36-40  
+  index.js                             |   39.56 |    12.29 |   35.71 |    38.2 | ...92-294,315-330 
+  libraryHelpers.js                    |    5.93 |        0 |       0 |     6.6 | 19-248            
+  longTimeout.js                       |    7.14 |        0 |       0 |    7.14 | 7-30              
+  notifications.js                     |     100 |      100 |     100 |     100 |                   
+  podcastUtils.js                      |     5.2 |        0 |       0 |    5.31 | ...97-400,410-428 
+  prober.js                            |    3.26 |        0 |       0 |    3.42 | 6-305,318-322     
+  profiler.js                          |   16.66 |        0 |       0 |   17.24 | 7-36              
+  rateLimiterFactory.js                |   51.35 |       30 |      40 |   52.77 | ...37-39,44,53-61 
+  requestUtils.js                      |     100 |      100 |     100 |     100 |                   
+  scandir.js                           |   45.31 |    35.71 |   36.84 |   44.35 | ...45-155,174-289 
+  stringifySequelizeQuery.js           |     100 |      100 |     100 |     100 |                   
+  zipHelpers.js                        |   12.96 |        0 |       0 |   12.96 | ...58-106,117-122 
+ server/utils/generators               |    4.16 |        0 |       0 |    4.34 |                   
+  abmetadataGenerator.js               |    4.16 |        0 |       0 |    4.34 | 48-104,115-182    
+ server/utils/migrations               |     3.4 |        0 |       0 |    3.48 |                   
+  dbMigration.js                       |    1.99 |        0 |       0 |    2.05 | ...1513,1521-1598 
+  oldDbFiles.js                        |    11.6 |        0 |       0 |    11.6 | ...58-182,188-193 
+ server/utils/parsers                  |   51.75 |    47.67 |   54.28 |   50.57 |                   
+  parseComicInfoMetadata.js            |    7.14 |        0 |       0 |    7.14 | 10-27             
+  parseComicMetadata.js                |   17.39 |        0 |       0 |   18.18 | 17-29,40-88       
+  parseEbookMetadata.js                |   22.22 |        0 |       0 |   22.22 | 18-26,37-45       
+  parseEpubMetadata.js                 |   10.93 |        0 |       0 |   11.66 | 15-58,68-124      
+  parseFullName.js                     |   52.02 |    45.89 |   83.33 |   50.59 | ...98,302-308,327 
+  parseNameString.js                   |   96.66 |     92.1 |     100 |   96.22 | 32,80             
+  parseNfoMetadata.js                  |   96.96 |       80 |     100 |   96.77 | 87-88             
+  parseOpfMetadata.js                  |   74.81 |    60.83 |      85 |   74.57 | ...90,194,197,242 
+  parseOverdriveMediaMarkers.js        |    5.17 |        0 |       0 |    5.45 | 7-126,129-137     
+  parseSeriesString.js                 |      10 |        0 |       0 |      10 | 13-24             
+  parseUserAgent.js                    |   18.18 |        0 |       0 |   18.18 | 4-21              
+ server/utils/queries                  |    4.87 |        0 |    1.41 |       5 |                   
+  adminStats.js                        |    8.69 |        0 |       0 |    9.09 | 13-192            
+  authorFilters.js                     |      25 |      100 |       0 |      25 | 12-77             
+  libraryFilters.js                    |    3.78 |        0 |       0 |    3.94 | 14-659            
+  libraryItemFilters.js                |    11.9 |        0 |       0 |    11.9 | 13-214            
+  libraryItemsBookFilters.js           |    2.72 |        0 |    2.27 |    2.82 | 17-383,390-1303   
+  libraryItemsPodcastFilters.js        |    4.68 |        0 |    5.88 |    4.68 | 15-104,111-577    
+  seriesFilters.js                     |    4.62 |        0 |       0 |    4.67 | 8-216             
+  userStats.js                         |    8.75 |        0 |       0 |    8.86 | 15-178            
+ test/server/managers/migrations       |   33.33 |      100 |       0 |   33.33 |                   
+  v1.0.0-migration.js                  |   33.33 |      100 |       0 |   33.33 | 3-6               
+  v1.1.0-migration.js                  |   33.33 |      100 |       0 |   33.33 | 3-6               
+  v1.10.0-migration.js                 |   33.33 |      100 |       0 |   33.33 | 3-6               
+  v1.2.0-migration.js                  |   33.33 |      100 |       0 |   33.33 | 3-6               
+ test/server/migrations                |     100 |      100 |     100 |     100 |                   
+  v0.0.1-migration_example.js          |     100 |      100 |     100 |     100 |                   
+---------------------------------------|---------|----------|---------|---------|-------------------

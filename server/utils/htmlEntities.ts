@@ -1,5 +1,5 @@
 
-const entities =  {
+const entities: Record<string, string> =  {
     "&AElig": "Æ",
     "&AElig;": "Æ",
     "&AMP": "&",
@@ -2233,3 +2233,6 @@ const entities =  {
     "&zwnj;": "‌"
 }
 module.exports.entities = entities
+
+const htmlEntitiesExports: { entities: Record<string, string> } = module.exports
+export = htmlEntitiesExports
