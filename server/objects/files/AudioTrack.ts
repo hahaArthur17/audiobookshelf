@@ -1,4 +1,16 @@
+type AudioFile = import('./AudioFile')
+type FileMetadata = import('../metadata/FileMetadata')
+
 class AudioTrack {
+  declare index: number | null
+  declare startOffset: number | null
+  declare duration: number | null
+  declare title: string | null
+  declare contentUrl: string | null
+  declare mimeType: string | null
+  declare codec: string | null
+  declare metadata: FileMetadata | null
+
   constructor() {
     this.index = null
     this.startOffset = null
@@ -23,7 +35,7 @@ class AudioTrack {
     }
   }
 
-  setData(itemId, audioFile, startOffset) {
+  setData(itemId: string, audioFile: AudioFile, startOffset: number): void {
     this.index = audioFile.index
     this.startOffset = startOffset
     this.duration = audioFile.duration
@@ -35,7 +47,7 @@ class AudioTrack {
     this.metadata = audioFile.metadata.clone()
   }
 
-  setFromStream(title, duration, contentUrl) {
+  setFromStream(title: string, duration: number, contentUrl: string): void {
     this.index = 1
     this.startOffset = 0
     this.duration = duration
@@ -44,4 +56,4 @@ class AudioTrack {
     this.mimeType = 'application/vnd.apple.mpegurl'
   }
 }
-module.exports = AudioTrack
+export = AudioTrack
