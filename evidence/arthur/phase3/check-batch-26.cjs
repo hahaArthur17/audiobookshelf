@@ -11,7 +11,8 @@ const item = (id) => ({
 })
 const books = {
   async getFilteredLibraryItems(...args) { calls.push(['book.filtered', args]); return { libraryItems: [item('book')], count: 2 } },
-  async getContinueSeriesLibraryItems(...args) { calls.push(['book.continue', args]); return { libraryItems: [item('series')], count: 1 } }
+  async getContinueSeriesLibraryItems(...args) { calls.push(['book.continue', args]); return { libraryItems: [item('series')], count: 1 } },
+  getLibraryItemsForCollection(collection) { calls.push(['book.collection', collection]); return ['collection-item'] }
 }
 const podcasts = {
   async getFilteredLibraryItems(...args) { calls.push(['podcast.filtered', args]); return { libraryItems: [item('podcast')], count: 3 } },
@@ -45,6 +46,10 @@ async function main() {
     output.progressPodcast = await target.getMediaItemsInProgress({ id: 'lib', isBook: false }, { id: 'u' }, [], 4)
     output.recentBook = await target.getLibraryItemsMostRecentlyAdded({ id: 'lib', isBook: true }, null, ['rssfeed'], 2)
     output.recentPodcast = await target.getLibraryItemsMostRecentlyAdded({ id: 'lib', isBook: false }, null, [], 2)
+    output.continueSeries = await target.getLibraryItemsContinueSeries({ id: 'lib', isBook: true }, null, ['rssfeed'], 2)
+    output.finishedBook = await target.getMediaFinished({ id: 'lib', isBook: true }, null, [], 2)
+    output.finishedPodcast = await target.getMediaFinished({ id: 'lib', isBook: false }, null, [], 2)
+    output.collection = target.getLibraryItemsForCollection({ id: 'collection' })
     output.calls = calls
     process.stdout.write(JSON.stringify(output) + '\n')
   } finally {
