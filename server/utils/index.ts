@@ -3,8 +3,9 @@ const uuid = require('uuid')
 const Logger = require('../Logger')
 const { parseString } = require('xml2js')
 const areEquivalent = require('./areEquivalent')
+const UtilsReceiver: { isObject(value: unknown): boolean; copyValue(value: unknown): unknown } = module.exports
 
-const levenshteinDistance = (str1, str2, caseSensitive = false) => {
+const levenshteinDistance = (str1: string, str2: string, caseSensitive = false): number => {
   str1 = String(str1)
   str2 = String(str2)
   if (!caseSensitive) {
@@ -34,7 +35,7 @@ const levenshteinDistance = (str1, str2, caseSensitive = false) => {
 }
 module.exports.levenshteinDistance = levenshteinDistance
 
-const levenshteinSimilarity = (str1, str2, caseSensitive = false) => {
+const levenshteinSimilarity = (str1: string, str2: string, caseSensitive = false): number => {
   const distance = levenshteinDistance(str1, str2, caseSensitive)
   const maxLength = Math.max(str1.length, str2.length)
   if (maxLength === 0) return 1
@@ -42,15 +43,15 @@ const levenshteinSimilarity = (str1, str2, caseSensitive = false) => {
 }
 module.exports.levenshteinSimilarity = levenshteinSimilarity
 
-module.exports.isObject = (val) => {
+module.exports.isObject = (val: unknown): boolean => {
   return val !== null && typeof val === 'object'
 }
 
-module.exports.comparePaths = (path1, path2) => {
+module.exports.comparePaths = (path1: string, path2: string): boolean => {
   return path1 === path2 || Path.normalize(path1) === Path.normalize(path2)
 }
 
-module.exports.isNullOrNaN = (num) => {
+module.exports.isNullOrNaN = (num: number | null): boolean => {
   return num === null || isNaN(num)
 }
 
@@ -59,14 +60,14 @@ module.exports.isNullOrNaN = (num) => {
  * @param {number} max
  * @returns {number|null}
  */
-module.exports.clampPositiveInt = (value, max) => {
+module.exports.clampPositiveInt = (value: number | null | undefined, max: number): number | null => {
   if (value == null || !Number.isFinite(value) || value <= 0) return null
   return Math.min(Math.floor(value), max)
 }
 
-const xmlToJSON = (xml) => {
-  return new Promise((resolve, reject) => {
-    parseString(xml, (err, results) => {
+const xmlToJSON = (xml: string): Promise<unknown | null> => {
+  return new Promise<unknown | null>((resolve, reject) => {
+    parseString(xml, (err: Error | null, results: unknown) => {
       if (err) {
         Logger.error(`[xmlToJSON] Error`, err)
         resolve(null)
@@ -78,7 +79,7 @@ const xmlToJSON = (xml) => {
 }
 module.exports.xmlToJSON = xmlToJSON
 
-module.exports.getId = (prepend = '') => {
+module.exports.getId = (prepend: string = ''): string => {
   var _id = Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8)
   if (prepend) return prepend + '_' + _id
   return _id
@@ -89,7 +90,7 @@ module.exports.getId = (prepend = '') => {
  * @param {number} seconds
  * @returns {string}
  */
-function elapsedPretty(seconds) {
+function elapsedPretty(seconds: number): string {
   if (seconds > 0 && seconds < 1) {
     return `${Math.floor(seconds * 1000)} ms`
   }
@@ -120,7 +121,7 @@ function elapsedPretty(seconds) {
 }
 module.exports.elapsedPretty = elapsedPretty
 
-function secondsToTimestamp(seconds, includeMs = false, alwaysIncludeHours = false) {
+function secondsToTimestamp(seconds: number, includeMs = false, alwaysIncludeHours = false): string {
   var _seconds = seconds
   var _minutes = Math.floor(seconds / 60)
   _seconds -= _minutes * 60
@@ -141,36 +142,36 @@ function secondsToTimestamp(seconds, includeMs = false, alwaysIncludeHours = fal
 }
 module.exports.secondsToTimestamp = secondsToTimestamp
 
-module.exports.reqSupportsWebp = (req) => {
+module.exports.reqSupportsWebp = (req: { headers?: { accept?: string } } | null): boolean => {
   if (!req || !req.headers || !req.headers.accept) return false
   return req.headers.accept.includes('image/webp') || req.headers.accept === '*/*'
 }
 
 module.exports.areEquivalent = areEquivalent
 
-module.exports.copyValue = (val) => {
+module.exports.copyValue = (val: unknown): unknown => {
   if (val === undefined || val === '') return null
   else if (!val) return val
 
-  if (!this.isObject(val)) return val
+  if (!UtilsReceiver.isObject(val)) return val
 
   if (Array.isArray(val)) {
-    return val.map(this.copyValue)
+    return val.map(UtilsReceiver.copyValue)
   } else {
-    var final = {}
-    for (const key in val) {
-      final[key] = this.copyValue(val[key])
+    var final: Record<string, unknown> = {}
+    for (const key in val as object) {
+      final[key] = UtilsReceiver.copyValue((val as Record<string, unknown>)[key])
     }
     return final
   }
 }
 
-module.exports.toNumber = (val, fallback = 0) => {
-  if (isNaN(val) || val === null) return fallback
+module.exports.toNumber = (val: number | string | null, fallback = 0): number => {
+  if ((isNaN as (value: unknown) => boolean)(val) || val === null) return fallback
   return Number(val)
 }
 
-module.exports.cleanStringForSearch = (str) => {
+module.exports.cleanStringForSearch = (str: string | null): string => {
   if (!str) return ''
   // Remove ' . ` " ,
   return str
@@ -179,9 +180,9 @@ module.exports.cleanStringForSearch = (str) => {
     .trim()
 }
 
-const getTitleParts = (title) => {
+const getTitleParts = (title: string): [string, string | null] => {
   if (!title) return ['', null]
-  const prefixesToIgnore = global.ServerSettings.sortingPrefixes || []
+  const prefixesToIgnore = (global as typeof global & { ServerSettings: { sortingPrefixes?: string[] } }).ServerSettings.sortingPrefixes || []
   for (const prefix of prefixesToIgnore) {
     // e.g. for prefix "the". If title is "The Book" return "Book, The"
     if (title.toLowerCase().startsWith(`${prefix} `)) {
@@ -197,7 +198,7 @@ const getTitleParts = (title) => {
  * @param {string} title
  * @returns {string}
  */
-module.exports.getTitleIgnorePrefix = (title) => {
+module.exports.getTitleIgnorePrefix = (title: string): string => {
   return getTitleParts(title)[0]
 }
 
@@ -207,7 +208,7 @@ module.exports.getTitleIgnorePrefix = (title) => {
  * @param {string} title
  * @returns {string}
  */
-module.exports.getTitlePrefixAtEnd = (title) => {
+module.exports.getTitlePrefixAtEnd = (title: string): string => {
   let [sort, prefix] = getTitleParts(title)
   return prefix ? `${sort}, ${prefix}` : title
 }
@@ -219,7 +220,7 @@ module.exports.getTitlePrefixAtEnd = (title) => {
  * @param {string} str
  * @returns {string}
  */
-module.exports.escapeRegExp = (str) => {
+module.exports.escapeRegExp = (str: unknown): string => {
   if (typeof str !== 'string') return ''
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
@@ -230,7 +231,7 @@ module.exports.escapeRegExp = (str) => {
  * @param {string} rawUrl
  * @returns {string} null if invalid
  */
-module.exports.validateUrl = (rawUrl) => {
+module.exports.validateUrl = (rawUrl: unknown): string | null => {
   if (!rawUrl || typeof rawUrl !== 'string') return null
   try {
     return new URL(rawUrl).toString()
@@ -246,7 +247,7 @@ module.exports.validateUrl = (rawUrl) => {
  * @param {string} str
  * @returns {boolean}
  */
-module.exports.isUUID = (str) => {
+module.exports.isUUID = (str: unknown): boolean => {
   if (!str || typeof str !== 'string') return false
   return uuid.validate(str)
 }
@@ -257,7 +258,7 @@ module.exports.isUUID = (str) => {
  * @param {string} str
  * @returns {boolean}
  */
-module.exports.isValidASIN = (str) => {
+module.exports.isValidASIN = (str: unknown): boolean => {
   if (!str || typeof str !== 'string') return false
   return /^[A-Z0-9]{10}$/.test(str)
 }
@@ -271,7 +272,7 @@ module.exports.isValidASIN = (str) => {
  * @param {string} timestamp
  * @returns {number}
  */
-module.exports.timestampToSeconds = (timestamp) => {
+module.exports.timestampToSeconds = (timestamp: unknown): number | null => {
   if (typeof timestamp !== 'string') {
     return null
   }
@@ -289,7 +290,9 @@ module.exports.timestampToSeconds = (timestamp) => {
 }
 
 class ValidationError extends Error {
-  constructor(paramName, message, status = 400) {
+  declare paramName: string
+  declare status: number
+  constructor(paramName: string, message: string, status = 400) {
     super(`Query parameter "${paramName}" ${message}`)
     this.name = 'ValidationError'
     this.paramName = paramName
@@ -299,7 +302,8 @@ class ValidationError extends Error {
 module.exports.ValidationError = ValidationError
 
 class NotFoundError extends Error {
-  constructor(message, status = 404) {
+  declare status: number
+  constructor(message: string, status = 404) {
     super(message)
     this.name = 'NotFoundError'
     this.status = status
@@ -323,7 +327,7 @@ module.exports.NotFoundError = NotFoundError
  * @throws {ValidationError} If value is too long
  * @throws {ValidationError} If value is required but not provided
  */
-module.exports.getQueryParamAsString = (query, paramName, defaultValue = '', required = false, maxLength = 1000) => {
+module.exports.getQueryParamAsString = (query: Record<string, unknown>, paramName: string, defaultValue = '', required = false, maxLength = 1000): string => {
   const value = query[paramName]
   if (value === undefined || value === null) {
     if (required) {
@@ -341,3 +345,5 @@ module.exports.getQueryParamAsString = (query, paramName, defaultValue = '', req
   }
   return String(value)
 }
+
+export = module.exports
