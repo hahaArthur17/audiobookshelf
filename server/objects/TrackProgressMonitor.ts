@@ -1,4 +1,21 @@
+type TrackStartedCallback = (trackIndex: number) => void
+type ProgressCallback = (trackIndex: number, progressInTrack: number, totalProgress: number) => void
+type TrackFinishedCallback = (trackIndex: number) => void
+
 class TrackProgressMonitor {
+  declare trackDurations: number[]
+  declare totalDuration: number
+  declare trackStartedCallback: TrackStartedCallback
+  declare progressCallback: ProgressCallback
+  declare trackFinishedCallback: TrackFinishedCallback
+  declare currentTrackIndex: number
+  declare cummulativeProgress: number
+  declare currentTrackPercentage: number
+  declare numTracks: number
+  declare allTracksFinished: boolean
+  /** Total progress (in percent) beyond the start of the current track. Not set by the constructor: undefined until the first update(). */
+  declare currentTrackProgress?: number
+
   /**
    * @callback TrackStartedCallback
    * @param {number} trackIndex - The index of the track that started.
@@ -24,7 +41,7 @@ class TrackProgressMonitor {
    * @param {ProgressCallback} progressCallback - The callback to call when progress is updated.
    * @param {TrackFinishedCallback} trackFinishedCallback - The callback to call when a track finishes.
    */
-  constructor(trackDurations, trackStartedCallback, progressCallback, trackFinishedCallback) {
+  constructor(trackDurations: number[], trackStartedCallback: TrackStartedCallback, progressCallback: ProgressCallback, trackFinishedCallback: TrackFinishedCallback) {
     this.trackDurations = trackDurations
     this.totalDuration = trackDurations.reduce((total, duration) => total + duration, 0)
     this.trackStartedCallback = trackStartedCallback
@@ -38,12 +55,12 @@ class TrackProgressMonitor {
     this.#moveToNextTrack()
   }
 
-  #outsideCurrentTrack(progress) {
+  #outsideCurrentTrack(progress: number): boolean {
     this.currentTrackProgress = progress - this.cummulativeProgress
     return this.currentTrackProgress >= this.currentTrackPercentage
   }
 
-  #moveToNextTrack() {
+  #moveToNextTrack(): void {
     if (this.currentTrackIndex >= 0) this.#trackFinished()
     this.currentTrackIndex++
     this.cummulativeProgress += this.currentTrackPercentage
@@ -55,16 +72,17 @@ class TrackProgressMonitor {
     this.#trackStarted()
   }
 
-  #trackStarted() {
+  #trackStarted(): void {
     this.trackStartedCallback(this.currentTrackIndex)
   }
 
-  #progressUpdated(totalProgress) {
-    const progressInTrack = (this.currentTrackProgress / this.currentTrackPercentage) * 100
+  // Only reached from update(), which has always run #outsideCurrentTrack() first, so currentTrackProgress is set
+  #progressUpdated(totalProgress: number): void {
+    const progressInTrack = (this.currentTrackProgress! / this.currentTrackPercentage) * 100
     this.progressCallback(this.currentTrackIndex, progressInTrack, totalProgress)
   }
 
-  #trackFinished() {
+  #trackFinished(): void {
     this.trackFinishedCallback(this.currentTrackIndex)
   }
 
@@ -72,7 +90,7 @@ class TrackProgressMonitor {
    * Updates the track progress based on the total progress.
    * @param {number} totalProgress - The total progress in percent.
    */
-  update(totalProgress) {
+  update(totalProgress: number): void {
     while (this.#outsideCurrentTrack(totalProgress) && !this.allTracksFinished) this.#moveToNextTrack()
     if (!this.allTracksFinished) this.#progressUpdated(totalProgress)
   }
@@ -81,8 +99,8 @@ class TrackProgressMonitor {
    * Finish the track progress monitoring.
    * Forces all remaining tracks to finish.
    */
-  finish() {
+  finish(): void {
     this.update(101)
   }
 }
-module.exports = TrackProgressMonitor
+export = TrackProgressMonitor
