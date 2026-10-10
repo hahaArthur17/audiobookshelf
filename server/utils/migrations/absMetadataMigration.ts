@@ -4,13 +4,36 @@ const fsExtra = require('../../libs/fsExtra')
 const fileUtils = require('../fileUtils')
 const LibraryFile = require('../../objects/files/LibraryFile')
 
+interface MigrationLibraryFile {
+  metadata: { path: string, size: unknown }
+}
+
+interface MigrationLibraryItem {
+  id: string
+  isFile: boolean
+  path: string
+  media: { getAbsMetadataJson(): unknown }
+  libraryFiles: MigrationLibraryFile[]
+  mtime?: number
+  ctime?: number
+  size?: number
+  changed(field: string, value: boolean): void
+  save(): Promise<unknown>
+}
+
+interface MigrationDatabase {
+  libraryItemModel: {
+    getLibraryItemsIncrement(offset: number, limit: number, where: { isMissing: boolean }): Promise<MigrationLibraryItem[]>
+  }
+}
+
 /**
  * 
  * @param {import('../../models/LibraryItem')} libraryItem 
  * @returns {Promise<boolean>} false if failed
  */
-async function writeMetadataFileForItem(libraryItem) {
-  const storeMetadataWithItem = global.ServerSettings.storeMetadataWithItem && !libraryItem.isFile
+async function writeMetadataFileForItem(libraryItem: MigrationLibraryItem): Promise<boolean | null> {
+  const storeMetadataWithItem = (global as typeof global & { ServerSettings: { storeMetadataWithItem: boolean } }).ServerSettings.storeMetadataWithItem && !libraryItem.isFile
   const metadataPath = storeMetadataWithItem ? libraryItem.path : Path.join(global.MetadataPath, 'items', libraryItem.id)
   const metadataFilepath = fileUtils.filePathToPOSIX(Path.join(metadataPath, 'metadata.json'))
   if ((await fsExtra.pathExists(metadataFilepath))) {
@@ -27,8 +50,8 @@ async function writeMetadataFileForItem(libraryItem) {
   const metadataJson = libraryItem.media.getAbsMetadataJson()
 
   // Save to file
-  const success = await fsExtra.writeFile(metadataFilepath, JSON.stringify(metadataJson, null, 2)).then(() => true).catch((error) => {
-    Logger.error(`[absMetadataMigration] failed to save metadata file at "${metadataFilepath}"`, error.message || error)
+  const success = await fsExtra.writeFile(metadataFilepath, JSON.stringify(metadataJson, null, 2)).then(() => true).catch((error: unknown) => {
+    Logger.error(`[absMetadataMigration] failed to save metadata file at "${metadataFilepath}"`, (error as { message?: unknown }).message || error)
     return false
   })
 
@@ -49,13 +72,13 @@ async function writeMetadataFileForItem(libraryItem) {
     libraryItem.mtime = libraryItemDirTimestamps.mtimeMs
     libraryItem.ctime = libraryItemDirTimestamps.ctimeMs
     let size = 0
-    libraryItem.libraryFiles.forEach((lf) => size += (!isNaN(lf.metadata.size) ? Number(lf.metadata.size) : 0))
+    libraryItem.libraryFiles.forEach((lf) => size += (!isNaN(lf.metadata.size as number) ? Number(lf.metadata.size) : 0))
     libraryItem.size = size
   }
 
   libraryItem.changed('libraryFiles', true)
-  return libraryItem.save().then(() => true).catch((error) => {
-    Logger.error(`[absMetadataMigration] failed to save libraryItem "${libraryItem.id}"`, error.message || error)
+  return libraryItem.save().then(() => true).catch((error: unknown) => {
+    Logger.error(`[absMetadataMigration] failed to save libraryItem "${libraryItem.id}"`, (error as { message?: unknown }).message || error)
     return false
   })
 }
@@ -66,7 +89,7 @@ async function writeMetadataFileForItem(libraryItem) {
  * @param {number} [offset=0]
  * @param {number} [totalCreated=0]
  */
-async function runMigration(Database, offset = 0, totalCreated = 0) {
+async function runMigration(Database: MigrationDatabase, offset = 0, totalCreated = 0): Promise<number> {
   const libraryItems = await Database.libraryItemModel.getLibraryItemsIncrement(offset, 500, { isMissing: false })
   if (!libraryItems.length) return totalCreated
 
@@ -86,8 +109,10 @@ async function runMigration(Database, offset = 0, totalCreated = 0) {
  * 
  * @param {import('../../Database')} Database 
  */
-module.exports.migrate = async (Database) => {
+module.exports.migrate = async (Database: MigrationDatabase): Promise<void> => {
   Logger.info(`[absMetadataMigration] Starting metadata.json migration`)
   const totalCreated = await runMigration(Database)
   Logger.info(`[absMetadataMigration] Finished metadata.json migration (${totalCreated} files created)`)
 }
+
+export = module.exports

@@ -1,0 +1,7 @@
+# Batch 15 contract: ABS metadata file migration
+
+Target: `server/utils/migrations/absMetadataMigration.js` only. Main Agent owns implementation and acceptance. This contract is frozen before code changes.
+
+- Keep the single direct CommonJS `migrate` async arrow export and module require order. The migration fetches library items in 500-item pages, counts only truthy file-creation results, recurses with the original offset and logs start/finish with the count. It propagates unhandled fetch/metadata/path errors as before.
+- Preserve `storeMetadataWithItem` selection, path construction/POSIX conversion, existing-file short circuit, directory creation, `metadata.json` content/format, write error logging and boolean result. When stored beside the item, preserve duplicate library-file filtering, new `LibraryFile` creation, timestamp/size mutation, `changed('libraryFiles', true)`, `save()` and save-error handling. Avoid extra guards or changes to mutation order.
+- Do not access real project/user metadata or database in the behavior fixture: stub file I/O, model and logger. Compare Phase 2 and candidate results for empty page, existing metadata, external metadata creation, adjacent metadata creation, write failure, save failure and pagination. Review emitted JS; fresh strict build and all 356 original tests are required before acceptance. No edits to other source files, tests, config or lockfiles.
