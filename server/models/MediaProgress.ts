@@ -176,7 +176,7 @@ class MediaProgress extends Model {
     })
 
     // update the potentially cached user after destroying the media progress
-    MediaProgress.addHook('afterDestroy', (instance) => {
+    MediaProgress.addHook('afterDestroy', (instance: MediaProgress) => {
       (user as typeof user & typeof import('./User')).mediaProgressRemoved(instance) // the registry types its entries as plain models; mediaProgressRemoved() is User's own static
     })
 

@@ -1,52 +1,183 @@
-const uuidv4 = require('uuid').v4
-const sequelize = require('sequelize')
-const { LRUCache } = require('lru-cache')
+/// <reference path="../types/untypedModules.d.ts" />
+import uuid = require('uuid')
+const uuidv4 = uuid.v4
+import sequelize = require('sequelize')
+import type { BuildOptions, CreationAttributes, InstanceDestroyOptions, InstanceUpdateOptions, ModelStatic, SaveOptions, Sequelize } from 'sequelize'
+import lruCache = require('lru-cache')
+const { LRUCache } = lruCache
 
-const Logger = require('../Logger')
-const SocketAuthority = require('../SocketAuthority')
-const { isNullOrNaN } = require('../utils')
-const TokenManager = require('../auth/TokenManager')
+import Logger = require('../Logger')
+import SocketAuthority = require('../SocketAuthority')
+import utils = require('../utils')
+const { isNullOrNaN }: { isNullOrNaN: (num: unknown) => boolean } = utils
+import TokenManager = require('../auth/TokenManager')
+
+declare const global: typeof globalThis & { ServerSettings: { authOpenIDMatchExistingBy: string | null } }
+
+type MediaProgress = import('./MediaProgress')
+type Book = import('./Book')
+type PodcastEpisode = import('./PodcastEpisode')
+type LibraryItem = import('./LibraryItem')
+type OldPlaybackSession = import('../objects/PlaybackSession')
+
+/** Registry entries this file reads by name. podcastEpisode and libraryItem are written as ModelStatic of the row that the one query on each loads in createUpdateMediaProgressFromPayload(): the row with the media progress of this user included */
+type RegisteredModels = {
+  mediaProgress: typeof import('./MediaProgress')
+  podcastEpisode: ModelStatic<PodcastEpisode & { mediaProgresses?: MediaProgress[] }>
+  libraryItem: ModelStatic<LibraryItem & { media: Book & { mediaProgresses?: MediaProgress[] } }>
+}
+
+// Type-only: keeps import('./User').ProgressUpdatePayload (read by models/MediaProgress.ts) and .AudioBookmarkObject resolvable after export = User
+declare namespace User {
+  interface AudioBookmarkObject {
+    libraryItemId: string
+    title: string
+    time: number
+    createdAt: number
+  }
+  interface ProgressUpdatePayload {
+    libraryItemId: string
+    episodeId?: string
+    duration?: number
+    progress?: number
+    currentTime?: number
+    isFinished?: boolean
+    hideFromContinueListening?: boolean
+    ebookLocation?: string
+    ebookProgress?: number
+    finishedAt?: string
+    lastUpdate?: number
+    markAsFinishedTimeRemaining?: number
+    markAsFinishedPercentComplete?: number
+    createdAt?: string | number // read by createUpdateMediaProgressFromPayload(); the typedef does not list it
+  }
+}
+type AudioBookmarkObject = User.AudioBookmarkObject
+type ProgressUpdatePayload = User.ProgressUpdatePayload
+
+/** JSON in the permissions column: the keys of getDefaultPermissionsForUserType(). All optional, because updatePermissionsFromExternalJSON() starts from an empty object */
+interface UserPermissions {
+  [key: string]: unknown // updatePermissionsFromExternalJSON() reads and writes a permission by a dynamic key (this.permissions[userPermKey])
+  download?: boolean
+  update?: boolean
+  delete?: boolean
+  upload?: boolean
+  createEreader?: boolean
+  accessAllLibraries?: boolean
+  accessAllTags?: boolean
+  accessExplicitContent?: boolean
+  selectedTagsNotAccessible?: boolean
+  librariesAccessible?: string[]
+  itemTagsSelected?: string[]
+}
+
+/** JSON in the extraData column: the keys this file reads or writes */
+interface UserExtraData {
+  seriesHideFromContinueListening?: string[]
+  authOpenIDSub?: string
+  oldUserId?: string
+}
+
+/** The permissions claim of OpenID, keyed by the names in User.permissionMapping */
+interface AbsPermissions {
+  [key: string]: unknown // updatePermissionsFromExternalJSON() reads every key of the claim by a dynamic key (absPermissions[absKey])
+  allowedLibraries?: string[]
+  allowedTags?: string[]
+}
+
+/** The claims of an OpenID userinfo response that this file reads */
+interface OpenIdUserInfo {
+  sub: string
+  email?: string
+  email_verified?: boolean
+  preferred_username?: string
+  username?: string
+  name?: string
+}
+
+/** Return of toOldJSONForBrowser(). mediaProgress and bookmarks are optional because the minimal form deletes them */
+type OldUserJsonForBrowser = {
+  id: string
+  username: string
+  email: string | null
+  type: string
+  token: string
+  isOldToken: boolean | undefined
+  mediaProgress?: ReturnType<MediaProgress['getOldMediaProgress']>[]
+  seriesHideFromContinueListening: string[]
+  bookmarks?: AudioBookmarkObject[]
+  isActive: boolean
+  isLocked: boolean
+  lastSeen: number | null
+  createdAt: number
+  permissions: UserPermissions
+  librariesAccessible: string[]
+  itemTagsSelected: string[]
+  hasOpenIDLink: boolean
+}
+
+/** The values createUpdateMediaProgressFromPayload() creates a media progress with. finishedAt starts as the string of the payload or null and may then be set to a Date */
+type NewMediaProgressValues = {
+  userId: string
+  mediaItemId: string
+  podcastId: string | null
+  mediaItemType: 'podcastEpisode' | 'book'
+  duration: number
+  currentTime: number
+  isFinished: boolean
+  hideFromContinueListening: boolean
+  ebookLocation: string | null
+  ebookProgress: number
+  finishedAt: Date | string | null
+  createdAt: Date | string | number
+  extraData: { libraryItemId: string; progress: number }
+}
+
+/** What checkCanAccessLibraryItem() reads from a library item. metadata is the old model shape: no model sets it, so for a model instance that half of the explicit test is always false (reported in PO-S07 and not changed) */
+type LibraryItemAccessFields = { libraryId: string; media: { explicit?: boolean; tags: string[]; metadata?: { explicit?: boolean } } }
 
 class UserCache {
+  declare cache: lruCache.LRUCache<string, User>
+
   constructor() {
     this.cache = new LRUCache({ max: 100 })
   }
 
-  getById(id) {
+  getById(id: string) {
     const user = this.cache.get(id)
     return user
   }
 
-  getByEmail(email) {
+  getByEmail(email: string) {
     const user = this.cache.find((u) => u.email === email)
     return user
   }
 
-  getByUsername(username) {
+  getByUsername(username: string) {
     const user = this.cache.find((u) => u.username === username)
     return user
   }
 
-  getByOldId(oldUserId) {
+  getByOldId(oldUserId: string) {
     const user = this.cache.find((u) => u.extraData?.oldUserId === oldUserId)
     return user
   }
 
-  getByOpenIDSub(sub) {
+  getByOpenIDSub(sub: string) {
     const user = this.cache.find((u) => u.extraData?.authOpenIDSub === sub)
     return user
   }
 
-  set(user) {
+  set(user: User) {
     user.fromCache = true
     this.cache.set(user.id, user)
   }
 
-  delete(userId) {
+  delete(userId: string) {
     this.cache.delete(userId)
   }
 
-  maybeInvalidate(user) {
+  maybeInvalidate(user: User) {
     if (!user.fromCache) this.delete(user.id)
   }
 }
@@ -81,7 +212,27 @@ const { DataTypes, Model } = sequelize
  */
 
 class User extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare username: string
+  declare email: string | null // createUserFromOpenIdUserInfo() stores null when the email is not verified; the JSDoc says string
+  declare pash: string | null // createUserFromOpenIdUserInfo() stores null; the JSDoc says string
+  declare type: string
+  declare token: string
+  declare isActive: boolean
+  declare isLocked: boolean
+  declare lastSeen: Date | null // null until the user was seen (toJSONForPublic() reads it with ?.); the JSDoc says Date
+  declare permissions: UserPermissions
+  declare bookmarks: AudioBookmarkObject[]
+  declare extraData: UserExtraData | null // every method that writes it first tests for a missing value; the JSDoc says Object
+  declare createdAt: Date
+  declare updatedAt: Date
+  declare mediaProgresses: MediaProgress[]
+  declare isOldToken?: boolean // not a column: a temporary flag that Auth.js sets (see toOldJSONForBrowser)
+  declare fromCache?: boolean // not a column: set by UserCache.set()
+  declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entries this file reads
+  declare readonly sequelize: Sequelize & { models: RegisteredModels } // the same on the instance
+
+  constructor(values?: CreationAttributes<User>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -123,7 +274,7 @@ class User extends Model {
    * List of expected permission properties from the client
    * Only used for OpenID
    */
-  static permissionMapping = {
+  static permissionMapping: { [absKey: string]: string } = { // index signature: updatePermissionsFromExternalJSON() reads the mapping by a dynamic key (User.permissionMapping[absKey])
     canDownload: 'download',
     canUpload: 'upload',
     canDelete: 'delete',
@@ -146,7 +297,7 @@ class User extends Model {
    */
   static getSampleAbsPermissions() {
     // Start with a template object where all permissions are false for simplicity
-    const samplePermissions = Object.keys(User.permissionMapping).reduce((acc, key) => {
+    const samplePermissions = Object.keys(User.permissionMapping).reduce((acc: { [key: string]: boolean | string[] }, key) => { // index signature: the sample is filled by a dynamic key (acc[key])
       // For array-based permissions, provide a sample array
       if (key === 'allowedLibraries') {
         acc[key] = [`5406ba8a-16e1-451d-96d7-4931b0a0d966`, `918fd848-7c1d-4a02-818a-847435a879ca`]
@@ -166,7 +317,7 @@ class User extends Model {
    * @param {string} type
    * @returns
    */
-  static getDefaultPermissionsForUserType(type) {
+  static getDefaultPermissionsForUserType(type: string) {
     return {
       download: true,
       update: type === 'root' || type === 'admin',
@@ -189,7 +340,7 @@ class User extends Model {
    * @param {import('../Auth')} auth
    * @returns {Promise<User>}
    */
-  static async createRootUser(username, pash, auth) {
+  static async createRootUser(username: string, pash: string, auth: import('../Auth')) {
     const userId = uuidv4()
 
     const token = auth.generateAccessToken({ id: userId, username })
@@ -217,7 +368,7 @@ class User extends Model {
    * @param {Object} userinfo
    * @returns {Promise<User|{error: string}>}
    */
-  static async findUserFromOpenIdUserInfo(userinfo) {
+  static async findUserFromOpenIdUserInfo(userinfo: OpenIdUserInfo) {
     let user = await this.getUserByOpenIDSub(userinfo.sub)
 
     // Matched by sub
@@ -308,7 +459,7 @@ class User extends Model {
    * @param {Object} userinfo
    * @returns {Promise<User>}
    */
-  static async createUserFromOpenIdUserInfo(userinfo) {
+  static async createUserFromOpenIdUserInfo(userinfo: OpenIdUserInfo) {
     const userId = uuidv4()
     // TODO: Ensure username is unique?
     const username = userinfo.preferred_username || userinfo.name || userinfo.sub
@@ -345,7 +496,7 @@ class User extends Model {
    * @param {string} username
    * @returns {Promise<User>}
    */
-  static async getUserByUsername(username) {
+  static async getUserByUsername(username: string) {
     if (!username) return null
 
     const cachedUser = userCache.getByUsername(username)
@@ -366,7 +517,7 @@ class User extends Model {
    * @param {string} email
    * @returns {Promise<User>}
    */
-  static async getUserByEmail(email) {
+  static async getUserByEmail(email: string) {
     if (!email) return null
 
     const cachedUser = userCache.getByEmail(email)
@@ -387,7 +538,7 @@ class User extends Model {
    * @param {string} userId
    * @returns {Promise<User>}
    */
-  static async getUserById(userId) {
+  static async getUserById(userId: string) {
     if (!userId) return null
 
     const cachedUser = userCache.getById(userId)
@@ -409,7 +560,7 @@ class User extends Model {
    * @param {string} userId
    * @returns {Promise<User>}
    */
-  static async getUserByIdOrOldId(userId) {
+  static async getUserByIdOrOldId(userId: string) {
     if (!userId) return null
     const cachedUser = userCache.getById(userId) || userCache.getByOldId(userId)
     if (cachedUser) return cachedUser
@@ -431,7 +582,7 @@ class User extends Model {
    * @param {string} sub
    * @returns {Promise<User>}
    */
-  static async getUserByOpenIDSub(sub) {
+  static async getUserByOpenIDSub(sub: string) {
     if (!sub) return null
 
     const cachedUser = userCache.getByOpenIDSub(sub)
@@ -481,7 +632,7 @@ class User extends Model {
    * @param {string} username
    * @returns {boolean}
    */
-  static async checkUserExistsWithUsername(username) {
+  static async checkUserExistsWithUsername(username: string) {
     const count = await this.count({
       where: {
         username
@@ -490,7 +641,7 @@ class User extends Model {
     return count > 0
   }
 
-  static mediaProgressRemoved(mediaProgress) {
+  static mediaProgressRemoved(mediaProgress: MediaProgress) {
     const cachedUser = userCache.getById(mediaProgress.userId)
     if (cachedUser) {
       Logger.debug(`[User] mediaProgressRemoved: ${mediaProgress.id} from user ${cachedUser.id}`)
@@ -498,11 +649,13 @@ class User extends Model {
     }
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -532,7 +685,7 @@ class User extends Model {
         sequelize,
         modelName: 'user',
         hooks: {
-          beforeDestroy(user) {
+          beforeDestroy(user: User) {
             if (user.type === 'root') {
               throw new Error('Root user cannot be deleted')
             }
@@ -581,7 +734,7 @@ class User extends Model {
    * @param {import('../objects/PlaybackSession')[]} sessions
    * @returns
    */
-  toJSONForPublic(sessions) {
+  toJSONForPublic(sessions?: OldPlaybackSession[]) {
     const session = sessions?.find((s) => s.userId === this.id)?.toJSONForClient() || null
     return {
       id: this.id,
@@ -608,7 +761,7 @@ class User extends Model {
     delete permissions.librariesAccessible
     delete permissions.itemTagsSelected
 
-    const json = {
+    const json: OldUserJsonForBrowser = {
       id: this.id,
       username: this.username,
       email: this.email,
@@ -643,7 +796,7 @@ class User extends Model {
    * @param {string} libraryId
    * @returns {boolean}
    */
-  checkCanAccessLibrary(libraryId) {
+  checkCanAccessLibrary(libraryId: string) {
     if (this.permissions?.accessAllLibraries) return true
     if (!this.permissions?.librariesAccessible) return false
     return this.permissions.librariesAccessible.includes(libraryId)
@@ -655,7 +808,7 @@ class User extends Model {
    * @param {string[]} tags
    * @returns {boolean}
    */
-  checkCanAccessLibraryItemWithTags(tags) {
+  checkCanAccessLibraryItemWithTags(tags: string[]) {
     if (this.permissions.accessAllTags) return true
     const itemTagsSelected = this.permissions?.itemTagsSelected || []
     if (this.permissions.selectedTagsNotAccessible) {
@@ -672,7 +825,7 @@ class User extends Model {
    * @param {import('./LibraryItem')} libraryItem
    * @returns {boolean}
    */
-  checkCanAccessLibraryItem(libraryItem) {
+  checkCanAccessLibraryItem(libraryItem: LibraryItemAccessFields) {
     if (!this.checkCanAccessLibrary(libraryItem.libraryId)) return false
 
     const libraryItemExplicit = !!libraryItem.media.explicit || !!libraryItem.media.metadata?.explicit
@@ -688,7 +841,7 @@ class User extends Model {
    * @param {string[]} libraryIds
    * @returns {string|null}
    */
-  getDefaultLibraryId(libraryIds) {
+  getDefaultLibraryId(libraryIds: string[]) {
     // Libraries should already be in ascending display order, find first accessible
     return libraryIds.find((lid) => this.checkCanAccessLibrary(lid)) || null
   }
@@ -700,7 +853,7 @@ class User extends Model {
    * @param {string|null} [episodeId]
    * @returns {import('./MediaProgress')|null}
    */
-  getMediaProgress(mediaItemId) {
+  getMediaProgress(mediaItemId: string) {
     if (!this.mediaProgresses?.length) return null
     return this.mediaProgresses.find((mp) => mp.mediaItemId === mediaItemId)
   }
@@ -713,7 +866,7 @@ class User extends Model {
    * @param {string} [episodeId]
    * @returns
    */
-  getOldMediaProgress(libraryItemId, episodeId = null) {
+  getOldMediaProgress(libraryItemId: string, episodeId: string | null = null) {
     const mediaProgress = this.mediaProgresses?.find((mp) => {
       if (episodeId && mp.mediaItemId !== episodeId) return false
       return mp.extraData?.libraryItemId === libraryItemId
@@ -727,9 +880,9 @@ class User extends Model {
    * @param {ProgressUpdatePayload} progressPayload
    * @returns {Promise<{ mediaProgress: import('./MediaProgress'), error: [string], statusCode: [number] }>}
    */
-  async createUpdateMediaProgressFromPayload(progressPayload) {
+  async createUpdateMediaProgressFromPayload(progressPayload: ProgressUpdatePayload) {
     /** @type {import('./MediaProgress')|null} */
-    let mediaProgress = null
+    let mediaProgress: MediaProgress | null | undefined = null
     let mediaItemId = null
     let podcastId = null
     if (progressPayload.episodeId) {
@@ -744,10 +897,12 @@ class User extends Model {
           {
             model: this.sequelize.models.podcast,
             attributes: ['id', 'title'],
-            include: {
-              model: this.sequelize.models.libraryItem,
-              attributes: ['id']
-            }
+            include: [
+              {
+                model: this.sequelize.models.libraryItem,
+                attributes: ['id']
+              }
+            ]
           }
         ]
       })
@@ -768,11 +923,13 @@ class User extends Model {
           model: this.sequelize.models.book,
           attributes: ['id', 'title'],
           required: false,
-          include: {
-            model: this.sequelize.models.mediaProgress,
-            where: { userId: this.id },
-            required: false
-          }
+          include: [
+            {
+              model: this.sequelize.models.mediaProgress,
+              where: { userId: this.id },
+              required: false
+            }
+          ]
         }
       })
       if (!libraryItem) {
@@ -795,9 +952,10 @@ class User extends Model {
 
     if (mediaProgress) {
       mediaProgress = await mediaProgress.applyProgressUpdate(progressPayload)
-      this.mediaProgresses = this.mediaProgresses.map((mp) => (mp.id === mediaProgress.id ? mediaProgress : mp))
+      const updatedMediaProgress = mediaProgress // the same object under a const: inside the callback below TypeScript forgets that the let is not null
+      this.mediaProgresses = this.mediaProgresses.map((mp) => (mp.id === updatedMediaProgress.id ? updatedMediaProgress : mp))
     } else {
-      const newMediaProgressPayload = {
+      const newMediaProgressPayload: NewMediaProgressValues = {
         userId: this.id,
         mediaItemId,
         podcastId,
@@ -838,7 +996,7 @@ class User extends Model {
    * @param {number} time
    * @returns {AudioBookmarkObject|null}
    */
-  findBookmark(libraryItemId, time) {
+  findBookmark(libraryItemId: string, time: number) {
     return this.bookmarks.find((bm) => bm.libraryItemId === libraryItemId && bm.time == time)
   }
 
@@ -850,7 +1008,7 @@ class User extends Model {
    * @param {string} title
    * @returns {Promise<AudioBookmarkObject>}
    */
-  async createBookmark(libraryItemId, time, title) {
+  async createBookmark(libraryItemId: string, time: number, title: string) {
     const existingBookmark = this.findBookmark(libraryItemId, time)
     if (existingBookmark) {
       Logger.warn('[User] Create Bookmark already exists for this time')
@@ -882,7 +1040,7 @@ class User extends Model {
    * @param {string} title
    * @returns {Promise<AudioBookmarkObject>}
    */
-  async updateBookmark(libraryItemId, time, title) {
+  async updateBookmark(libraryItemId: string, time: number, title: string) {
     const bookmark = this.findBookmark(libraryItemId, time)
     if (!bookmark) {
       Logger.error(`[User] updateBookmark not found`)
@@ -901,7 +1059,7 @@ class User extends Model {
    * @param {number} time
    * @returns {Promise<boolean>} - true if bookmark was removed
    */
-  async removeBookmark(libraryItemId, time) {
+  async removeBookmark(libraryItemId: string, time: number) {
     if (!this.findBookmark(libraryItemId, time)) {
       Logger.error(`[User] removeBookmark not found`)
       return false
@@ -917,7 +1075,7 @@ class User extends Model {
    * @param {string} seriesId
    * @returns {Promise<boolean>}
    */
-  async addSeriesToHideFromContinueListening(seriesId) {
+  async addSeriesToHideFromContinueListening(seriesId: string) {
     if (!this.extraData) this.extraData = {}
     const seriesHideFromContinueListening = this.extraData.seriesHideFromContinueListening || []
     if (seriesHideFromContinueListening.includes(seriesId)) return false
@@ -933,7 +1091,7 @@ class User extends Model {
    * @param {string} seriesId
    * @returns {Promise<boolean>}
    */
-  async removeSeriesFromHideFromContinueListening(seriesId) {
+  async removeSeriesFromHideFromContinueListening(seriesId: string) {
     if (!this.extraData) this.extraData = {}
     let seriesHideFromContinueListening = this.extraData.seriesHideFromContinueListening || []
     if (!seriesHideFromContinueListening.includes(seriesId)) return false
@@ -950,7 +1108,7 @@ class User extends Model {
    * @param {Object} absPermissions JSON containing user permissions
    * @returns {Promise<boolean>} true if updates were made
    */
-  async updatePermissionsFromExternalJSON(absPermissions) {
+  async updatePermissionsFromExternalJSON(absPermissions: AbsPermissions) {
     if (!this.permissions) this.permissions = {}
     let hasUpdates = false
 
@@ -1007,20 +1165,20 @@ class User extends Model {
     return hasUpdates
   }
 
-  async update(values, options) {
+  async update(values: Record<string, unknown>, options?: InstanceUpdateOptions) {
     userCache.maybeInvalidate(this)
     return await super.update(values, options)
   }
 
-  async save(options) {
+  async save(options?: SaveOptions) {
     userCache.maybeInvalidate(this)
     return await super.save(options)
   }
 
-  async destroy(options) {
+  async destroy(options?: InstanceDestroyOptions) {
     userCache.delete(this.id)
     await super.destroy(options)
   }
 }
 
-module.exports = User
+export = User
