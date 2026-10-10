@@ -1,0 +1,58 @@
+PO-S08 post-run checks
+Made by Claude, independent of the agent, on a Linux copy of the repo after the run (2026-10-11, NZDT, from about 07:00 to 11:55).
+The agent's own numbers are in the agent's final report (po-s08-store/agent-final-report.txt). This file only holds what was checked again.
+
+1. Build and tests, one commit at a time
+   Commits: c4c94aa3 (set 1), bcb90db8 (set 2), 0ed63ce5 (set 3), c19fac00 (set 4), d89acaf7 (Misc req.files).
+   For each commit: a clean dist-server, npm run build:server, then npm test. Result for all five: 0 'error TS', 375 passing, 0 failing.
+   (The agent reported the same for the final state.)
+
+2. What changed since the setup commit 04dce8cf
+   14 renames of controllers (.js -> .ts, similarity 61% to 84%) and 1 modified file: server/types/untypedModules.d.ts (3 lines added).
+   15 files changed, 512 insertions, 278 deletions. The /usage line "1532 added, 589 removed" is larger because it also counts the work the agent restored or rejected.
+   Unchanged since the setup commit (git diff --quiet): test/, package.json, package-lock.json, tsconfig.server.json, tsconfig.check.json, server/libs/, CLAUDE.md, client/.
+   .claude/settings.local.json: same sha256 as before the run (prefix 924633a747a9bae0).
+   Note: the agent edited server/types/untypedModules.d.ts. The prompt said "only you edit server/types/", but the CLAUDE.md scope line said no file outside server/controllers/. The two instructions disagreed (my setup mistake); the agent followed the prompt.
+
+3. Compiled output compared with the baseline (the Windows build at the setup commit, po-s08-baseline)
+   14 converted files compared, ignoring require lines and comments: 0 code differences.
+   Comment-only differences: 4 lines that stand on their own line (the agent's explanation comments).
+
+4. Counts in the 14 converted controllers (CacheController excluded), by a second script (comments and imports removed)
+                                    my count   agent's report
+   casts with "as"                    26          26
+     Allowance 1 (as unknown ===)      1           1
+     Allowance 2 ((error as Error))    5           5
+     other (Allowance 3 + rule 5)     20          20 (agent: 5 + 15; I did not re-check this split, it needs a judgement)
+   ! assertions                         3           3
+   index signatures                    10          10
+   this: ApiRouter parameters          21          21
+   this: PublicRouter                   1           1
+   banned tokens (any, @ts-ignore...)   0           0
+   Correction: my first scan, made during the run, counted 21 casts. That number was wrong. The scan removed template literals and so hid the five (error as Error) casts. The 26 above is the corrected figure and equals the agent's.
+
+5. The eight controllers left as JavaScript: the agent's reasons against the saved compiler output
+   The saved error files (po-s08-store/scratchpad) agree with the reasons in the agent's report:
+   - User: 33 lines of errors, mostly TS2339 (12) and TS2322 (10); also TS2345 (Database.getPlaybackSessions where = null), TS2353 (nested include).
+   - Session: compiles only with two silencers (a2-SessionController.with-silencers.ts); without them the unguarded user lookup fails.
+   - Collection and Playlist: unguarded .find() results (TS18048 x16, TS18047 x3 in the Playlist file), plus TS2684 on Database.libraryItemModel statics.
+   - Library: 202 lines, TS2339 x40, TS7053 x21, TS7006 x21, TS2322 x16 (association mixins, limit/page rewritten to numbers by a middleware).
+   - LibraryItem: 178 lines, TS2339 x38, TS18048 x26, TS7006 x20, TS2554 x8.
+   - Podcast: reached 4 errors (TS2339) after fixes; the last blocker is getFileTimestampsWithIno() returning false.
+   - ApiKey: I compiled the agent's rejected file (rejected/ApiKeyController.converted.ts) in a scratch copy of the final commit: npx tsc -p tsconfig.check.json gave 0 errors. The file has 2 casts, both (apiKey as ApiKeyWithGetUser) because the converted model ApiKey.ts does not declare the getUser() mixin. So ApiKey was left out because of the rule (a cast that corrects a converted file's type), not because of compiler errors.
+
+6. Bug log of the sub-agents
+   Entries counted in the five hand-backs: set 1 = 13, set 2 = 17, set 3 = 15, set 4 = 6, set 5 = 12. Total 63, as the agent said.
+   All 63 come from reading the code. None was confirmed by a test and none was fixed (a fix would have broken the "type-only" rule).
+
+7. API smoke test (real server, 59 requests, same script as the earlier main-branch audit)
+   Four runs: baseline (po-s01 commit 50d46876, last commit before the controller work) twice, head d89acaf7 twice; each on a new empty data folder.
+   Every run: 60 steps written, boot log 75 lines, 0 ERROR, 0 FATAL, no step aborted, status codes 57 x 200, 1 x 201, 1 x 404 (the 404 is the expected "unknown author id" step).
+   After masking the run folder name and the port number: head run 1 and head run 2 are identical to baseline run 1 on all 129 lines.
+   Baseline run 2 differs from baseline run 1 in one line (line 101): the series RSS feed lists its two episodes in the other order ("Test Book" first or "Second Book" first). The same unstable line was found in the earlier main-branch audit, so it is not a change from the agent's work.
+   What it covers: 7 of the 14 converted controllers get at least one request (Author, Series, Me, RSSFeed, Share, Misc through PATCH /api/settings and GET /api/tags, Notification through GET /api/notifications). It does not call Backup, CustomMetadataProvider, Email, FileSystem, Search, Stats or Tools; for these the compiled-output comparison in part 3 is the only behaviour evidence. Only normal requests and one error case are tested.
+
+8. Limits of these checks
+   - The 63 bug-log entries and the A3-versus-other split of the casts were not re-checked.
+   - The tests passed before and after, so they say nothing about the converted code that no test reaches.
+   - Part 3 shows the JavaScript that runs is the same; it does not show that the types are right.

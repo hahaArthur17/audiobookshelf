@@ -66,4 +66,63 @@ The spike was done by Claude, who knew the earlier runs and the repo, so its dur
 If the agent asks a question or a permission prompt appears, the user answers in a few words and counts it. The user does not give hints about the code.
 
 ## Results (written after the run)
-(to be filled)
+
+Sources: agent-final-report.txt and terminal-transcript.txt (po-s08-store), usage-start.txt, usage-end.txt, run-log.txt, session-log-analysis.txt, subagent-briefs.txt and post-run-checks.txt (evidence/test-results/PO-S08/), and the session logs (po-session-backup/PO-S08). Times are NZDT, 2026-10-11.
+
+### How the run was operated
+The session was started by the user (fresh session, /model Opus 5.5 with max effort, auto mode on, checks of /plugin and /permissions) and the prompt was pasted at 04:33:06. The 15-minute checkpoints (run-log.txt), the checks after the run and these notes were done with Claude in a separate chat session. That session read the repo through the mounted folder and wrote the checkpoint files into evidence/test-results/PO-S08/ (untracked) during the run; the agent logs show only directory listings of that folder, no reads of those files. Nothing was sent to the agent session.
+
+### What happened
+- 14 of the 22 controllers were converted and committed in five commits (c4c94aa3, bcb90db8, 0ed63ce5, c19fac00, d89acaf7). 8 stayed JavaScript, each restored completely: ApiKey, Session, User, Collection, Playlist, Library, LibraryItem, Podcast. Every controller was attempted; none was "not reached".
+- Time: about 89 minutes (prompt 04:33:06, last command 06:02:39). The wave stop times (05:33 and 06:33) and the cap (07:03) were not reached. The session then stayed idle until 11:44 (end of run /usage).
+- Agents: the main agent and five sub-agents, as the prompt asked (three in wave 1 from 04:35 to 04:36, two in wave 2 at 05:21). Sub-agent time in the logs: set 1 28.9 min, set 2 35.9, set 3 33.7, set 4 29.4, set 5 34.5. The sum is about 162 minutes of agent time inside 89 minutes of wall time.
+- Cost (panel at the end): $53.88, API time 2 h 36 min, 68 requests in the main session, 1532 lines added and 589 removed (this counts the work that was restored). Week limit 64% to 68%. The panel also says that 47% of the usage came from sub-agent-heavy sessions (32% from sub-agents of the general-purpose type) and 83% at more than 150k context. Tokens per agent are in session-log-analysis.txt. The logs hold only about 56% of the weighted tokens of the panel (output 328k of 943.8k, cache read 60.9m of 105.1m). The missing part is probably the auto-mode classifier (315 decisions); this is a hypothesis and cannot be proven from the logs.
+- Human involvement: one paste (2,965 characters). No question was answered, no permission prompt was shown, "Recently denied" was empty. The logs hold 799 permission decisions, all accepted (315 by the classifier). Nobody touched the session between the paste and 11:44. The converted code has not been reviewed by a person yet.
+- The agent's own report was checked: the counts (26 casts, 3 `!`, 10 index signatures, 21 `this: ApiRouter`) and the build and test results are the same in post-run-checks.txt.
+
+### Checks after the run (details in post-run-checks.txt)
+- Each commit alone: 0 'error TS', 375 passing. Nothing changed in test/, package*.json, tsconfig*.json, server/libs, CLAUDE.md, client or .claude/settings.local.json. One file outside server/controllers/ changed: server/types/untypedModules.d.ts (3 lines).
+- Compiled output against the baseline: 0 code differences in the 14 files (require lines and comments ignored).
+- API smoke test on a real server, 59 requests, two runs each of the baseline and the final commit: the final commit is identical to the baseline. One line differs between the two baseline runs (episode order in a series feed) and was already unstable in the earlier audit. Only 7 of the 14 converted controllers get a request.
+- ApiKey, restored by the main agent, compiles with 0 errors when put back (2 casts to a local type that adds the getUser() mixin). It was restored because of the rule, not because of the compiler.
+
+### Predictions against results
+1. 19 to 22 converted: wrong. 14 converted. The three named as likely skips (Library, LibraryItem, Podcast) were skipped, with five more.
+2. Every commit builds and passes 375 tests alone: right (5 of 5).
+3. 80 to 140 minutes, wave 1 within 60: right (about 89 minutes; wave 1 reports at 05:05 to 05:12).
+4. $35 to $80, best guess $55: right ($53.88). Part of the cost is outside the logs (see above).
+5. 60 to 200 `(error as Error)` sites and fewer than 10 `!`: half right. `!` is 3. The `(error as Error)` casts are 5 (the agent used the allowance only where a catch block reads `.message`), and 26 casts in total.
+6. At least 18 files differ only in requires and comments, and 1 to 3 show a code change: half right. All 14 differ only in requires and comments; none shows a code change. The agent made two small edits of its own after the sub-agents' work (parentheses in AuthorController, `req.files` required in MiscController); both are type-only.
+7. At least 10 bugs in the bug log: right (63 entries by reading the code; none run, none fixed, not checked by a person).
+8. Week limit not reached: right (68%).
+
+### Why 8 controllers were left as JavaScript (the agents' reasons, checked against the saved compiler output)
+- Declarations missing in converted models or helpers: ApiKey (the getUser() association mixin is not declared), Library (seven of its nine blockers are associations on converted models, and a middleware turns `limit` and `page` into numbers), LibraryItem (the LibraryItem model is still JavaScript, so Sequelize statics called through Database.libraryItemModel fail with TS2684; also required arguments that are missing, TS2554).
+- A lookup or helper result that can be null or false although the code never checks it: Session (getUserById), Podcast (getFileTimestampsWithIno() can return false), Collection (1 site) and Playlist (4 lookups) with `.find()` results that earlier checks guarantee. Rule 5 allows `!` only for fields that start as null. Collection and Playlist also have other errors.
+- Sequelize typings that reject arguments which work at runtime (`where: null`, a nested `include` given as one object): User.
+Several of these blockers sit in the models and helpers and not in the controller code (ApiKey, Library, Collection, Playlist, LibraryItem). So the earlier runs limit this one.
+
+### Decisions the agent took (from its report and the logs)
+- It read rule 5 strictly (it found the PO-S07 notes in the repo). Because of that ApiKey was restored although it compiled.
+- The main agent ruled at 05:41 that `!` is allowed on an association that is always loaded (`library.libraryFolders` in MiscController), and passed the ruling to sub-agents 4 and 5. A `!` on a guarded `.find()` result had been treated as not allowed by sub-agent 3 (Collection, Playlist) and the main agent did not send those files back. The two decisions are not consistent. The line between them is one of the blockers of Collection and Playlist.
+- It edited server/types/untypedModules.d.ts. The prompt allowed this (only the main agent edits server/types/) and the scope line in CLAUDE.md said "no file outside server/controllers/". The two instructions disagreed.
+- 4 casts of call arguments were accepted (the agent's list of decisions).
+- Sub-agents 2 and 3 each used `sed -i` once, against the brief, on files that were restored later. The deny rules cover the Edit tool and not shell commands, so nothing stopped it. Sub-agent 3 reported it, and said that `sed -i` removed the carriage returns of the file and that it repaired this.
+
+### Failure modes (from the brief's list)
+- Context loss: none seen. The only compaction happened at 06:58, after the run had ended.
+- Hallucinated APIs: none seen in the compiler output. Not checked further.
+- Weakened tests: none (test/ unchanged).
+- Premature completion claims: none found; the report's counts match the checks. The report says the scratchpad evidence is temporary, which is correct (it was copied to po-s08-store).
+- Drift: sub-agents 4 and 5 read rule 5 differently from the brief about `!` on loaded associations (the PO-S05 problem again), and the main agent settled it with two rulings. The `sed -i` use shows that rules in the brief are not enforced.
+
+### Threats to the result
+- The pre-run notes (design, spike findings, decisions, predictions, the name of po-s08-baseline) were in the repo. The prompt did not mention them, but the main agent read the whole file at 04:36:49 (about 3.5 minutes after its first command), sub-agent 2 read lines 25 to 60, and sub-agents 1 and 3 searched it. The main agent then used po-s08-baseline to build its own compiled-output comparison and a per-commit check. The "0 code differences" and "5 of 5 commits pass" results therefore come from a run that had our verification method and our predictions.
+- The job, the guidance and the limits changed together compared with PO-S05, so no result can be credited to one of them. The three allowances and the patterns in CLAUDE.md come from the operator spike done before the run.
+- One run, one model, one repository. The cost is not exact. The smoke test covers half of the converted controllers. The converted code has not been read by a person. The web client and the apps were not run against the converted server.
+
+### Changes for the next run
+- Keep the notes and predictions of a run outside the repo until it has finished (or deny reading them).
+- Deny `sed -i` in the permission rules and fix the scope line in CLAUDE.md so that it agrees with the prompt.
+- Decide the rule 5 question (`!` on guarded lookups and on loaded associations) before any retry of the 8 controllers, and add the gaps the agent listed (nullable lookups, undeclared association mixins, TS2554 on required arguments, Sequelize typing limits) to CLAUDE.md.
+- A few `declare` lines in server/models/ would probably unblock ApiKey, Collection and Library (the agent's estimate; only the ApiKey file was recompiled, with its two casts).
