@@ -95,7 +95,7 @@ class Author extends Model {
     })
 
     const libraryItems = []
-    if (author.books) {
+    if (author?.books) {
       for (const book of author.books) {
         const libraryItem = book.libraryItem
         libraryItem.media = book
