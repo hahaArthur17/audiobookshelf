@@ -1,0 +1,43 @@
+server/utils/globals.ts(1,7): error TS2451: Cannot redeclare block-scoped variable 'globals'.
+server/utils/scandir.ts(3,7): error TS2451: Cannot redeclare block-scoped variable 'globals'.
+server/utils/scandir.ts(19,22): error TS7006: Parameter 'mediaType' implicitly has an 'any' type.
+server/utils/scandir.ts(19,33): error TS7006: Parameter 'ext' implicitly has an 'any' type.
+server/utils/scandir.ts(27,34): error TS7006: Parameter 'ext' implicitly has an 'any' type.
+server/utils/scandir.ts(33,35): error TS7006: Parameter 'filepath' implicitly has an 'any' type.
+server/utils/scandir.ts(48,44): error TS7006: Parameter 'mediaType' implicitly has an 'any' type.
+server/utils/scandir.ts(48,55): error TS7006: Parameter 'fileItems' implicitly has an 'any' type.
+server/utils/scandir.ts(48,66): error TS7006: Parameter 'audiobooksOnly' implicitly has an 'any' type.
+server/utils/scandir.ts(50,43): error TS7006: Parameter 'i' implicitly has an 'any' type.
+server/utils/scandir.ts(57,9): error TS7034: Variable 'mediaFileItems' implicitly has type 'any[]' in some locations where its type cannot be determined.
+server/utils/scandir.ts(59,9): error TS7034: Variable 'otherFileItems' implicitly has type 'any[]' in some locations where its type cannot be determined.
+server/utils/scandir.ts(60,26): error TS7006: Parameter 'item' implicitly has an 'any' type.
+server/utils/scandir.ts(70,3): error TS7005: Variable 'mediaFileItems' implicitly has an 'any[]' type.
+server/utils/scandir.ts(71,57): error TS7006: Parameter 'p' implicitly has an 'any' type.
+server/utils/scandir.ts(77,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+server/utils/scandir.ts(84,13): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+server/utils/scandir.ts(87,11): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+server/utils/scandir.ts(91,11): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+server/utils/scandir.ts(95,11): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+server/utils/scandir.ts(103,3): error TS7005: Variable 'otherFileItems' implicitly has an 'any[]' type.
+server/utils/scandir.ts(112,11): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+server/utils/scandir.ts(115,9): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+server/utils/scandir.ts(130,27): error TS7006: Parameter 'libraryItemPath' implicitly has an 'any' type.
+server/utils/scandir.ts(130,44): error TS7006: Parameter 'files' implicitly has an 'any' type.
+server/utils/scandir.ts(132,22): error TS7006: Parameter 'file' implicitly has an 'any' type.
+server/utils/scandir.ts(149,29): error TS7006: Parameter 'relPath' implicitly has an 'any' type.
+server/utils/scandir.ts(182,22): error TS7006: Parameter 'folder' implicitly has an 'any' type.
+server/utils/scandir.ts(205,22): error TS7006: Parameter 'folder' implicitly has an 'any' type.
+server/utils/scandir.ts(234,27): error TS7006: Parameter 'folder' implicitly has an 'any' type.
+server/utils/scandir.ts(253,22): error TS7006: Parameter 'folder' implicitly has an 'any' type.
+server/utils/scandir.ts(265,18): error TS7006: Parameter 'folder' implicitly has an 'any' type.
+server/utils/scandir.ts(282,32): error TS7006: Parameter 'relPath' implicitly has an 'any' type.
+server/utils/scandir.ts(299,30): error TS7006: Parameter 'libraryMediaType' implicitly has an 'any' type.
+server/utils/scandir.ts(299,48): error TS7006: Parameter 'folderPath' implicitly has an 'any' type.
+server/utils/scandir.ts(299,60): error TS7006: Parameter 'relPath' implicitly has an 'any' type.
+server/utils/scandir.ts(308,58): error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.

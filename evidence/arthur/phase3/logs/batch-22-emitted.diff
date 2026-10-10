@@ -1,0 +1,50 @@
+--- /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2/dist-server/server/utils/scandir.js	2026-10-03 21:34:39
++++ dist-server/server/utils/scandir.js	2026-10-11 09:50:10
+@@ -1,7 +1,7 @@
+ "use strict";
+ const Path = require('path');
+ const { filePathToPOSIX } = require('./fileUtils');
+-const globals = require('./globals');
++const scanGlobals = require('./globals');
+ const LibraryFile = require('../objects/files/LibraryFile');
+ const parseNameString = require('./parsers/parseNameString');
+ /**
+@@ -20,23 +20,23 @@
+         return false;
+     const extclean = ext.slice(1).toLowerCase();
+     if (mediaType === 'podcast')
+-        return globals.SupportedAudioTypes.includes(extclean);
++        return scanGlobals.SupportedAudioTypes.includes(extclean);
+     else if (audiobooksOnly)
+-        return globals.SupportedAudioTypes.includes(extclean);
+-    return globals.SupportedAudioTypes.includes(extclean) || globals.SupportedEbookTypes.includes(extclean);
++        return scanGlobals.SupportedAudioTypes.includes(extclean);
++    return scanGlobals.SupportedAudioTypes.includes(extclean) || scanGlobals.SupportedEbookTypes.includes(extclean);
+ }
+ function isScannableNonMediaFile(ext) {
+     if (!ext)
+         return false;
+     const extclean = ext.slice(1).toLowerCase();
+-    return globals.TextFileTypes.includes(extclean) || globals.MetadataFileTypes.includes(extclean) || globals.SupportedImageTypes.includes(extclean);
++    return scanGlobals.TextFileTypes.includes(extclean) || scanGlobals.MetadataFileTypes.includes(extclean) || scanGlobals.SupportedImageTypes.includes(extclean);
+ }
+ function checkFilepathIsAudioFile(filepath) {
+     const ext = Path.extname(filepath);
+     if (!ext)
+         return false;
+     const extclean = ext.slice(1).toLowerCase();
+-    return globals.SupportedAudioTypes.includes(extclean);
++    return scanGlobals.SupportedAudioTypes.includes(extclean);
+ }
+ module.exports.checkFilepathIsAudioFile = checkFilepathIsAudioFile;
+ /**
+@@ -53,9 +53,7 @@
+     });
+     // Step 2: Separate media files and other files
+     //     - Directories without a media file will not be included (unless includeNonMediaFiles is true)
+-    /** @type {import('./fileUtils').FilePathItem[]} */
+     const mediaFileItems = [];
+-    /** @type {import('./fileUtils').FilePathItem[]} */
+     const otherFileItems = [];
+     itemsFiltered.forEach((item) => {
+         if (isMediaFile(mediaType, item.extension, audiobooksOnly) || (includeNonMediaFiles && isScannableNonMediaFile(item.extension))) {

@@ -1,0 +1,6 @@
+server/utils/scandir.ts(183,36): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string | null'.
+  Type 'undefined' is not assignable to type 'string | null'.
+server/utils/scandir.ts(230,20): error TS18048: 'match.groups' is possibly 'undefined'.
+server/utils/scandir.ts(230,45): error TS18048: 'match.groups' is possibly 'undefined'.
+server/utils/scandir.ts(230,73): error TS18048: 'match.groups' is possibly 'undefined'.
+server/utils/scandir.ts(231,28): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
