@@ -83,3 +83,100 @@ P6. Missing types for uuid (used by Task.js and Notification.js). npm install is
 2. Output style: the user-level setting outputStyle is Explanatory in this run (pre-run-state.txt). The PO-S01 final report contains an "Insight" box, so the same style was active then. It is a constant, not a variable.
 3. The PO-S01 session was not fresh: the run happened in the same Claude session as the pre-run checks. The PO-S01 cost of 4.88 dollars is the run alone (end block minus start block); the session total was 5.28 dollars. PO-S06 starts in a fresh session.
 4. The superpowers plugin is installed but disabled in the user-level settings (enabledPlugins: false). The PO-S01 session log shows no superpowers skill, so the plugin is off in both runs.
+
+## Results (written 2026-10-11, after the run; the predictions above are unchanged)
+
+### Corrections to earlier entries in this file
+- Effort level. All 486 assistant entries in the session log show effort "max". It was set with /model at 23:12:53, for this session only. The section "Corrections made before the run" says xhigh. That was an assumption taken from the settings file, not a measurement. PO-S01's effort level was not recorded, so effort is one more uncontrolled difference between the two runs.
+- Start time. The session log shows that the prompt was sent at 23:22:43. The first "CK -Mark" was run at 23:38:37, about 16 minutes later. A correction was added at the end of run-start.txt and run-log.txt. All times below are counted from 23:22:43.
+
+### What the run was
+- Prompt: 185 words, 14 files named, no guidance file. The text the agent received is the same as evidence/plans/PO-S06-prompt.md (checked in more-facts.txt; the only extra words in the log are the paste tags).
+- Model claude-opus-5-5, effort max, Explanatory output style, superpowers off, permission mode auto.
+- The agent made 165 replies and 261 tool calls. No call was denied, no question was asked, no subagent was used, and no user message was sent during the run.
+- Prompt sent 23:22:43, final message 00:48:03: 85.3 minutes. (The wall time of 1 h 46 min in the usage panel includes the time until the panel was read at about 01:09.)
+- Cost: $21.39 (an API-price estimate; the plan is Claude Max, so nothing was billed). Panel tokens: 307.3k output, 55.2M cache read, 524.4k cache write. The log gives 307,082 output tokens and 54.7M cache-read tokens from the prompt to the final message, within 1% of the panel.
+- Result: 15 commits on the branch po-s06/typescript-migration (14 conversions and 1 refinement, d6b0a3a). The agent created the branch itself. The master branch is still at baseline c8fc528.
+
+### Time and tokens by phase (phase-facts.txt, more-facts.txt)
+| Phase | Minutes | Model time | Tool time | Replies | Output tokens | Thinking tokens |
+|---|---|---|---|---|---|---|
+| A. Orientation (until the first file change, 23:42:27) | 19.7 | 13.7 | 6.0 | 28 | 84,945 | 71,192 |
+| B. Conversion (until the last conversion commit command, 00:14:48) | 32.4 | 19.0 | 13.4 | 89 | 115,116 | 60,769 |
+| C. Checking and report (until the final message) | 33.2 | 18.1 | 15.1 | 48 | 107,021 | 54,437 |
+| Total | 85.3 | 50.8 | 34.5 | 165 | 307,082 | 186,398 |
+
+- Model time is the time spent waiting for the model. Tool time is the time spent in commands (builds, tests, scripts, servers). Both come from the gaps between log entries, so they are approximate. The model time (50.8 min) matches the API time in the usage panel (50 min 9 s).
+- Thinking was 61% of all output tokens. One reply before the first edit held 34,051 thinking tokens and took 5.3 minutes. The ten longest model waits add up to about 14 minutes, so no single wait explains the total.
+- The agent ran 32 build, test or lint commands: 22 test runs (all 356 passing) and 4 builds with type errors (at least 17 errors in total, because the agent printed only the end of each build output). It used those errors to decide its next edit.
+- Phase C (39% of the time, 35% of the output tokens) was checking. By the agent's report it reviewed its own diff, ran the old and new compiled code side by side on 4,705 inputs, planted a change in each of the 14 modules to test its tests, and compared two booted servers over 27 steps. This led to one extra commit (d6b0a3a). These figures are the agent's; we have not re-run them.
+
+### Checks made by us, independent of the agent
+- 14 of 14 files converted. Nothing changed outside the 14 files or the protected paths (post-run-checks.txt).
+- All 16 commit states build with 0 TypeScript errors and pass 356 tests (per-commit-checks.txt). Five clean builds and test runs give the same result and 464 files (clean-build-N.txt, clean-test-N.txt).
+- Compiled output against the baseline build (compiled-diff-14files.txt): 5 of the 14 files compile to identical JavaScript and 9 differ in small ways. The agent named the same 9 files. I read the differences and found them harmless; this is a reading, not a proof.
+- npm run lint exits with code 0 at the last commit (lint-HEAD.txt). This is a weak check, see "Other observations".
+
+### Type-safety counts (counts-PO-S06.txt, counts-PO-S01.txt; the same 11 files in both runs)
+| Marker | PO-S06 | PO-S01 |
+|---|---|---|
+| any, as any, @ts-ignore and similar | 0 | 0 |
+| type assertions (as X) | 14 | 1 |
+| non-null assertions (!) | 4 | 0 |
+| unknown | 11 | 10 |
+| index signatures | 0 | 2 |
+| plain require() left in the file | 1 | 0 |
+| comments of the JavaScript file missing or changed | 3 of 66 | 0 of 66 |
+| lines added / removed against the original | 301 / 89 | 225 / 57 |
+
+- PO-S06 also converted Notification, AudioMetaTags and areEquivalent. For all 14 files: 0 any, 31 type assertions, 5 non-null assertions, 3 of 111 comments missing, 497 lines added and 128 removed.
+- The three missing comments are JSDoc type blocks (Task 2, OpenLibrary 1). The TypeScript types replace them, and the descriptions went with them.
+- PO-S01 added a declaration file for uuid. PO-S06 did not; it keeps a typed require() in Notification and Task, and its report leaves the declaration (uuid and @types/uuid in package.json) as a decision for us.
+
+### Scoring against the predictions above
+- P1: met.
+- P2: missed (0 banned tokens in the 14 files).
+- P3: the behaviour part is met (356 tests pass in all 16 states and the compiled output is equivalent). The bug-report part is partly met. PO-S01 recorded 3 bugs, all in parseFullName. The agent reported 1 of them (the fixCase comparison with the string 'undefined') and not the other 2. It reported 6 further quirks in other files, which PO-S01 did not record. Checked so far: findByISBN has no callers (true), and one call passes null as task data (PodcastManager.js line 536, true; the report names TaskManager, which only forwards the value).
+- P4: not met as written (3 of 111 comments missing, in 2 files).
+- P5: missed on both counts. Cost $21.39 against $5-10. Time 85.3 minutes against 30-55 (the conversion alone, 32.4 minutes, is inside the range).
+- P6: met.
+
+### Differences from PO-S01 that limit the comparison
+- PO-S06 had no guidance file (PO-S01 had CLAUDE.md). The agent used server/finders/ as its style guide.
+- Scope: PO-S06 was given 14 named files. PO-S01 chose its own scope and converted 11, all inside the 14. Per file, PO-S06 cost $1.53 and 6.1 minutes; PO-S01 cost $0.44 and about 3.2 minutes. This is not like for like, because the three extra files include two of the larger ones (AudioMetaTags and Notification).
+- Permission mode: auto in PO-S06; acceptEdits in PO-S01. Both used the same permission file (7 allow and 19 deny rules).
+- Prompt wording: PO-S06 gave the reason and the end state ("the project should build, all the tests should still pass, and the server should behave exactly as before") and asked for a report of what could not be converted or verified.
+- Effort: max in PO-S06, not recorded for PO-S01.
+- Same in both: model Opus 5.5, source commit 9f4ff460, Explanatory output style, superpowers off.
+- Not controlled: the agent had network access and used it (curl to the live Open Library site) and started local servers. The upstream project is public, so the model may know it.
+- Each strategy was run once. Every cause named in this file is a hypothesis.
+
+### Hypotheses for cost and time (not tested; one run)
+1. The prompt wording ("behave exactly as before", "anything you could not verify") invited the long checking phase.
+2. Effort max produced 186k thinking tokens and a 5.3-minute thinking step before the first edit.
+3. Auto mode checks part of the calls with a classifier (130 of 261 calls). Its time cost was not measured.
+4. The limit to 14 files moved workarounds into the files (typed require for uuid, 31 type assertions).
+A repeat run with one setting changed would be needed to separate these.
+
+### Other observations
+- ESLint does not process .ts files (lint-ts-ignored.txt: "File ignored because no matching configuration was supplied"). So npm run lint passing says nothing about the 14 converted files, and the conversion removed them from lint. The agent said this in its report. It belongs in the code-based factors section of the final report.
+- The agent created and used its own branch and left master at baseline. This was not asked for.
+- The agent built its own checking tools: compiled-output comparison, AST comparison with negative controls, differential tests, a planted-change test and a server comparison. They are saved outside Git in po-session-backup\PO-S06-agent-scratchpad.
+- At 01:43:47 the PO-S06 session was compacted (the saved log ends with a 38,399-character summary entry). This was after the run and after the usage panel was read, so it changes no number above.
+
+### Not yet verified by us
+- The agent's differential tests, planted-change test and 27-step server comparison (the scripts are saved; we have not re-run them).
+- The claim that the Open Library ISBN address returns an HTML page (the site did not answer our own test).
+- Five of the seven quirks in the agent's report (all except findByISBN and the null task data).
+
+### Evidence files (evidence/test-results/PO-S06)
+- usage-start.txt, usage-end.txt: the usage panels.
+- run-start.txt, run-log.txt: start records, with the correction.
+- phase-facts.txt, more-facts.txt, session-facts.txt, agent-final-message.txt: analysis of the session log and the agent's report.
+- per-commit-checks.txt, pc-test-*.txt, clean-build-*.txt, clean-test-*.txt: builds and tests.
+- compiled-diff.txt, compiled-diff-14files.txt: compiled output against the baseline.
+- counts-*.txt, escape-hatches-*.txt, line-survival.txt: type-safety markers and size of the rewrite.
+- lint-HEAD.txt, lint-ts-ignored.txt: lint.
+- post-run-checks.txt: scope check.
+- The *.js files are the helper scripts that made these files.
+- The session log and the agent's scratch folder are stored outside Git, in D:\SEM-2\574\Project\po-session-backup.
