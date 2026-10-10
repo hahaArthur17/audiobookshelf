@@ -31,8 +31,8 @@ type RequestUserObject = { user: User }
 type RequestWithUser<Body = unknown> = Request<MiscParams, unknown, Body, MiscQuery> & RequestUserObject
 // An uploaded file as express-fileupload puts it on the request: only the members that handleUpload() uses
 type UploadedFile = { name: string; mv: (path: string) => Promise<void> }
-// files is optional here because handleUpload() itself checks that it is set
-type RequestWithFiles<Body = unknown> = RequestWithUser<Body> & { files?: { [key: string]: UploadedFile } } // index signature: the client chooses the field names, and handleUpload() reads the files with Object.values
+// files is set by the upload middleware, so it is a required property in the handler type; handleUpload() also checks it at runtime
+type RequestWithFiles<Body = unknown> = RequestWithUser<Body> & { files: { [key: string]: UploadedFile } } // index signature: the client chooses the field names, and handleUpload() reads the files with Object.values
 // Body of POST /api/upload. handleUpload() checks at runtime that the values are non-empty strings, and sets author and series to null when they are not
 type UploadBody = { title?: string; author?: string | null; series?: string | null; folder?: string; library?: string }
 type SettingsUpdate = { [key: string]: unknown } // index signature: updateServerSettings() reads req.body and fills filteredUpdate by a dynamic key
