@@ -1,13 +1,19 @@
-const { Request, Response } = require('express')
-const Logger = require('../Logger')
-const BookFinder = require('../finders/BookFinder')
-const PodcastFinder = require('../finders/PodcastFinder')
-const AuthorFinder = require('../finders/AuthorFinder')
-const Database = require('../Database')
-const { isValidASIN, getQueryParamAsString, ValidationError, NotFoundError } = require('../utils')
+import type { Request, Response } from 'express'
+import Logger = require('../Logger')
+import BookFinder = require('../finders/BookFinder')
+import PodcastFinder = require('../finders/PodcastFinder')
+import AuthorFinder = require('../finders/AuthorFinder')
+import Database = require('../Database')
+import utils = require('../utils')
+const { isValidASIN, getQueryParamAsString, ValidationError, NotFoundError } = utils
+
+type User = import('../models/User')
+type CustomMetadataProvider = import('../models/CustomMetadataProvider')
+
+type RequestWithUser = Request & { user: User }
 
 // Provider name mappings for display purposes
-const providerMap = {
+const providerMap: { [key: string]: string } = { // index signature: formatProvider() reads it by a dynamic key
   all: 'All',
   best: 'Best',
   google: 'Google Books',
@@ -44,7 +50,7 @@ class SearchController {
    * @param {string} methodName - Name of the calling method for logging
    * @returns {Promise<import('../models/LibraryItem').LibraryItemExpanded>}
    */
-  static async fetchLibraryItem(id) {
+  static async fetchLibraryItem(id: string) {
     const libraryItem = await Database.libraryItemModel.getExpandedById(id)
     if (!libraryItem) {
       throw new NotFoundError(`library item "${id}" not found`)
@@ -57,7 +63,7 @@ class SearchController {
    * @param {Array} providers - Array of custom provider objects
    * @returns {Array<{value: string, text: string}>}
    */
-  static mapCustomProviders(providers) {
+  static mapCustomProviders(providers: CustomMetadataProvider[]) {
     return providers.map((provider) => ({
       value: provider.getSlug(),
       text: provider.name
@@ -69,7 +75,7 @@ class SearchController {
    * @param {string} providerValue - Provider identifier
    * @returns {{value: string, text: string}}
    */
-  static formatProvider(providerValue) {
+  static formatProvider(providerValue: string) {
     return {
       value: providerValue,
       text: providerMap[providerValue] || providerValue
@@ -82,7 +88,7 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findBooks(req, res) {
+  async findBooks(req: RequestWithUser, res: Response) {
     try {
       const query = req.query
       const provider = getQueryParamAsString(query, 'provider', 'google')
@@ -93,10 +99,10 @@ class SearchController {
       // Fetch library item
       const libraryItem = id ? await SearchController.fetchLibraryItem(id) : null
 
-      const results = await BookFinder.search(libraryItem, provider, title, author)
+      const results = await BookFinder.search(libraryItem as Parameters<typeof BookFinder.search>[0], provider, title, author) // boundary: BookFinder.search takes a weak MatchLibraryItem type; a podcast item's media shares no property with it (TS2345)
       res.json(results)
     } catch (error) {
-      Logger.error(`[SearchController] findBooks: ${error.message}`)
+      Logger.error(`[SearchController] findBooks: ${(error as Error).message}`) // catch variables are unknown; the code reads .message before any instanceof test
       if (error instanceof ValidationError || error instanceof NotFoundError) {
         return res.status(error.status).json({ error: error.message })
       }
@@ -110,10 +116,10 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findCovers(req, res) {
+  async findCovers(req: RequestWithUser, res: Response) {
     try {
       const query = req.query
-      const podcast = query.podcast === '1' || query.podcast === 1
+      const podcast = query.podcast === '1' || (query.podcast as unknown) === 1 // a query value is never the number 1 (TS2367); the comparison is kept as it is, see the bug log
       const title = getQueryParamAsString(query, 'title', '', true)
       const author = getQueryParamAsString(query, 'author', '')
       const provider = getQueryParamAsString(query, 'provider', 'google')
@@ -123,7 +129,7 @@ class SearchController {
       else results = await BookFinder.findCovers(provider, title, author)
       res.json({ results })
     } catch (error) {
-      Logger.error(`[SearchController] findCovers: ${error.message}`)
+      Logger.error(`[SearchController] findCovers: ${(error as Error).message}`)
       if (error instanceof ValidationError) {
         return res.status(error.status).json({ error: error.message })
       }
@@ -138,7 +144,7 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findPodcasts(req, res) {
+  async findPodcasts(req: RequestWithUser, res: Response) {
     try {
       const query = req.query
       const term = getQueryParamAsString(query, 'term', '', true)
@@ -147,7 +153,7 @@ class SearchController {
       const results = await PodcastFinder.search(term, { country })
       res.json(results)
     } catch (error) {
-      Logger.error(`[SearchController] findPodcasts: ${error.message}`)
+      Logger.error(`[SearchController] findPodcasts: ${(error as Error).message}`)
       if (error instanceof ValidationError) {
         return res.status(error.status).json({ error: error.message })
       }
@@ -162,14 +168,14 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findAuthor(req, res) {
+  async findAuthor(req: RequestWithUser, res: Response) {
     try {
       const query = getQueryParamAsString(req.query, 'q', '', true)
 
       const author = await AuthorFinder.findAuthorByName(query)
       res.json(author)
     } catch (error) {
-      Logger.error(`[SearchController] findAuthor: ${error.message}`)
+      Logger.error(`[SearchController] findAuthor: ${(error as Error).message}`)
       if (error instanceof ValidationError) {
         return res.status(error.status).json({ error: error.message })
       }
@@ -183,7 +189,7 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findChapters(req, res) {
+  async findChapters(req: RequestWithUser, res: Response) {
     try {
       const query = req.query
       const asin = getQueryParamAsString(query, 'asin', '', true)
@@ -197,7 +203,7 @@ class SearchController {
       }
       res.json(chapterData)
     } catch (error) {
-      Logger.error(`[SearchController] findChapters: ${error.message}`)
+      Logger.error(`[SearchController] findChapters: ${(error as Error).message}`)
       if (error instanceof ValidationError) {
         if (error.paramName === 'asin') {
           return res.json({ error: 'Invalid ASIN', stringKey: 'MessageInvalidAsin' })
@@ -217,7 +223,7 @@ class SearchController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async getAllProviders(req, res) {
+  async getAllProviders(req: RequestWithUser, res: Response) {
     const customProviders = await Database.customMetadataProviderModel.findAll()
 
     const customBookProviders = customProviders.filter((p) => p.mediaType === 'book')
@@ -235,4 +241,4 @@ class SearchController {
     res.json({ providers })
   }
 }
-module.exports = new SearchController()
+export = new SearchController()

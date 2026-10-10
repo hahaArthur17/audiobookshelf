@@ -1,11 +1,29 @@
-const { Request, Response, NextFunction } = require('express')
-const Logger = require('../Logger')
-const SocketAuthority = require('../SocketAuthority')
-const Database = require('../Database')
+import type { NextFunction, Request, Response } from 'express'
+import Logger = require('../Logger')
+import SocketAuthority = require('../SocketAuthority')
+import Database = require('../Database')
 
-const RssFeedManager = require('../managers/RssFeedManager')
+import RssFeedManager = require('../managers/RssFeedManager')
 
-const libraryItemsBookFilters = require('../utils/queries/libraryItemsBookFilters')
+import libraryItemsBookFilters = require('../utils/queries/libraryItemsBookFilters')
+
+type User = import('../models/User')
+type Series = import('../models/Series')
+type LibraryItem = import('../models/LibraryItem')
+type Feed = import('../models/Feed')
+
+type SeriesQuery = { include?: string } // query values are assumed to be strings: findOne() calls .split on include
+type SeriesBody = { [key: string]: unknown } // index signature: update() reads req.body by a dynamic key
+
+type RequestWithUser = Request<{ id: string }, unknown, SeriesBody, SeriesQuery> & { user: User }
+type RequestEntityObject = { series: Series; libraryItemsInSeries: LibraryItem[] } // libraryItemsInSeries is set by middleware() too, although the JSDoc typedef does not list it
+type SeriesControllerRequest = RequestWithUser & RequestEntityObject
+
+/** toOldJSON() of a series plus the keys that findOne() adds to the same object */
+type SeriesJsonWithIncludes = ReturnType<Series['toOldJSON']> & {
+  progress?: { libraryItemIds: string[]; libraryItemIdsFinished: string[]; isFinished: boolean }
+  rssFeed?: ReturnType<Feed['toOldJSONMinified']> | null
+}
 
 /**
  * @typedef RequestUserObject
@@ -32,13 +50,13 @@ class SeriesController {
    * @param {SeriesControllerRequest} req
    * @param {Response} res
    */
-  async findOne(req, res) {
+  async findOne(req: SeriesControllerRequest, res: Response) {
     const include = (req.query.include || '')
       .split(',')
       .map((v) => v.trim())
       .filter((v) => !!v)
 
-    const seriesJson = req.series.toOldJSON()
+    const seriesJson: SeriesJsonWithIncludes = req.series.toOldJSON()
 
     // Add progress map with isFinished flag
     if (include.includes('progress')) {
@@ -67,9 +85,9 @@ class SeriesController {
    * @param {SeriesControllerRequest} req
    * @param {Response} res
    */
-  async update(req, res) {
+  async update(req: SeriesControllerRequest, res: Response) {
     const keysToUpdate = ['name', 'description']
-    const payload = {}
+    const payload: { [key: string]: string } = {} // index signature: filled by a dynamic key
     for (const key of keysToUpdate) {
       if (req.body[key] !== undefined && typeof req.body[key] === 'string') {
         payload[key] = req.body[key]
@@ -92,7 +110,7 @@ class SeriesController {
    * @param {Response} res
    * @param {NextFunction} next
    */
-  async middleware(req, res, next) {
+  async middleware(req: RequestWithUser & Partial<RequestEntityObject>, res: Response, next: NextFunction) {
     const series = await Database.seriesModel.findByPk(req.params.id)
     if (!series) return res.sendStatus(404)
 
@@ -118,4 +136,4 @@ class SeriesController {
     next()
   }
 }
-module.exports = new SeriesController()
+export = new SeriesController()
