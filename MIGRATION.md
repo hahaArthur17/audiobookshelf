@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) resumed on 2026-10-11 Auckland time from accepted commit `54bd5be7`; Batches 01–12, 14–17 and 19 accepted, **35/46 migrated, 11 remaining**. Batches 13 (podcast queries) and 18 (comic extractors) are assigned in isolated worktrees. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
+Status: Stage 1 (`server/utils/`) resumed on 2026-10-11 Auckland time from accepted commit `54bd5be7`; Batches 01–17 and 19 accepted, **36/46 migrated, 10 remaining**. Batch 18 (comic extractors) is ready for main-agent integration and independent verification. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
 
 ## Starting point
 
@@ -43,13 +43,14 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 10 | `parseNameString` | Fresh strict build 0 errors; unchanged tests 356/356; fixed name/CJK/invalid-input sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-10-*` |
 | 11 | `parseOpfMetadata`, `parseEpubMetadata` | Fresh strict build 0 errors; unchanged tests 356/356; independent XML/archive/mutation sample and all prior accepted batch samples equal to baseline | Accepted after main-agent primitive-metadata repair; see `stage1-run.md` and `logs/batch-11-*` |
 | 12 | `parseOverdriveMediaMarkers` | Fresh strict build 0 errors; unchanged tests 356/356; fixed XML/marker/time/error sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-12-*` |
+| 13 | `libraryItemsPodcastFilters` | Fresh strict build 0 errors; unchanged tests 356/356; independent query/cache/mutation/profile sample and all prior accepted batch samples equal to baseline | Accepted after main-agent emitted-JS repair; see `stage1-run.md` and `logs/batch-13-*` |
 | 14 | `zipHelpers` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline archive/response event sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-14-*` |
 | 15 | `absMetadataMigration` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline file/model/pagination sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-15-*` |
 | 16 | `parseFullName` | Fresh strict build 0 errors; unchanged tests 356/356; fixed 37-case name sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-16-*` |
 | 17 | `utils/index` | Fresh strict build 0 errors; unchanged tests 356/356; fixed shared-utility/XML/query sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-17-*` |
 | 19 | `oldDbFiles` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline legacy-db stream/archive sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-19-*` |
 
-Next: independently verify Batches 13 and 18 when their isolated work is ready, then continue Stage 1 in small batches. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
+Next: independently verify Batch 18, then pause at a green Stage 1 boundary before selecting another small batch according to quota. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
 
 Remaining Stage 1 targets:
 
@@ -63,6 +64,5 @@ server/utils/podcastUtils.js
 server/utils/prober.js
 server/utils/queries/libraryFilters.js
 server/utils/queries/libraryItemsBookFilters.js
-server/utils/queries/libraryItemsPodcastFilters.js
 server/utils/scandir.js
 ```

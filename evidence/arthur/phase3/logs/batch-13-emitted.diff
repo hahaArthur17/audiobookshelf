@@ -1,0 +1,82 @@
+--- /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2/dist-server/server/utils/queries/libraryItemsPodcastFilters.js	2026-10-03 21:34:39
++++ dist-server/server/utils/queries/libraryItemsPodcastFilters.js	2026-10-11 00:40:47
+@@ -5,7 +5,7 @@
+ const { profile } = require('../../utils/profiler');
+ const stringifySequelizeQuery = require('../stringifySequelizeQuery');
+ const countCache = new Map();
+-module.exports = {
++const libraryItemsPodcastFilters = {
+     /**
+      * User permissions to restrict podcasts for explicit content & tags
+      * @param {import('../../models/User')} user
+@@ -44,7 +44,7 @@
+     getMediaGroupQuery(group, value) {
+         if (!group)
+             return { mediaWhere: {}, replacements: {} };
+-        let mediaWhere = {};
++        const mediaWhere = {};
+         const replacements = {};
+         if (['genres', 'tags'].includes(group)) {
+             mediaWhere[group] = Sequelize.where(Sequelize.literal(`(SELECT count(*) FROM json_each(${group}) WHERE json_valid(${group}) AND json_each.value = :filterValue)`), {
+@@ -164,7 +164,7 @@
+         }
+         else if (filterGroup === 'recent') {
+             libraryItemWhere['createdAt'] = {
+-                [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
++                [Sequelize.Op.gte]: new Date(Number(new Date()) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+             };
+         }
+         const podcastIncludes = [];
+@@ -199,7 +199,8 @@
+         const libraryItems = podcasts.map((podcastExpanded) => {
+             const libraryItem = podcastExpanded.libraryItem;
+             const podcast = podcastExpanded;
+-            delete podcast.libraryItem;
++            const podcastWithoutLibraryItem = podcast;
++            delete podcastWithoutLibraryItem.libraryItem;
+             if (libraryItem.feeds?.length) {
+                 libraryItem.rssFeed = libraryItem.feeds[0];
+             }
+@@ -240,7 +241,7 @@
+         }
+         const podcastEpisodeIncludes = [];
+         let podcastEpisodeWhere = {};
+-        let libraryItemWhere = {
++        const libraryItemWhere = {
+             libraryId
+         };
+         if (filterGroup === 'progress') {
+@@ -274,7 +275,7 @@
+         }
+         else if (filterGroup === 'recent') {
+             podcastEpisodeWhere['createdAt'] = {
+-                [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
++                [Sequelize.Op.gte]: new Date(Number(new Date()) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+             };
+         }
+         const podcastEpisodeOrder = [];
+@@ -311,7 +312,8 @@
+         const libraryItems = podcastEpisodes.map((ep) => {
+             const libraryItem = ep.podcast.libraryItem;
+             const podcast = ep.podcast;
+-            delete podcast.libraryItem;
++            const podcastWithoutLibraryItem = podcast;
++            delete podcastWithoutLibraryItem.libraryItem;
+             libraryItem.media = podcast;
+             libraryItem.recentEpisode = ep.toOldJSON(libraryItem.id);
+             return libraryItem;
+@@ -373,7 +375,8 @@
+         const itemMatches = [];
+         for (const podcast of podcasts) {
+             const libraryItem = podcast.libraryItem;
+-            delete podcast.libraryItem;
++            const podcastWithoutLibraryItem = podcast;
++            delete podcastWithoutLibraryItem.libraryItem;
+             libraryItem.media = podcast;
+             libraryItem.media.podcastEpisodes = [];
+             itemMatches.push({
+@@ -582,3 +585,4 @@
+         });
+     }
+ };
++module.exports = libraryItemsPodcastFilters;

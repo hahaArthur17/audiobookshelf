@@ -225,7 +225,7 @@ const libraryItemsPodcastFilters: PodcastFiltersModule = {
   getMediaGroupQuery(group, value) {
     if (!group) return { mediaWhere: {}, replacements: {} }
 
-    const mediaWhere: Record<string, unknown> = {}
+    let mediaWhere: Record<string, unknown> = {}
     const replacements: Record<string, unknown> = {}
 
     if (['genres', 'tags'].includes(group)) {
@@ -346,7 +346,7 @@ const libraryItemsPodcastFilters: PodcastFiltersModule = {
       ]
     } else if (filterGroup === 'recent') {
       libraryItemWhere['createdAt'] = {
-        [Sequelize.Op.gte]: new Date(Number(new Date()) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+        [Sequelize.Op.gte]: new Date((new Date() as Date & number) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
       }
     }
 
@@ -389,8 +389,7 @@ const libraryItemsPodcastFilters: PodcastFiltersModule = {
       const libraryItem = podcastExpanded.libraryItem
       const podcast = podcastExpanded
 
-      const podcastWithoutLibraryItem: { libraryItem?: LibraryItemRow } = podcast
-      delete podcastWithoutLibraryItem.libraryItem
+      delete (podcast as { libraryItem?: LibraryItemRow }).libraryItem
 
       if (libraryItem.feeds?.length) {
         libraryItem.rssFeed = libraryItem.feeds[0]
@@ -438,7 +437,7 @@ const libraryItemsPodcastFilters: PodcastFiltersModule = {
 
     const podcastEpisodeIncludes = []
     let podcastEpisodeWhere: Record<string, unknown> | object[] = {}
-    const libraryItemWhere: QueryOptions = {
+    let libraryItemWhere: QueryOptions = {
       libraryId
     }
     if (filterGroup === 'progress') {
@@ -471,7 +470,7 @@ const libraryItemsPodcastFilters: PodcastFiltersModule = {
       }
     } else if (filterGroup === 'recent') {
       (podcastEpisodeWhere as Record<string, unknown>)['createdAt'] = {
-        [Sequelize.Op.gte]: new Date(Number(new Date()) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+        [Sequelize.Op.gte]: new Date((new Date() as Date & number) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
       }
     }
 
@@ -513,8 +512,7 @@ const libraryItemsPodcastFilters: PodcastFiltersModule = {
     const libraryItems = podcastEpisodes.map((ep) => {
       const libraryItem = ep.podcast.libraryItem
       const podcast = ep.podcast
-      const podcastWithoutLibraryItem: { libraryItem?: LibraryItemRow } = podcast
-      delete podcastWithoutLibraryItem.libraryItem
+      delete (podcast as { libraryItem?: LibraryItemRow }).libraryItem
       libraryItem.media = podcast
 
       libraryItem.recentEpisode = ep.toOldJSON(libraryItem.id)
@@ -584,8 +582,7 @@ const libraryItemsPodcastFilters: PodcastFiltersModule = {
 
     for (const podcast of podcasts) {
       const libraryItem = podcast.libraryItem
-      const podcastWithoutLibraryItem: { libraryItem?: LibraryItemRow } = podcast
-      delete podcastWithoutLibraryItem.libraryItem
+      delete (podcast as { libraryItem?: LibraryItemRow }).libraryItem
       libraryItem.media = podcast
       libraryItem.media.podcastEpisodes = []
       itemMatches.push({
