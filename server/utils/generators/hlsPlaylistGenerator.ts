@@ -1,6 +1,12 @@
-const fs = require('../../libs/fsExtra')
+import fs = require('../../libs/fsExtra')
 
-function getPlaylistStr(segmentName, duration, segmentLength, hlsSegmentType) {
+// fsExtra attaches its promisified graceful-fs methods in a loop at load time (libs/fsExtra/fs/index.js), so writeFile is missing from the module's inferred type. Describes the one call made here; type-only, emits no code.
+type FsExtraWriteFile = { writeFile(file: string, data: string): Promise<void> }
+
+/** Values ffmpeg accepts for -hls_segment_type */
+type HlsSegmentType = 'mpegts' | 'fmp4'
+
+function getPlaylistStr(segmentName: string, duration: number, segmentLength: number, hlsSegmentType: HlsSegmentType): string {
   var ext = hlsSegmentType === 'fmp4' ? 'm4s' : 'ts'
 
   var lines = [
@@ -28,8 +34,8 @@ function getPlaylistStr(segmentName, duration, segmentLength, hlsSegmentType) {
   return lines.join('\n')
 }
 
-function generatePlaylist(outputPath, segmentName, duration, segmentLength, hlsSegmentType) {
+function generatePlaylist(outputPath: string, segmentName: string, duration: number, segmentLength: number, hlsSegmentType: HlsSegmentType): Promise<void> {
   var playlistStr = getPlaylistStr(segmentName, duration, segmentLength, hlsSegmentType)
-  return fs.writeFile(outputPath, playlistStr)
+  return (fs as typeof fs & FsExtraWriteFile).writeFile(outputPath, playlistStr)
 }
-module.exports = generatePlaylist
+export = generatePlaylist
