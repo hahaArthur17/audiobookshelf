@@ -1,7 +1,15 @@
-const { DataTypes, Model } = require('sequelize')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model } = sequelizeModule
+import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
 
 class CollectionBook extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare order: number
+  declare bookId: string
+  declare collectionId: string
+  declare createdAt: Date
+
+  constructor(values?: CreationAttributes<CollectionBook>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -16,7 +24,9 @@ class CollectionBook extends Model {
     this.createdAt
   }
 
-  static init(sequelize) {
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -52,4 +62,4 @@ class CollectionBook extends Model {
   }
 }
 
-module.exports = CollectionBook
+export = CollectionBook
