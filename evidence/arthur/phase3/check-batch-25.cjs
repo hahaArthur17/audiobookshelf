@@ -6,6 +6,7 @@ const root = process.argv[2]
 if (!root) throw new Error('Provide checkout path')
 const calls = []
 const snapshot = (value) => value instanceof Error ? { error: value.message } : value
+let runMode = 'success'
 class Command extends EventEmitter {
   constructor(input) { super(); calls.push(['ffmpeg.create', input === undefined ? '[undefined]' : input]) }
   on(name, listener) { calls.push(['ffmpeg.on', name]); return super.on(name, listener) }
@@ -18,6 +19,11 @@ class Command extends EventEmitter {
   run() {
     calls.push(['ffmpeg.run'])
     this.emit('start', 'ffmpeg command')
+    if (runMode === 'error') {
+      runMode = 'success'
+      this.emit('error', new Error('ffmpeg failed'), 'stdout', 'stderr')
+      return this
+    }
     this.emit('stderr', 'warning')
     this.emit('progress', { percent: 32, targetSize: 10, timemark: '00:00:10' })
     this.emit('end', 'stdout', 'stderr')
@@ -31,10 +37,11 @@ const fs = {
 }
 const logger = Object.fromEntries(['debug', 'info', 'warn', 'error'].map((name) => [name, (...args) => calls.push([`log.${name}`, ...args.map(snapshot)])]))
 let attempts = 0
+let forceFailure = false
 const axios = async (options) => {
   calls.push(['axios', { ...options, httpAgent: options.httpAgent, httpsAgent: options.httpsAgent }])
   attempts++
-  if (attempts === 1) throw new Error('first user agent rejected')
+  if (attempts === 1 || forceFailure) throw new Error('first user agent rejected')
   return { data: 'stream' }
 }
 const originalLoad = Module._load
@@ -62,8 +69,13 @@ async function main() {
     output.writeMetadata = await target.writeFFMetadataFile({ title: 'A' }, null, '/tmp/meta.txt')
     output.cover = await target.extractCoverArt('/input.m4b', '/out/cover.jpg')
     output.resize = await target.resizeImage('/in.jpg', '/out.jpg', 0, 200)
+    runMode = 'error'
+    output.resizeError = await target.resizeImage('/in.jpg', '/out-error.jpg', 100, 0)
     const episodeDownload = { url: 'https://feed/episode.mp3', targetPath: '/tmp/episode.mp3', pubYear: 2020, libraryItem: { media: { title: 'Show', author: 'Host', genres: ['Books'], language: 'en', itunesId: 'i1', podcastType: 'episodic' } }, rssPodcastEpisode: { enclosure: { length: '10000' }, title: 'Episode', subtitle: 'Sub', description: 'Text', season: '1', episode: '2', pubDate: 'today', episodeType: 'full' } }
     output.download = await target.downloadPodcastEpisode(episodeDownload)
+    forceFailure = true
+    output.downloadFailure = await target.downloadPodcastEpisode(episodeDownload)
+    forceFailure = false
     output.ffObject = target.getFFMetadataObject({ media: { title: 'Book', subtitle: 'Part', authorName: 'Author', genres: ['Fiction'], publishedYear: '2020', narrators: ['Reader'], series: [] } }, 2)
     output.add = await target.addCoverAndMetadataToFile('/audio/book.mp3', null, '/tmp/meta.txt', 2, 'audio/mpeg', (value) => calls.push(['progress', value]))
     output.merge = await target.mergeAudioFiles([{ index: 0, metadata: { path: '/audio/book.m4b', ext: '.m4b' }, duration: 20 }], 20, '/tmp/cache', '/tmp/merged.m4b', { bitrate: '96k', codec: 'aac', channels: 2 }, (value) => calls.push(['merge.progress', value]))
