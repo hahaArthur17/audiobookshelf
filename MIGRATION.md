@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) resumed on 2026-10-11 Auckland time from accepted commit `54bd5be7`; Batches 01–12 and 14–17 accepted, **34/46 migrated, 12 remaining**. Batch 13 (podcast queries) is assigned in an isolated worktree. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
+Status: Stage 1 (`server/utils/`) resumed on 2026-10-11 Auckland time from accepted commit `54bd5be7`; Batches 01–12, 14–17 and 19 accepted, **35/46 migrated, 11 remaining**. Batches 13 (podcast queries) and 18 (comic extractors) are assigned in isolated worktrees. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
 
 ## Starting point
 
@@ -47,8 +47,9 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 15 | `absMetadataMigration` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline file/model/pagination sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-15-*` |
 | 16 | `parseFullName` | Fresh strict build 0 errors; unchanged tests 356/356; fixed 37-case name sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-16-*` |
 | 17 | `utils/index` | Fresh strict build 0 errors; unchanged tests 356/356; fixed shared-utility/XML/query sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-17-*` |
+| 19 | `oldDbFiles` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline legacy-db stream/archive sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-19-*` |
 
-Next: independently verify Batch 13 when its isolated work is ready, then continue Stage 1 in small batches. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
+Next: independently verify Batches 13 and 18 when their isolated work is ready, then continue Stage 1 in small batches. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
 
 Remaining Stage 1 targets:
 
@@ -58,7 +59,6 @@ server/utils/ffmpegHelpers.js
 server/utils/fileUtils.js
 server/utils/libraryHelpers.js
 server/utils/migrations/dbMigration.js
-server/utils/migrations/oldDbFiles.js
 server/utils/podcastUtils.js
 server/utils/prober.js
 server/utils/queries/libraryFilters.js

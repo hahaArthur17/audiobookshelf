@@ -1,0 +1,7 @@
+# Batch 19 contract: legacy database files
+
+Target: `server/utils/migrations/oldDbFiles.js` only. Main Agent owns implementation and acceptance. This contract is frozen before code changes.
+
+- Preserve the direct CommonJS named async arrow exports and lexical `this.checkHasOldDb()` in `checkHasOldDbZip`. `loadOldData` reads only `.json` filenames in directory order, parses newline-delimited entities through `readline`, logs bad lines and missing/read errors, returns `[]` on load failures and preserves the original console message.
+- `zipWrapOldDb` archives the listed folders at compression level 9, registers output/archive handlers before piping, resolves `false` on archive error and `true` after output close and ordered folder removals. Preserve event/log ordering and existing behavior if later events fire. `checkHasOldDbZip` extracts the full archive then closes it and rechecks folders. The older partial extraction helper preserves its sequential extraction and cleanup branches, including current early-return close behavior. The folder-removal helper removes the three paths in order.
+- No real user files or databases in the fixture: stub file streams, ZIP/archiver, logger and path existence. Compare Phase 2 and candidate exports, load/parse errors, archive events, full/partial extraction, existence and cleanup. Review emitted JavaScript; run a fresh strict build, all 356 unchanged tests and previous batch samples before acceptance. No edits to other source files, tests, config or lockfiles.
