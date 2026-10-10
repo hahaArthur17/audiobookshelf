@@ -1,14 +1,38 @@
-const Sequelize = require('sequelize')
-const Database = require('../../Database')
+const Sequelize = require('sequelize') as typeof import('sequelize')
 
-module.exports = {
+interface AuthorCountRow {
+  authorId: string
+  author: { name: string }
+  get(key: string): number
+}
+
+interface AuthorSearchRow {
+  dataValues: { numBooks: number }
+  toOldJSONExpanded(numBooks: number): Record<string, unknown>
+}
+
+interface TextQuery {
+  matchExpression(column: string): string
+}
+
+const Database = require('../../Database') as {
+  authorModel: {
+    count(options: object): Promise<number>
+    findAll(options: object): Promise<AuthorSearchRow[]>
+  }
+  bookAuthorModel: {
+    findAll(options: object): Promise<AuthorCountRow[]>
+  }
+}
+
+const authorFilters = {
   /**
    * Get authors total count
    *
    * @param {string} libraryId
    * @returns {Promise<number>} count
    */
-  async getAuthorsTotalCount(libraryId) {
+  async getAuthorsTotalCount(libraryId: string) {
     const authorsCount = await Database.authorModel.count({
       where: {
         libraryId: libraryId
@@ -24,7 +48,7 @@ module.exports = {
    * @param {number} limit
    * @returns {Promise<{id:string, name:string, count:number}>}
    */
-  async getAuthorsWithCount(libraryId, limit) {
+  async getAuthorsWithCount(libraryId: string, limit: number) {
     const authors = await Database.bookAuthorModel.findAll({
       include: [
         {
@@ -59,7 +83,7 @@ module.exports = {
    * @param {number} offset
    * @returns {Promise<Object[]>} oldAuthor with numBooks
    */
-  async search(libraryId, query, limit, offset) {
+  async search(libraryId: string, query: TextQuery, limit: number, offset: number) {
     const matchAuthor = query.matchExpression('name')
     const authors = await Database.authorModel.findAll({
       where: {
@@ -79,3 +103,5 @@ module.exports = {
     return authorMatches
   }
 }
+
+export = authorFilters

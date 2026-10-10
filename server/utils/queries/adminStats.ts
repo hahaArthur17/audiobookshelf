@@ -1,15 +1,68 @@
-const Sequelize = require('sequelize')
-const Database = require('../../Database')
+const Sequelize = require('sequelize') as typeof import('sequelize')
+const Database = require('../../Database') as {
+  playbackSessionModel: {
+    findAll(options: object): Promise<ListeningSession[]>
+  }
+  authorModel: {
+    count(options: object): Promise<number>
+  }
+  bookModel: {
+    findAll(options: object): Promise<AddedBook[]>
+  }
+  libraryItemModel: object
+  podcastEpisodeModel: {
+    count(options?: object): Promise<number>
+  }
+  sequelize: {
+    random(): unknown
+    query<Row extends object = Record<string, unknown>>(sql: string, options?: object): Promise<[Row[], unknown]>
+  }
+}
 const PlaybackSession = require('../../models/PlaybackSession')
 const fsExtra = require('../../libs/fsExtra')
 
-module.exports = {
+interface ListeningSession {
+  createdAt: Date
+  timeListening: number | null
+  mediaMetadata?: {
+    authors?: Array<{ name: string }> | null
+    narrators?: string[] | null
+    genres?: string[] | null
+  } | null
+}
+
+interface AddedBook {
+  coverPath: string | null
+  duration: number | null
+  libraryItem: { id: string; size: number | null }
+}
+
+interface StatAggregateRow {
+  totalSize?: number | null
+  totalDuration?: number | null
+  totalItems?: number | null
+  numAudioFiles?: number | null
+}
+
+interface MediaTypeStatRow {
+  mediaType: string
+  totalSize: number | null
+  numItems: number | null
+}
+
+interface AdminStatsModule {
+  getBooksAddedForYear(year: number): Promise<AddedBook[]>
+  getNumAuthorsAddedForYear(year: number): Promise<number>
+  getListeningSessionsForYear(year: number): Promise<ListeningSession[]>
+}
+
+const adminStats = {
   /**
    *
    * @param {number} year YYYY
    * @returns {Promise<PlaybackSession[]>}
    */
-  async getListeningSessionsForYear(year) {
+  async getListeningSessionsForYear(year: number): Promise<ListeningSession[]> {
     const sessions = await Database.playbackSessionModel.findAll({
       where: {
         createdAt: {
@@ -26,7 +79,7 @@ module.exports = {
    * @param {number} year YYYY
    * @returns {Promise<number>}
    */
-  async getNumAuthorsAddedForYear(year) {
+  async getNumAuthorsAddedForYear(year: number): Promise<number> {
     const count = await Database.authorModel.count({
       where: {
         createdAt: {
@@ -43,7 +96,7 @@ module.exports = {
    * @param {number} year YYYY
    * @returns {Promise<import('../../models/Book')[]>}
    */
-  async getBooksAddedForYear(year) {
+  async getBooksAddedForYear(year: number): Promise<AddedBook[]> {
     const books = await Database.bookModel.findAll({
       attributes: ['id', 'title', 'coverPath', 'duration', 'createdAt'],
       where: {
@@ -66,12 +119,12 @@ module.exports = {
    *
    * @param {number} year YYYY
    */
-  async getStatsForYear(year) {
+  async getStatsForYear(this: AdminStatsModule, year: number) {
     const booksAdded = await this.getBooksAddedForYear(year)
 
     let totalBooksAddedSize = 0
     let totalBooksAddedDuration = 0
-    const booksWithCovers = []
+    const booksWithCovers: string[] = []
 
     for (const book of booksAdded) {
       // Grab first 25 that have a cover
@@ -88,9 +141,9 @@ module.exports = {
 
     const numAuthorsAdded = await this.getNumAuthorsAddedForYear(year)
 
-    let authorListeningMap = {}
-    let narratorListeningMap = {}
-    let genreListeningMap = {}
+    const authorListeningMap: Record<string, number> = {}
+    const narratorListeningMap: Record<string, number> = {}
+    const genreListeningMap: Record<string, number> = {}
 
     const listeningSessions = await this.getListeningSessionsForYear(year)
     let totalListeningTime = 0
@@ -117,8 +170,7 @@ module.exports = {
       })
     }
 
-    let topAuthors = null
-    topAuthors = Object.keys(authorListeningMap)
+    const topAuthors = Object.keys(authorListeningMap)
       .map((authorName) => ({
         name: authorName,
         time: Math.round(authorListeningMap[authorName])
@@ -126,8 +178,7 @@ module.exports = {
       .sort((a, b) => b.time - a.time)
       .slice(0, 3)
 
-    let topNarrators = null
-    topNarrators = Object.keys(narratorListeningMap)
+    const topNarrators = Object.keys(narratorListeningMap)
       .map((narratorName) => ({
         name: narratorName,
         time: Math.round(narratorListeningMap[narratorName])
@@ -135,8 +186,7 @@ module.exports = {
       .sort((a, b) => b.time - a.time)
       .slice(0, 3)
 
-    let topGenres = null
-    topGenres = Object.keys(genreListeningMap)
+    const topGenres = Object.keys(genreListeningMap)
       .map((genre) => ({
         genre,
         time: Math.round(genreListeningMap[genre])
@@ -145,7 +195,7 @@ module.exports = {
       .slice(0, 3)
 
     // Stats for total books, size and duration for everything added this year or earlier
-    const [totalStatResultsRow] = await Database.sequelize.query(`SELECT SUM(li.size) AS totalSize, SUM(b.duration) AS totalDuration, COUNT(*) AS totalItems FROM libraryItems li, books b WHERE b.id = li.mediaId AND li.mediaType = 'book' AND li.createdAt < ":nextYear-01-01";`, {
+    const [totalStatResultsRow] = await Database.sequelize.query<StatAggregateRow>(`SELECT SUM(li.size) AS totalSize, SUM(b.duration) AS totalDuration, COUNT(*) AS totalItems FROM libraryItems li, books b WHERE b.id = li.mediaId AND li.mediaType = 'book' AND li.createdAt < ":nextYear-01-01";`, {
       replacements: {
         nextYear: year + 1
       }
@@ -179,7 +229,7 @@ module.exports = {
    * @returns {Promise<{books: SizeObject, podcasts: SizeObject, total: SizeObject}}>}
    */
   async getTotalSize() {
-    const [mediaTypeStats] = await Database.sequelize.query(`SELECT li.mediaType, SUM(li.size) AS totalSize, COUNT(*) AS numItems FROM libraryItems li group by li.mediaType;`)
+    const [mediaTypeStats] = await Database.sequelize.query<MediaTypeStatRow>(`SELECT li.mediaType, SUM(li.size) AS totalSize, COUNT(*) AS numItems FROM libraryItems li group by li.mediaType;`)
     const bookStats = mediaTypeStats.find((m) => m.mediaType === 'book')
     const podcastStats = mediaTypeStats.find((m) => m.mediaType === 'podcast')
 
@@ -205,7 +255,7 @@ module.exports = {
    * @returns {Promise<{numBookAudioFiles: number, numPodcastAudioFiles: number, numAudioFiles: number}>}
    */
   async getNumAudioFiles() {
-    const [numBookAudioFilesRow] = await Database.sequelize.query(`SELECT SUM(json_array_length(b.audioFiles)) AS numAudioFiles FROM books b;`)
+    const [numBookAudioFilesRow] = await Database.sequelize.query<StatAggregateRow>(`SELECT SUM(json_array_length(b.audioFiles)) AS numAudioFiles FROM books b;`)
     const numBookAudioFiles = numBookAudioFilesRow[0]?.numAudioFiles || 0
     const numPodcastAudioFiles = await Database.podcastEpisodeModel.count()
     return {
@@ -215,3 +265,5 @@ module.exports = {
     }
   }
 }
+
+export = adminStats

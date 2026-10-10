@@ -1,17 +1,66 @@
-const Sequelize = require('sequelize')
-const Database = require('../../Database')
+const Sequelize = require('sequelize') as typeof import('sequelize')
 const PlaybackSession = require('../../models/PlaybackSession')
 const MediaProgress = require('../../models/MediaProgress')
-const fsExtra = require('../../libs/fsExtra')
+const fsExtra = require('../../libs/fsExtra') as {
+  pathExists(path: string): Promise<boolean>
+}
 
-module.exports = {
+interface ListeningSession {
+  createdAt: Date
+  displayTitle: string | null
+  mediaItemType: string
+  timeListening: number | null
+  mediaMetadata?: {
+    authors?: Array<{ name: string }> | null
+    narrators?: string[] | null
+    genres?: string[] | null
+  } | null
+  mediaItem?: {
+    id: string
+    title: string
+    coverPath: string | null
+    libraryItem: { id: string }
+  } | null
+}
+
+interface FinishedBookProgress {
+  duration: number | null
+  finishedAt: Date | null
+  mediaItem: {
+    id: string
+    title: string
+    coverPath: string | null
+    libraryItem: { id: string }
+  }
+}
+
+interface UserStatsDatabase {
+  playbackSessionModel: {
+    findAll(options: object): Promise<ListeningSession[]>
+  }
+  mediaProgressModel: {
+    findAll(options: object): Promise<FinishedBookProgress[]>
+  }
+  bookModel: object
+  libraryItemModel: object
+  sequelize: { random(): unknown }
+}
+
+interface UserStatsModule {
+  getUserListeningSessionsForYear(userId: string, year: number): Promise<ListeningSession[]>
+  getBookMediaProgressFinishedForYear(userId: string, year: number): Promise<FinishedBookProgress[]>
+}
+
+const Database = require('../../Database') as UserStatsDatabase
+
+const userStats = {
   /**
    *
    * @param {string} userId
    * @param {number} year YYYY
    * @returns {Promise<PlaybackSession[]>}
    */
-  async getUserListeningSessionsForYear(userId, year) {
+  async getUserListeningSessionsForYear(userId: string, year: number): Promise<ListeningSession[]> {
     const sessions = await Database.playbackSessionModel.findAll({
       where: {
         userId,
@@ -40,7 +89,7 @@ module.exports = {
    * @param {number} year YYYY
    * @returns {Promise<MediaProgress[]>}
    */
-  async getBookMediaProgressFinishedForYear(userId, year) {
+  async getBookMediaProgressFinishedForYear(userId: string, year: number): Promise<FinishedBookProgress[]> {
     const progresses = await Database.mediaProgressModel.findAll({
       where: {
         userId,
@@ -68,7 +117,7 @@ module.exports = {
    * @param {string} userId
    * @param {number} year YYYY
    */
-  async getStatsForYear(userId, year) {
+  async getStatsForYear(this: UserStatsModule, userId: string, year: number) {
     const listeningSessions = await this.getUserListeningSessionsForYear(userId, year)
     const bookProgressesFinished = await this.getBookMediaProgressFinishedForYear(userId, year)
 
@@ -76,18 +125,18 @@ module.exports = {
     let totalPodcastListeningTime = 0
     let totalListeningTime = 0
 
-    let authorListeningMap = {}
-    let genreListeningMap = {}
-    let narratorListeningMap = {}
-    let monthListeningMap = {}
-    let bookListeningMap = {}
+    const authorListeningMap: Record<string, number> = {}
+    const genreListeningMap: Record<string, number> = {}
+    const narratorListeningMap: Record<string, number> = {}
+    const monthListeningMap: Record<string, number> = {}
+    const bookListeningMap: Record<string, number> = {}
 
-    const booksWithCovers = []
-    const finishedBooksWithCovers = []
+    const booksWithCovers: string[] = []
+    const finishedBooksWithCovers: string[] = []
 
     // Get finished book stats
     const numBooksFinished = bookProgressesFinished.length
-    let longestAudiobookFinished = null
+    let longestAudiobookFinished: { id: string; title: string; duration: number; finishedAt: Date | null } | null = null
     for (const mediaProgress of bookProgressesFinished) {
       // Grab first 5 that have a cover
       if (mediaProgress.mediaItem?.coverPath && !finishedBooksWithCovers.includes(mediaProgress.mediaItem.libraryItem.id) && finishedBooksWithCovers.length < 5 && (await fsExtra.pathExists(mediaProgress.mediaItem.coverPath))) {
@@ -154,8 +203,7 @@ module.exports = {
     totalBookListeningTime = Math.round(totalBookListeningTime)
     totalPodcastListeningTime = Math.round(totalPodcastListeningTime)
 
-    let topAuthors = null
-    topAuthors = Object.keys(authorListeningMap)
+    const topAuthors = Object.keys(authorListeningMap)
       .map((authorName) => ({
         name: authorName,
         time: Math.round(authorListeningMap[authorName])
@@ -163,7 +211,7 @@ module.exports = {
       .sort((a, b) => b.time - a.time)
       .slice(0, 3)
 
-    let mostListenedNarrator = null
+    let mostListenedNarrator: { time: number; name: string } | null = null
     for (const narrator in narratorListeningMap) {
       if (!mostListenedNarrator?.time || narratorListeningMap[narrator] > mostListenedNarrator.time) {
         mostListenedNarrator = {
@@ -173,8 +221,7 @@ module.exports = {
       }
     }
 
-    let topGenres = null
-    topGenres = Object.keys(genreListeningMap)
+    const topGenres = Object.keys(genreListeningMap)
       .map((genre) => ({
         genre,
         time: Math.round(genreListeningMap[genre])
@@ -182,7 +229,7 @@ module.exports = {
       .sort((a, b) => b.time - a.time)
       .slice(0, 3)
 
-    let mostListenedMonth = null
+    let mostListenedMonth: { month: number; time: number } | null = null
     for (const month in monthListeningMap) {
       if (!mostListenedMonth?.time || monthListeningMap[month] > mostListenedMonth.time) {
         mostListenedMonth = {
@@ -209,3 +256,5 @@ module.exports = {
     }
   }
 }
+
+export = userStats
