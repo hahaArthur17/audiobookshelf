@@ -74,6 +74,18 @@ Status: in progress. This file records observed events, not planned outcomes.
 - Emitted-JS review found changes to local binding names and export construction timing in the comic/ebook modules; runtime exports after module initialization and all exercised call/side-effect paths match. The `EBookFileScanData` type remains available to scanner/manager JS imports. No original tests, callers, config or lockfiles changed.
 - Accepted at approximately 2026-10-10 07:11 UTC. Account snapshot: five-hour window 76% used, weekly window 33% used. Twenty-six of 46 Stage 1 targets migrated; 20 remain. Exact tokens/fee unavailable. Real CBZ/CBR/EPUB backends and all malformed archives were not integration-tested.
 
+## Batch 10 — name string parser
+
+- Isolated Parser Sub-Agent requested `gpt-6-luna` / `xhigh` and owned one file. Actual billed variant/effort was not exposed. Agent commit `83a6daa4a1ed330e912e2e6553792a696db3329a` was cherry-picked as `a4e3ce7c`. Agent reported about 1m52s, fresh strict build, 356 original tests and local fixed-input comparison passing.
+- Main Agent independently ran a fresh `npm run build:server` (0 errors; `logs/batch-10-clean-build.log`), `npm run coverage` (356 passing; `logs/batch-10-coverage.log`), and `check-batch-10.cjs` against Phase 2 and candidate builds. Outputs matched for direct CommonJS exports, callable shapes, empty/invalid input, comma/semicolon/ampersand/`and` splitting, names with suffixes and CJK names. Emitted JS differs only by removed introductory comments. All prior Batch 01–09 samples matched stored baselines (`logs/batch-10-prior-*.log`). Original tests, `tsconfig.server.json`, package and lockfiles were unchanged from the Phase 2 commit.
+- Accepted at approximately 2026-10-10 07:16 UTC. Account snapshot: five-hour window 82% used, weekly window 34% used. Twenty-seven of 46 Stage 1 targets migrated; 19 remain. Exact tokens/fee unavailable. The fixed sample does not cover every unusual title/suffix or non-CJK script.
+
+## Pause and resume
+
+- Stage 1 is partially completed, **27/46**. The remaining 19 paths are listed in `MIGRATION.md`; no Stage 2 file was migrated. With 82% of the account's five-hour window used, the main Agent did not start another batch that might not have enough quota for implementation plus independent acceptance.
+- This run began around 06:41 UTC and stopped after Batch 10 around 07:16 UTC on 2026-10-10, approximately 35 minutes wall-clock. Account-wide usage moved from 8% to 82% in the five-hour window and 22% to 34% in the weekly window; these percentages are not exact run tokens. No reliable token count or monetary cost was exposed. Quota resets or credits were not used.
+- Continue only after the user's next explicit request. Start from the last accepted branch HEAD in `audiobookshelf-phase3`, inspect a clean worktree, recheck current usage, read the contracts and latest logs, then choose a bounded Stage 1 batch. Re-run fresh strict build, all 356 original tests, emitted-JS/behavior comparisons and record any new difference before counting a file. Stage 2 requires a separate explicit request after Stage 1 completes.
+
 Record subsequent batches with exact file ownership and prompt, model requested versus verified, context/contract version, start/end time, code commit, clean build exit/error count, coverage result, baseline/previous-commit behavior samples and differences, repair work, current usage snapshot, migrated and remaining count.
 
 ## Known limits

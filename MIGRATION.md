@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) in progress; Batches 01–09 accepted, **26/46 migrated, 20 remaining**. Stage 2–8 are outside this run; stop after Stage 1 and report to the user. If the Codex five-hour usage window is too low to implement and verify the next batch, stop at the last accepted batch and report partial progress.
+Status: Stage 1 (`server/utils/`) **partially completed and paused at an accepted batch boundary**; Batches 01–10 accepted, **27/46 migrated, 19 remaining**. The current five-hour account window was 82% used after Batch 10, so no new batch was started. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run; do not start them without the user's explicit continuation.
 
 ## Starting point
 
@@ -40,5 +40,30 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 07 | `hlsPlaylistGenerator`, `profiler`, `rateLimiterFactory` | Fresh strict build 0 errors; unchanged tests 356/356; fixed HLS/profiler/disabled-rate-limit sample and Batches 01–04 samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-07-*` |
 | 08 | `parseComicInfoMetadata`, `parseComicMetadata`, `parseEbookMetadata` | Fresh strict build 0 errors; unchanged tests 356/356; fixed mock archive/XML/EPUB sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-08-*` |
 | 09 | `areEquivalent` | Fresh strict build 0 errors; unchanged tests 356/356; fixed nested/function/date/circular sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-09-*` |
+| 10 | `parseNameString` | Fresh strict build 0 errors; unchanged tests 356/356; fixed name/CJK/invalid-input sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-10-*` |
 
-Next: choose a small parser batch only if enough quota remains for implementation and acceptance. The larger query, media and migration files require their own later batches.
+Next, after the user explicitly requests continuation: reread `stage1-context.md`, `stage1-contract.md`, `stage1-run.md` and this index; confirm the HEAD/working tree and usage window; choose a small next batch from the 19 paths below; verify against the immediately prior accepted commit and Phase 2 baseline. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
+
+Remaining Stage 1 targets:
+
+```text
+server/utils/comicBookExtractors.js
+server/utils/ffmpegHelpers.js
+server/utils/fileUtils.js
+server/utils/index.js
+server/utils/libraryHelpers.js
+server/utils/migrations/absMetadataMigration.js
+server/utils/migrations/dbMigration.js
+server/utils/migrations/oldDbFiles.js
+server/utils/parsers/parseEpubMetadata.js
+server/utils/parsers/parseFullName.js
+server/utils/parsers/parseOpfMetadata.js
+server/utils/parsers/parseOverdriveMediaMarkers.js
+server/utils/podcastUtils.js
+server/utils/prober.js
+server/utils/queries/libraryFilters.js
+server/utils/queries/libraryItemsBookFilters.js
+server/utils/queries/libraryItemsPodcastFilters.js
+server/utils/scandir.js
+server/utils/zipHelpers.js
+```
