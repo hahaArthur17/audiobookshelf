@@ -84,17 +84,12 @@ interface SeriesFiltersModule {
 
 const Database = require('../../Database') as DatabaseModule
 const libraryItemsBookFilters = require('./libraryItemsBookFilters') as LibraryItemsBookFilters
-const serverGlobals = globalThis as typeof globalThis & {
-  ServerSettings: { sortingIgnorePrefix: boolean }
-}
-
 const seriesFilters = {
   decode(text: string): string | null {
     try {
       return Buffer.from(decodeURIComponent(text), 'base64').toString()
     } catch (error) {
-      const message = (error as { message: unknown }).message
-      Logger.warn(`[seriesFilters] Failed to decode filter value "${text}": ${message}`)
+      Logger.warn(`[seriesFilters] Failed to decode filter value "${text}": ${(error as { message: unknown }).message}`)
       return null
     }
   },
@@ -160,7 +155,7 @@ const seriesFilters = {
     // Handle filters
     // TODO: Simplify and break-out
     let attrQuery: string | null = null
-    if (['genres', 'tags', 'narrators'].includes(filterGroup || '')) {
+    if (['genres', 'tags', 'narrators'].includes(filterGroup as string)) {
       attrQuery = `SELECT count(*) FROM books b, bookSeries bs WHERE bs.seriesId = series.id AND bs.bookId = b.id AND (SELECT count(*) FROM json_each(b.${filterGroup}) WHERE json_valid(b.${filterGroup}) AND json_each.value = :filterValue) > 0`
       userPermissionBookWhere.replacements.filterValue = filterValue
     } else if (filterGroup === 'authors') {
@@ -228,7 +223,7 @@ const seriesFilters = {
     } else if (sortBy === 'addedAt') {
       order.push(['createdAt', dir])
     } else if (sortBy === 'name') {
-      if (serverGlobals.ServerSettings.sortingIgnorePrefix) {
+      if ((global as typeof global & { ServerSettings: { sortingIgnorePrefix: boolean } }).ServerSettings.sortingIgnorePrefix) {
         order.push([Sequelize.literal('nameIgnorePrefix COLLATE NOCASE'), dir])
       } else {
         order.push([Sequelize.literal('`series`.`name` COLLATE NOCASE'), dir])
@@ -303,8 +298,7 @@ const seriesFilters = {
       })
       oldSeries.books = s.bookSeries.map((bs) => {
         const libraryItem = bs.book.libraryItem
-        const bookWithoutLibraryItem: { libraryItem?: LibraryItemRow } = bs.book
-        delete bookWithoutLibraryItem.libraryItem
+        delete (bs.book as { libraryItem?: LibraryItemRow }).libraryItem
         libraryItem.media = bs.book
         const oldLibraryItem = libraryItem.toOldJSONMinified()
         return oldLibraryItem
