@@ -124,7 +124,7 @@ function OpfFetchDate(metadata: OpfMetadataRecord): string | null {
   const date = OpfFetchTagString(metadata, 'dc:date')
   if (!date) return null
   const dateSplit = date.split('-')
-  if (!dateSplit.length || dateSplit[0].length !== 4 || Number.isNaN(Number(dateSplit[0]))) return null
+  if (!dateSplit.length || dateSplit[0].length !== 4 || (isNaN as (value: unknown) => boolean)(dateSplit[0])) return null
   return dateSplit[0]
 }
 
@@ -186,7 +186,7 @@ function OpfFetchSeries(metadataMeta: OpfXmlNode[] | null | undefined): OpfMetad
     if ((metadataMeta[i].$ as Record<string, unknown> | undefined)?.name === 'calibre:series' && ((metadataMeta[i].$ as Record<string, unknown>).content as string | undefined)?.trim()) {
       const name = ((metadataMeta[i].$ as Record<string, unknown>).content as string).trim()
       let sequence: string | null = null
-      if ((metadataMeta[i + 1]?.$ as Record<string, unknown> | undefined)?.name === 'calibre:series_index' && ((metadataMeta[i + 1].$ as Record<string, unknown>).content as string | undefined)?.trim()) {
+      if ((metadataMeta[i + 1]?.$ as Record<string, unknown> | undefined)?.name === 'calibre:series_index' && ((metadataMeta[i + 1].$ as Record<string, unknown> | undefined)?.content as string | undefined)?.trim()) {
         sequence = ((metadataMeta[i + 1].$ as Record<string, unknown>).content as string).trim()
       }
       result.push({ name, sequence })
@@ -245,8 +245,7 @@ module.exports.parseOpfMetadataJson = (json: unknown): OpfMetadataResult | null 
   const metadataRecord = metadata as OpfMetadataRecord
   const metadataMeta = (prefix ? metadataRecord[`${prefix}:meta`] || metadataRecord.meta : metadataRecord.meta) as OpfXmlNode[] | null | undefined
 
-  const mutableMetadataRecord = Object(metadataRecord)
-  Reflect.set(mutableMetadataRecord, 'meta', {}, mutableMetadataRecord)
+  metadataRecord.meta = {}
   if (metadataMeta?.length) {
     metadataMeta.forEach((metaNode) => {
       if ((metaNode?.['$'] as Record<string, unknown> | undefined)?.name) {
