@@ -1,9 +1,25 @@
-const { Request, Response, NextFunction } = require('express')
-const Path = require('path')
-const fs = require('../libs/fsExtra')
-const Logger = require('../Logger')
-const Database = require('../Database')
-const fileUtils = require('../utils/fileUtils')
+import type { NextFunction, Request, Response } from 'express'
+import Path = require('path')
+import fs = require('../libs/fsExtra')
+import Logger = require('../Logger')
+import Database = require('../Database')
+import fileUtils = require('../utils/fileUtils')
+type ApiRouter = import('../routers/ApiRouter')
+type User = import('../models/User')
+type Backup = import('../objects/Backup')
+
+declare const global: typeof globalThis & { XAccel?: string }
+
+// Body of PATCH /api/backups/path. path is assumed to be a string (the original code passes it to Path.resolve)
+type PathBody = { path?: string }
+// An uploaded file as express-fileupload puts it on the request: only the members that BackupManager.uploadBackup() reads
+type UploadedFile = { name: string; mv: (path: string) => Promise<void> }
+
+type RequestWithUser = Request<{ id?: string }, unknown, PathBody> & { user: User }
+type RequestWithBackup = RequestWithUser & { backup: Backup }
+// The middleware sets backup when the route has an id
+type RequestWithOptionalBackup = RequestWithUser & { backup?: Backup }
+type RequestWithFiles = RequestWithUser & { files: { file?: UploadedFile } }
 
 /**
  * @typedef RequestUserObject
@@ -23,7 +39,7 @@ class BackupController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  getAll(req, res) {
+  getAll(this: ApiRouter, req: RequestWithUser, res: Response) {
     res.json({
       backups: this.backupManager.backups.map((b) => b.toJSON()),
       backupLocation: this.backupManager.backupPath,
@@ -39,7 +55,7 @@ class BackupController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  create(req, res) {
+  create(this: ApiRouter, req: RequestWithUser, res: Response) {
     this.backupManager.requestCreateBackup(res)
   }
 
@@ -51,7 +67,7 @@ class BackupController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async delete(req, res) {
+  async delete(this: ApiRouter, req: RequestWithBackup, res: Response) {
     await this.backupManager.removeBackup(req.backup)
 
     res.json({
@@ -67,7 +83,7 @@ class BackupController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  upload(req, res) {
+  upload(this: ApiRouter, req: RequestWithFiles, res: Response) {
     if (!req.files.file) {
       Logger.error('[BackupController] Upload backup invalid')
       return res.sendStatus(500)
@@ -84,7 +100,7 @@ class BackupController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async updatePath(req, res) {
+  async updatePath(this: ApiRouter, req: RequestWithUser, res: Response) {
     // Validate path is not empty and is a string
     if (!req.body.path || !req.body.path?.trim?.()) {
       Logger.error('[BackupController] Update backup path invalid')
@@ -110,7 +126,7 @@ class BackupController {
       const direxists = await fs.pathExists(newBackupPath)
       if (!direxists) {
         // If folder does not exist try to make it
-        await fs.mkdir(newBackupPath)
+        await (fs as typeof fs & { mkdir(path: string): Promise<void> }).mkdir(newBackupPath) // libs/fsExtra adds mkdir in a loop, so its inferred type lacks it
       }
     } catch (error) {
       Logger.error(`[BackupController] updatePath: Failed to ensure backup path "${newBackupPath}"`, error)
@@ -131,7 +147,7 @@ class BackupController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  download(req, res) {
+  download(req: RequestWithBackup, res: Response) {
     if (global.XAccel) {
       const encodedURI = fileUtils.encodeUriPath(global.XAccel + req.backup.fullPath)
       Logger.debug(`Use X-Accel to serve static file ${encodedURI}`)
@@ -151,7 +167,7 @@ class BackupController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  apply(req, res) {
+  apply(this: ApiRouter, req: RequestWithBackup, res: Response) {
     this.backupManager.requestApplyBackup(this.apiCacheManager, req.backup, res)
   }
 
@@ -161,7 +177,7 @@ class BackupController {
    * @param {Response} res
    * @param {NextFunction} next
    */
-  middleware(req, res, next) {
+  middleware(this: ApiRouter, req: RequestWithOptionalBackup, res: Response, next: NextFunction) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[BackupController] Non-admin user "${req.user.username}" attempting to access backups`)
       return res.sendStatus(403)
@@ -177,4 +193,4 @@ class BackupController {
     next()
   }
 }
-module.exports = new BackupController()
+export = new BackupController()

@@ -1,10 +1,26 @@
-const { Request, Response } = require('express')
-const Path = require('path')
-const Logger = require('../Logger')
-const fs = require('../libs/fsExtra')
-const { toNumber } = require('../utils/index')
-const fileUtils = require('../utils/fileUtils')
-const Database = require('../Database')
+import type { Request, Response } from 'express'
+import type { FindOptions } from 'sequelize'
+import Path = require('path')
+import Logger = require('../Logger')
+import fs = require('../libs/fsExtra')
+import utils = require('../utils/index')
+const { toNumber }: { toNumber: (val: unknown, fallback?: number) => number } = utils
+import fileUtils = require('../utils/fileUtils')
+import Database = require('../Database')
+type User = import('../models/User')
+type LibraryItem = import('../models/LibraryItem')
+
+declare const global: typeof globalThis & { isWin: boolean; appRoot: string }
+
+// Query values are assumed to be strings (the original code passes path to Path.isAbsolute)
+type Query = { path?: string; level?: string }
+// Body of POST /api/filesystem/pathexists. The handler checks at runtime that both values are non-empty strings
+type PathExistsBody = { directory?: string; folderPath?: string }
+type DirectoryEntry = { path: string; dirname: string; level: number }
+// The one inherited Sequelize static that this controller calls on the LibraryItem model (used by the cast in checkPathExists)
+type LibraryItemFindOne = { findOne(options: FindOptions): Promise<LibraryItem | null> }
+
+type RequestWithUser = Request<Record<string, string>, unknown, PathExistsBody, Query> & { user: User }
 
 /**
  * @typedef RequestUserObject
@@ -21,7 +37,7 @@ class FileSystemController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async getPaths(req, res) {
+  async getPaths(req: RequestWithUser, res: Response) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[FileSystemController] Non-admin user "${req.user.username}" attempting to get filesystem paths`)
       return res.sendStatus(403)
@@ -37,7 +53,7 @@ class FileSystemController {
     }
     Logger.debug(`[FileSystemController] Getting file paths at ${relpath || 'root'} (${level})`)
 
-    let directories = []
+    let directories: DirectoryEntry[] = []
 
     // Windows returns drives first
     if (global.isWin) {
@@ -82,7 +98,7 @@ class FileSystemController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async checkPathExists(req, res) {
+  async checkPathExists(req: RequestWithUser, res: Response) {
     if (!req.user.canUpload) {
       Logger.error(`[FileSystemController] User "${req.user.username}" without upload permissions attempting to check path exists`)
       return res.sendStatus(403)
@@ -140,7 +156,8 @@ class FileSystemController {
         possiblePaths.push(fileUtils.filePathToPOSIX(Path.join(folderPath, Path.dirname(subdir))))
       }
 
-      const libraryItem = await Database.libraryItemModel.findOne({
+      // boundary cast: LibraryItem.js replaces Model.init with its own init(sequelize), so TypeScript does not accept the untyped class as the this of an inherited Sequelize static
+      const libraryItem = await (Database.libraryItemModel as LibraryItemFindOne).findOne({
         where: {
           path: possiblePaths
         }
@@ -159,4 +176,4 @@ class FileSystemController {
     })
   }
 }
-module.exports = new FileSystemController()
+export = new FileSystemController()

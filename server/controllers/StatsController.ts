@@ -1,7 +1,10 @@
-const { Request, Response, NextFunction } = require('express')
-const Logger = require('../Logger')
+import type { NextFunction, Request, Response } from 'express'
+import Logger = require('../Logger')
 
-const adminStats = require('../utils/queries/adminStats')
+import adminStats = require('../utils/queries/adminStats')
+type User = import('../models/User')
+
+type RequestWithUser = Request & { user: User }
 
 /**
  * @typedef RequestUserObject
@@ -20,7 +23,7 @@ class StatsController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async getServerStats(req, res) {
+  async getServerStats(req: RequestWithUser, res: Response) {
     Logger.debug('[StatsController] getServerStats')
     const totalSize = await adminStats.getTotalSize()
     const numAudioFiles = await adminStats.getNumAudioFiles()
@@ -47,7 +50,7 @@ class StatsController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async getAdminStatsForYear(req, res) {
+  async getAdminStatsForYear(req: RequestWithUser, res: Response) {
     const year = Number(req.params.year)
     if (isNaN(year) || year < 2000 || year > 9999) {
       Logger.error(`[StatsController] Invalid year "${year}"`)
@@ -63,7 +66,7 @@ class StatsController {
    * @param {Response} res
    * @param {NextFunction} next
    */
-  async middleware(req, res, next) {
+  async middleware(req: RequestWithUser, res: Response, next: NextFunction) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[StatsController] Non-admin user "${req.user.username}" attempted to access stats route`)
       return res.sendStatus(403)
@@ -72,4 +75,4 @@ class StatsController {
     next()
   }
 }
-module.exports = new StatsController()
+export = new StatsController()

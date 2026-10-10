@@ -1,9 +1,20 @@
-const { Request, Response, NextFunction } = require('express')
-const Logger = require('../Logger')
-const SocketAuthority = require('../SocketAuthority')
-const Database = require('../Database')
+import type { NextFunction, Request, Response } from 'express'
+import Logger = require('../Logger')
+import SocketAuthority = require('../SocketAuthority')
+import Database = require('../Database')
 
-const { validateUrl } = require('../utils/index')
+import utils = require('../utils/index')
+const { validateUrl }: { validateUrl: (rawUrl: string) => string | null } = utils // the JSDoc in utils/index.js says string, but the function returns null for an invalid url
+type User = import('../models/User')
+type CustomMetadataProvider = import('../models/CustomMetadataProvider')
+
+// Body of POST /api/custom-metadata-providers. The values are assumed to be strings (the original code does not check their types)
+type CreateBody = { name?: string; url?: string; mediaType?: string; authHeaderValue?: string }
+
+type RequestWithUser = Request<{ id?: string }, unknown, CreateBody> & { user: User }
+type RequestWithProvider = RequestWithUser & { customMetadataProvider: CustomMetadataProvider }
+// The middleware sets customMetadataProvider. findByPk returns null for an unknown id, which the middleware answers with 404
+type RequestWithOptionalProvider = RequestWithUser & { customMetadataProvider?: CustomMetadataProvider | null }
 
 /**
  * @typedef RequestUserObject
@@ -21,7 +32,7 @@ class CustomMetadataProviderController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async getAll(req, res) {
+  async getAll(req: RequestWithUser, res: Response) {
     const providers = await Database.customMetadataProviderModel.findAll()
 
     res.json({
@@ -35,7 +46,7 @@ class CustomMetadataProviderController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async create(req, res) {
+  async create(req: RequestWithUser, res: Response) {
     const { name, url, mediaType, authHeaderValue } = req.body
 
     if (!name || !url || !mediaType) {
@@ -69,7 +80,7 @@ class CustomMetadataProviderController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async delete(req, res) {
+  async delete(req: RequestWithProvider, res: Response) {
     const slug = `custom-${req.params.id}`
 
     /** @type {import('../models/CustomMetadataProvider')} */
@@ -105,7 +116,7 @@ class CustomMetadataProviderController {
    * @param {Response} res
    * @param {NextFunction} next
    */
-  async middleware(req, res, next) {
+  async middleware(req: RequestWithOptionalProvider, res: Response, next: NextFunction) {
     if (!req.user.isAdminOrUp) {
       Logger.warn(`[CustomMetadataProviderController] Non-admin user "${req.user.username}" attempted access route "${req.path}"`)
       return res.sendStatus(403)
@@ -122,4 +133,4 @@ class CustomMetadataProviderController {
     next()
   }
 }
-module.exports = new CustomMetadataProviderController()
+export = new CustomMetadataProviderController()

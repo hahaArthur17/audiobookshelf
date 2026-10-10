@@ -1,8 +1,15 @@
-const { Request, Response, NextFunction } = require('express')
-const Logger = require('../Logger')
-const Database = require('../Database')
+import type { NextFunction, Request, Response } from 'express'
+import Logger = require('../Logger')
+import Database = require('../Database')
 
-const RssFeedManager = require('../managers/RssFeedManager')
+import RssFeedManager = require('../managers/RssFeedManager')
+type User = import('../models/User')
+
+// Body of the three open routes. The handlers check serverAddress and slug at runtime and pass the whole body on to RssFeedManager as the feed options
+type OpenFeedBody = { serverAddress?: string; slug?: string }
+
+// Each route has its own id param (itemId, collectionId, seriesId or id), so each handler names the one it reads
+type RequestWithUser<Params = Record<string, string>> = Request<Params, unknown, OpenFeedBody> & { user: User }
 
 /**
  * @typedef RequestUserObject
@@ -22,7 +29,7 @@ class RSSFeedController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async getAll(req, res) {
+  async getAll(req: RequestWithUser, res: Response) {
     const feeds = await RssFeedManager.getFeeds()
     res.json({
       feeds: feeds.map((f) => f.toOldJSON()),
@@ -38,7 +45,7 @@ class RSSFeedController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async openRSSFeedForItem(req, res) {
+  async openRSSFeedForItem(req: RequestWithUser<{ itemId: string }>, res: Response) {
     const reqBody = req.body || {}
 
     const itemExpanded = await Database.libraryItemModel.getExpandedById(req.params.itemId)
@@ -87,7 +94,7 @@ class RSSFeedController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async openRSSFeedForCollection(req, res) {
+  async openRSSFeedForCollection(req: RequestWithUser<{ collectionId: string }>, res: Response) {
     const reqBody = req.body || {}
 
     // Check request body options exist
@@ -130,7 +137,7 @@ class RSSFeedController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async openRSSFeedForSeries(req, res) {
+  async openRSSFeedForSeries(req: RequestWithUser<{ seriesId: string }>, res: Response) {
     const reqBody = req.body || {}
 
     // Check request body options exist
@@ -173,7 +180,7 @@ class RSSFeedController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async closeRSSFeed(req, res) {
+  async closeRSSFeed(req: RequestWithUser<{ id: string }>, res: Response) {
     const feed = await Database.feedModel.findByPk(req.params.id)
     if (!feed) {
       Logger.error(`[RSSFeedController] Cannot close RSS feed because feed "${req.params.id}" does not exist`)
@@ -191,7 +198,7 @@ class RSSFeedController {
    * @param {Response} res
    * @param {NextFunction} next
    */
-  middleware(req, res, next) {
+  middleware(req: RequestWithUser, res: Response, next: NextFunction) {
     if (!req.user.isAdminOrUp) {
       // Only admins can manage rss feeds
       Logger.error(`[RSSFeedController] Non-admin user "${req.user.username}" attempted to make a request to an RSS feed route`)
@@ -201,4 +208,4 @@ class RSSFeedController {
     next()
   }
 }
-module.exports = new RSSFeedController()
+export = new RSSFeedController()

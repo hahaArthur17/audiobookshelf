@@ -1,6 +1,23 @@
-const { Request, Response, NextFunction } = require('express')
-const Logger = require('../Logger')
-const Database = require('../Database')
+import type { NextFunction, Request, Response } from 'express'
+import Logger = require('../Logger')
+import Database = require('../Database')
+type ApiRouter = import('../routers/ApiRouter')
+type User = import('../models/User')
+type LibraryItem = import('../models/LibraryItem')
+type Task = import('../objects/Task')
+
+// Query of the encode-m4b route: encodeM4b passes the whole query on as the encode options of AbMergeManager.startAudiobookMerge()
+type EncodeQuery = NonNullable<Parameters<ApiRouter['abMergeManager']['startAudiobookMerge']>[2]>
+// Query of the embed-metadata routes. Query values are assumed to be strings (the original code compares them with '1')
+type EmbedQuery = { forceEmbedChapters?: string; backup?: string }
+// Body of POST /api/tools/batch/embed-metadata. libraryItemIds is assumed to be an array of strings (the original code does not check it)
+type BatchBody = { libraryItemIds?: string[] }
+
+// The routes with :id always have the id; the batch route and the middleware (which serves both) do not
+type RequestWithUser<Params = { id?: string }, Query = EmbedQuery> = Request<Params, unknown, BatchBody, Query> & { user: User }
+type RequestWithLibraryItem<Query = EmbedQuery> = RequestWithUser<{ id: string }, Query> & { libraryItem: LibraryItem }
+// The middleware sets libraryItem when the route has an id
+type RequestWithOptionalLibraryItem = RequestWithUser & { libraryItem?: LibraryItem }
 
 /**
  * @typedef RequestUserObject
@@ -26,7 +43,7 @@ class ToolsController {
    * @param {RequestWithLibraryItem} req
    * @param {Response} res
    */
-  async encodeM4b(req, res) {
+  async encodeM4b(this: ApiRouter, req: RequestWithLibraryItem<EncodeQuery>, res: Response) {
     if (req.libraryItem.isMissing || req.libraryItem.isInvalid) {
       Logger.error(`[MiscController] encodeM4b: library item not found or invalid ${req.params.id}`)
       return res.status(404).send('Audiobook not found')
@@ -63,8 +80,9 @@ class ToolsController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async cancelM4bEncode(req, res) {
-    const workerTask = this.abMergeManager.getPendingTaskByLibraryItemId(req.params.id)
+  async cancelM4bEncode(this: ApiRouter, req: RequestWithUser<{ id: string }>, res: Response) {
+    // boundary cast: AbMergeManager.js documents the return type as Task|null, but it returns the pending entry { id, task } that holds the task
+    const workerTask = this.abMergeManager.getPendingTaskByLibraryItemId(req.params.id) as { task: Task } | null
     if (!workerTask) return res.sendStatus(404)
 
     this.abMergeManager.cancelEncode(workerTask.task)
@@ -81,7 +99,7 @@ class ToolsController {
    * @param {RequestWithLibraryItem} req
    * @param {Response} res
    */
-  async embedAudioFileMetadata(req, res) {
+  async embedAudioFileMetadata(this: ApiRouter, req: RequestWithLibraryItem, res: Response) {
     if (req.libraryItem.isMissing || !req.libraryItem.hasAudioTracks || !req.libraryItem.isBook) {
       Logger.error(`[ToolsController] Invalid library item`)
       return res.sendStatus(400)
@@ -109,7 +127,7 @@ class ToolsController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async batchEmbedMetadata(req, res) {
+  async batchEmbedMetadata(this: ApiRouter, req: RequestWithUser, res: Response) {
     const libraryItemIds = req.body.libraryItemIds || []
     if (!libraryItemIds.length) {
       return res.status(400).send('Invalid request payload')
@@ -156,7 +174,7 @@ class ToolsController {
    * @param {Response} res
    * @param {NextFunction} next
    */
-  async middleware(req, res, next) {
+  async middleware(req: RequestWithOptionalLibraryItem, res: Response, next: NextFunction) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[LibraryItemController] Non-root user "${req.user.username}" attempted to access tools route`)
       return res.sendStatus(403)
@@ -177,4 +195,4 @@ class ToolsController {
     next()
   }
 }
-module.exports = new ToolsController()
+export = new ToolsController()
