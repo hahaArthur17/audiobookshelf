@@ -1,9 +1,46 @@
-const { DataTypes, Model } = require('sequelize')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model } = sequelizeModule
+import type { BelongsToGetAssociationMixin, BelongsToGetAssociationMixinOptions, BuildOptions, CreationAttributes, Sequelize, WhereOptions } from 'sequelize'
 
-const oldPlaybackSession = require('../objects/PlaybackSession')
+import oldPlaybackSession = require('../objects/PlaybackSession')
+
+type Book = import('./Book')
+type PodcastEpisode = import('./PodcastEpisode')
+type Device = import('./Device')
 
 class PlaybackSession extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare mediaItemId: string
+  declare mediaItemType: 'book' | 'podcastEpisode' // the JSDoc says string; these are the two values getFromOld() stores and the associations in init() are scoped to, and getMediaItem() builds a mixin name from them
+  declare displayTitle: string
+  declare displayAuthor: string
+  declare duration: number
+  declare playMethod: number
+  declare mediaPlayer: string
+  declare startTime: number
+  declare currentTime: number
+  declare serverVersion: string | null // getFromOld() stores null when the old session has no version; the JSDoc says string
+  declare coverPath: string
+  declare timeListening: number
+  declare mediaMetadata: Record<string, unknown>
+  declare date: string
+  declare dayOfWeek: string
+  declare extraData: { libraryItemId?: string } | null // the JSDoc says Object; libraryItemId is the only key this file reads or writes, and it reads it with ?.
+  declare userId: string
+  declare deviceId: string | null // getFromOld() stores null when the old session has no device info; the JSDoc says UUIDV4
+  declare libraryId: string
+  declare updatedAt: Date
+  declare createdAt: Date
+  declare device?: Device // only set by a query that includes device (getOldPlaybackSessions, getById); not listed in the constructor
+  declare mediaItem: Book | PodcastEpisode // set by the afterFind hook; not listed in the constructor
+  declare book?: Book // set by a query that includes book; the afterFind hook moves it to mediaItem and deletes it
+  declare podcastEpisode?: PodcastEpisode // set by a query that includes podcastEpisode; the afterFind hook moves it to mediaItem and deletes it
+  declare getBook: BelongsToGetAssociationMixin<Book> // mixin added by belongsTo(book) in init()
+  declare getPodcastEpisode: BelongsToGetAssociationMixin<PodcastEpisode> // mixin added by belongsTo(podcastEpisode) in init()
+  declare static readonly sequelize: Sequelize // set by init() before any query runs (optional in Sequelize's typings)
+  declare readonly sequelize: Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> } // Database.js adds uppercaseFirst to the Sequelize instance before any model is used
+
+  constructor(values?: CreationAttributes<PlaybackSession>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -52,9 +89,9 @@ class PlaybackSession extends Model {
     this.createdAt
   }
 
-  static async getOldPlaybackSessions(where = null) {
+  static async getOldPlaybackSessions(where: WhereOptions | null = null) {
     const playbackSessions = await this.findAll({
-      where,
+      ...(where && { where }), // where is left out when it is null: Sequelize's typings reject where: null, which it treats like no where
       include: [
         {
           model: this.sequelize.models.device
@@ -64,7 +101,7 @@ class PlaybackSession extends Model {
     return playbackSessions.map((session) => this.getOldPlaybackSession(session))
   }
 
-  static async getById(sessionId) {
+  static async getById(sessionId: string) {
     const playbackSession = await this.findByPk(sessionId, {
       include: [
         {
@@ -76,7 +113,7 @@ class PlaybackSession extends Model {
     return this.getOldPlaybackSession(playbackSession)
   }
 
-  static getOldPlaybackSession(playbackSessionExpanded) {
+  static getOldPlaybackSession(playbackSessionExpanded: PlaybackSession) {
     const isPodcastEpisode = playbackSessionExpanded.mediaItemType === 'podcastEpisode'
 
     return new oldPlaybackSession({
@@ -107,7 +144,7 @@ class PlaybackSession extends Model {
     })
   }
 
-  static removeById(sessionId) {
+  static removeById(sessionId: string) {
     return this.destroy({
       where: {
         id: sessionId
@@ -115,14 +152,12 @@ class PlaybackSession extends Model {
     })
   }
 
-  static createFromOld(oldPlaybackSession) {
+  static createFromOld(oldPlaybackSession: oldPlaybackSession) {
     const playbackSession = this.getFromOld(oldPlaybackSession)
-    return this.upsert(playbackSession, {
-      silent: true
-    })
+    return this.upsert(playbackSession)
   }
 
-  static updateFromOld(oldPlaybackSession) {
+  static updateFromOld(oldPlaybackSession: oldPlaybackSession) {
     const playbackSession = this.getFromOld(oldPlaybackSession)
     return this.update(playbackSession, {
       where: {
@@ -132,7 +167,7 @@ class PlaybackSession extends Model {
     })
   }
 
-  static getFromOld(oldPlaybackSession) {
+  static getFromOld(oldPlaybackSession: oldPlaybackSession) {
     return {
       id: oldPlaybackSession.id,
       mediaItemId: oldPlaybackSession.episodeId || oldPlaybackSession.bookId,
@@ -161,17 +196,19 @@ class PlaybackSession extends Model {
     }
   }
 
-  getMediaItem(options) {
+  getMediaItem(options?: BelongsToGetAssociationMixinOptions) {
     if (!this.mediaItemType) return Promise.resolve(null)
-    const mixinMethodName = `get${this.sequelize.uppercaseFirst(this.mediaItemType)}`
+    const mixinMethodName: 'getBook' | 'getPodcastEpisode' = `get${this.sequelize.uppercaseFirst(this.mediaItemType)}`
     return this[mixinMethodName](options)
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -231,7 +268,7 @@ class PlaybackSession extends Model {
     })
     PlaybackSession.belongsTo(podcastEpisode, { foreignKey: 'mediaItemId', constraints: false })
 
-    PlaybackSession.addHook('afterFind', (findResult) => {
+    PlaybackSession.addHook('afterFind', (findResult: PlaybackSession | PlaybackSession[] | null) => {
       if (!findResult) return
 
       if (!Array.isArray(findResult)) findResult = [findResult]
@@ -254,4 +291,4 @@ class PlaybackSession extends Model {
   }
 }
 
-module.exports = PlaybackSession
+export = PlaybackSession
