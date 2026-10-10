@@ -1,20 +1,195 @@
-const Sequelize = require('sequelize')
+type LibraryFiltersPagination = number | string | null | undefined
+
+interface LibraryFiltersUser {
+  id?: string
+  canAccessExplicitContent: boolean
+  permissions?: {
+    accessAllTags?: boolean
+    itemTagsSelected?: string[] | null
+    selectedTagsNotAccessible?: boolean
+  }
+}
+
+interface LibraryFiltersOldItem {
+  [key: string]: unknown
+  media: Record<string, unknown> & {
+    size?: unknown
+    metadata: Record<string, unknown> & { series?: unknown }
+  }
+}
+
+interface LibraryFiltersFeed {
+  toOldJSONMinified(): unknown
+}
+
+interface LibraryFiltersItem {
+  [key: string]: unknown
+  id: string
+  size?: unknown
+  rssFeed?: LibraryFiltersFeed | null
+  mediaItemShare?: unknown
+  numEpisodesIncomplete?: number
+  recentEpisode?: unknown
+  series?: unknown
+  toOldJSONMinified(): LibraryFiltersOldItem
+}
+
+interface LibraryFiltersBook {
+  [key: string]: unknown
+  id: string
+  tags?: string[] | null
+  genres?: string[] | null
+  narrators?: string[] | null
+  publisher?: string | null
+  publishedYear?: number | null
+  language?: string | null
+  libraryItem: LibraryFiltersItem & { isMissing?: unknown; isInvalid?: unknown }
+  authors?: unknown[]
+  series?: unknown[]
+}
+
+interface LibraryFiltersBookSeries {
+  sequence?: string | null
+  book: Omit<LibraryFiltersBook, 'libraryItem'> & { libraryItem?: LibraryFiltersItem }
+}
+
+interface LibraryFiltersOldSeries {
+  [key: string]: unknown
+  rssFeed?: unknown
+  books?: Array<LibraryFiltersOldItem | null>
+}
+
+interface LibraryFiltersSeries {
+  [key: string]: unknown
+  id: string
+  name?: string | null
+  feeds?: LibraryFiltersFeed[]
+  bookSeries: LibraryFiltersBookSeries[]
+  toOldJSON(): LibraryFiltersOldSeries
+}
+
+interface LibraryFiltersAuthor {
+  [key: string]: unknown
+  id: string
+  name: string
+  books: unknown[]
+  toOldJSONExpanded(numBooks: number): unknown
+}
+
+interface LibraryFiltersPodcast {
+  tags?: string[] | null
+  genres?: string[] | null
+  language?: string | null
+}
+
+interface LibraryFiltersQueryOptions {
+  [key: string]: unknown
+  [key: symbol]: unknown
+  limit?: LibraryFiltersPagination
+  offset?: LibraryFiltersPagination
+}
+
+interface LibraryFiltersQueryModel<Row> {
+  count(options: LibraryFiltersQueryOptions): Promise<number>
+  findAll(options: LibraryFiltersQueryOptions): Promise<Row[]>
+  findAndCountAll(options: LibraryFiltersQueryOptions): Promise<{ rows: Row[]; count: number }>
+}
+
+interface LibraryFiltersData {
+  authors: Array<{ id: string; name: string }>
+  genres: Set<string> | string[]
+  tags: Set<string> | string[]
+  series: Array<{ id: string; name: string }>
+  narrators: Set<string> | string[]
+  languages: Set<string> | string[]
+  publishers: Set<string> | string[]
+  publishedDecades: Set<string> | string[]
+  bookCount: number
+  authorCount: number
+  seriesCount: number
+  podcastCount: number
+  numIssues: number
+  loadedAt?: number
+}
+
+interface LibraryFiltersDatabase {
+  libraryFilterData: Record<string, LibraryFiltersData | undefined>
+  bookModel: LibraryFiltersQueryModel<LibraryFiltersBook>
+  seriesModel: LibraryFiltersQueryModel<LibraryFiltersSeries>
+  authorModel: LibraryFiltersQueryModel<LibraryFiltersAuthor>
+  podcastModel: LibraryFiltersQueryModel<LibraryFiltersPodcast>
+  libraryItemModel: unknown
+  feedModel: unknown
+  bookSeriesModel: unknown
+}
+
+interface LibraryFiltersLibrary {
+  id: string
+  isBook: boolean
+  mediaType: string
+  settings: { hideSingleBookSeries?: boolean }
+}
+
+interface LibraryFiltersAuthorSource {
+  id: string
+  libraryId: string
+}
+
+interface LibraryFiltersModule {
+  decode(text: string): string | null
+  getFilteredLibraryItems(libraryId: string, user: LibraryFiltersUser, options: {
+    filterBy?: string | null
+    sortBy?: string | null
+    sortDesc?: boolean | string | null
+    limit?: LibraryFiltersPagination
+    offset?: LibraryFiltersPagination
+    collapseseries?: boolean
+    include: string[]
+    mediaType?: string
+  }): Promise<{ libraryItems: LibraryFiltersItem[]; count: number | undefined }>
+  getMediaItemsInProgress(library: LibraryFiltersLibrary, user: LibraryFiltersUser, include: string[], limit: LibraryFiltersPagination): Promise<{ items: LibraryFiltersOldItem[]; count: number | undefined }>
+  getLibraryItemsMostRecentlyAdded(library: LibraryFiltersLibrary, user: LibraryFiltersUser, include: string[], limit: LibraryFiltersPagination): Promise<{ libraryItems: LibraryFiltersOldItem[]; count: number | undefined }>
+  getLibraryItemsContinueSeries(library: LibraryFiltersLibrary, user: LibraryFiltersUser, include: string[], limit: LibraryFiltersPagination): Promise<{ libraryItems: LibraryFiltersOldItem[]; count: number | undefined }>
+  getMediaFinished(library: LibraryFiltersLibrary, user: LibraryFiltersUser, include: string[], limit: LibraryFiltersPagination): Promise<{ items: LibraryFiltersOldItem[]; count: number | undefined }>
+  getSeriesMostRecentlyAdded(library: LibraryFiltersLibrary, user: LibraryFiltersUser, include: string[], limit: LibraryFiltersPagination): Promise<{ series: LibraryFiltersOldSeries[]; count: number }>
+  getNewestAuthors(library: LibraryFiltersLibrary, user: LibraryFiltersUser, limit: LibraryFiltersPagination): Promise<{ authors: unknown[]; count: number }>
+  getLibraryItemsToDiscover(library: LibraryFiltersLibrary, user: LibraryFiltersUser, include: string[], limit: LibraryFiltersPagination): Promise<{ libraryItems: LibraryFiltersOldItem[]; count: number | undefined }>
+  getNewestPodcastEpisodes(library: LibraryFiltersLibrary, user: LibraryFiltersUser, limit: LibraryFiltersPagination): Promise<{ libraryItems: LibraryFiltersOldItem[]; count: number | undefined }>
+  getLibraryItemsForAuthor(author: LibraryFiltersAuthorSource, user: LibraryFiltersUser, limit: LibraryFiltersPagination, offset: LibraryFiltersPagination): Promise<{ libraryItems: LibraryFiltersItem[]; count: number | undefined }>
+  getLibraryItemsForCollection(collection: unknown): Promise<LibraryFiltersItem[]>
+  getFilterData(mediaType: string, libraryId: string): Promise<LibraryFiltersData>
+}
+
+interface LibraryFiltersBookModule {
+  getFilteredLibraryItems(...args: unknown[]): Promise<{ libraryItems: LibraryFiltersItem[]; count: number | undefined }>
+  getContinueSeriesLibraryItems(...args: unknown[]): Promise<{ libraryItems: LibraryFiltersItem[]; count: number }>
+  getDiscoverLibraryItems(...args: unknown[]): Promise<{ libraryItems: LibraryFiltersItem[]; count: number | undefined }>
+  getUserPermissionBookWhereQuery(user: LibraryFiltersUser): { bookWhere: unknown[]; replacements: Record<string, unknown> }
+  getLibraryItemsForCollection(collection: unknown): Promise<LibraryFiltersItem[]>
+}
+
+interface LibraryFiltersPodcastModule {
+  getFilteredLibraryItems(...args: unknown[]): Promise<{ libraryItems: LibraryFiltersItem[]; count: number | undefined }>
+  getFilteredPodcastEpisodes(...args: unknown[]): Promise<{ libraryItems: LibraryFiltersItem[]; count: number | undefined }>
+}
+
+const Sequelize = require('sequelize') as typeof import('sequelize')
 const Logger = require('../../Logger')
-const Database = require('../../Database')
-const libraryItemsBookFilters = require('./libraryItemsBookFilters')
-const libraryItemsPodcastFilters = require('./libraryItemsPodcastFilters')
+const Database = require('../../Database') as LibraryFiltersDatabase
+const libraryItemsBookFilters = require('./libraryItemsBookFilters') as LibraryFiltersBookModule
+const libraryItemsPodcastFilters = require('./libraryItemsPodcastFilters') as LibraryFiltersPodcastModule
 const { createNewSortInstance } = require('../../libs/fastSort')
 const { profile } = require('../../utils/profiler')
 const naturalSort = createNewSortInstance({
   comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
 })
 
-module.exports = {
+const libraryFilters: LibraryFiltersModule = {
   decode(text) {
     try {
       return Buffer.from(decodeURIComponent(text), 'base64').toString()
     } catch (error) {
-      Logger.warn(`[libraryFilters] Failed to decode filter value "${text}": ${error.message}`)
+      Logger.warn(`[libraryFilters] Failed to decode filter value "${text}": ${(error as { message: unknown }).message}`)
       return null
     }
   },
@@ -216,11 +391,11 @@ module.exports = {
 
     const userPermissionBookWhere = libraryItemsBookFilters.getUserPermissionBookWhereQuery(user)
 
-    const seriesWhere = [
+    const seriesWhere: unknown[] = [
       {
         libraryId: library.id,
         createdAt: {
-          [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+          [Sequelize.Op.gte]: new Date((new Date() as Date & number) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
         }
       }
     ]
@@ -280,7 +455,7 @@ module.exports = {
       order: [['createdAt', 'DESC']]
     })
 
-    const allOldSeries = []
+    const allOldSeries: LibraryFiltersOldSeries[] = []
     for (const s of series) {
       const oldSeries = s.toOldJSON()
 
@@ -340,7 +515,7 @@ module.exports = {
       where: {
         libraryId: library.id,
         createdAt: {
-          [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+      [Sequelize.Op.gte]: new Date((new Date() as Date & number) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
         }
       },
       replacements,
@@ -449,7 +624,7 @@ module.exports = {
   async getFilterData(mediaType, libraryId) {
     const cachedFilterData = Database.libraryFilterData[libraryId]
     if (cachedFilterData) {
-      const cacheElapsed = Date.now() - cachedFilterData.loadedAt
+      const cacheElapsed = Date.now() - cachedFilterData.loadedAt!
       // Cache library filters for 30 mins
       // TODO: Keep cached filter data up-to-date on updates
       if (cacheElapsed < 1000 * 60 * 30) {
@@ -458,15 +633,15 @@ module.exports = {
     }
     const start = Date.now() // Temp for checking load times
 
-    const data = {
+    const data: LibraryFiltersData = {
       authors: [],
-      genres: new Set(),
-      tags: new Set(),
+      genres: new Set<string>(),
+      tags: new Set<string>(),
       series: [],
-      narrators: new Set(),
-      languages: new Set(),
-      publishers: new Set(),
-      publishedDecades: new Set(),
+      narrators: new Set<string>(),
+      languages: new Set<string>(),
+      publishers: new Set<string>(),
+      publishedDecades: new Set<string>(),
       bookCount: 0, // How many books returned from database query
       authorCount: 0, // How many authors returned from database query
       seriesCount: 0, // How many series returned from database query
@@ -474,7 +649,7 @@ module.exports = {
       numIssues: 0
     }
 
-    const lastLoadedAt = cachedFilterData ? cachedFilterData.loadedAt : 0
+    const lastLoadedAt = cachedFilterData ? cachedFilterData.loadedAt! : 0
 
     if (mediaType === 'podcast') {
       // Check how many podcasts are in library to determine if we need to load all of the data
@@ -521,14 +696,14 @@ module.exports = {
 
         if (podcastCountFromDatabase === Database.libraryFilterData[libraryId]?.podcastCount) {
           Logger.debug(`Filter data for ${libraryId} has not changed, returning cached data and updating cache time after ${((Date.now() - start) / 1000).toFixed(2)}s`)
-          Database.libraryFilterData[libraryId].loadedAt = Date.now()
-          return cachedFilterData
+          Database.libraryFilterData[libraryId]!.loadedAt = Date.now()
+          return cachedFilterData!
         }
       }
 
       // Something has changed in the podcasts table, so reload all of the filter data for library
       const findAll = process.env.QUERY_PROFILING ? profile(Database.podcastModel.findAll.bind(Database.podcastModel)) : Database.podcastModel.findAll.bind(Database.podcastModel)
-      const podcasts = await findAll({
+      const podcasts: LibraryFiltersPodcast[] = await findAll({
         include: {
           model: Database.libraryItemModel,
           attributes: [],
@@ -540,13 +715,13 @@ module.exports = {
       })
       for (const podcast of podcasts) {
         if (podcast.tags?.length) {
-          podcast.tags.forEach((tag) => data.tags.add(tag))
+          podcast.tags.forEach((tag) => (data.tags as Set<string>).add(tag))
         }
         if (podcast.genres?.length) {
-          podcast.genres.forEach((genre) => data.genres.add(genre))
+          podcast.genres.forEach((genre) => (data.genres as Set<string>).add(genre))
         }
         if (podcast.language) {
-          data.languages.add(podcast.language)
+          (data.languages as Set<string>).add(podcast.language)
         }
       }
 
@@ -623,10 +798,10 @@ module.exports = {
       if (changedBooks + changedSeries + changedAuthors === 0) {
         // If nothing has changed, check if the number of authors, series, and books
         // matches the prior check before updating cache creation time
-        if (bookCountFromDatabase === Database.libraryFilterData[libraryId]?.bookCount && seriesCountFromDatabase === Database.libraryFilterData[libraryId]?.seriesCount && authorCountFromDatabase === Database.libraryFilterData[libraryId].authorCount) {
+        if (bookCountFromDatabase === Database.libraryFilterData[libraryId]?.bookCount && seriesCountFromDatabase === Database.libraryFilterData[libraryId]?.seriesCount && authorCountFromDatabase === Database.libraryFilterData[libraryId]!.authorCount) {
           Logger.debug(`Filter data for ${libraryId} has not changed, returning cached data and updating cache time after ${((Date.now() - start) / 1000).toFixed(2)}s`)
-          Database.libraryFilterData[libraryId].loadedAt = Date.now()
-          return cachedFilterData
+          Database.libraryFilterData[libraryId]!.loadedAt = Date.now()
+          return cachedFilterData!
         }
       }
 
@@ -649,21 +824,21 @@ module.exports = {
       for (const book of books) {
         if (book.libraryItem.isMissing || book.libraryItem.isInvalid) data.numIssues++
         if (book.tags?.length) {
-          book.tags.forEach((tag) => data.tags.add(tag))
+          book.tags.forEach((tag) => (data.tags as Set<string>).add(tag))
         }
         if (book.genres?.length) {
-          book.genres.forEach((genre) => data.genres.add(genre))
+          book.genres.forEach((genre) => (data.genres as Set<string>).add(genre))
         }
         if (book.narrators?.length) {
-          book.narrators.forEach((narrator) => data.narrators.add(narrator))
+          book.narrators.forEach((narrator) => (data.narrators as Set<string>).add(narrator))
         }
-        if (book.publisher) data.publishers.add(book.publisher)
+        if (book.publisher) (data.publishers as Set<string>).add(book.publisher)
         // Check if published year exists and is valid
         if (book.publishedYear && !isNaN(book.publishedYear) && book.publishedYear > 0 && book.publishedYear < 3000) {
-          const decade = (Math.floor(book.publishedYear / 10) * 10).toString()
-          data.publishedDecades.add(decade)
+          const decade = (Math.floor(book.publishedYear / 10) * 10).toString();
+          (data.publishedDecades as Set<string>).add(decade)
         }
-        if (book.language) data.languages.add(book.language)
+        if (book.language) (data.languages as Set<string>).add(book.language)
       }
 
       const series = await Database.seriesModel.findAll({
@@ -683,10 +858,10 @@ module.exports = {
       authors.forEach((a) => data.authors.push({ id: a.id, name: a.name }))
     }
 
-    data.authors = naturalSort(data.authors).asc((au) => au.name)
+    data.authors = naturalSort(data.authors).asc((au: { name: string }) => au.name)
     data.genres = naturalSort([...data.genres]).asc()
     data.tags = naturalSort([...data.tags]).asc()
-    data.series = naturalSort(data.series).asc((se) => se.name)
+    data.series = naturalSort(data.series).asc((se: { name: string }) => se.name)
     data.narrators = naturalSort([...data.narrators]).asc()
     data.publishers = naturalSort([...data.publishers]).asc()
     data.publishedDecades = naturalSort([...data.publishedDecades]).asc()
@@ -698,3 +873,5 @@ module.exports = {
     return data
   }
 }
+
+export = libraryFilters
