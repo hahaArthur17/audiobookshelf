@@ -1,11 +1,21 @@
-//
-// This takes a string and parsed out first and last names
-//   accepts comma separated lists e.g. "Jon Smith, Jane Smith" or "Smith, Jon, Smith, Jane"
-//   can be separated by "&" e.g. "Jon Smith & Jane Smith" or "Smith, Jon & Smith, Jane"
-//
-const parseFullName = require('./parseFullName')
+interface ParseNameStringFullNameParts {
+  first: string
+  middle: string
+  last: string
+}
 
-function parseName(name) {
+interface ParseNameStringNameParts {
+  first_name: string
+  last_name: string
+}
+
+interface ParseNameStringResult {
+  names: string[]
+}
+
+const parseFullName: (name: unknown) => ParseNameStringFullNameParts = require('./parseFullName')
+
+function parseName(name: unknown): ParseNameStringNameParts {
   var parts = parseFullName(name)
   var firstName = parts.first
   if (firstName && parts.middle) firstName += ' ' + parts.middle
@@ -18,7 +28,7 @@ function parseName(name) {
 
 // Check if this name segment is of the format "Last, First" or "First Last"
 // return true is "Last, First"
-function checkIsALastName(name) {
+function checkIsALastName(name: string): boolean {
   if (!name.includes(' ')) return true // No spaces must be a Last name
 
   var parsed = parseFullName(name)
@@ -28,7 +38,7 @@ function checkIsALastName(name) {
 }
 
 // Handle name already in First Last format and return Last, First
-module.exports.nameToLastFirst = (firstLast) => {
+module.exports.nameToLastFirst = (firstLast: unknown): string => {
   var nameObj = parseName(firstLast)
   if (!nameObj.last_name) return nameObj.first_name
   else if (!nameObj.first_name) return nameObj.last_name
@@ -41,10 +51,10 @@ module.exports.nameToLastFirst = (firstLast) => {
  * @param {string} nameString - The name string to parse
  * @returns {{ names: string[] }} Array of names
  */
-module.exports.parse = (nameString) => {
+module.exports.parse = (nameString: string | null | undefined): ParseNameStringResult | null => {
   if (!nameString) return null
 
-  let splitNames = []
+  let splitNames: string[] = []
   const isCommaSeparated = nameString.includes(',')
 
   // Example &LF: Friedman, Milton & Friedman, Rose
@@ -66,7 +76,7 @@ module.exports.parse = (nameString) => {
     }
   }
 
-  let names = []
+  let names: ParseNameStringNameParts[] = []
 
   // 1 name FIRST LAST
   if (splitNames.length === 1) {
@@ -84,8 +94,8 @@ module.exports.parse = (nameString) => {
     if (firstChunkIsALastName) {
       var num = splitNames.length / 2
       for (let i = 0; i < num; i++) {
-        var last = splitNames.shift()
-        var first = splitNames.shift()
+        var last = splitNames.shift()!
+        var first = splitNames.shift()!
         names.push({
           first_name: first,
           last_name: last
