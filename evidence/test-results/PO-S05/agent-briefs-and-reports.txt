@@ -486,7 +486,7 @@ RM server/models/Series.js -> server/models/Series.ts
 Mine are the Book, BookAuthor and BookSeries lines. At 16:29:58 `git status --short -- server/models/LibraryItem.js server/models/LibraryItem.ts` printed nothing and `git diff --quiet HEAD` confirmed the file equals HEAD. I created nothing else in the repo.
 
 ## Files in the scratchpad
-Folder: `C:\Users\WatCHoUT\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\a1\`
+Folder: `C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\a1\`
 - `check-li.txt`: the full 81-error list for LibraryItem. Subtract 55 from its line numbers for original lines 28-717 and 57 for lines from 718.
 - `LibraryItem.probe.ts`: the first-pass source that produced those errors.
 - `check4.txt`: the last check output.
@@ -623,7 +623,7 @@ RM server/models/Series.js -> server/models/Series.ts
 - D:\SEM-2\574\Project\audiobookshelf-po\server\models\MediaProgress.ts
 - D:\SEM-2\574\Project\audiobookshelf-po\server\models\ApiKey.ts
 - D:\SEM-2\574\Project\audiobookshelf-po\server\models\User.js (untouched)
-- Scratchpad, outside the repo: C:\Users\WatCHoUT\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\ (emit.js, emit\, whatif.js, b2probe.js, includeprobe.js)
+- Scratchpad, outside the repo: C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\ (emit.js, emit\, whatif.js, b2probe.js, includeprobe.js)
 
 ===== 16:56:08 | agent-a5ab35e18afcd2747.jsonl | SubagentHandback
 --- message:
@@ -703,7 +703,7 @@ Prints nothing. `git status --short -- server/models/User.js server/models/User.
 
 ### What I ran and kept
 - Only `npx tsc -p tsconfig.check.json`, twice: on the first pass and after the restore. No build, tests, commit or other compile.
-- You did not ask for this in the SKIPPED case: I saved the first-pass copy and the full check output outside the repo, in the scratchpad folder C:\Users\WatCHoUT\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\
+- You did not ask for this in the SKIPPED case: I saved the first-pass copy and the full check output outside the repo, in the scratchpad folder C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\
   - User.ts.partial (1120 lines: header, namespace for ProgressUpdatePayload and AudioBookmarkObject, field declarations, init overloads)
   - user-check1.out (full output of the 16:52 check)
 - D:\SEM-2\574\Project\audiobookshelf-po\server\models\User.js is as at HEAD 053a778b.
@@ -850,7 +850,7 @@ Two of my six models are converted and pass the check. Three do not fit the rule
 | Feed | NOT REACHED: untouched |
 
 In all three skips the JavaScript does something that works at runtime but that TypeScript or the Sequelize typings reject. The only ways through are a change to the emitted code or a cast that rule 5 does not cover, so I restored them. Converted copies are saved outside the repo in case you relax a rule:
-`C:\Users\WatCHoUT\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\a4\` (`Collection.ts.converted`, `Playlist.ts.converted`, `FeedEpisode.ts.partial`).
+`C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\a4\` (`Collection.ts.converted`, `Playlist.ts.converted`, `FeedEpisode.ts.partial`).
 
 ## Converted models
 

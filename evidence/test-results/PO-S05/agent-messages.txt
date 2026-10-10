@@ -89,7 +89,7 @@ The prompt named no bug log and limited edits to the three files, so these are o
 - Counts: first-party `.ts` went from 41 to 44. In-scope `.js` went down by 3; I count 125 → 122 with your exclusions, against your 126 at the start, so our counting differs by one file.
 
 The three test outputs and the three probe files are in the session scratchpad, if you want them for `evidence/test-results/PO-S04/`:
-`C:\Users\WatCHoUT\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\2d937ae2-1250-4078-888b-80d673301105\scratchpad`
+`C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\2d937ae2-1250-4078-888b-80d673301105\scratchpad`
 
 `★ Insight ─────────────────────────────────────`
 - **Why zero casts was possible:** Sequelize's `ModelStatic<M>` is `NonConstructor<typeof Model> & { new(): M }`. That is exactly two requirements — a static side assignable to `Model`'s, and a constructor callable with no arguments. The overload satisfies the first and the optional constructor parameters the second, which is why every association and query call then type-checks untouched.
@@ -275,7 +275,7 @@ I verified the first one myself; the rest are as the sub-agents reported them.
 
 The converted or partial copies of the skipped models are outside the repo, in the session scratch folder. It is a temp folder, so copy it if you want to keep them:
 
-`C:\Users\WatCHoUT\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\`
+`C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\`
 
 - `held\`: Author and PlaybackSession, complete (they passed the check with their assertions).
 - `a4\`: Collection and Playlist, complete except for the blocking errors; FeedEpisode and Feed, partial.

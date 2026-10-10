@@ -58,7 +58,7 @@ User.js   1026 lines
     "Edit(tsconfig.check.json)"
   ]
 }
--- C:\Users\WatCHoUT\.claude\settings.json
+-- C:\Users\<user>\.claude\settings.json
 null
 == test folder ==
 test files: 35
