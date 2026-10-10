@@ -1,0 +1,189 @@
+--- every line with both 'declare' and 'sequelize' (the agent reported 6 in 5 files)
+Book.ts:183: declare readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entries this file reads
+Library.ts:59: declare static readonly sequelize: Sequelize // set by init() before any query runs (optional in Sequelize's typings)
+MediaItemShare.ts:87: declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entry this file reads
+MediaItemShare.ts:88: declare readonly sequelize: Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> } // Database.js adds uppercaseFirst to the Sequelize instance before any model is used
+MediaProgress.ts:42: declare readonly sequelize: Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> } // Database.js adds uppercaseFirst to the Sequelize instance before the models are used
+PlaylistMediaItem.ts:22: declare readonly sequelize: Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> } // Database.js adds uppercaseFirst to the Sequelize instance before any model is used
+Series.ts:22: declare getBooks: (options?: Omit<BelongsToManyGetAssociationsMixinOptions, 'order'> & { order?: Order | [Literal][] }) => Promise<BookExpandedWithLibraryItem[]> // mixin added by book.belongsToMany(series) in BookSeries.init(); only called with the includes of getBooksExpandedWithLibraryItem(), hence the expanded result. order also takes a one-element item ([literal]): Sequelize accepts it at runtime, but its Order type does not describe it
+total: 7
+--- 'failing' lines in the five test outputs (expect 0)
+0
+--- commits: author, message and files
+
+053a778b Aung Min Myat
+[PO-S05] models: BookSeries, BookAuthor, Book: migrate to TypeScript
+
+3 files (sub-agent 1, wave 1). The base class is untouched.
+0 non-null assertions, 0 index signatures, 1 cast, 0 removed requires.
+- Cast, BookAuthor.ts:63, with a comment: the result of findAll({ raw: true, ... })
+  as (BookAuthor & { count: number })[]. With raw: true the rows carry the COUNT
+  alias, which the findAll typing of Sequelize leaves out (precedent:
+  ShareManager.ts:109).
+- Book declares the registry once instead of asserting at each of its four reads:
+    declare readonly sequelize: Sequelize & { models: RegisteredModels }
+  with the entries author, bookAuthor, series and bookSeries.
+- Book exports its typedef names (AudioFileObject, AudioTrack, ChapterObject,
+  EBookFileObject, SeriesExpanded, BookExpanded, BookExpandedWithLibraryItem) from a
+  type-only namespace merged with the class, so import('./Book').Name still resolves.
+- No index signature for the dynamic keys in updateFromRequest(): the key arrays are
+  annotated (MetadataStringKey[] and ('narrators' | 'genres')[]) and the nine string
+  columns share the type string | null.
+- Two casts of the sub-agent were removed by the main agent at integration, because
+  neither is at a module boundary. getTracklist() types its local as the audio file
+  with the three track keys optional, so they are optional in its return type too.
+  updateSeriesFromRequest() needs no cast now that Series declares bookSeries.
+- The two title helpers from ../utils are annotated once, with string | null
+  parameters.
+- Field types that differ from the constructor JSDoc are explained on their declare
+  lines.
+Skipped, restored to .js:
+- LibraryItem: the requires of ./Book and ./Podcast (LibraryItem.js:8-9) are used
+  only in JSDoc, so TypeScript would drop them from the compiled file and change the
+  load order. Also where, replacements and include default to null, which the
+  Sequelize typings reject, and media is Book | Podcast with branches on mediaType
+  that narrow nothing. 81 errors after a first pass.
+
+Compiled files equal the baseline except for the require lines and, in
+BookAuthor.js, the comment on the cast line.
+
+Build passes, 356 passing (run on the whole tree after all four sub-agents).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+
+ server/models/{Book.js => Book.ts}             | 180 +++++++++++++++++++++----
+ server/models/{BookAuthor.js => BookAuthor.ts} |  29 ++--
+ server/models/{BookSeries.js => BookSeries.ts} |  22 ++-
+ 3 files changed, 192 insertions(+), 39 deletions(-)
+
+4186309f Aung Min Myat
+[PO-S05] models: CustomMetadataProvider, Device, MediaProgress, ApiKey: migrate to TypeScript
+
+4 files (sub-agent 2, wave 1). The base class is untouched.
+2 non-null assertions, 1 index signature, 1 cast, 0 removed requires.
+- Non-null assertions, both in MediaProgress.applyProgressUpdate() and each with a
+  comment: progressPayload.progress! and
+  progressPayload.markAsFinishedPercentComplete!. The !isNaN() or !isNullOrNaN() test
+  in the same condition rules out undefined, but the compiler cannot follow it. This
+  is a guard and not "a field that starts as null and is set before it is read", so
+  it stretches the wording of rule 5 (precedent: LogManager.ts:106).
+- Cast, MediaProgress.ts:180, with a comment:
+  (user as typeof user & typeof import('./User')).mediaProgressRemoved(instance).
+  The registry entry comes from the sequelize parameter of init(), which a class
+  declaration cannot type (precedent: ShareManager.ts:109).
+- Index signature, ApiKey.ts:14, with a comment: the ApiKeyPermissions data
+  interface, whose keys mergePermissionsWithDefault() reads and writes dynamically.
+- MediaProgress declares isNaN(value: unknown) for the file, as BookFinder.ts does,
+  and the instance sequelize with the uppercaseFirst helper that Database.js adds.
+- The instance overrides of update, save and destroy in ApiKey take
+  InstanceUpdateOptions, SaveOptions and InstanceDestroyOptions.
+- MediaProgress: the afterFind hook parameter is annotated and the properties the
+  hook deletes are optional.
+- Field types that differ from the constructor JSDoc are explained on their declare
+  lines (for example MediaProgress.finishedAt is Date | string | number | null).
+Not reached in wave 1: User.
+
+Compiled files equal the baseline except for the require lines and, in
+MediaProgress.js, three comments (the lines with ! or the cast).
+
+Build passes, 356 passing (run on the whole tree after all four sub-agents).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+
+ server/models/{ApiKey.js => ApiKey.ts}             | 80 ++++++++++++++++------
+ ...tadataProvider.js => CustomMetadataProvider.ts} | 35 ++++++++--
+ server/models/{Device.js => Device.ts}             | 47 ++++++++++---
+ .../models/{MediaProgress.js => MediaProgress.ts}  | 68 ++++++++++++++----
+ 4 files changed, 179 insertions(+), 51 deletions(-)
+
+a99079ee Aung Min Myat
+[PO-S05] models: MediaItemShare, Series, Library, PodcastEpisode, Podcast: migrate to TypeScript
+
+5 files (sub-agent 3, wave 1). The base class is untouched.
+0 non-null assertions, 3 index signatures, 0 casts, 0 removed requires.
+- Index signatures, all in Podcast and each with a comment: the class
+  ([key: string]: unknown, because updateFromRequest() assigns this[key]) and two in
+  the erased PodcastRequestPayload interface (payload[key], payload.metadata[key]).
+- Registry reads, which CLAUDE.md does not cover: Sequelize types the static
+  Model.sequelize as optional and sequelize.models.x as ModelCtor<Model<any, any>>.
+  Instead of a ! and a cast at each use, the class declares it once, in erased code:
+    declare static readonly sequelize: Sequelize & { models: RegisteredModels }
+  MediaItemShare uses this with one entry. Library only needs
+  declare static readonly sequelize: Sequelize.
+- MediaItemShare: LibraryItem is still JavaScript, and its JSDoc marks replacements
+  as optional while the call passes null (TS2345). The registry entry therefore
+  describes the one static used, findOneExpanded, by hand (added by the main agent at
+  integration).
+- MediaItemShare, Library, PodcastEpisode and Podcast export their typedef names from
+  a type-only namespace merged with the class, so import('../models/X').Name still
+  resolves. ShareManager.ts reads three of them and has no errors.
+- MediaItemShare.getMediaItem() is typed like the one in PlaylistMediaItem: a literal
+  mediaItemType, declared mixins and uppercaseFirst declared on the instance
+  sequelize. No cast, no index signature.
+- Series declares the getBooks mixin with an order type that also takes [[literal]],
+  and bookSeries, the join row that Book.updateSeriesFromRequest() attaches (added by
+  the main agent at integration, so that Book needs no cast).
+- Library: this.max<number, Library>('displayOrder'), type arguments only.
+- Field types that differ from the constructor JSDoc are explained on their declare
+  lines (for example the string columns of Podcast are string | null).
+Skipped at integration and restored to .js (the sub-agent had converted them):
+- Author: getAllLibraryItemsForAuthor() dereferences a findByPk() result without a
+  null check (Author.js:98). That needs author!, which asserts something the code
+  does not guarantee, so rule 5 does not cover it.
+- PlaybackSession: where: null passed to findAll, and { silent: true } passed to
+  upsert. Both need a cast of an argument against the option types of Sequelize,
+  which rule 5 does not cover.
+
+Compiled files equal the baseline except for the require lines.
+
+Build passes, 356 passing (run on the whole tree after all four sub-agents).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+
+ server/models/{Library.js => Library.ts}           | 61 +++++++++++---
+ .../{MediaItemShare.js => MediaItemShare.ts}       | 75 +++++++++++++++--
+ server/models/{Podcast.js => Podcast.ts}           | 94 +++++++++++++++++-----
+ .../{PodcastEpisode.js => PodcastEpisode.ts}       | 87 +++++++++++++++++---
+ server/models/{Series.js => Series.ts}             | 40 ++++++---
+ 5 files changed, 298 insertions(+), 59 deletions(-)
+
+12ae05dc Aung Min Myat
+[PO-S05] models: CollectionBook, PlaylistMediaItem: migrate to TypeScript
+
+2 files (sub-agent 4, wave 1). The base class is untouched.
+0 non-null assertions, 0 index signatures, 0 casts, 0 removed requires.
+- Both use the init shape from CLAUDE.md as written: the uncallable overload, the
+  real signature, then the implementation. CollectionBook's init has no JSDoc.
+- PlaylistMediaItem.getMediaItem() calls this[mixinMethodName](options) without an
+  index signature or a cast: mediaItemType is 'book' | 'podcastEpisode' (the JSDoc
+  says string), the two mixins are declared, and the local is annotated
+  'getBook' | 'getPodcastEpisode'.
+- PlaylistMediaItem declares the instance sequelize as
+  Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> }, the helper
+  that Database.js adds to the Sequelize instance. Erased code, no assertion at the
+  call.
+- The afterFind hook parameter is annotated
+  (findResult: PlaylistMediaItem | PlaylistMediaItem[] | null); book? and
+  podcastEpisode? are optional because the hook deletes them.
+Skipped, restored to .js. In each the JavaScript does something the compiler or
+Sequelize's typings reject, and rule 5 has no cast for it:
+- Collection: where: null passed to findAll (TS2322, Collection.js:51).
+- FeedEpisode: new Date(b) - new Date(a) (TS2362 and TS2363, FeedEpisode.js:93, 95).
+- Playlist: a nested include given as one object instead of an array (TS2322 and
+  TS2353, Playlist.js:75, 123, 300).
+- Feed: a function and its argument chosen in matching branches (TS2345,
+  Feed.js:527), and a Series | null passed on unchecked (TS2345, Feed.js:511).
+
+Compiled files equal the baseline except for the sequelize require, split in two.
+
+Build passes, 356 passing (run on the whole tree after all four sub-agents).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+
+ .../{CollectionBook.js => CollectionBook.ts}       | 18 ++++++++---
+ .../{PlaylistMediaItem.js => PlaylistMediaItem.ts} | 36 +++++++++++++++++-----
+ 2 files changed, 43 insertions(+), 11 deletions(-)

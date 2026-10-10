@@ -1,0 +1,31 @@
+[PO-S05] models: CollectionBook, PlaylistMediaItem: migrate to TypeScript
+
+2 files (sub-agent 4, wave 1). The base class is untouched.
+0 non-null assertions, 0 index signatures, 0 casts, 0 removed requires.
+- Both use the init shape from CLAUDE.md as written: the uncallable overload, the
+  real signature, then the implementation. CollectionBook's init has no JSDoc.
+- PlaylistMediaItem.getMediaItem() calls this[mixinMethodName](options) without an
+  index signature or a cast: mediaItemType is 'book' | 'podcastEpisode' (the JSDoc
+  says string), the two mixins are declared, and the local is annotated
+  'getBook' | 'getPodcastEpisode'.
+- PlaylistMediaItem declares the instance sequelize as
+  Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> }, the helper
+  that Database.js adds to the Sequelize instance. Erased code, no assertion at the
+  call.
+- The afterFind hook parameter is annotated
+  (findResult: PlaylistMediaItem | PlaylistMediaItem[] | null); book? and
+  podcastEpisode? are optional because the hook deletes them.
+Skipped, restored to .js. In each the JavaScript does something the compiler or
+Sequelize's typings reject, and rule 5 has no cast for it:
+- Collection: where: null passed to findAll (TS2322, Collection.js:51).
+- FeedEpisode: new Date(b) - new Date(a) (TS2362 and TS2363, FeedEpisode.js:93, 95).
+- Playlist: a nested include given as one object instead of an array (TS2322 and
+  TS2353, Playlist.js:75, 123, 300).
+- Feed: a function and its argument chosen in matching branches (TS2345,
+  Feed.js:527), and a Series | null passed on unchecked (TS2345, Feed.js:511).
+
+Compiled files equal the baseline except for the sequelize require, split in two.
+
+Build passes, 356 passing (run on the whole tree after all four sub-agents).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

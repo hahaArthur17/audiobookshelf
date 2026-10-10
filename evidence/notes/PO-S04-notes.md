@@ -50,3 +50,7 @@ Model and effort: Opus 5.5, max effort (read from /model before the paste; see R
 - The prompt names only CLAUDE.md. The agent also read the PO-S02 notes and the PO-S04 plan and notes in evidence/, and used the baseline path from the notes file for its own compiled-output check (its own statements in the report). So the result does not come from the prompt and CLAUDE.md alone.
 - The agent wrote three probe files outside the repo (in the Claude scratchpad folder). It never started the server.
 - Not recorded: the prompts answered before the switch to auto, the "Recently denied" count, and the exact time of the switch. usage-start.txt is reconstructed.- The agent's text messages, with times, were extracted from the Claude session file into agent-messages.txt. The last entry is its final report.
+
+Addendum written after PO-S05: the "Recently denied" list of the PO-S04 session was empty when it was read before /exit. The number of prompts answered before the switch to auto mode was not recorded.
+
+Addendum written after PO-S05: the "Recently denied" list of the PO-S04 session was empty when it was read before /exit. The number of prompts answered before the switch to auto mode was not recorded.
