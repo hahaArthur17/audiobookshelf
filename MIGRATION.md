@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) resumed again on 2026-10-11 Auckland time from accepted commit `381f7645`; Batches 01–19 and 21–23 accepted, **40/46 migrated, 6 remaining**. Batch 20 is still in an isolated Sub-Agent worktree and does not count yet. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
+Status: Stage 1 (`server/utils/`) resumed again on 2026-10-11 Auckland time from accepted commit `381f7645`; Batches 01–23 accepted, **41/46 migrated, 5 remaining**. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
 
 ## Starting point
 
@@ -50,11 +50,12 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 17 | `utils/index` | Fresh strict build 0 errors; unchanged tests 356/356; fixed shared-utility/XML/query sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-17-*` |
 | 18 | `comicBookExtractors` | Fresh strict build 0 errors; unchanged tests 356/356; independent offline CBR/CBZ side-effect sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-18-*` |
 | 19 | `oldDbFiles` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline legacy-db stream/archive sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-19-*` |
+| 20 | `prober` | Fresh strict build 0 errors; unchanged tests 356/356; independent ffprobe mock sample and all prior accepted batch samples equal to baseline | Accepted after main-agent emitted-JS repair; see `stage1-session3.md` and `logs/batch-20-*` |
 | 21 | `libraryHelpers` | Fresh strict build 0 errors; unchanged tests 356/356; independent series/collapse/payload sample and all prior accepted batch samples equal to baseline | Accepted after main-agent emitted-JS repair; see `stage1-session3.md` and `logs/batch-21-*` |
 | 22 | `scandir` | Fresh strict build 0 errors; unchanged tests 356/356; independent grouping/path/metadata sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-session3.md` and `logs/batch-22-*` |
 | 23 | `podcastUtils` | Fresh strict build 0 errors; unchanged tests 356/356; independent RSS/HTTP/matching sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-session3.md` and `logs/batch-23-*` |
 
-Next: independently integrate and verify Batch 20, then select the next small Stage 1 target from the remaining list. Do not start Stage 2 automatically.
+Next: independently integrate and verify Batch 24, then select the next small Stage 1 target from the remaining list. Do not start Stage 2 automatically.
 
 Remaining Stage 1 targets:
 
@@ -62,7 +63,6 @@ Remaining Stage 1 targets:
 server/utils/ffmpegHelpers.js
 server/utils/fileUtils.js
 server/utils/migrations/dbMigration.js
-server/utils/prober.js
 server/utils/queries/libraryFilters.js
 server/utils/queries/libraryItemsBookFilters.js
 ```

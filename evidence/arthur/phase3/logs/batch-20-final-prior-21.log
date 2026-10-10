@@ -1,0 +1,297 @@
+{
+  "exports": [
+    [
+      "getSeriesFromBooks",
+      3,
+      false
+    ],
+    [
+      "collapseBookSeries",
+      3,
+      false
+    ],
+    [
+      "handleCollapseSubseries",
+      4,
+      false
+    ]
+  ],
+  "grouping": [
+    {
+      "id": "S",
+      "name": "The Series",
+      "nameIgnorePrefix": "Series, The",
+      "nameIgnorePrefixSort": "Series",
+      "type": "series",
+      "books": [
+        {
+          "id": "b1",
+          "media": {
+            "duration": 10,
+            "metadata": {}
+          },
+          "sequence": "1",
+          "filterSeriesSequence": "1"
+        },
+        {
+          "id": "b2",
+          "media": {
+            "duration": 20,
+            "metadata": {}
+          },
+          "sequence": "2",
+          "filterSeriesSequence": "2"
+        },
+        {
+          "id": "b3",
+          "media": {
+            "duration": 30,
+            "metadata": {}
+          },
+          "sequence": "3",
+          "filterSeriesSequence": "3"
+        }
+      ],
+      "totalDuration": 60
+    },
+    {
+      "id": "A",
+      "name": "A Subseries",
+      "nameIgnorePrefix": "A Subseries, The",
+      "nameIgnorePrefixSort": "A Subseries",
+      "type": "series",
+      "books": [
+        {
+          "id": "b1",
+          "media": {
+            "duration": 10,
+            "metadata": {}
+          },
+          "sequence": "1",
+          "filterSeriesSequence": "1"
+        },
+        {
+          "id": "b2",
+          "media": {
+            "duration": 20,
+            "metadata": {}
+          },
+          "sequence": "2",
+          "filterSeriesSequence": "2"
+        }
+      ],
+      "totalDuration": 30
+    }
+  ],
+  "groupingHidden": [
+    {
+      "id": "S",
+      "name": "The Series",
+      "nameIgnorePrefix": "Series, The",
+      "nameIgnorePrefixSort": "Series",
+      "type": "series",
+      "books": [
+        {
+          "id": "b1",
+          "media": {
+            "duration": 10,
+            "metadata": {}
+          },
+          "sequence": "1"
+        },
+        {
+          "id": "b2",
+          "media": {
+            "duration": 20,
+            "metadata": {}
+          },
+          "sequence": "2"
+        },
+        {
+          "id": "b3",
+          "media": {
+            "duration": 30,
+            "metadata": {}
+          },
+          "sequence": "3"
+        }
+      ],
+      "totalDuration": 60
+    },
+    {
+      "id": "A",
+      "name": "A Subseries",
+      "nameIgnorePrefix": "A Subseries, The",
+      "nameIgnorePrefixSort": "A Subseries",
+      "type": "series",
+      "books": [
+        {
+          "id": "b1",
+          "media": {
+            "duration": 10,
+            "metadata": {}
+          },
+          "sequence": "1"
+        },
+        {
+          "id": "b2",
+          "media": {
+            "duration": 20,
+            "metadata": {}
+          },
+          "sequence": "2"
+        }
+      ],
+      "totalDuration": 30
+    }
+  ],
+  "collapsed": [
+    {
+      "id": "b1",
+      "proto": true,
+      "collapsed": "A",
+      "mediaId": "book-b1"
+    },
+    {
+      "id": "b3",
+      "proto": true,
+      "mediaId": "book-b3"
+    }
+  ],
+  "handled": [
+    {
+      "id": "b1",
+      "media": {
+        "duration": 10,
+        "metadata": {
+          "series": {
+            "id": "S",
+            "name": "The Series",
+            "sequence": "1"
+          }
+        }
+      }
+    },
+    {
+      "id": "b2",
+      "media": {
+        "duration": 20,
+        "metadata": {
+          "series": {
+            "id": "S",
+            "name": "The Series",
+            "sequence": "2"
+          }
+        }
+      }
+    }
+  ],
+  "payload": {
+    "sortDesc": false,
+    "limit": 2,
+    "page": 0,
+    "total": 3
+  },
+  "deletedAssociations": [
+    [
+      "book-b1",
+      false
+    ],
+    [
+      "book-b2",
+      false
+    ],
+    [
+      "book-b3",
+      false
+    ]
+  ],
+  "titleHandled": [
+    {
+      "id": "b2",
+      "media": {
+        "duration": 20,
+        "metadata": {
+          "series": {
+            "id": "S",
+            "name": "The Series",
+            "sequence": "2"
+          }
+        }
+      }
+    },
+    {
+      "id": "b1",
+      "media": {
+        "duration": 10,
+        "metadata": {
+          "series": {
+            "id": "S",
+            "name": "The Series",
+            "sequence": "1"
+          }
+        }
+      }
+    }
+  ],
+  "titlePayload": {
+    "sortBy": "media.metadata.title",
+    "sortDesc": true,
+    "limit": 0,
+    "page": 0,
+    "total": 3
+  },
+  "missing": [],
+  "missingPayload": {
+    "sortBy": "sequence",
+    "sortDesc": false,
+    "limit": 0,
+    "page": 0,
+    "total": 0
+  },
+  "events": [
+    [
+      "warn",
+      "[libraryHelpers] Invalid \"sort\" query string \"invalid-sort\""
+    ],
+    [
+      "findByPk",
+      "S",
+      "{\"include\":{\"model\":{\"name\":\"book\"},\"through\":{\"attributes\":[\"sequence\"]},\"include\":[{\"model\":{\"name\":\"libraryItem\"}},{\"model\":{\"name\":\"author\"},\"through\":{\"attributes\":[]}},{\"model\":{\"name\":\"series\"},\"through\":{\"attributes\":[\"sequence\"]}}]}}"
+    ],
+    [
+      "access",
+      "b1"
+    ],
+    [
+      "access",
+      "b2"
+    ],
+    [
+      "access",
+      "b3"
+    ],
+    [
+      "findByPk",
+      "S",
+      "{\"include\":{\"model\":{\"name\":\"book\"},\"through\":{\"attributes\":[\"sequence\"]},\"include\":[{\"model\":{\"name\":\"libraryItem\"}},{\"model\":{\"name\":\"author\"},\"through\":{\"attributes\":[]}},{\"model\":{\"name\":\"series\"},\"through\":{\"attributes\":[\"sequence\"]}}]}}"
+    ],
+    [
+      "access",
+      "b1"
+    ],
+    [
+      "access",
+      "b2"
+    ],
+    [
+      "access",
+      "b3"
+    ],
+    [
+      "findByPk",
+      "missing",
+      "{\"include\":{\"model\":{\"name\":\"book\"},\"through\":{\"attributes\":[\"sequence\"]},\"include\":[{\"model\":{\"name\":\"libraryItem\"}},{\"model\":{\"name\":\"author\"},\"through\":{\"attributes\":[]}},{\"model\":{\"name\":\"series\"},\"through\":{\"attributes\":[\"sequence\"]}}]}}"
+    ]
+  ]
+}

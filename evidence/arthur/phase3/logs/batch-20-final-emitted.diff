@@ -1,0 +1,29 @@
+--- /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2/dist-server/server/utils/prober.js	2026-10-03 21:34:39
++++ dist-server/server/utils/prober.js	2026-10-11 10:05:03
+@@ -1,7 +1,7 @@
+ "use strict";
+ const ffprobe = require('../libs/nodeFfprobe');
+ const MediaProbeData = require('../scanner/MediaProbeData');
+-const Logger = require('../Logger');
++const ProberLogger = require('../Logger');
+ function tryGrabBitRate(stream, all_streams, total_bit_rate) {
+     if (!isNaN(stream.bit_rate) && stream.bit_rate) {
+         return Number(stream.bit_rate);
+@@ -139,7 +139,7 @@
+         return [];
+     return _chapters
+         .map((chap) => {
+-        let title = chap['TAG:title'] || chap.title || '';
++        let title = (chap['TAG:title'] || chap.title || '');
+         if (!title && chap.tags?.title)
+             title = chap.tags.title;
+         title = title.trim();
+@@ -163,7 +163,7 @@
+         return {};
+     }
+     if (verbose) {
+-        Logger.debug('Tags', format.tags);
++        ProberLogger.debug('Tags', format.tags);
+     }
+     const tags = {
+         file_tag_encoder: tryGrabTags(format, 'encoder', 'tsse', 'tss'),

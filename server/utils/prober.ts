@@ -412,16 +412,15 @@ function probe(filepath: string, verbose = false): Promise<MediaProbeDataInstanc
     ffprobe.FFPROBE_PATH = process.env.FFPROBE_PATH
   }
 
-  return ffprobe(filepath)
-    .then((rawValue) => {
-      const rawError = (rawValue as RawProbeData).error
-      if (rawError) {
+  return (ffprobe(filepath) as Promise<RawProbeData>)
+    .then((raw) => {
+      if (raw.error) {
         return {
-          error: rawError.string
+          error: raw.error.string
         }
       }
 
-      const rawProbeData = parseProbeData(rawValue as RawProbeData, verbose)
+      const rawProbeData = parseProbeData(raw, verbose)
       if (!rawProbeData || (!rawProbeData.audio_stream && !rawProbeData.video_stream)) {
         return {
           error: rawProbeData ? 'Invalid media file: no audio or video streams found' : 'Probe Failed'
