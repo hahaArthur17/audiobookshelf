@@ -1,0 +1,16 @@
+# PO-S07 Library, bug: getMaxDisplayOrder() applies || 0 to a Promise, so an empty table gives null (Library.ts:169)
+# AFTER the fix (async, and || 0 applied to the awaited value). 2026-10-10 21:33:37
+# Command: npm test (build, then all tests), then npx mocha dist-server/test/server/bugfix/Library.getMaxDisplayOrder.test.js
+# Log lines "DEBUG: [LibraryItems...Filters] ..." are filtered out of this file.
+# npm test summary:  375 passing (10s);
+
+
+
+  Library.getMaxDisplayOrder
+    ✔ returns the largest display order of the libraries
+    ✔ returns 0 when there is no library
+
+
+  2 passing (938ms)
+
+exit code: 0

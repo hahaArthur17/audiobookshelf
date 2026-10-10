@@ -165,8 +165,8 @@ class Library extends Model {
    * Used for setting a new libraries display order
    * @returns {Promise<number>}
    */
-  static getMaxDisplayOrder() {
-    return this.max<number, Library>('displayOrder') || 0
+  static async getMaxDisplayOrder() {
+    return (await this.max<number, Library>('displayOrder')) || 0
   }
 
   /**
