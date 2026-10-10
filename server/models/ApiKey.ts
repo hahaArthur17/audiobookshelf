@@ -1,7 +1,29 @@
-const { DataTypes, Model, Op } = require('sequelize')
-const jwt = require('jsonwebtoken')
-const { LRUCache } = require('lru-cache')
-const Logger = require('../Logger')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model, Op } = sequelizeModule
+import type { BuildOptions, CreationAttributes, InstanceDestroyOptions, InstanceUpdateOptions, SaveOptions, Sequelize } from 'sequelize'
+import jwt = require('jsonwebtoken')
+import type { SignOptions } from 'jsonwebtoken'
+import lruCache = require('lru-cache')
+const { LRUCache } = lruCache
+import Logger = require('../Logger')
+
+type User = import('./User')
+
+/** Permissions stored on an api key: the properties of the JSDoc typedef below, plus every other key that mergePermissionsWithDefault() copies from the request */
+interface ApiKeyPermissions {
+  [key: string]: unknown // mergePermissionsWithDefault() reads the request's permissions and writes the merged ones by a dynamic key
+  download: boolean
+  update: boolean
+  delete: boolean
+  upload: boolean
+  createEreader: boolean
+  accessAllLibraries: boolean
+  accessAllTags: boolean
+  accessExplicitContent: boolean
+  selectedTagsNotAccessible: boolean
+  librariesAccessible: string[]
+  itemTagsSelected: string[]
+}
 
 /**
  * @typedef {Object} ApiKeyPermissions
@@ -19,25 +41,27 @@ const Logger = require('../Logger')
  */
 
 class ApiKeyCache {
+  declare cache: lruCache.LRUCache<string, ApiKey>
+
   constructor() {
     this.cache = new LRUCache({ max: 100 })
   }
 
-  getById(id) {
+  getById(id: string) {
     const apiKey = this.cache.get(id)
     return apiKey
   }
 
-  set(apiKey) {
+  set(apiKey: ApiKey) {
     apiKey.fromCache = true
     this.cache.set(apiKey.id, apiKey)
   }
 
-  delete(apiKeyId) {
+  delete(apiKeyId: string) {
     this.cache.delete(apiKeyId)
   }
 
-  maybeInvalidate(apiKey) {
+  maybeInvalidate(apiKey: ApiKey) {
     if (!apiKey.fromCache) this.delete(apiKey.id)
   }
 }
@@ -45,7 +69,21 @@ class ApiKeyCache {
 const apiKeyCache = new ApiKeyCache()
 
 class ApiKey extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare name: string
+  declare description: string | null // ApiKeyController.create() does not set it
+  declare expiresAt: Date | null // null for a key that does not expire
+  declare lastUsedAt: Date | null // the server never writes this column
+  declare isActive: boolean
+  declare permissions: ApiKeyPermissions | null // ApiKeyController.create() does not set it
+  declare createdAt: Date
+  declare updatedAt: Date
+  declare userId: string
+  declare createdByUserId: string | null // init() sets onDelete: 'SET NULL' on this foreign key
+  declare user: User
+  declare fromCache?: boolean // set by ApiKeyCache.set(); not a column and not listed in the constructor
+
+  constructor(values?: CreationAttributes<ApiKey>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -81,7 +119,7 @@ class ApiKey extends Model {
    * Same properties as User.getDefaultPermissions
    * @returns {ApiKeyPermissions}
    */
-  static getDefaultPermissions() {
+  static getDefaultPermissions(): ApiKeyPermissions {
     return {
       download: true,
       update: true,
@@ -102,7 +140,7 @@ class ApiKey extends Model {
    * @param {ApiKeyPermissions} reqPermissions
    * @returns {ApiKeyPermissions}
    */
-  static mergePermissionsWithDefault(reqPermissions) {
+  static mergePermissionsWithDefault(reqPermissions: ApiKeyPermissions | null | undefined): ApiKeyPermissions {
     const permissions = this.getDefaultPermissions()
 
     if (!reqPermissions || typeof reqPermissions !== 'object') {
@@ -163,13 +201,13 @@ class ApiKey extends Model {
    * @param {number} [expiresIn] - Seconds until the api key expires or undefined for no expiration
    * @returns {Promise<string>}
    */
-  static async generateApiKey(tokenSecret, keyId, name, expiresIn) {
-    const options = {}
+  static async generateApiKey(tokenSecret: string, keyId: string, name: string, expiresIn?: number) {
+    const options: SignOptions = {}
     if (expiresIn && !isNaN(expiresIn) && expiresIn > 0) {
       options.expiresIn = expiresIn
     }
 
-    return new Promise((resolve) => {
+    return new Promise<string | null | undefined>((resolve) => {
       jwt.sign(
         {
           keyId,
@@ -195,7 +233,7 @@ class ApiKey extends Model {
    * @param {string} apiKeyId
    * @returns {Promise<ApiKey | null>}
    */
-  static async getById(apiKeyId) {
+  static async getById(apiKeyId: string) {
     if (!apiKeyId) return null
 
     const cachedApiKey = apiKeyCache.getById(apiKeyId)
@@ -208,11 +246,13 @@ class ApiKey extends Model {
     return apiKey
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -253,20 +293,20 @@ class ApiKey extends Model {
     ApiKey.belongsTo(user, { as: 'createdByUser', foreignKey: 'createdByUserId' })
   }
 
-  async update(values, options) {
+  async update(values: Record<string, unknown>, options?: InstanceUpdateOptions) {
     apiKeyCache.maybeInvalidate(this)
     return await super.update(values, options)
   }
 
-  async save(options) {
+  async save(options?: SaveOptions) {
     apiKeyCache.maybeInvalidate(this)
     return await super.save(options)
   }
 
-  async destroy(options) {
+  async destroy(options?: InstanceDestroyOptions) {
     apiKeyCache.delete(this.id)
     await super.destroy(options)
   }
 }
 
-module.exports = ApiKey
+export = ApiKey

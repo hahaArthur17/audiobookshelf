@@ -1,8 +1,33 @@
-const { DataTypes, Model } = require('sequelize')
-const oldDevice = require('../objects/DeviceInfo')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model } = sequelizeModule
+import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
+import oldDevice = require('../objects/DeviceInfo')
+
+type DeviceInfo = oldDevice
+
+/** JSON in the extraData column: the DeviceInfo fields without a column of their own; getFromOld() leaves out the empty ones */
+interface DeviceExtraData {
+  manufacturer?: string
+  model?: string
+  osName?: string
+  osVersion?: string
+  browserName?: string
+}
 
 class Device extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare deviceId: string
+  declare clientName: string | null // getFromOld() stores null when DeviceInfo has no value
+  declare clientVersion: string | null // same
+  declare ipAddress: string | null // DeviceInfo.ipAddress is null when the request has no ip
+  declare deviceName: string | null // getFromOld() stores null when DeviceInfo has no value
+  declare deviceVersion: string | null // same
+  declare extraData: DeviceExtraData
+  declare userId: string
+  declare createdAt: Date
+  declare updatedAt: Date
+
+  constructor(values?: CreationAttributes<Device>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -29,7 +54,7 @@ class Device extends Model {
     this.updatedAt
   }
 
-  static async getOldDeviceByDeviceId(deviceId) {
+  static async getOldDeviceByDeviceId(deviceId: string) {
     const device = await this.findOne({
       where: {
         deviceId
@@ -39,12 +64,12 @@ class Device extends Model {
     return device.getOldDevice()
   }
 
-  static createFromOld(oldDevice) {
+  static createFromOld(oldDevice: DeviceInfo) {
     const device = this.getFromOld(oldDevice)
     return this.create(device)
   }
 
-  static updateFromOld(oldDevice) {
+  static updateFromOld(oldDevice: DeviceInfo) {
     const device = this.getFromOld(oldDevice)
     return this.update(device, {
       where: {
@@ -53,8 +78,8 @@ class Device extends Model {
     })
   }
 
-  static getFromOld(oldDeviceInfo) {
-    let extraData = {}
+  static getFromOld(oldDeviceInfo: DeviceInfo) {
+    let extraData: DeviceExtraData = {}
 
     if (oldDeviceInfo.manufacturer) {
       extraData.manufacturer = oldDeviceInfo.manufacturer
@@ -85,11 +110,13 @@ class Device extends Model {
     }
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -174,4 +201,4 @@ class Device extends Model {
   }
 }
 
-module.exports = Device
+export = Device
