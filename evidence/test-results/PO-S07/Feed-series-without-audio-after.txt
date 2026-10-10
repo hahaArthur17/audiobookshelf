@@ -1,0 +1,20 @@
+# PO-S07 Feed, bug: getFeedObjForSeries throws when a series has no book with audio tracks (Feed.js:305)
+# AFTER the fix (booksWithTracks[0]?.libraryItem.libraryId || seriesExpanded.libraryId). 2026-10-10 21:11:04
+# Command: npm test (build, then all tests), then npx mocha dist-server/test/server/bugfix/Feed.getFeedObjForSeries.test.js
+# Log lines "DEBUG: [LibraryItems...Filters] ..." are filtered out of this file.
+# npm test summary:  373 passing (9s);
+
+
+
+  Feed.getFeedObjForSeries
+    ✔ builds the site url from the library of the first book with audio tracks
+    ✔ does not throw when no book of the series has audio tracks
+[2026-10-10 21:11:11.383] INFO: [FeedEpisode] Upserting 1 episodes for feed 77ffc60b-e98a-46ef-abea-f93b4f11e842 (0 existing)
+[2026-10-10 21:11:11.396] INFO: [FeedEpisode] Upserting 0 episodes for feed 77ffc60b-e98a-46ef-abea-f93b4f11e842 (0 existing)
+[2026-10-10 21:11:11.396] INFO: [Feed] Removing 1 episodes from feed 77ffc60b-e98a-46ef-abea-f93b4f11e842
+    ✔ lets updateFeedForEntity empty a series feed whose books lost their audio tracks
+
+
+  3 passing (1s)
+
+exit code: 0

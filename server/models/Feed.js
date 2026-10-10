@@ -302,7 +302,7 @@ class Feed extends Model {
       serverAddress,
       feedURL: `/feed/${slug}`,
       imageURL: firstBookWithCover?.coverPath ? `/feed/${slug}/cover${Path.extname(firstBookWithCover.coverPath)}` : `/Logo.png`,
-      siteURL: `/library/${booksWithTracks[0].libraryItem.libraryId}/series/${seriesExpanded.id}`,
+      siteURL: `/library/${booksWithTracks[0]?.libraryItem.libraryId || seriesExpanded.libraryId}/series/${seriesExpanded.id}`,
       title: seriesExpanded.name,
       description: seriesExpanded.description || '',
       author,
