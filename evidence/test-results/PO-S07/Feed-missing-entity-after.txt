@@ -1,0 +1,24 @@
+# PO-S07 Feed, bug: updateFeedForEntity uses a getExpandedById() result with no null check (Feed.js:489, 502 and 511)
+# AFTER the fix (a null check with Logger.error and return null in each of the three branches). 2026-10-10 21:09:27
+# Command: npm test (build, then all tests), then npx mocha dist-server/test/server/bugfix/Feed.updateFeedForEntity.test.js
+# Log lines "DEBUG: [LibraryItems...Filters] ..." are filtered out of this file.
+# npm test summary:  370 passing (9s);
+
+
+
+  Feed.updateFeedForEntity
+[2026-10-10 21:09:33.672] INFO: [FeedEpisode] Upserting 1 episodes for feed 3530f027-65ef-4864-aeef-2bbd9bac1c49 (0 existing)
+[2026-10-10 21:09:33.685] INFO: [FeedEpisode] Upserting 1 episodes for feed 3530f027-65ef-4864-aeef-2bbd9bac1c49 (1 existing)
+    ✔ updates the feed of an existing series (42ms)
+[2026-10-10 21:09:33.885] ERROR: [LibraryItem] Library item not found with id "00000000-0000-0000-0000-000000000000"
+[2026-10-10 21:09:33.885] ERROR: [Feed] Library item 00000000-0000-0000-0000-000000000000 not found for feed 2318ad5c-8279-495f-8f2c-b953bd39ca4f
+    ✔ returns null when the library item of the feed no longer exists
+[2026-10-10 21:09:34.092] ERROR: [Feed] Collection 00000000-0000-0000-0000-000000000000 not found for feed e6e66667-f2c0-4c22-acf1-1601453522c6
+    ✔ returns null when the collection of the feed no longer exists
+[2026-10-10 21:09:34.284] ERROR: [Feed] Series 00000000-0000-0000-0000-000000000000 not found for feed d226b14b-e1a7-4a19-8602-47b79bf812b2
+    ✔ returns null when the series of the feed no longer exists
+
+
+  4 passing (1s)
+
+exit code: 0

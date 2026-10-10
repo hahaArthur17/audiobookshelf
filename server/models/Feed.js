@@ -486,6 +486,10 @@ class Feed extends Model {
       const libraryItemModel = this.sequelize.models.libraryItem
 
       const itemExpanded = await libraryItemModel.getExpandedById(this.entityId)
+      if (!itemExpanded) {
+        Logger.error(`[Feed] Library item ${this.entityId} not found for feed ${this.id}`)
+        return null
+      }
       feedObj = Feed.getFeedObjForLibraryItem(this.userId, itemExpanded, this.slug, this.serverAddress)
 
       feedEpisodeCreateFuncEntity = itemExpanded
@@ -499,6 +503,10 @@ class Feed extends Model {
       const collectionModel = this.sequelize.models.collection
 
       const collectionExpanded = await collectionModel.getExpandedById(this.entityId)
+      if (!collectionExpanded) {
+        Logger.error(`[Feed] Collection ${this.entityId} not found for feed ${this.id}`)
+        return null
+      }
       const feedObjData = Feed.getFeedObjForCollection(this.userId, collectionExpanded, this.slug, this.serverAddress)
       feedObj = feedObjData.feedObj
       feedEpisodeCreateFuncEntity = feedObjData.booksWithTracks
@@ -508,6 +516,10 @@ class Feed extends Model {
       const seriesModel = this.sequelize.models.series
 
       const seriesExpanded = await seriesModel.getExpandedById(this.entityId)
+      if (!seriesExpanded) {
+        Logger.error(`[Feed] Series ${this.entityId} not found for feed ${this.id}`)
+        return null
+      }
       const feedObjData = Feed.getFeedObjForSeries(this.userId, seriesExpanded, this.slug, this.serverAddress)
       feedObj = feedObjData.feedObj
       feedEpisodeCreateFuncEntity = feedObjData.booksWithTracks
