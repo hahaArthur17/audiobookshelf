@@ -1,0 +1,1017 @@
+{
+  "exports": [
+    [
+      "getUserPermissionPodcastWhereQuery",
+      "function",
+      1,
+      false
+    ],
+    [
+      "getMediaGroupQuery",
+      "function",
+      2,
+      false
+    ],
+    [
+      "getOrder",
+      "function",
+      2,
+      false
+    ],
+    [
+      "clearCountCache",
+      "function",
+      2,
+      false
+    ],
+    [
+      "findAndCountAll",
+      "function",
+      5,
+      false
+    ],
+    [
+      "getFilteredLibraryItems",
+      "function",
+      9,
+      false
+    ],
+    [
+      "getFilteredPodcastEpisodes",
+      "function",
+      8,
+      false
+    ],
+    [
+      "search",
+      "function",
+      5,
+      false
+    ],
+    [
+      "getRecentEpisodes",
+      "function",
+      4,
+      false
+    ],
+    [
+      "getPodcastLibraryStats",
+      "function",
+      1,
+      false
+    ],
+    [
+      "getGenresWithCount",
+      "function",
+      1,
+      false
+    ],
+    [
+      "getLongestPodcasts",
+      "function",
+      2,
+      false
+    ]
+  ],
+  "permissions": {
+    "podcastWhere": [
+      {
+        "explicit": false
+      },
+      {
+        "attribute": {
+          "val": "(SELECT count(*) FROM json_each(tags) WHERE json_valid(tags) AND json_each.value IN (:userTagsSelected))"
+        },
+        "comparator": "=",
+        "logic": {
+          "Symbol(gte)": 1
+        }
+      }
+    ],
+    "replacements": {
+      "userTagsSelected": [
+        "tag"
+      ]
+    }
+  },
+  "mediaGroups": [
+    {
+      "mediaWhere": {
+        "genres": {
+          "attribute": {
+            "val": "(SELECT count(*) FROM json_each(genres) WHERE json_valid(genres) AND json_each.value = :filterValue)"
+          },
+          "comparator": "=",
+          "logic": {
+            "Symbol(gte)": 1
+          }
+        }
+      },
+      "replacements": {
+        "filterValue": "tag"
+      }
+    },
+    {
+      "mediaWhere": {
+        "tags": {
+          "attribute": {
+            "val": "(SELECT count(*) FROM json_each(tags) WHERE json_valid(tags) AND json_each.value = :filterValue)"
+          },
+          "comparator": "=",
+          "logic": {
+            "Symbol(gte)": 1
+          }
+        }
+      },
+      "replacements": {
+        "filterValue": "tag"
+      }
+    },
+    {
+      "mediaWhere": {
+        "language": "tag"
+      },
+      "replacements": {}
+    },
+    {
+      "mediaWhere": {
+        "explicit": true
+      },
+      "replacements": {}
+    },
+    {
+      "mediaWhere": {},
+      "replacements": {}
+    },
+    {
+      "mediaWhere": {},
+      "replacements": {}
+    }
+  ],
+  "orders": [
+    [
+      [
+        {
+          "val": "libraryItem.createdAt"
+        },
+        "DESC"
+      ]
+    ],
+    [
+      [
+        {
+          "val": "libraryItem.size"
+        },
+        "DESC"
+      ]
+    ],
+    [
+      [
+        {
+          "val": "libraryItem.birthtime"
+        },
+        "DESC"
+      ]
+    ],
+    [
+      [
+        {
+          "val": "libraryItem.mtime"
+        },
+        "DESC"
+      ]
+    ],
+    [
+      [
+        {
+          "val": "`podcast`.`author` COLLATE NOCASE DESC NULLS FIRST"
+        }
+      ]
+    ],
+    [
+      [
+        {
+          "val": "`libraryItem`.`titleIgnorePrefix` COLLATE NOCASE"
+        },
+        "DESC"
+      ]
+    ],
+    [
+      [
+        "numEpisodes",
+        "DESC"
+      ]
+    ],
+    [
+      "RANDOM"
+    ],
+    []
+  ],
+  "cache": [
+    {
+      "rows": [
+        {
+          "id": "pod1",
+          "title": "Episode Test",
+          "numEpisodes": 4,
+          "libraryItem": {
+            "id": "pod1",
+            "libraryId": "lib",
+            "feeds": [
+              {
+                "toOldJSONMinified": "[function toOldJSONMinified]"
+              }
+            ],
+            "toOldJSONMinified": "[function toOldJSONMinified]",
+            "toOldJSONExpanded": "[function toOldJSONExpanded]"
+          },
+          "dataValues": {
+            "duration": 72
+          },
+          "toOldJSON": "[function toOldJSON]"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "rows": [
+        {
+          "id": "pod1",
+          "title": "Episode Test",
+          "numEpisodes": 4,
+          "libraryItem": {
+            "id": "pod1",
+            "libraryId": "lib",
+            "feeds": [
+              {
+                "toOldJSONMinified": "[function toOldJSONMinified]"
+              }
+            ],
+            "toOldJSONMinified": "[function toOldJSONMinified]",
+            "toOldJSONExpanded": "[function toOldJSONExpanded]"
+          },
+          "dataValues": {
+            "duration": 72
+          },
+          "toOldJSON": "[function toOldJSON]"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "rows": [
+        {
+          "id": "pod1",
+          "title": "Episode Test",
+          "numEpisodes": 4,
+          "libraryItem": {
+            "id": "pod1",
+            "libraryId": "lib",
+            "feeds": [
+              {
+                "toOldJSONMinified": "[function toOldJSONMinified]"
+              }
+            ],
+            "toOldJSONMinified": "[function toOldJSONMinified]",
+            "toOldJSONExpanded": "[function toOldJSONExpanded]"
+          },
+          "dataValues": {
+            "duration": 72
+          },
+          "toOldJSON": "[function toOldJSON]"
+        }
+      ],
+      "count": 3
+    }
+  ],
+  "uncached": {
+    "rows": [
+      {
+        "id": "pod2",
+        "title": "Episode Test",
+        "numEpisodes": 4,
+        "libraryItem": {
+          "id": "pod2",
+          "libraryId": "lib",
+          "feeds": [
+            {
+              "toOldJSONMinified": "[function toOldJSONMinified]"
+            }
+          ],
+          "toOldJSONMinified": "[function toOldJSONMinified]",
+          "toOldJSONExpanded": "[function toOldJSONExpanded]"
+        },
+        "dataValues": {
+          "duration": 72
+        },
+        "toOldJSON": "[function toOldJSON]"
+      }
+    ],
+    "count": 4
+  },
+  "items": {
+    "libraryItems": [
+      {
+        "id": "pod2",
+        "libraryId": "lib",
+        "feeds": [
+          {
+            "toOldJSONMinified": "[function toOldJSONMinified]"
+          }
+        ],
+        "toOldJSONMinified": "[function toOldJSONMinified]",
+        "toOldJSONExpanded": "[function toOldJSONExpanded]",
+        "rssFeed": "[circular]",
+        "numEpisodesIncomplete": 3,
+        "media": {
+          "id": "pod2",
+          "title": "Episode Test",
+          "numEpisodes": 4,
+          "dataValues": {
+            "duration": 72
+          },
+          "toOldJSON": "[function toOldJSON]"
+        }
+      }
+    ],
+    "count": 4
+  },
+  "episodes": {
+    "libraryItems": [
+      {
+        "id": "ep2",
+        "libraryId": "lib",
+        "feeds": [
+          {
+            "toOldJSONMinified": "[function toOldJSONMinified]"
+          }
+        ],
+        "toOldJSONMinified": "[function toOldJSONMinified]",
+        "toOldJSONExpanded": "[function toOldJSONExpanded]",
+        "media": {
+          "id": "ep2",
+          "title": "Episode Test",
+          "numEpisodes": 4,
+          "dataValues": {
+            "duration": 72
+          },
+          "toOldJSON": "[function toOldJSON]"
+        },
+        "recentEpisode": {
+          "id": "ep2",
+          "itemId": "ep2"
+        }
+      }
+    ],
+    "count": 6
+  },
+  "recentEpisodes": [
+    {
+      "id": "ep1",
+      "itemId": "ep1",
+      "podcast": {
+        "id": "ep1",
+        "itemId": "ep1"
+      },
+      "libraryId": "lib"
+    }
+  ],
+  "search": {
+    "podcast": [
+      {
+        "libraryItem": {
+          "id": "pod1",
+          "media": {
+            "title": "Episode Test"
+          },
+          "recentEpisode": "[undefined]"
+        }
+      }
+    ],
+    "tags": [
+      {
+        "name": "history",
+        "numItems": 2
+      }
+    ],
+    "genres": [
+      {
+        "name": "history",
+        "numItems": 2
+      }
+    ],
+    "episodes": [
+      {
+        "libraryItem": {
+          "id": "ep1",
+          "media": {
+            "title": "Episode Test"
+          },
+          "recentEpisode": {
+            "id": "ep1",
+            "itemId": "ep1"
+          }
+        }
+      }
+    ]
+  },
+  "stats": {
+    "totalDuration": 23,
+    "numAudioFiles": 2,
+    "totalItems": 1,
+    "totalSize": 10
+  },
+  "genres": [
+    {
+      "genre": "history",
+      "count": 2
+    }
+  ],
+  "longest": [
+    {
+      "id": "pod1",
+      "title": "Episode Test",
+      "duration": 72
+    }
+  ],
+  "profiled": {
+    "libraryItems": [
+      {
+        "id": "ep1",
+        "libraryId": "lib",
+        "feeds": [
+          {
+            "toOldJSONMinified": "[function toOldJSONMinified]"
+          }
+        ],
+        "toOldJSONMinified": "[function toOldJSONMinified]",
+        "toOldJSONExpanded": "[function toOldJSONExpanded]",
+        "media": {
+          "id": "ep1",
+          "title": "Episode Test",
+          "numEpisodes": 4,
+          "dataValues": {
+            "duration": 72
+          },
+          "toOldJSON": "[function toOldJSON]"
+        },
+        "recentEpisode": {
+          "id": "ep1",
+          "itemId": "ep1"
+        }
+      }
+    ],
+    "count": 5
+  },
+  "calls": [
+    [
+      "random"
+    ],
+    [
+      "stringify",
+      {
+        "where": {
+          "libraryId": "lib"
+        }
+      }
+    ],
+    [
+      "debug",
+      "[LibraryItemsPodcastFilters] countCacheKey: {\"where\":{\"libraryId\":\"lib\"}}"
+    ],
+    [
+      "podcast.count",
+      {
+        "where": {
+          "libraryId": "lib"
+        }
+      }
+    ],
+    [
+      "podcast.findAll",
+      {
+        "where": {
+          "libraryId": "lib"
+        },
+        "limit": 2,
+        "offset": 0
+      }
+    ],
+    [
+      "stringify",
+      {
+        "where": {
+          "libraryId": "lib"
+        }
+      }
+    ],
+    [
+      "debug",
+      "[LibraryItemsPodcastFilters] countCacheKey: {\"where\":{\"libraryId\":\"lib\"}}"
+    ],
+    [
+      "podcast.findAll",
+      {
+        "where": {
+          "libraryId": "lib"
+        },
+        "limit": 1,
+        "offset": 1
+      }
+    ],
+    [
+      "debug",
+      "[LibraryItemsPodcastFilters] podcast.afterUpdate: Clearing count cache"
+    ],
+    [
+      "stringify",
+      {
+        "where": {
+          "libraryId": "lib"
+        }
+      }
+    ],
+    [
+      "debug",
+      "[LibraryItemsPodcastFilters] countCacheKey: {\"where\":{\"libraryId\":\"lib\"}}"
+    ],
+    [
+      "podcast.count",
+      {
+        "where": {
+          "libraryId": "lib"
+        }
+      }
+    ],
+    [
+      "podcast.findAll",
+      {
+        "where": {
+          "libraryId": "lib"
+        },
+        "limit": 1,
+        "offset": 2
+      }
+    ],
+    [
+      "podcast.findAndCountAll",
+      {
+        "where": {
+          "x": 1
+        },
+        "limit": null,
+        "offset": 7
+      }
+    ],
+    [
+      "podcast.findAndCountAll",
+      {
+        "where": [],
+        "replacements": {
+          "userId": "user"
+        },
+        "distinct": true,
+        "attributes": {
+          "include": []
+        },
+        "include": [
+          {
+            "model": {
+              "name": "libraryItemModel"
+            },
+            "required": true,
+            "where": {
+              "libraryId": "lib",
+              "createdAt": {
+                "Symbol(gte)": "2023-09-15T22:13:20.000Z"
+              }
+            },
+            "include": [
+              {
+                "model": {
+                  "name": "feedModel"
+                },
+                "required": false,
+                "separate": true
+              }
+            ]
+          }
+        ],
+        "order": [
+          [
+            {
+              "val": "libraryItem.createdAt"
+            },
+            "ASC"
+          ]
+        ],
+        "subQuery": false,
+        "limit": 2,
+        "offset": 0
+      }
+    ],
+    [
+      "episode.findAndCountAll",
+      {
+        "where": [
+          {
+            "$mediaProgresses.isFinished$": false
+          },
+          {
+            "$mediaProgresses.currentTime$": {
+              "Symbol(gt)": 0
+            }
+          }
+        ],
+        "replacements": {},
+        "include": [
+          {
+            "model": {
+              "count": "[function count]",
+              "findAll": "[function findAll]",
+              "findAndCountAll": "[function findAndCountAll]"
+            },
+            "required": true,
+            "where": [],
+            "include": [
+              {
+                "model": {
+                  "name": "libraryItemModel"
+                },
+                "required": true,
+                "where": {
+                  "libraryId": "lib"
+                }
+              }
+            ]
+          },
+          {
+            "model": {
+              "name": "mediaProgressModel"
+            },
+            "where": {
+              "userId": "user",
+              "hideFromContinueListening": false
+            },
+            "attributes": [
+              "id",
+              "isFinished",
+              "currentTime",
+              "updatedAt"
+            ]
+          }
+        ],
+        "subQuery": false,
+        "order": [
+          [
+            {
+              "val": "mediaProgresses.updatedAt"
+            },
+            "DESC"
+          ]
+        ],
+        "limit": 2,
+        "offset": 0
+      }
+    ],
+    [
+      "episode.findAll",
+      {
+        "where": {
+          "$mediaProgresses.isFinished$": {
+            "Symbol(or)": [
+              null,
+              false
+            ]
+          }
+        },
+        "replacements": {},
+        "include": [
+          {
+            "model": {
+              "count": "[function count]",
+              "findAll": "[function findAll]",
+              "findAndCountAll": "[function findAndCountAll]"
+            },
+            "where": [],
+            "required": true,
+            "include": {
+              "model": {
+                "name": "libraryItemModel"
+              },
+              "where": {
+                "libraryId": "lib"
+              }
+            }
+          },
+          {
+            "model": {
+              "name": "mediaProgressModel"
+            },
+            "where": {
+              "userId": "user"
+            },
+            "required": false
+          }
+        ],
+        "order": [
+          [
+            "publishedAt",
+            "DESC"
+          ]
+        ],
+        "subQuery": false,
+        "limit": 3,
+        "offset": 0
+      }
+    ],
+    [
+      "textQuery",
+      "hi"
+    ],
+    [
+      "podcast.findAll",
+      {
+        "where": [
+          {
+            "Symbol(or)": [
+              {
+                "val": "MATCH(podcast.title)"
+              },
+              {
+                "val": "MATCH(podcast.author)"
+              },
+              {
+                "itunesId": {
+                  "Symbol(substring)": "hi"
+                }
+              },
+              {
+                "itunesArtistId": {
+                  "Symbol(substring)": "hi"
+                }
+              }
+            ]
+          }
+        ],
+        "replacements": {},
+        "include": [
+          {
+            "model": {
+              "name": "libraryItemModel"
+            },
+            "where": {
+              "libraryId": "lib"
+            }
+          }
+        ],
+        "subQuery": false,
+        "distinct": true,
+        "limit": 2,
+        "offset": 0
+      }
+    ],
+    [
+      "episode.findAll",
+      {
+        "where": [
+          {
+            "val": "MATCH(podcastEpisode.title)"
+          },
+          {
+            "$podcast.libraryItem.libraryId$": "lib"
+          }
+        ],
+        "replacements": {},
+        "include": [
+          {
+            "model": {
+              "count": "[function count]",
+              "findAll": "[function findAll]",
+              "findAndCountAll": "[function findAndCountAll]"
+            },
+            "where": [],
+            "include": [
+              {
+                "model": {
+                  "name": "libraryItemModel"
+                }
+              }
+            ]
+          }
+        ],
+        "distinct": true,
+        "offset": 0,
+        "limit": 2
+      }
+    ],
+    [
+      "sql",
+      "SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.tags) WHERE json_valid(p.tags) AND MATCH(json_each.value) AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;",
+      {
+        "replacements": {
+          "libraryId": "lib",
+          "limit": 2,
+          "offset": 0
+        },
+        "raw": true
+      }
+    ],
+    [
+      "sql",
+      "SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND MATCH(json_each.value) AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;",
+      {
+        "replacements": {
+          "libraryId": "lib",
+          "limit": 2,
+          "offset": 0
+        },
+        "raw": true
+      }
+    ],
+    [
+      "sql",
+      "SELECT SUM(li.size) AS totalSize FROM libraryItems li WHERE li.mediaType = \"podcast\" AND li.libraryId = :libraryId;",
+      {
+        "replacements": {
+          "libraryId": "lib"
+        }
+      }
+    ],
+    [
+      "sql",
+      "SELECT SUM(json_extract(pe.audioFile, '$.duration')) AS totalDuration, COUNT(DISTINCT(li.id)) AS totalItems, COUNT(pe.id) AS numAudioFiles FROM libraryItems li, podcasts p LEFT OUTER JOIN podcastEpisodes pe ON pe.podcastId = p.id WHERE p.id = li.mediaId AND li.libraryId = :libraryId;",
+      {
+        "replacements": {
+          "libraryId": "lib"
+        }
+      }
+    ],
+    [
+      "sql",
+      "SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC;",
+      {
+        "replacements": {
+          "libraryId": "lib"
+        },
+        "raw": true
+      }
+    ],
+    [
+      "podcast.findAll",
+      {
+        "attributes": [
+          "id",
+          "title",
+          [
+            {
+              "val": "(SELECT SUM(json_extract(pe.audioFile, '$.duration')) FROM podcastEpisodes pe WHERE pe.podcastId = podcast.id)"
+            },
+            "duration"
+          ]
+        ],
+        "include": {
+          "model": {
+            "name": "libraryItemModel"
+          },
+          "attributes": [
+            "id",
+            "libraryId"
+          ],
+          "where": {
+            "libraryId": "lib"
+          }
+        },
+        "order": [
+          [
+            "duration",
+            "DESC"
+          ]
+        ],
+        "limit": 2
+      }
+    ],
+    [
+      "warn",
+      "Cannot sort podcast episodes by progress without filtering by progress"
+    ],
+    [
+      "profile",
+      "findAndCountAll"
+    ],
+    [
+      "stringify",
+      {
+        "where": {},
+        "replacements": {},
+        "include": [
+          {
+            "model": {
+              "count": "[function count]",
+              "findAll": "[function findAll]",
+              "findAndCountAll": "[function findAndCountAll]"
+            },
+            "required": true,
+            "where": [],
+            "include": [
+              {
+                "model": {
+                  "name": "libraryItemModel"
+                },
+                "required": true,
+                "where": {
+                  "libraryId": "lib"
+                }
+              }
+            ]
+          }
+        ],
+        "subQuery": false,
+        "order": [
+          [
+            "createdAt",
+            "ASC"
+          ]
+        ]
+      }
+    ],
+    [
+      "debug",
+      "[LibraryItemsPodcastFilters] countCacheKey: {\"where\":{},\"replacements\":{},\"include\":[{\"model\":{\"count\":\"[function count]\",\"findAll\":\"[function findAll]\",\"findAndCountAll\":\"[function findAndCountAll]\"},\"required\":true,\"where\":[],\"include\":[{\"model\":{\"name\":\"libraryItemModel\"},\"required\":true,\"where\":{\"libraryId\":\"lib\"}}]}],\"subQuery\":false,\"order\":[[\"createdAt\",\"ASC\"]]}"
+    ],
+    [
+      "episode.count",
+      {
+        "where": {},
+        "replacements": {},
+        "include": [
+          {
+            "model": {
+              "count": "[function count]",
+              "findAll": "[function findAll]",
+              "findAndCountAll": "[function findAndCountAll]"
+            },
+            "required": true,
+            "where": [],
+            "include": [
+              {
+                "model": {
+                  "name": "libraryItemModel"
+                },
+                "required": true,
+                "where": {
+                  "libraryId": "lib"
+                }
+              }
+            ]
+          }
+        ],
+        "subQuery": false,
+        "order": [
+          [
+            "createdAt",
+            "ASC"
+          ]
+        ]
+      }
+    ],
+    [
+      "episode.findAll",
+      {
+        "where": {},
+        "replacements": {},
+        "include": [
+          {
+            "model": {
+              "count": "[function count]",
+              "findAll": "[function findAll]",
+              "findAndCountAll": "[function findAndCountAll]"
+            },
+            "required": true,
+            "where": [],
+            "include": [
+              {
+                "model": {
+                  "name": "libraryItemModel"
+                },
+                "required": true,
+                "where": {
+                  "libraryId": "lib"
+                }
+              }
+            ]
+          }
+        ],
+        "subQuery": false,
+        "order": [
+          [
+            "createdAt",
+            "ASC"
+          ]
+        ],
+        "limit": 1,
+        "offset": 0
+      }
+    ]
+  ]
+}

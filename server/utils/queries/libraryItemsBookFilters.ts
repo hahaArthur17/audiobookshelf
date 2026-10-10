@@ -711,7 +711,7 @@ const libraryItemsBookFilters: LibraryItemsBookFiltersModule = {
       })
     } else if (filterGroup === 'recent') {
       libraryItemWhere['createdAt'] = {
-        [Sequelize.Op.gte]: new Date(Number(new Date()) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+        [Sequelize.Op.gte]: new Date((new Date() as Date & number) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
       }
     }
 
@@ -1009,7 +1009,7 @@ const libraryItemsBookFilters: LibraryItemsBookFiltersModule = {
         libraryItem.media = book
         return libraryItem
       })
-      .filter((s): s is LibraryItemRow => !!s)
+      .filter((s) => s) as LibraryItemRow[]
 
     return {
       libraryItems,
@@ -1172,7 +1172,7 @@ const libraryItemsBookFilters: LibraryItemsBookFiltersModule = {
     })
 
     const booksById = new Map(books.map((b) => [b.id, b]))
-    const orderedBooks = selectedIds.map((id) => booksById.get(id)).filter((book): book is BookRow => !!book)
+    const orderedBooks = selectedIds.map((id) => booksById.get(id)).filter(Boolean) as BookRow[]
 
     // Step 3: Map books to library items
     const libraryItems = orderedBooks.map((bookExpanded) => {

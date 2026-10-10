@@ -1,0 +1,163 @@
+--- /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2/dist-server/server/utils/queries/libraryItemsBookFilters.js	2026-10-03 21:34:39
++++ dist-server/server/utils/queries/libraryItemsBookFilters.js	2026-10-11 10:07:32
+@@ -1,13 +1,13 @@
+ "use strict";
+ const Sequelize = require('sequelize');
+ const Database = require('../../Database');
+-const Logger = require('../../Logger');
++const LibraryLogger = require('../../Logger');
+ const authorFilters = require('./authorFilters');
+ const ShareManager = require('../../managers/ShareManager');
+ const { profile } = require('../profiler');
+-const stringifySequelizeQuery = require('../stringifySequelizeQuery');
++const serializeSequelizeQuery = require('../stringifySequelizeQuery');
+ const countCache = new Map();
+-module.exports = {
++const libraryItemsBookFilters = {
+     /**
+      * User permissions to restrict books for explicit content & tags
+      * @param {import('../../models/User')} user
+@@ -104,14 +104,15 @@
+             return { mediaWhere: {}, replacements: {} };
+         let mediaWhere = {};
+         const replacements = {};
++        const mutableMediaWhere = mediaWhere;
+         if (group === 'progress') {
+             if (value === 'not-finished') {
+-                mediaWhere['$mediaProgresses.isFinished$'] = {
++                mutableMediaWhere['$mediaProgresses.isFinished$'] = {
+                     [Sequelize.Op.or]: [null, false]
+                 };
+             }
+             else if (value === 'not-started') {
+-                mediaWhere[Sequelize.Op.and] = [
++                mutableMediaWhere[Sequelize.Op.and] = [
+                     {
+                         '$mediaProgresses.currentTime$': {
+                             [Sequelize.Op.or]: [null, 0]
+@@ -125,10 +126,10 @@
+                 ];
+             }
+             else if (value === 'finished') {
+-                mediaWhere['$mediaProgresses.isFinished$'] = true;
++                mutableMediaWhere['$mediaProgresses.isFinished$'] = true;
+             }
+             else if (value === 'in-progress') {
+-                mediaWhere[Sequelize.Op.and] = [
++                mutableMediaWhere[Sequelize.Op.and] = [
+                     {
+                         [Sequelize.Op.or]: [
+                             {
+@@ -149,7 +150,7 @@
+                 ];
+             }
+             else if (value === 'audio-in-progress') {
+-                mediaWhere[Sequelize.Op.and] = [
++                mutableMediaWhere[Sequelize.Op.and] = [
+                     {
+                         '$mediaProgresses.currentTime$': {
+                             [Sequelize.Op.gt]: 0
+@@ -188,25 +189,25 @@
+             }
+         }
+         else if (group === 'series' && value === 'no-series') {
+-            mediaWhere['$series.id$'] = null;
++            mutableMediaWhere['$series.id$'] = null;
+         }
+         else if (group === 'abridged') {
+-            mediaWhere['abridged'] = true;
++            mutableMediaWhere['abridged'] = true;
+         }
+         else if (group === 'explicit') {
+-            mediaWhere['explicit'] = true;
++            mutableMediaWhere['explicit'] = true;
+         }
+         else if (['genres', 'tags', 'narrators'].includes(group)) {
+-            mediaWhere[group] = Sequelize.where(Sequelize.literal(`(SELECT count(*) FROM json_each(${group}) WHERE json_valid(${group}) AND json_each.value = :filterValue)`), {
++            mutableMediaWhere[group] = Sequelize.where(Sequelize.literal(`(SELECT count(*) FROM json_each(${group}) WHERE json_valid(${group}) AND json_each.value = :filterValue)`), {
+                 [Sequelize.Op.gte]: 1
+             });
+             replacements.filterValue = value;
+         }
+         else if (group === 'publishers') {
+-            mediaWhere['publisher'] = value;
++            mutableMediaWhere['publisher'] = value;
+         }
+         else if (group === 'languages') {
+-            mediaWhere['language'] = value;
++            mutableMediaWhere['language'] = value;
+         }
+         else if (group === 'tracks') {
+             if (value === 'none') {
+@@ -223,12 +224,12 @@
+         }
+         else if (group === 'ebooks') {
+             if (value === 'ebook') {
+-                mediaWhere['ebookFile'] = {
++                mutableMediaWhere['ebookFile'] = {
+                     [Sequelize.Op.not]: null
+                 };
+             }
+             else if (value == 'no-ebook') {
+-                mediaWhere['ebookFile'] = {
++                mutableMediaWhere['ebookFile'] = {
+                     [Sequelize.Op.eq]: null
+                 };
+             }
+@@ -238,20 +239,20 @@
+                 let key = value;
+                 if (value === 'cover')
+                     key = 'coverPath';
+-                mediaWhere[key] = {
++                mutableMediaWhere[key] = {
+                     [Sequelize.Op.or]: [null, '']
+                 };
+             }
+             else if (['genres', 'tags', 'narrators', 'chapters'].includes(value)) {
+-                mediaWhere[value] = {
++                mutableMediaWhere[value] = {
+                     [Sequelize.Op.or]: [null, Sequelize.where(Sequelize.fn('json_array_length', Sequelize.col(value)), 0)]
+                 };
+             }
+             else if (value === 'authors') {
+-                mediaWhere['$authors.id$'] = null;
++                mutableMediaWhere['$authors.id$'] = null;
+             }
+             else if (value === 'series') {
+-                mediaWhere['$series.id$'] = null;
++                mutableMediaWhere['$series.id$'] = null;
+             }
+         }
+         else if (group === 'publishedDecades') {
+@@ -383,14 +384,14 @@
+         return { booksToExclude, bookSeriesToInclude };
+     },
+     clearCountCache(hook) {
+-        Logger.debug(`[LibraryItemsBookFilters] book.${hook}: Clearing count cache`);
++        LibraryLogger.debug(`[LibraryItemsBookFilters] book.${hook}: Clearing count cache`);
+         countCache.clear();
+     },
+     async findAndCountAll(findOptions, limit, offset, useCountCache) {
+         const model = Database.bookModel;
+         if (useCountCache) {
+-            const countCacheKey = stringifySequelizeQuery(findOptions);
+-            Logger.debug(`[LibraryItemsBookFilters] countCacheKey: ${countCacheKey}`);
++            const countCacheKey = serializeSequelizeQuery(findOptions);
++            LibraryLogger.debug(`[LibraryItemsBookFilters] countCacheKey: ${countCacheKey}`);
+             if (!countCache.has(countCacheKey)) {
+                 const count = await model.count(findOptions);
+                 countCache.set(countCacheKey, count);
+@@ -1012,7 +1013,7 @@
+      */
+     async getLibraryItemsForCollection(collection) {
+         if (!collection?.books?.length) {
+-            Logger.error(`[libraryItemsBookFilters] Invalid collection`, collection);
++            LibraryLogger.error(`[libraryItemsBookFilters] Invalid collection`, collection);
+             return [];
+         }
+         const books = await Database.bookModel.findAll({
+@@ -1308,3 +1309,4 @@
+         });
+     }
+ };
++module.exports = libraryItemsBookFilters;
