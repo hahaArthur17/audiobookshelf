@@ -1,12 +1,188 @@
-const Sequelize = require('sequelize')
-const Database = require('../../Database')
-const Logger = require('../../Logger')
-const { profile } = require('../../utils/profiler')
-const stringifySequelizeQuery = require('../stringifySequelizeQuery')
+type PaginationValue = number | string | null | undefined
 
-const countCache = new Map()
+interface QueryOptions {
+  [key: string]: unknown
+  [key: symbol]: unknown
+  limit?: PaginationValue
+  offset?: PaginationValue
+}
 
-module.exports = {
+interface PodcastUser {
+  id: string
+  canAccessExplicitContent: boolean
+  permissions?: {
+    accessAllTags?: boolean
+    itemTagsSelected?: string[] | null
+    selectedTagsNotAccessible?: boolean
+  }
+  mediaProgresses: Array<{ podcastId: string; isFinished: boolean }>
+}
+
+interface PodcastLibrary {
+  id: string
+}
+
+interface PermissionPodcastWhere {
+  podcastWhere: object[]
+  replacements: Record<string, unknown>
+}
+
+interface MediaGroupQuery {
+  mediaWhere: Record<string, unknown>
+  replacements: Record<string, unknown>
+}
+
+interface OldLibraryItem {
+  media: { size?: number | null; [key: string]: unknown }
+  rssFeed?: unknown
+  mediaItemShare?: unknown
+  numEpisodesIncomplete?: number
+  recentEpisode?: unknown
+  [key: string]: unknown
+}
+
+interface FeedRow {
+  toOldJSONMinified(): unknown
+}
+
+interface LibraryItemRow {
+  id: string
+  libraryId: string
+  feeds?: FeedRow[] | null
+  rssFeed?: FeedRow | null
+  media?: PodcastRow
+  size?: number | null
+  mediaItemShare?: unknown
+  numEpisodesIncomplete?: number
+  recentEpisode?: unknown
+  toOldJSONMinified(): OldLibraryItem
+  toOldJSONExpanded(): OldLibraryItem
+  [key: string]: unknown
+}
+
+interface PodcastRow {
+  id: string
+  title: string
+  numEpisodes: number
+  libraryItem: LibraryItemRow
+  podcastEpisodes?: unknown[]
+  dataValues: { duration?: number | null }
+  toOldJSON(libraryItemId: string): Record<string, unknown>
+  [key: string]: unknown
+}
+
+interface PodcastEpisodeJson {
+  podcast?: Record<string, unknown>
+  libraryId?: string
+  [key: string]: unknown
+}
+
+interface PodcastEpisodeRow {
+  podcast: PodcastRow
+  toOldJSON(libraryItemId: string): unknown
+  toOldJSONExpanded(libraryItemId: string): PodcastEpisodeJson
+  [key: string]: unknown
+}
+
+interface QueryModel<Row extends object> {
+  count(options: QueryOptions): Promise<number>
+  findAll(options: QueryOptions): Promise<Row[]>
+  findAndCountAll(options: QueryOptions): Promise<{ rows: Row[]; count: number }>
+}
+
+interface TextSearchQuery {
+  matchExpression(column: string): string
+}
+
+interface RawQueryRow {
+  value: string
+  numItems: number
+}
+
+interface PodcastStatsRow {
+  totalSize?: number | null
+  totalDuration?: number | null
+  numAudioFiles?: number | null
+  totalItems?: number | null
+}
+
+interface PodcastDatabase {
+  podcastModel: QueryModel<PodcastRow>
+  podcastEpisodeModel: QueryModel<PodcastEpisodeRow>
+  libraryItemModel: unknown
+  mediaProgressModel: unknown
+  feedModel: unknown
+  sequelize: {
+    random(): unknown
+    query<Row extends object>(sql: string, options?: QueryOptions): Promise<[Row[], unknown]>
+  }
+  createTextSearchQuery(query: string): Promise<TextSearchQuery>
+}
+
+interface PodcastSearchResult {
+  podcast: Array<{ libraryItem: OldLibraryItem }>
+  tags: Array<{ name: string; numItems: number }>
+  genres: Array<{ name: string; numItems: number }>
+  episodes: Array<{ libraryItem: OldLibraryItem }>
+}
+
+interface PodcastLibraryStats {
+  totalSize: number
+  totalDuration: number
+  numAudioFiles: number
+  totalItems: number
+}
+
+interface PodcastFiltersModule {
+  getUserPermissionPodcastWhereQuery(user: PodcastUser): PermissionPodcastWhere
+  getMediaGroupQuery(group: string | null, value: string | null): MediaGroupQuery
+  getOrder(sortBy: string | null, sortDesc: boolean): unknown[]
+  clearCountCache(model?: string, hook?: string): void
+  findAndCountAll<Row extends PodcastRow | PodcastEpisodeRow>(
+    findOptions: QueryOptions,
+    model: QueryModel<Row>,
+    limit: PaginationValue,
+    offset: PaginationValue,
+    useCountCache: boolean
+  ): Promise<{ rows: Row[]; count: number | undefined }>
+  getFilteredLibraryItems(
+    libraryId: string,
+    user: PodcastUser,
+    filterGroup: string | null,
+    filterValue: string | null,
+    sortBy: string | null,
+    sortDesc: boolean,
+    include: string[],
+    limit: PaginationValue,
+    offset: PaginationValue
+  ): Promise<{ libraryItems: LibraryItemRow[]; count: number | undefined }>
+  getFilteredPodcastEpisodes(
+    libraryId: string,
+    user: PodcastUser,
+    filterGroup: string | null,
+    filterValue: string | null,
+    sortBy: string | null,
+    sortDesc: boolean,
+    limit: PaginationValue,
+    offset: PaginationValue,
+    isHomePage?: boolean
+  ): Promise<{ libraryItems: LibraryItemRow[]; count: number | undefined }>
+  search(user: PodcastUser, library: PodcastLibrary, query: string, limit: PaginationValue, offset: PaginationValue): Promise<PodcastSearchResult>
+  getRecentEpisodes(user: PodcastUser, library: PodcastLibrary, limit: PaginationValue, offset: PaginationValue): Promise<PodcastEpisodeJson[]>
+  getPodcastLibraryStats(libraryId: string): Promise<PodcastLibraryStats>
+  getGenresWithCount(libraryId: string): Promise<Array<{ genre: string; count: number }>>
+  getLongestPodcasts(libraryId: string, limit: PaginationValue): Promise<Array<{ id: string; title: string; duration: number | null | undefined }>>
+}
+
+const Sequelize = require('sequelize') as typeof import('sequelize')
+const Database = require('../../Database') as PodcastDatabase
+const Logger = require('../../Logger') as { debug(message: string): void; warn(message: string): void }
+const { profile } = require('../../utils/profiler') as { profile<T extends Function>(fn: T): T }
+const stringifySequelizeQuery = require('../stringifySequelizeQuery') as (value: object) => string
+
+const countCache = new Map<string, number>()
+
+const libraryItemsPodcastFilters: PodcastFiltersModule = {
   /**
    * User permissions to restrict podcasts for explicit content & tags
    * @param {import('../../models/User')} user
@@ -14,7 +190,7 @@ module.exports = {
    */
   getUserPermissionPodcastWhereQuery(user) {
     const podcastWhere = []
-    const replacements = {}
+    const replacements: Record<string, unknown> = {}
     if (!user.canAccessExplicitContent) {
       podcastWhere.push({
         explicit: false
@@ -49,8 +225,8 @@ module.exports = {
   getMediaGroupQuery(group, value) {
     if (!group) return { mediaWhere: {}, replacements: {} }
 
-    let mediaWhere = {}
-    const replacements = {}
+    const mediaWhere: Record<string, unknown> = {}
+    const replacements: Record<string, unknown> = {}
 
     if (['genres', 'tags'].includes(group)) {
       mediaWhere[group] = Sequelize.where(Sequelize.literal(`(SELECT count(*) FROM json_each(${group}) WHERE json_valid(${group}) AND json_each.value = :filterValue)`), {
@@ -89,7 +265,7 @@ module.exports = {
       const nullDir = sortDesc ? 'DESC NULLS FIRST' : 'ASC NULLS LAST'
       return [[Sequelize.literal(`\`podcast\`.\`author\` COLLATE NOCASE ${nullDir}`)]]
     } else if (sortBy === 'media.metadata.title') {
-      if (global.ServerSettings.sortingIgnorePrefix) {
+      if ((global as typeof global & { ServerSettings: { sortingIgnorePrefix: boolean } }).ServerSettings.sortingIgnorePrefix) {
         return [[Sequelize.literal('`libraryItem`.`titleIgnorePrefix` COLLATE NOCASE'), dir]]
       } else {
         return [[Sequelize.literal('`libraryItem`.`title` COLLATE NOCASE'), dir]]
@@ -147,7 +323,7 @@ module.exports = {
     const includeRSSFeed = include.includes('rssfeed')
     const includeNumEpisodesIncomplete = include.includes('numepisodesincomplete')
 
-    const libraryItemWhere = {
+    const libraryItemWhere: QueryOptions = {
       libraryId
     }
     const libraryItemIncludes = []
@@ -170,11 +346,11 @@ module.exports = {
       ]
     } else if (filterGroup === 'recent') {
       libraryItemWhere['createdAt'] = {
-        [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+        [Sequelize.Op.gte]: new Date(Number(new Date()) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
       }
     }
 
-    const podcastIncludes = []
+    const podcastIncludes: object[] = []
 
     let { mediaWhere, replacements } = this.getMediaGroupQuery(filterGroup, filterValue)
     replacements.userId = user.id
@@ -213,7 +389,8 @@ module.exports = {
       const libraryItem = podcastExpanded.libraryItem
       const podcast = podcastExpanded
 
-      delete podcast.libraryItem
+      const podcastWithoutLibraryItem: { libraryItem?: LibraryItemRow } = podcast
+      delete podcastWithoutLibraryItem.libraryItem
 
       if (libraryItem.feeds?.length) {
         libraryItem.rssFeed = libraryItem.feeds[0]
@@ -260,12 +437,12 @@ module.exports = {
     }
 
     const podcastEpisodeIncludes = []
-    let podcastEpisodeWhere = {}
-    let libraryItemWhere = {
+    let podcastEpisodeWhere: Record<string, unknown> | object[] = {}
+    const libraryItemWhere: QueryOptions = {
       libraryId
     }
     if (filterGroup === 'progress') {
-      const mediaProgressWhere = {
+      const mediaProgressWhere: QueryOptions = {
         userId: user.id
       }
       // Respect hide from continue listening for home page shelf
@@ -290,11 +467,11 @@ module.exports = {
           }
         ]
       } else if (filterValue === 'finished') {
-        podcastEpisodeWhere['$mediaProgresses.isFinished$'] = true
+        (podcastEpisodeWhere as Record<string, unknown>)['$mediaProgresses.isFinished$'] = true
       }
     } else if (filterGroup === 'recent') {
-      podcastEpisodeWhere['createdAt'] = {
-        [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+      (podcastEpisodeWhere as Record<string, unknown>)['createdAt'] = {
+        [Sequelize.Op.gte]: new Date(Number(new Date()) - 60 * 24 * 60 * 60 * 1000) // 60 days ago
       }
     }
 
@@ -336,7 +513,8 @@ module.exports = {
     const libraryItems = podcastEpisodes.map((ep) => {
       const libraryItem = ep.podcast.libraryItem
       const podcast = ep.podcast
-      delete podcast.libraryItem
+      const podcastWithoutLibraryItem: { libraryItem?: LibraryItemRow } = podcast
+      delete podcastWithoutLibraryItem.libraryItem
       libraryItem.media = podcast
 
       libraryItem.recentEpisode = ep.toOldJSON(libraryItem.id)
@@ -406,7 +584,8 @@ module.exports = {
 
     for (const podcast of podcasts) {
       const libraryItem = podcast.libraryItem
-      delete podcast.libraryItem
+      const podcastWithoutLibraryItem: { libraryItem?: LibraryItemRow } = podcast
+      delete podcastWithoutLibraryItem.libraryItem
       libraryItem.media = podcast
       libraryItem.media.podcastEpisodes = []
       itemMatches.push({
@@ -455,7 +634,7 @@ module.exports = {
 
     // Search tags
     const tagMatches = []
-    const [tagResults] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.tags) WHERE json_valid(p.tags) AND ${matchJsonValue} AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
+    const [tagResults] = await Database.sequelize.query<RawQueryRow>(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.tags) WHERE json_valid(p.tags) AND ${matchJsonValue} AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
       replacements: {
         libraryId: library.id,
         limit,
@@ -472,7 +651,7 @@ module.exports = {
 
     // Search genres
     const genreMatches = []
-    const [genreResults] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND ${matchJsonValue} AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
+    const [genreResults] = await Database.sequelize.query<RawQueryRow>(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND ${matchJsonValue} AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
       replacements: {
         libraryId: library.id,
         limit,
@@ -563,12 +742,12 @@ module.exports = {
    * @returns {Promise<{ totalSize:number, totalDuration:number, numAudioFiles:number, totalItems:number}>}
    */
   async getPodcastLibraryStats(libraryId) {
-    const [sizeResults] = await Database.sequelize.query(`SELECT SUM(li.size) AS totalSize FROM libraryItems li WHERE li.mediaType = "podcast" AND li.libraryId = :libraryId;`, {
+    const [sizeResults] = await Database.sequelize.query<PodcastStatsRow>(`SELECT SUM(li.size) AS totalSize FROM libraryItems li WHERE li.mediaType = "podcast" AND li.libraryId = :libraryId;`, {
       replacements: {
         libraryId
       }
     })
-    const [statResults] = await Database.sequelize.query(`SELECT SUM(json_extract(pe.audioFile, '$.duration')) AS totalDuration, COUNT(DISTINCT(li.id)) AS totalItems, COUNT(pe.id) AS numAudioFiles FROM libraryItems li, podcasts p LEFT OUTER JOIN podcastEpisodes pe ON pe.podcastId = p.id WHERE p.id = li.mediaId AND li.libraryId = :libraryId;`, {
+    const [statResults] = await Database.sequelize.query<PodcastStatsRow>(`SELECT SUM(json_extract(pe.audioFile, '$.duration')) AS totalDuration, COUNT(DISTINCT(li.id)) AS totalItems, COUNT(pe.id) AS numAudioFiles FROM libraryItems li, podcasts p LEFT OUTER JOIN podcastEpisodes pe ON pe.podcastId = p.id WHERE p.id = li.mediaId AND li.libraryId = :libraryId;`, {
       replacements: {
         libraryId
       }
@@ -588,7 +767,7 @@ module.exports = {
    */
   async getGenresWithCount(libraryId) {
     const genres = []
-    const [genreResults] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC;`, {
+    const [genreResults] = await Database.sequelize.query<RawQueryRow>(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC;`, {
       replacements: {
         libraryId
       },
@@ -631,3 +810,5 @@ module.exports = {
     })
   }
 }
+
+export = libraryItemsPodcastFilters
