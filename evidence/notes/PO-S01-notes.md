@@ -85,3 +85,10 @@ I ran no other checkpoint.
 - any / @ts-ignore / as any / as unknown as: none found in the .ts files outside server/libs. 13 casts, the same number as Phase 1: the agent removed the isbnLookup cast in BookFinder.ts and added one in hlsPlaylistGenerator.ts.
 - Compiled output against my saved Phase 1 build: 5 files changed, 14 changed lines in total (Task 3/1, OpenLibrary 2/1, hlsPlaylistGenerator 2/1, parseNfoMetadata 1/1, parseUserAgent 1/1), no missing files. BookFinder.js compiled identically although its source lost a cast.
 - Rules in CLAUDE.md the agent ignored: none found by my checks. It committed groups of files, which CLAUDE.md allowed; it added server/types/untypedModules.d.ts, which CLAUDE.md did not mention (uuid has no types, and the tsconfig excludes .d.ts files, so it pulled the file in with a reference comment); and it restored failed files with git mv and git restore, as the rules allowed.
+
+## Corrections added on 11 October 2026
+
+These were found when the session log was measured again. The text above is left as it was written.
+- Prompt time and duration: the log shows that the prompt arrived at 02:13:16 and the last message was at 02:52:27. That is 39.2 minutes (3.6 minutes per converted file), not "about 02:15 to 02:19" and "33 to 37 minutes". The agent's own turn was 23 min 45 s, so the gap of about 15 minutes is probably time at permission prompts (an inference; the logs do not record the prompts).
+- Effort: the log shows xhigh for every assistant entry. The statement that the effort was not recorded is replaced by this.
+- The measured figures for all runs are in the run record (`claude/run-records.md` in the Claude Project).

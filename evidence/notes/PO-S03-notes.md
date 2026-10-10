@@ -35,3 +35,9 @@ Added tsconfig.check.json (a new file, not a change to tsconfig.server.json; it 
 - Against my definition: Pass, Good, and Strong for this stage alone (2,158 lines against about 2,100). Not checked: the server was never started; the intermediate commits were not built on their own; the casts are the agent's count; I did not record how many prompts I answered Yes and No; as far as I remember I chose Yes at every prompt and No at none (from memory, not verified). So my planned No answers (a sub-agent asking to build, test or commit) were never used, and I have no record of whether such a request came.
 - Cumulative at this commit, from my own count against the public baseline 7d10b8fc: 41 first-party .ts files outside server/libs, 4199 non-blank baseline lines converted, 9% of the 46,896 baseline lines.
 - The session ID of the parallel run (the resume line on exit): 0bf83f6f-65ea-4fb0-a22c-cda001732d16.
+
+## Corrections added on 11 October 2026
+
+These were found when the session log was measured again. The text above is left as it was written.
+- Prompt time: 05:28:58 was a PowerShell command that was pasted into the session by mistake, and the agent did not react to it. The prompt itself arrived at 05:31:12. From 05:31:12 to the last message at 06:16:38 is 45.4 minutes, which equals the agent's own turn (45 min 26 s). The "about 47 minutes" and the "1.5 minutes not accounted for" above should be read as 45 minutes and nothing unaccounted for.
+- Effort: the session log shows xhigh for every assistant entry. It was not recorded on the run day.

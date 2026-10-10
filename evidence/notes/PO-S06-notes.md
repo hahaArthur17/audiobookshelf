@@ -180,3 +180,7 @@ A repeat run with one setting changed would be needed to separate these.
 - post-run-checks.txt: scope check.
 - The *.js files are the helper scripts that made these files.
 - The session log and the agent's scratch folder are stored outside Git, in D:\SEM-2\574\Project\po-session-backup.
+
+## Correction added on 11 October 2026
+
+- Effort of PO-S01: the session log shows xhigh. The "not recorded" statements above (the comparison with PO-S01) are replaced by this. PO-S01 took 39.2 minutes from the prompt (3.6 minutes per file), not 33 to 37 minutes (about 3.2 per file).

@@ -37,3 +37,7 @@ Progress measure: first-party .ts files outside server/libs excluding .d.ts (14 
 - The agent edited source files with sed -i and node -e, not only with its edit tool. That is inside server/, which is allowed; my deny rules cover file tools only, so a shell write into a protected path would only have been stopped by my answer to the prompt.
 - Against my earlier definition: Pass (builds from an empty dist-server, 356 passing, nothing protected changed since the stage base, no banned tokens, no file over 30 changed lines). package.json differs from the PO-S01 base only by my own @types commit (7dbc5d92), made before this stage.
 - Not checked: the server was never started; any types that come from untyped JavaScript are not counted; I did not record how many prompts I answered Yes and No.
+
+## Correction added on 11 October 2026
+
+- Effort: the session log shows xhigh for every assistant entry. It was not recorded on the run day.

@@ -54,3 +54,7 @@ Model and effort: Opus 5.5, max effort (read from /model before the paste; see R
 Addendum written after PO-S05: the "Recently denied" list of the PO-S04 session was empty when it was read before /exit. The number of prompts answered before the switch to auto mode was not recorded.
 
 Addendum written after PO-S05: the "Recently denied" list of the PO-S04 session was empty when it was read before /exit. The number of prompts answered before the switch to auto mode was not recorded.
+
+## Correction added on 11 October 2026
+
+- The line "The effort level was not recorded for PO-S01 to PO-S03" is out of date. The session logs show xhigh for all three runs.
