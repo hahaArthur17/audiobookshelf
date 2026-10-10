@@ -1,8 +1,25 @@
-const { DataTypes, Model, where, fn, col } = require('sequelize')
-const parseNameString = require('../utils/parsers/parseNameString')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model, where, fn, col } = sequelizeModule
+import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
+import parseNameString = require('../utils/parsers/parseNameString')
+
+type LibraryItem = import('./LibraryItem')
+type BookExpandedWithLibraryItem = import('./Book').BookExpandedWithLibraryItem
 
 class Author extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare name: string
+  declare lastFirst: string
+  declare asin: string | null // not set by findOrCreateByNameAndLibrary(), so null until it is edited; the JSDoc says string
+  declare description: string | null // see asin
+  declare imagePath: string | null // see asin
+  declare libraryId: string
+  declare updatedAt: Date
+  declare createdAt: Date
+  declare books?: BookExpandedWithLibraryItem[] // only set by a query that includes book (getAllLibraryItemsForAuthor); not listed in the constructor
+  declare static readonly sequelize: Sequelize // set by init() before any query runs (optional in Sequelize's typings)
+
+  constructor(values?: CreationAttributes<Author>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -30,7 +47,7 @@ class Author extends Model {
    * @param {string} name
    * @returns {string}
    */
-  static getLastFirst(name) {
+  static getLastFirst(name: string) {
     if (!name) return null
     return parseNameString.nameToLastFirst(name)
   }
@@ -40,7 +57,7 @@ class Author extends Model {
    * @param {string} authorId
    * @returns {Promise<boolean>}
    */
-  static async checkExistsById(authorId) {
+  static async checkExistsById(authorId: string) {
     return (await this.count({ where: { id: authorId } })) > 0
   }
 
@@ -52,7 +69,7 @@ class Author extends Model {
    * @param {string} libraryId
    * @returns {Promise<Author>}
    */
-  static async getByNameAndLibrary(authorName, libraryId) {
+  static async getByNameAndLibrary(authorName: string, libraryId: string) {
     return this.findOne({
       where: [
         where(fn('lower', col('name')), authorName.toLowerCase()),
@@ -68,7 +85,7 @@ class Author extends Model {
    * @param {string} authorId
    * @returns {Promise<import('./LibraryItem')[]>}
    */
-  static async getAllLibraryItemsForAuthor(authorId) {
+  static async getAllLibraryItemsForAuthor(authorId: string) {
     const author = await this.findByPk(authorId, {
       include: [
         {
@@ -94,12 +111,13 @@ class Author extends Model {
       ]
     })
 
-    const libraryItems = []
+    const libraryItems: LibraryItem[] = []
     if (author?.books) {
       for (const book of author.books) {
         const libraryItem = book.libraryItem
         libraryItem.media = book
-        delete book.libraryItem
+        const bookWithOptionalItem: { libraryItem?: LibraryItem } = book // the same object, seen with libraryItem optional: TypeScript only allows delete on an optional property (TS2790)
+        delete bookWithOptionalItem.libraryItem
         libraryItems.push(libraryItem)
       }
     }
@@ -113,7 +131,7 @@ class Author extends Model {
    * @param {string} libraryId
    * @returns {Promise<{ author: Author, created: boolean }>}
    */
-  static async findOrCreateByNameAndLibrary(name, libraryId) {
+  static async findOrCreateByNameAndLibrary(name: string, libraryId: string) {
     const author = await this.getByNameAndLibrary(name, libraryId)
     if (author) return { author, created: false }
     const newAuthor = await this.create({
@@ -124,11 +142,13 @@ class Author extends Model {
     return { author: newAuthor, created: true }
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -193,7 +213,7 @@ class Author extends Model {
    * @returns
    */
   toOldJSONExpanded(numBooks = 0) {
-    const oldJson = this.toOldJSON()
+    const oldJson: ReturnType<Author['toOldJSON']> & { numBooks?: number } = this.toOldJSON()
     oldJson.numBooks = numBooks
     return oldJson
   }
@@ -205,4 +225,4 @@ class Author extends Model {
     }
   }
 }
-module.exports = Author
+export = Author
