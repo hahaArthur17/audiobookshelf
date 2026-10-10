@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) in progress; Batches 01–04 and 07 accepted, **18/46 migrated, 28 remaining**. Batches 05–06 are in isolated agent worktrees. Stage 2–8 are outside this run; stop after Stage 1 and report to the user. If the Codex five-hour usage window is too low to implement and verify the next batch, stop at the last accepted batch and report partial progress.
+Status: Stage 1 (`server/utils/`) in progress; Batches 01–05 and 07 accepted, **20/46 migrated, 26 remaining**. Batch 06 is ready for integration from an isolated agent worktree. Stage 2–8 are outside this run; stop after Stage 1 and report to the user. If the Codex five-hour usage window is too low to implement and verify the next batch, stop at the last accepted batch and report partial progress.
 
 ## Starting point
 
@@ -35,6 +35,7 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 02 | `parseNfoMetadata`, `parseOPML`, `parseUserAgent`, `opmlGenerator` | Fresh strict build 0 errors; unchanged tests 356/356; fixed parser/OPML sample equal to baseline; emitted JS review | Accepted after main-agent export-shape repair; see `stage1-run.md` and `logs/batch-02-*` |
 | 03 | `authorFilters`, `userStats`, `adminStats` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline query sample equal to baseline; emitted JS review | Accepted after main-agent require-order repair; see `stage1-run.md` and `logs/batch-03-*` |
 | 04 | `constants`, `notifications`, `htmlEntities`, `htmlSanitizer` | Fresh strict build 0 errors; unchanged tests 356/356; fixed static/HTML sample and Phase 2 metadata JSON equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-04-*` |
+| 05 | `parseSeriesString`, `abmetadataGenerator` | Fresh strict build 0 errors; unchanged tests 356/356; fixed series/metadata sample, prior batch samples and Phase 2 metadata JSON equal to baseline | Accepted after main-agent emitted-JS repair; see `stage1-run.md` and `logs/batch-05-*` |
 | 07 | `hlsPlaylistGenerator`, `profiler`, `rateLimiterFactory` | Fresh strict build 0 errors; unchanged tests 356/356; fixed HLS/profiler/disabled-rate-limit sample and Batches 01–04 samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-07-*` |
 
-Next: integrate isolated Batch 05 metadata parser and Batch 06 query agent commits one at a time. Quota is checked before each new batch.
+Next: integrate isolated Batch 06 query agent commit. Quota is checked before each new batch.

@@ -70,16 +70,15 @@ function parseJsonMetadataText(text: string, mediaType: string): AbMetadataResul
     const abmetadataData = JSON.parse(text) as Record<string, unknown>
 
     // Old metadata.json used nested "metadata"
-    const nestedMetadata = abmetadataData.metadata as Record<string, unknown>
-    if (nestedMetadata) {
-      for (const key in nestedMetadata) {
-        if (nestedMetadata[key] === undefined) continue
+    if (abmetadataData.metadata) {
+      for (const key in abmetadataData.metadata as Record<string, unknown>) {
+        if ((abmetadataData.metadata as Record<string, unknown>)[key] === undefined) continue
         let newModelKey = key
         if (key === 'feedUrl') newModelKey = 'feedURL'
         else if (key === 'imageUrl') newModelKey = 'imageURL'
         else if (key === 'itunesPageUrl') newModelKey = 'itunesPageURL'
         else if (key === 'type') newModelKey = 'podcastType'
-        abmetadataData[newModelKey] = nestedMetadata[key]
+        abmetadataData[newModelKey] = (abmetadataData.metadata as Record<string, unknown>)[key]
       }
     }
     delete abmetadataData.metadata
@@ -102,9 +101,7 @@ function parseJsonMetadataText(text: string, mediaType: string): AbMetadataResul
     }
 
     if (validated.series?.length) {
-      validated.series = validated.series
-        .map((series) => parseSeriesString.parse(series))
-        .filter((series): series is AbMetadataSeries => Boolean(series))
+      validated.series = validated.series.map((series) => parseSeriesString.parse(series)).filter(Boolean) as AbMetadataSeries[]
     }
 
     if (mediaType === 'book' && 'chapters' in abmetadataData) {
@@ -157,8 +154,7 @@ function validateMetadataValue(key: string, value: unknown, expectedType: string
       return undefined
     }
 
-    const values: unknown[] = value
-    const cleanedArray = values.filter((item): item is string => typeof item === 'string')
+    const cleanedArray = value.filter((item): item is string => typeof item === 'string')
     return [...new Set(cleanedArray.map((item) => item.trim()).filter((item) => item))]
   }
 
