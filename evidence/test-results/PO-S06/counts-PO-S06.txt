@@ -1,0 +1,37 @@
+Counts for PO-S06 (D:\SEM-2\574\po-s06-run\audiobookshelf)
+file                                               lines       any    as any as unk as     casts         !     index   declare   unknown require()   mod.exp  export =  import =     @ts-*
+server/objects/Notification                          168         0         0         0         2         0         0        13         0         1         0         1         0         0
+server/objects/Task                                  142         0         0         0         0         0         0        18         2         1         0         1         0         0
+server/objects/TrackProgressMonitor                   94         0         0         0         0         1         0        11         0         0         0         1         0         0
+server/objects/files/AudioTrack                       53         0         0         0         0         0         0         8         0         0         0         1         0         0
+server/objects/metadata/AudioMetaTags                328         0         0         0         8         1         0        37         0         0         0         1         0         0
+server/providers/OpenLibrary                         165         0         0         0         0         1         0         1         3         0         0         1         1         0
+server/utils/areEquivalent                           140         0         0         0         7         0         0         0         6         0         0         1         0         0
+server/utils/generators/hlsPlaylistGenerator          36         0         0         0         1         0         0         0         0         0         0         1         1         0
+server/utils/globals                                  16         0         0         0         0         0         0         0         0         0         0         1         0         0
+server/utils/longTimeout                              36         0         0         0         0         0         0         2         0         0         0         1         0         0
+server/utils/parsers/parseFullName                   351         0         0         0        10         2         0         0         1         0         0         1         0         0
+server/utils/parsers/parseNfoMetadata                119         0         0         0         0         0         0         0         0         0         0         1         0         0
+server/utils/parsers/parseUserAgent                   39         0         0         0         2         0         0         0         0         0         0         1         1         0
+server/utils/stringifySequelizeQuery                  21         0         0         0         1         0         0         0         5         0         0         1         0         0
+TOTAL (14 files)                                    1708         0         0         0        31         5         0        90        17         2         0        14         3         0
+
+Comments of the original .js file that are not found unchanged in the converted file (whitespace ignored):
+server/objects/Notification: 0 of 1 missing
+server/objects/Task: 2 of 23 missing
+    /** * @typedef TaskString * @property {string} text * @property {string} key * @property {string[]} [subs] */
+    /** * Set initial task data * * @param {string} action * @param {TaskString} titleString * @param {TaskString|null} descriptionString * @param {boolea
+server/objects/TrackProgressMonitor: 0 of 6 missing
+server/objects/files/AudioTrack: 0 of 0 missing
+server/objects/metadata/AudioMetaTags: 0 of 4 missing
+server/providers/OpenLibrary: 1 of 2 missing
+    /** * * @param {string} uri * @param {number} timeout * @returns {Promise<Object>} */
+server/utils/areEquivalent: 0 of 40 missing
+server/utils/generators/hlsPlaylistGenerator: 0 of 0 missing
+server/utils/globals: 0 of 0 missing
+server/utils/longTimeout: 0 of 2 missing
+server/utils/parsers/parseFullName: 0 of 31 missing
+server/utils/parsers/parseNfoMetadata: 0 of 1 missing
+server/utils/parsers/parseUserAgent: 0 of 1 missing
+server/utils/stringifySequelizeQuery: 0 of 0 missing
+TOTAL: 3 of 111 comments missing or changed
