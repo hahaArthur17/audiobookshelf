@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) in progress. Stage 2–8 are outside this run; stop after Stage 1 and report to the user. If the Codex five-hour usage window is too low to implement and verify the next batch, stop at the last accepted batch and report partial progress.
+Status: Stage 1 (`server/utils/`) in progress; Batch 01 accepted, **4/46 migrated, 42 remaining**. Stage 2–8 are outside this run; stop after Stage 1 and report to the user. If the Codex five-hour usage window is too low to implement and verify the next batch, stop at the last accepted batch and report partial progress.
 
 ## Starting point
 
@@ -26,3 +26,11 @@ Status: Stage 1 (`server/utils/`) in progress. Stage 2–8 are outside this run;
 - `evidence/arthur/phase3/logs/`
 
 Update this index after each accepted batch with its commit, migrated/remaining count, exception list and next action.
+
+## Accepted batches
+
+| Batch | Files | Checks | Result |
+| --- | --- | --- | --- |
+| 01 | `globals`, `longTimeout`, `requestUtils`, `stringifySequelizeQuery` | Fresh strict build 0 errors; unchanged tests 356/356; fixed sample equal to Phase 2 baseline; emitted JS review | Accepted; see `stage1-run.md` and `logs/batch-01-*` |
+
+Next: integrate isolated Batch 02 parser and Batch 03 query agent commits one at a time, each with independent clean build, tests and behavior review.
