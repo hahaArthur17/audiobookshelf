@@ -76,3 +76,10 @@ P6. Missing types for uuid (used by Task.js and Notification.js). npm install is
 - test-results/PO-S06/base-check-2.txt: corrected check. The run started at 9f4ff460, three evidence commits after c9f5fe99. No file outside evidence/ differs between the two commits, and CLAUDE.md is the same in both.
 - test-results/PO-S06/removed-CLAUDE.md-from-base.txt: the rule file that the PO-S06 agent does not have.
 - plans/PO-S06-prompt.md: the prompt, exactly as it is pasted.
+## Corrections made before the run (after the plan commit 06b5f9af)
+1. The row "Model and mode" in the design table was wrong. What the record shows:
+   - PO-S01: Opus 5.5 (the usage block shows claude-opus-5-5). The effort level was not recorded. The user-level default is xhigh and nothing records a change, so xhigh is the most likely value (an inference). The settings file gave acceptEdits mode. Whether permission prompts were approved by hand or auto mode was used was not recorded (PO-S01 notes, lines 31 and 77).
+   - PO-S06: Opus 5.5 at xhigh (the default, not changed), auto mode, no prompt answered by hand. The permission mode is therefore one more difference from PO-S01, besides the guidance, the file list and the prompt wording.
+2. Output style: the user-level setting outputStyle is Explanatory in this run (pre-run-state.txt). The PO-S01 final report contains an "Insight" box, so the same style was active then. It is a constant, not a variable.
+3. The PO-S01 session was not fresh: the run happened in the same Claude session as the pre-run checks. The PO-S01 cost of 4.88 dollars is the run alone (end block minus start block); the session total was 5.28 dollars. PO-S06 starts in a fresh session.
+4. The superpowers plugin is installed but disabled in the user-level settings (enabledPlugins: false). The PO-S01 session log shows no superpowers skill, so the plugin is off in both runs.

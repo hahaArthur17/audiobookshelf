@@ -1,0 +1,20 @@
+PO-S06 setup of the clean folder, 2026-10-10 22:59:47
+[22:59:50] checked out 9f4ff460 (expected 9f4ff460)
+[22:59:50] tracked files before removal: 1022
+[22:59:52] identity and autocrlf copied from the main repository (values not printed)
+[22:59:59] commits in the new repository: 1 ; remotes: []
+[22:59:59] settings file is ignored by git, as in PO-S01
+[22:59:59] git status after the settings copy (empty = clean): 
+[23:00:17] npm ci: added 575 packages, and audited 576 packages in 17s
+[23:01:20] baseline test: 356 passing ; failing lines: 0 ; error TS lines: 0
+[23:01:21] baseline copy of the compiled output, files: 464
+[23:01:21] tracked: 952 ; under evidence/: 0 ; CLAUDE.md or AGENTS.md: 0
+[23:01:22] server .ts files: 4 ; .js files: 423
+[23:01:22] git status after build and test (empty = clean): 
+[23:01:22] settings file lines: 35
+[23:01:22] == Guidance outside the folder that Claude Code loads in every project ==
+[23:01:22] user-level CLAUDE.md exists: False
+[23:01:22] user-level settings.json exists: True
+[23:01:22]   top-level keys: model, enableWorkflows, enabledPlugins, outputStyle, effortLevel, modelSettings, autoUpdatesChannel, skipWorkflowUsageWarning, theme, inputNeededNotifEnabled, agentPushNotifEnabled
+[23:01:22]   enabledPlugins: {"superpowers@claude-plugins-official":false}
+[23:01:22] installed plugins: superpowers@claude-plugins-official
