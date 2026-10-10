@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) resumed again on 2026-10-11 Auckland time from accepted commit `381f7645`; Batches 01–24 and 26 accepted, **43/46 migrated, 3 remaining**. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
+Status: Stage 1 (`server/utils/`) resumed again on 2026-10-11 Auckland time from accepted commit `381f7645`; Batches 01–26 accepted, **44/46 migrated, 2 remaining**. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
 
 ## Starting point
 
@@ -55,14 +55,14 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 22 | `scandir` | Fresh strict build 0 errors; unchanged tests 356/356; independent grouping/path/metadata sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-session3.md` and `logs/batch-22-*` |
 | 23 | `podcastUtils` | Fresh strict build 0 errors; unchanged tests 356/356; independent RSS/HTTP/matching sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-session3.md` and `logs/batch-23-*` |
 | 24 | `libraryItemsBookFilters` | Fresh strict build 0 errors; unchanged tests 356/356; independent permission/order/cache/collapse sample and all prior accepted batch samples equal to baseline | Accepted after main-agent emitted-JS repair; see `stage1-session3.md` and `logs/batch-24-*` |
+| 25 | `ffmpegHelpers` | Fresh strict build 0 errors; unchanged tests 356/356; independent mock FFmpeg/HTTP/metadata sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-session3.md` and `logs/batch-25-*` |
 | 26 | `libraryFilters` | Fresh strict build 0 errors; unchanged tests 356/356; independent decode/dispatch/shelf sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-session3.md` and `logs/batch-26-*` |
 
-Next: integrate and independently verify isolated Batch 25, then assess quota before another Stage 1 target. Do not start Stage 2 automatically.
+Next: resume Stage 1 only after a later explicit request and quota check. Batch 27 `fileUtils` has a frozen contract and baseline fixture; `migrations/dbMigration` needs a separate high-risk contract and disposable DB/FS samples. Do not start Stage 2 automatically.
 
 Remaining Stage 1 targets:
 
 ```text
-server/utils/ffmpegHelpers.js
 server/utils/fileUtils.js
 server/utils/migrations/dbMigration.js
 ```

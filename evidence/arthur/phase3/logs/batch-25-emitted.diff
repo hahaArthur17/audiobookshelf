@@ -1,0 +1,332 @@
+--- /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2/dist-server/server/utils/ffmpegHelpers.js	2026-10-03 21:34:39
++++ dist-server/server/utils/ffmpegHelpers.js	2026-10-11 10:22:10
+@@ -1,15 +1,15 @@
+ "use strict";
+-const axios = require('axios');
+-const ssrfFilter = require('ssrf-req-filter');
+-const Ffmpeg = require('../libs/fluentFfmpeg');
+-const ffmpgegUtils = require('../libs/fluentFfmpeg/utils');
+-const fs = require('../libs/fsExtra');
+-const Path = require('path');
+-const Logger = require('../Logger');
+-const { filePathToPOSIX, copyToExisting } = require('./fileUtils');
++const FfmpegHelpersAxiosModule = require('axios');
++const FfmpegHelpersSsrfFilter = require('ssrf-req-filter');
++const FfmpegHelpersFfmpeg = require('../libs/fluentFfmpeg');
++const FfmpegHelpersFfmpegUtils = require('../libs/fluentFfmpeg/utils');
++const FfmpegHelpersFs = require('../libs/fsExtra');
++const FfmpegHelpersPath = require('path');
++const FfmpegHelpersLogger = require('../Logger');
++const { filePathToPOSIX: ffmpegHelpersFilePathToPOSIX, copyToExisting: ffmpegHelpersCopyToExisting } = require('./fileUtils');
+ function escapeSingleQuotes(path) {
+     // A ' within a quoted string is escaped with '\'' in ffmpeg (see https://www.ffmpeg.org/ffmpeg-utils.html#Quoting-and-escaping)
+-    return filePathToPOSIX(path).replace(/'/g, "'\\''");
++    return ffmpegHelpersFilePathToPOSIX(path).replace(/'/g, "'\\''");
+ }
+ // Returns first track start time
+ // startTime is for streams starting an encode part-way through an audiobook
+@@ -35,32 +35,32 @@
+     });
+     var inputstr = trackPaths.join('\n\n');
+     try {
+-        await fs.writeFile(outputPath, inputstr);
++        await FfmpegHelpersFs.writeFile(outputPath, inputstr);
+         return firstTrackStartTime;
+     }
+     catch (error) {
+-        Logger.error(`[ffmpegHelpers] Failed to write stream concat file at "${outputPath}"`, error);
++        FfmpegHelpersLogger.error(`[ffmpegHelpers] Failed to write stream concat file at "${outputPath}"`, error);
+         return null;
+     }
+ }
+ module.exports.writeConcatFile = writeConcatFile;
+ async function extractCoverArt(filepath, outputpath) {
+-    var dirname = Path.dirname(outputpath);
+-    await fs.ensureDir(dirname);
++    var dirname = FfmpegHelpersPath.dirname(outputpath);
++    await FfmpegHelpersFs.ensureDir(dirname);
+     return new Promise((resolve) => {
+         /** @type {import('../libs/fluentFfmpeg/index').FfmpegCommand} */
+-        var ffmpeg = Ffmpeg(filepath);
++        var ffmpeg = FfmpegHelpersFfmpeg(filepath);
+         ffmpeg.addOption(['-map 0:v:0', '-frames:v 1']);
+         ffmpeg.output(outputpath);
+         ffmpeg.on('start', (cmd) => {
+-            Logger.debug(`[FfmpegHelpers] Extract Cover Cmd: ${cmd}`);
++            FfmpegHelpersLogger.debug(`[FfmpegHelpers] Extract Cover Cmd: ${cmd}`);
+         });
+         ffmpeg.on('error', (err, stdout, stderr) => {
+-            Logger.error(`[FfmpegHelpers] Extract Cover Error ${err}`);
++            FfmpegHelpersLogger.error(`[FfmpegHelpers] Extract Cover Error ${err}`);
+             resolve(false);
+         });
+         ffmpeg.on('end', () => {
+-            Logger.debug(`[FfmpegHelpers] Cover Art Extracted Successfully`);
++            FfmpegHelpersLogger.debug(`[FfmpegHelpers] Cover Art Extracted Successfully`);
+             resolve(outputpath);
+         });
+         ffmpeg.run();
+@@ -71,18 +71,18 @@
+ async function resizeImage(filePath, outputPath, width, height) {
+     return new Promise((resolve) => {
+         /** @type {import('../libs/fluentFfmpeg/index').FfmpegCommand} */
+-        var ffmpeg = Ffmpeg(filePath);
++        var ffmpeg = FfmpegHelpersFfmpeg(filePath);
+         ffmpeg.addOption(['-vf', `scale=${width || -1}:${height || -1}`]);
+         ffmpeg.addOutput(outputPath);
+         ffmpeg.on('start', (cmd) => {
+-            Logger.debug(`[FfmpegHelpers] Resize Image Cmd: ${cmd}`);
++            FfmpegHelpersLogger.debug(`[FfmpegHelpers] Resize Image Cmd: ${cmd}`);
+         });
+         ffmpeg.on('error', (err, stdout, stderr) => {
+-            Logger.error(`[FfmpegHelpers] Resize Image Error ${err} ${stdout} ${stderr}`);
++            FfmpegHelpersLogger.error(`[FfmpegHelpers] Resize Image Error ${err} ${stdout} ${stderr}`);
+             resolve(false);
+         });
+         ffmpeg.on('end', () => {
+-            Logger.debug(`[FfmpegHelpers] Image resized Successfully`);
++            FfmpegHelpersLogger.debug(`[FfmpegHelpers] Image resized Successfully`);
+             resolve(outputPath);
+         });
+         ffmpeg.run();
+@@ -106,7 +106,7 @@
+         let lastError = null;
+         for (const userAgent of userAgents) {
+             try {
+-                response = await axios({
++                response = await FfmpegHelpersAxiosModule({
+                     url: podcastEpisodeDownload.url,
+                     method: 'GET',
+                     responseType: 'stream',
+@@ -115,18 +115,18 @@
+                         'User-Agent': userAgent
+                     },
+                     timeout: global.PodcastDownloadTimeout,
+-                    httpAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : ssrfFilter(podcastEpisodeDownload.url),
+-                    httpsAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : ssrfFilter(podcastEpisodeDownload.url)
++                    httpAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : FfmpegHelpersSsrfFilter(podcastEpisodeDownload.url),
++                    httpsAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : FfmpegHelpersSsrfFilter(podcastEpisodeDownload.url)
+                 });
+-                Logger.debug(`[ffmpegHelpers] Successfully connected with User-Agent: ${userAgent}`);
++                FfmpegHelpersLogger.debug(`[ffmpegHelpers] Successfully connected with User-Agent: ${userAgent}`);
+                 break;
+             }
+             catch (error) {
+                 lastError = error;
+-                Logger.warn(`[ffmpegHelpers] Failed to download podcast episode with User-Agent "${userAgent}" for url "${podcastEpisodeDownload.url}"`, error.message);
++                FfmpegHelpersLogger.warn(`[ffmpegHelpers] Failed to download podcast episode with User-Agent "${userAgent}" for url "${podcastEpisodeDownload.url}"`, error.message);
+                 // If this is the last attempt, log the full error
+                 if (userAgent === userAgents[userAgents.length - 1]) {
+-                    Logger.error(`[ffmpegHelpers] All User-Agent attempts failed for url "${podcastEpisodeDownload.url}"`, lastError);
++                    FfmpegHelpersLogger.error(`[ffmpegHelpers] All User-Agent attempts failed for url "${podcastEpisodeDownload.url}"`, lastError);
+                 }
+             }
+         }
+@@ -137,7 +137,7 @@
+             });
+         }
+         /** @type {import('../libs/fluentFfmpeg/index').FfmpegCommand} */
+-        const ffmpeg = Ffmpeg(response.data);
++        const ffmpeg = FfmpegHelpersFfmpeg(response.data);
+         ffmpeg.addOption('-loglevel debug'); // Debug logs printed on error
+         ffmpeg.outputOptions('-c:a', 'copy', '-map', '0:a', '-metadata', 'podcast=1');
+         /** @type {import('../models/Podcast')} */
+@@ -170,7 +170,7 @@
+         for (const tag in taggings) {
+             if (taggings[tag]) {
+                 if (taggings[tag].length > 10000) {
+-                    Logger.warn(`[ffmpegHelpers] Episode download tag "${tag}" is too long (${taggings[tag].length} characters) - trimming it down`);
++                    FfmpegHelpersLogger.warn(`[ffmpegHelpers] Episode download tag "${tag}" is too long (${taggings[tag].length} characters) - trimming it down`);
+                     taggings[tag] = taggings[tag].slice(0, 10000);
+                 }
+                 ffmpeg.addOption('-metadata', `${tag}=${taggings[tag]}`);
+@@ -184,12 +184,12 @@
+             }
+         });
+         ffmpeg.on('start', (cmd) => {
+-            Logger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Cmd: ${cmd}`);
++            FfmpegHelpersLogger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Cmd: ${cmd}`);
+         });
+         ffmpeg.on('error', (err) => {
+-            Logger.error(`[FfmpegHelpers] downloadPodcastEpisode: Error ${err}`);
++            FfmpegHelpersLogger.error(`[FfmpegHelpers] downloadPodcastEpisode: Error ${err}`);
+             if (stderrLines.length) {
+-                Logger.error(`Full stderr dump for episode url "${podcastEpisodeDownload.url}": ${stderrLines.join('\n')}`);
++                FfmpegHelpersLogger.error(`Full stderr dump for episode url "${podcastEpisodeDownload.url}": ${stderrLines.join('\n')}`);
+             }
+             resolve({
+                 success: false
+@@ -201,10 +201,10 @@
+                 const finalSizeInKb = Math.floor(finalSizeInBytes / 1000);
+                 progressPercent = Math.min(1, progress.targetSize / finalSizeInKb) * 100;
+             }
+-            Logger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Progress estimate ${progressPercent.toFixed(0)}% (${progress?.targetSize || 'N/A'} KB) for "${podcastEpisodeDownload.url}"`);
++            FfmpegHelpersLogger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Progress estimate ${progressPercent.toFixed(0)}% (${progress?.targetSize || 'N/A'} KB) for "${podcastEpisodeDownload.url}"`);
+         });
+         ffmpeg.on('end', () => {
+-            Logger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Complete`);
++            FfmpegHelpersLogger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Complete`);
+             resolve({
+                 success: true
+             });
+@@ -251,12 +251,12 @@
+  */
+ async function writeFFMetadataFile(metadata, chapters, ffmetadataPath) {
+     try {
+-        await fs.writeFile(ffmetadataPath, generateFFMetadata(metadata, chapters));
+-        Logger.debug(`[ffmpegHelpers] Wrote ${ffmetadataPath}`);
++        await FfmpegHelpersFs.writeFile(ffmetadataPath, generateFFMetadata(metadata, chapters));
++        FfmpegHelpersLogger.debug(`[ffmpegHelpers] Wrote ${ffmetadataPath}`);
+         return true;
+     }
+     catch (error) {
+-        Logger.error(`[ffmpegHelpers] Write ${ffmetadataPath} failed`, error);
++        FfmpegHelpersLogger.error(`[ffmpegHelpers] Write ${ffmetadataPath} failed`, error);
+         return false;
+     }
+ }
+@@ -274,13 +274,13 @@
+  * @param {function(string, string): Promise<void>} copyFunc - The function to use for copying files (optional). Used for dependency injection in tests.
+  * @returns {Promise<void>} A promise that resolves if the operation is successful, rejects otherwise.
+  */
+-async function addCoverAndMetadataToFile(audioFilePath, coverFilePath, metadataFilePath, track, mimeType, progressCB = null, ffmpeg = Ffmpeg(), copyFunc = copyToExisting) {
++async function addCoverAndMetadataToFile(audioFilePath, coverFilePath, metadataFilePath, track, mimeType, progressCB = null, ffmpeg = FfmpegHelpersFfmpeg(), copyFunc = ffmpegHelpersCopyToExisting) {
+     const isMp4 = mimeType === 'audio/mp4';
+     const isMp3 = mimeType === 'audio/mpeg';
+-    const audioFileDir = Path.dirname(audioFilePath);
+-    const audioFileExt = Path.extname(audioFilePath);
+-    const audioFileBaseName = Path.basename(audioFilePath, audioFileExt);
+-    const tempFilePath = filePathToPOSIX(Path.join(audioFileDir, `${audioFileBaseName}.tmp${audioFileExt}`));
++    const audioFileDir = FfmpegHelpersPath.dirname(audioFilePath);
++    const audioFileExt = FfmpegHelpersPath.extname(audioFilePath);
++    const audioFileBaseName = FfmpegHelpersPath.basename(audioFilePath, audioFileExt);
++    const tempFilePath = ffmpegHelpersFilePathToPOSIX(FfmpegHelpersPath.join(audioFileDir, `${audioFileBaseName}.tmp${audioFileExt}`));
+     return new Promise((resolve, reject) => {
+         ffmpeg.input(audioFilePath).input(metadataFilePath).outputOptions([
+             '-map 0:a', // map audio stream from input file
+@@ -311,7 +311,7 @@
+                 '-metadata:s:v',
+                 'comment=Cover' // add comment metadata to cover image stream
+             ]);
+-            const ext = Path.extname(coverFilePath).toLowerCase();
++            const ext = FfmpegHelpersPath.extname(coverFilePath).toLowerCase();
+             if (ext === '.webp') {
+                 ffmpeg.outputOptions([
+                     '-c:v mjpeg' // convert webp images to jpeg
+@@ -326,37 +326,37 @@
+         ffmpeg
+             .output(tempFilePath)
+             .on('start', (commandLine) => {
+-            Logger.debug('[ffmpegHelpers] Spawned Ffmpeg with command: ' + commandLine);
++            FfmpegHelpersLogger.debug('[ffmpegHelpers] Spawned Ffmpeg with command: ' + commandLine);
+         })
+             .on('progress', (progress) => {
+             if (!progressCB || !progress.percent)
+                 return;
+-            Logger.debug(`[ffmpegHelpers] Progress: ${progress.percent}%`);
++            FfmpegHelpersLogger.debug(`[ffmpegHelpers] Progress: ${progress.percent}%`);
+             progressCB(progress.percent);
+         })
+             .on('end', async (stdout, stderr) => {
+-            Logger.debug('[ffmpegHelpers] ffmpeg stdout:', stdout);
+-            Logger.debug('[ffmpegHelpers] ffmpeg stderr:', stderr);
+-            Logger.debug('[ffmpegHelpers] Moving temp file to audio file path:', `"${tempFilePath}"`, '->', `"${audioFilePath}"`);
++            FfmpegHelpersLogger.debug('[ffmpegHelpers] ffmpeg stdout:', stdout);
++            FfmpegHelpersLogger.debug('[ffmpegHelpers] ffmpeg stderr:', stderr);
++            FfmpegHelpersLogger.debug('[ffmpegHelpers] Moving temp file to audio file path:', `"${tempFilePath}"`, '->', `"${audioFilePath}"`);
+             try {
+                 await copyFunc(tempFilePath, audioFilePath);
+-                await fs.remove(tempFilePath);
++                await FfmpegHelpersFs.remove(tempFilePath);
+                 resolve();
+             }
+             catch (error) {
+-                Logger.error(`[ffmpegHelpers] Failed to move temp file to audio file path: "${tempFilePath}" -> "${audioFilePath}"`, error);
++                FfmpegHelpersLogger.error(`[ffmpegHelpers] Failed to move temp file to audio file path: "${tempFilePath}" -> "${audioFilePath}"`, error);
+                 reject(error);
+             }
+         })
+             .on('error', (err, stdout, stderr) => {
+             if (err.message && err.message.includes('SIGKILL')) {
+-                Logger.info(`[ffmpegHelpers] addCoverAndMetadataToFile Killed by User`);
++                FfmpegHelpersLogger.info(`[ffmpegHelpers] addCoverAndMetadataToFile Killed by User`);
+                 reject(new Error('FFMPEG_CANCELED'));
+             }
+             else {
+-                Logger.error('Error adding cover image and metadata:', err);
+-                Logger.error('ffmpeg stdout:', stdout);
+-                Logger.error('ffmpeg stderr:', stderr);
++                FfmpegHelpersLogger.error('Error adding cover image and metadata:', err);
++                FfmpegHelpersLogger.error('ffmpeg stdout:', stdout);
++                FfmpegHelpersLogger.error('ffmpeg stderr:', stderr);
+                 reject(err);
+             }
+         });
+@@ -408,10 +408,10 @@
+  * @param {string} outputFilePath - The path to the output file.
+  * @param {import('../managers/AbMergeManager').AbMergeEncodeOptions} encodingOptions - The options for encoding the audio.
+  * @param {Function} [progressCB=null] - The callback function to track the progress of the merge.
+- * @param {import('../libs/fluentFfmpeg/index').FfmpegCommand} [ffmpeg=Ffmpeg()] - The FFmpeg instance to use for merging.
++ * @param {import('../libs/fluentFfmpeg/index').FfmpegCommand} [ffmpeg=FfmpegHelpersFfmpeg()] - The FFmpeg instance to use for merging.
+  * @returns {Promise<void>} A promise that resolves when the audio files are merged successfully.
+  */
+-async function mergeAudioFiles(audioTracks, duration, itemCachePath, outputFilePath, encodingOptions, progressCB = null, ffmpeg = Ffmpeg()) {
++async function mergeAudioFiles(audioTracks, duration, itemCachePath, outputFilePath, encodingOptions, progressCB = null, ffmpeg = FfmpegHelpersFfmpeg()) {
+     const audioBitrate = encodingOptions.bitrate || '128k';
+     const audioCodec = encodingOptions.codec || 'aac';
+     const audioChannels = encodingOptions.channels || 2;
+@@ -422,7 +422,7 @@
+     const isOneTrack = audioTracks.length === 1;
+     let concatFilePath = null;
+     if (!isOneTrack) {
+-        concatFilePath = Path.join(itemCachePath, 'files.txt');
++        concatFilePath = FfmpegHelpersPath.join(itemCachePath, 'files.txt');
+         if ((await writeConcatFile(audioTracks, concatFilePath)) == null) {
+             throw new Error('Failed to write concat file');
+         }
+@@ -449,34 +449,34 @@
+     return new Promise((resolve, reject) => {
+         ffmpeg
+             .on('start', (cmd) => {
+-            Logger.debug(`[ffmpegHelpers] Merge Audio Files ffmpeg command: ${cmd}`);
++            FfmpegHelpersLogger.debug(`[ffmpegHelpers] Merge Audio Files ffmpeg command: ${cmd}`);
+         })
+             .on('progress', (progress) => {
+             if (!progressCB || !progress.timemark || !duration)
+                 return;
+             // Cannot rely on progress.percent as it is not accurate for concat
+-            const percent = (ffmpgegUtils.timemarkToSeconds(progress.timemark) / duration) * 100;
++            const percent = (FfmpegHelpersFfmpegUtils.timemarkToSeconds(progress.timemark) / duration) * 100;
+             progressCB(percent);
+         })
+             .on('end', async (stdout, stderr) => {
+             if (concatFilePath)
+-                await fs.remove(concatFilePath);
+-            Logger.debug('[ffmpegHelpers] ffmpeg stdout:', stdout);
+-            Logger.debug('[ffmpegHelpers] ffmpeg stderr:', stderr);
+-            Logger.debug(`[ffmpegHelpers] Audio Files Merged Successfully`);
++                await FfmpegHelpersFs.remove(concatFilePath);
++            FfmpegHelpersLogger.debug('[ffmpegHelpers] ffmpeg stdout:', stdout);
++            FfmpegHelpersLogger.debug('[ffmpegHelpers] ffmpeg stderr:', stderr);
++            FfmpegHelpersLogger.debug(`[ffmpegHelpers] Audio Files Merged Successfully`);
+             resolve();
+         })
+             .on('error', async (err, stdout, stderr) => {
+             if (concatFilePath)
+-                await fs.remove(concatFilePath);
++                await FfmpegHelpersFs.remove(concatFilePath);
+             if (err.message && err.message.includes('SIGKILL')) {
+-                Logger.info(`[ffmpegHelpers] Merge Audio Files Killed by User`);
++                FfmpegHelpersLogger.info(`[ffmpegHelpers] Merge Audio Files Killed by User`);
+                 reject(new Error('FFMPEG_CANCELED'));
+             }
+             else {
+-                Logger.error(`[ffmpegHelpers] Merge Audio Files Error ${err}`);
+-                Logger.error('ffmpeg stdout:', stdout);
+-                Logger.error('ffmpeg stderr:', stderr);
++                FfmpegHelpersLogger.error(`[ffmpegHelpers] Merge Audio Files Error ${err}`);
++                FfmpegHelpersLogger.error('ffmpeg stdout:', stdout);
++                FfmpegHelpersLogger.error('ffmpeg stderr:', stderr);
+                 reject(err);
+             }
+         });
