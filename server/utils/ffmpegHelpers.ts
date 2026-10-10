@@ -1,20 +1,149 @@
-const axios = require('axios')
-const ssrfFilter = require('ssrf-req-filter')
-const Ffmpeg = require('../libs/fluentFfmpeg')
-const ffmpgegUtils = require('../libs/fluentFfmpeg/utils')
-const fs = require('../libs/fsExtra')
-const Path = require('path')
-const Logger = require('../Logger')
-const { filePathToPOSIX, copyToExisting } = require('./fileUtils')
+interface FfmpegHelpersCommand {
+  addOption(...options: Array<string | string[]>): this
+  addOutput(path: string): this
+  input(path: string): this
+  inputOptions(options: string[]): this
+  output(path: string): this
+  outputOptions(...options: Array<string | string[]>): this
+  run(): void
+  on(event: 'start', listener: (command: string) => void): this
+  on(event: 'error', listener: (error: Error, stdout?: string, stderr?: string) => void): this
+  on(event: 'end', listener: (stdout?: string, stderr?: string) => void): this
+  on(event: 'stderr', listener: (line: unknown) => void): this
+  on(event: 'progress', listener: (progress: FfmpegHelpersProgress) => void): this
+}
 
-function escapeSingleQuotes(path) {
+interface FfmpegHelpersProgress {
+  targetSize?: unknown
+  percent?: unknown
+  timemark?: unknown
+}
+
+interface FfmpegHelpersLogger {
+  debug(...values: unknown[]): void
+  error(...values: unknown[]): void
+  info(...values: unknown[]): void
+  warn(...values: unknown[]): void
+}
+
+interface FfmpegHelpersFileSystem {
+  ensureDir(path: string): Promise<unknown>
+  writeFile(path: string, content: string): Promise<unknown>
+  remove(path: string): Promise<unknown>
+}
+
+interface FfmpegHelpersAxiosConfig {
+  url: string
+  method: string
+  responseType: string
+  headers: Record<string, string>
+  timeout?: number
+  httpAgent: unknown
+  httpsAgent: unknown
+}
+
+interface FfmpegHelpersAxiosResponse {
+  data: unknown
+}
+
+interface FfmpegHelpersPodcastMedia {
+  title: unknown
+  author: unknown
+  genres: { length: number; join(separator: string): string }
+  language: unknown
+  itunesId: unknown
+  podcastType: unknown
+}
+
+interface FfmpegHelpersPodcastEpisode {
+  description: unknown
+  subtitle: unknown
+  season: unknown
+  episode: unknown
+  title: unknown
+  pubDate: unknown
+  episodeType: unknown
+  enclosure?: { length?: unknown } | null
+}
+
+interface FfmpegHelpersPodcastEpisodeDownload {
+  url: string
+  targetPath: string
+  pubYear: unknown
+  libraryItem: { media: FfmpegHelpersPodcastMedia }
+  rssPodcastEpisode: FfmpegHelpersPodcastEpisode
+}
+
+interface FfmpegHelpersTrack {
+  duration: number
+  index: number
+  metadata: { path: string; ext: string }
+}
+
+interface FfmpegHelpersChapter {
+  start: unknown
+  end: unknown
+  title?: unknown
+}
+
+interface FfmpegHelpersLibraryItem {
+  media: {
+    title: unknown
+    authorName: unknown
+    subtitle?: unknown
+    genres?: string[] | null
+    publishedYear?: unknown
+    description?: unknown
+    narrators?: string[] | null
+    publisher?: unknown
+    series?: Array<{ name: string; bookSeries: { sequence?: unknown } }> | null
+  }
+}
+
+interface FfmpegHelpersEncodingOptions {
+  bitrate?: string | number | null
+  codec?: string | null
+  channels?: string | number | null
+}
+
+interface FfmpegHelpersFileUtils {
+  filePathToPOSIX(path: string): string
+  copyToExisting(source: string, destination: string): Promise<void>
+}
+
+interface FfmpegHelpersAxios {
+  (config: FfmpegHelpersAxiosConfig): Promise<FfmpegHelpersAxiosResponse>
+}
+
+type FfmpegHelpersFactory = (source?: unknown) => FfmpegHelpersCommand
+type FfmpegHelpersSsrfFilter = (url: string) => unknown
+type FfmpegHelpersPath = typeof import('path')
+type FfmpegHelpersFfmetadataUtils = { timemarkToSeconds(timemark: string): number }
+type FfmpegHelpersGlobal = typeof global & {
+  PodcastDownloadTimeout?: number
+  DisableSsrfRequestFilter?: (url: string) => boolean
+}
+
+const FfmpegHelpersAxiosModule: FfmpegHelpersAxios = require('axios')
+const FfmpegHelpersSsrfFilter: FfmpegHelpersSsrfFilter = require('ssrf-req-filter')
+const FfmpegHelpersFfmpeg: FfmpegHelpersFactory = require('../libs/fluentFfmpeg')
+const FfmpegHelpersFfmpegUtils: FfmpegHelpersFfmetadataUtils = require('../libs/fluentFfmpeg/utils')
+const FfmpegHelpersFs: FfmpegHelpersFileSystem = require('../libs/fsExtra')
+const FfmpegHelpersPath: FfmpegHelpersPath = require('path')
+const FfmpegHelpersLogger: FfmpegHelpersLogger = require('../Logger')
+const {
+  filePathToPOSIX: ffmpegHelpersFilePathToPOSIX,
+  copyToExisting: ffmpegHelpersCopyToExisting
+}: FfmpegHelpersFileUtils = require('./fileUtils')
+
+function escapeSingleQuotes(path: string): string {
   // A ' within a quoted string is escaped with '\'' in ffmpeg (see https://www.ffmpeg.org/ffmpeg-utils.html#Quoting-and-escaping)
-  return filePathToPOSIX(path).replace(/'/g, "'\\''")
+  return ffmpegHelpersFilePathToPOSIX(path).replace(/'/g, "'\\''")
 }
 
 // Returns first track start time
 // startTime is for streams starting an encode part-way through an audiobook
-async function writeConcatFile(tracks, outputPath, startTime = 0) {
+async function writeConcatFile(tracks: FfmpegHelpersTrack[], outputPath: string, startTime = 0): Promise<number | null> {
   var trackToStartWithIndex = 0
   var firstTrackStartTime = 0
 
@@ -39,34 +168,34 @@ async function writeConcatFile(tracks, outputPath, startTime = 0) {
   var inputstr = trackPaths.join('\n\n')
 
   try {
-    await fs.writeFile(outputPath, inputstr)
+    await FfmpegHelpersFs.writeFile(outputPath, inputstr)
     return firstTrackStartTime
   } catch (error) {
-    Logger.error(`[ffmpegHelpers] Failed to write stream concat file at "${outputPath}"`, error)
+    FfmpegHelpersLogger.error(`[ffmpegHelpers] Failed to write stream concat file at "${outputPath}"`, error)
     return null
   }
 }
 module.exports.writeConcatFile = writeConcatFile
 
-async function extractCoverArt(filepath, outputpath) {
-  var dirname = Path.dirname(outputpath)
-  await fs.ensureDir(dirname)
+async function extractCoverArt(filepath: string, outputpath: string): Promise<string | false> {
+  var dirname = FfmpegHelpersPath.dirname(outputpath)
+  await FfmpegHelpersFs.ensureDir(dirname)
 
-  return new Promise((resolve) => {
+  return new Promise<string | false>((resolve) => {
     /** @type {import('../libs/fluentFfmpeg/index').FfmpegCommand} */
-    var ffmpeg = Ffmpeg(filepath)
+    var ffmpeg = FfmpegHelpersFfmpeg(filepath)
     ffmpeg.addOption(['-map 0:v:0', '-frames:v 1'])
     ffmpeg.output(outputpath)
 
     ffmpeg.on('start', (cmd) => {
-      Logger.debug(`[FfmpegHelpers] Extract Cover Cmd: ${cmd}`)
+      FfmpegHelpersLogger.debug(`[FfmpegHelpers] Extract Cover Cmd: ${cmd}`)
     })
     ffmpeg.on('error', (err, stdout, stderr) => {
-      Logger.error(`[FfmpegHelpers] Extract Cover Error ${err}`)
+      FfmpegHelpersLogger.error(`[FfmpegHelpers] Extract Cover Error ${err}`)
       resolve(false)
     })
     ffmpeg.on('end', () => {
-      Logger.debug(`[FfmpegHelpers] Cover Art Extracted Successfully`)
+      FfmpegHelpersLogger.debug(`[FfmpegHelpers] Cover Art Extracted Successfully`)
       resolve(outputpath)
     })
     ffmpeg.run()
@@ -75,21 +204,21 @@ async function extractCoverArt(filepath, outputpath) {
 module.exports.extractCoverArt = extractCoverArt
 
 //This should convert based on the output file extension as well
-async function resizeImage(filePath, outputPath, width, height) {
-  return new Promise((resolve) => {
+async function resizeImage(filePath: string, outputPath: string, width: number | null | undefined, height: number | null | undefined): Promise<string | false> {
+  return new Promise<string | false>((resolve) => {
     /** @type {import('../libs/fluentFfmpeg/index').FfmpegCommand} */
-    var ffmpeg = Ffmpeg(filePath)
+    var ffmpeg = FfmpegHelpersFfmpeg(filePath)
     ffmpeg.addOption(['-vf', `scale=${width || -1}:${height || -1}`])
     ffmpeg.addOutput(outputPath)
     ffmpeg.on('start', (cmd) => {
-      Logger.debug(`[FfmpegHelpers] Resize Image Cmd: ${cmd}`)
+      FfmpegHelpersLogger.debug(`[FfmpegHelpers] Resize Image Cmd: ${cmd}`)
     })
     ffmpeg.on('error', (err, stdout, stderr) => {
-      Logger.error(`[FfmpegHelpers] Resize Image Error ${err} ${stdout} ${stderr}`)
+      FfmpegHelpersLogger.error(`[FfmpegHelpers] Resize Image Error ${err} ${stdout} ${stderr}`)
       resolve(false)
     })
     ffmpeg.on('end', () => {
-      Logger.debug(`[FfmpegHelpers] Image resized Successfully`)
+      FfmpegHelpersLogger.debug(`[FfmpegHelpers] Image resized Successfully`)
       resolve(outputPath)
     })
     ffmpeg.run()
@@ -104,8 +233,8 @@ module.exports.resizeImage = resizeImage
  * @param {import('../objects/PodcastEpisodeDownload')} podcastEpisodeDownload
  * @returns {Promise<{success: boolean, isRequestError?: boolean}>}
  */
-module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
-  return new Promise(async (resolve) => {
+module.exports.downloadPodcastEpisode = (podcastEpisodeDownload: FfmpegHelpersPodcastEpisodeDownload): Promise<{ success: boolean; isRequestError?: boolean }> => {
+  return new Promise<{ success: boolean; isRequestError?: boolean }>(async (resolve) => {
     // Some podcasts fail due to user agent strings
     // See: https://github.com/advplyr/audiobookshelf/issues/3246 (requires iTMS user agent)
     // See: https://github.com/advplyr/audiobookshelf/issues/4401 (requires no iTMS user agent)
@@ -116,7 +245,7 @@ module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
 
     for (const userAgent of userAgents) {
       try {
-        response = await axios({
+        response = await FfmpegHelpersAxiosModule({
           url: podcastEpisodeDownload.url,
           method: 'GET',
           responseType: 'stream',
@@ -124,20 +253,20 @@ module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
             Accept: '*/*',
             'User-Agent': userAgent
           },
-          timeout: global.PodcastDownloadTimeout,
-          httpAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : ssrfFilter(podcastEpisodeDownload.url),
-          httpsAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : ssrfFilter(podcastEpisodeDownload.url)
+          timeout: (global as FfmpegHelpersGlobal).PodcastDownloadTimeout,
+          httpAgent: (global as FfmpegHelpersGlobal).DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : FfmpegHelpersSsrfFilter(podcastEpisodeDownload.url),
+          httpsAgent: (global as FfmpegHelpersGlobal).DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : FfmpegHelpersSsrfFilter(podcastEpisodeDownload.url)
         })
 
-        Logger.debug(`[ffmpegHelpers] Successfully connected with User-Agent: ${userAgent}`)
+        FfmpegHelpersLogger.debug(`[ffmpegHelpers] Successfully connected with User-Agent: ${userAgent}`)
         break
       } catch (error) {
         lastError = error
-        Logger.warn(`[ffmpegHelpers] Failed to download podcast episode with User-Agent "${userAgent}" for url "${podcastEpisodeDownload.url}"`, error.message)
+        FfmpegHelpersLogger.warn(`[ffmpegHelpers] Failed to download podcast episode with User-Agent "${userAgent}" for url "${podcastEpisodeDownload.url}"`, (error as { message: string }).message)
 
         // If this is the last attempt, log the full error
         if (userAgent === userAgents[userAgents.length - 1]) {
-          Logger.error(`[ffmpegHelpers] All User-Agent attempts failed for url "${podcastEpisodeDownload.url}"`, lastError)
+          FfmpegHelpersLogger.error(`[ffmpegHelpers] All User-Agent attempts failed for url "${podcastEpisodeDownload.url}"`, lastError)
         }
       }
     }
@@ -150,7 +279,7 @@ module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
     }
 
     /** @type {import('../libs/fluentFfmpeg/index').FfmpegCommand} */
-    const ffmpeg = Ffmpeg(response.data)
+    const ffmpeg = FfmpegHelpersFfmpeg(response.data)
     ffmpeg.addOption('-loglevel debug') // Debug logs printed on error
     ffmpeg.outputOptions('-c:a', 'copy', '-map', '0:a', '-metadata', 'podcast=1')
 
@@ -159,7 +288,7 @@ module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
     const podcastEpisode = podcastEpisodeDownload.rssPodcastEpisode
     const finalSizeInBytes = Number(podcastEpisode.enclosure?.length || 0)
 
-    const taggings = {
+    const taggings: Record<string, unknown> = {
       album: podcast.title,
       'album-sort': podcast.title,
       artist: podcast.author,
@@ -185,9 +314,9 @@ module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
 
     for (const tag in taggings) {
       if (taggings[tag]) {
-        if (taggings[tag].length > 10000) {
-          Logger.warn(`[ffmpegHelpers] Episode download tag "${tag}" is too long (${taggings[tag].length} characters) - trimming it down`)
-          taggings[tag] = taggings[tag].slice(0, 10000)
+        if ((taggings[tag] as { length: number }).length > 10000) {
+          FfmpegHelpersLogger.warn(`[ffmpegHelpers] Episode download tag "${tag}" is too long (${(taggings[tag] as { length: number }).length} characters) - trimming it down`)
+          taggings[tag] = (taggings[tag] as { slice(start: number, end: number): unknown }).slice(0, 10000)
         }
         ffmpeg.addOption('-metadata', `${tag}=${taggings[tag]}`)
       }
@@ -195,19 +324,19 @@ module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
 
     ffmpeg.addOutput(podcastEpisodeDownload.targetPath)
 
-    const stderrLines = []
+    const stderrLines: string[] = []
     ffmpeg.on('stderr', (stderrLine) => {
       if (typeof stderrLine === 'string') {
         stderrLines.push(stderrLine)
       }
     })
     ffmpeg.on('start', (cmd) => {
-      Logger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Cmd: ${cmd}`)
+      FfmpegHelpersLogger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Cmd: ${cmd}`)
     })
     ffmpeg.on('error', (err) => {
-      Logger.error(`[FfmpegHelpers] downloadPodcastEpisode: Error ${err}`)
+      FfmpegHelpersLogger.error(`[FfmpegHelpers] downloadPodcastEpisode: Error ${err}`)
       if (stderrLines.length) {
-        Logger.error(`Full stderr dump for episode url "${podcastEpisodeDownload.url}": ${stderrLines.join('\n')}`)
+        FfmpegHelpersLogger.error(`Full stderr dump for episode url "${podcastEpisodeDownload.url}": ${stderrLines.join('\n')}`)
       }
       resolve({
         success: false
@@ -215,14 +344,14 @@ module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
     })
     ffmpeg.on('progress', (progress) => {
       let progressPercent = 0
-      if (finalSizeInBytes && progress.targetSize && !isNaN(progress.targetSize)) {
+      if (finalSizeInBytes && progress.targetSize && !isNaN(progress.targetSize as number)) {
         const finalSizeInKb = Math.floor(finalSizeInBytes / 1000)
-        progressPercent = Math.min(1, progress.targetSize / finalSizeInKb) * 100
+        progressPercent = Math.min(1, (progress.targetSize as number) / finalSizeInKb) * 100
       }
-      Logger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Progress estimate ${progressPercent.toFixed(0)}% (${progress?.targetSize || 'N/A'} KB) for "${podcastEpisodeDownload.url}"`)
+      FfmpegHelpersLogger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Progress estimate ${progressPercent.toFixed(0)}% (${progress?.targetSize || 'N/A'} KB) for "${podcastEpisodeDownload.url}"`)
     })
     ffmpeg.on('end', () => {
-      Logger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Complete`)
+      FfmpegHelpersLogger.debug(`[FfmpegHelpers] downloadPodcastEpisode: Complete`)
       resolve({
         success: true
       })
@@ -237,13 +366,13 @@ module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
  * @param {Array|null} chapters - An array of chapter objects.
  * @returns {string} - The ffmetadata file content.
  */
-function generateFFMetadata(metadata, chapters) {
+function generateFFMetadata(metadata: Record<string, unknown>, chapters: FfmpegHelpersChapter[] | null | undefined): string {
   let ffmetadataContent = ';FFMETADATA1\n'
 
   // Add global metadata
   for (const key in metadata) {
     if (metadata[key]) {
-      ffmetadataContent += `${key}=${escapeFFMetadataValue(metadata[key])}\n`
+      ffmetadataContent += `${key}=${escapeFFMetadataValue(metadata[key] as string)}\n`
     }
   }
 
@@ -252,10 +381,10 @@ function generateFFMetadata(metadata, chapters) {
     chapters.forEach((chapter) => {
       ffmetadataContent += '\n[CHAPTER]\n'
       ffmetadataContent += `TIMEBASE=1/1000\n`
-      ffmetadataContent += `START=${Math.floor(chapter.start * 1000)}\n`
-      ffmetadataContent += `END=${Math.floor(chapter.end * 1000)}\n`
+      ffmetadataContent += `START=${Math.floor((chapter.start as number) * 1000)}\n`
+      ffmetadataContent += `END=${Math.floor((chapter.end as number) * 1000)}\n`
       if (chapter.title) {
-        ffmetadataContent += `title=${escapeFFMetadataValue(chapter.title)}\n`
+        ffmetadataContent += `title=${escapeFFMetadataValue(chapter.title as string)}\n`
       }
     })
   }
@@ -273,13 +402,13 @@ module.exports.generateFFMetadata = generateFFMetadata
  * @param {string} ffmetadataPath - The path to the FFmpeg metadata file.
  * @returns {Promise<boolean>} - A promise that resolves to true if the file was written successfully, false otherwise.
  */
-async function writeFFMetadataFile(metadata, chapters, ffmetadataPath) {
+async function writeFFMetadataFile(metadata: Record<string, unknown>, chapters: FfmpegHelpersChapter[] | null | undefined, ffmetadataPath: string): Promise<boolean> {
   try {
-    await fs.writeFile(ffmetadataPath, generateFFMetadata(metadata, chapters))
-    Logger.debug(`[ffmpegHelpers] Wrote ${ffmetadataPath}`)
+    await FfmpegHelpersFs.writeFile(ffmetadataPath, generateFFMetadata(metadata, chapters))
+    FfmpegHelpersLogger.debug(`[ffmpegHelpers] Wrote ${ffmetadataPath}`)
     return true
   } catch (error) {
-    Logger.error(`[ffmpegHelpers] Write ${ffmetadataPath} failed`, error)
+    FfmpegHelpersLogger.error(`[ffmpegHelpers] Write ${ffmetadataPath} failed`, error)
     return false
   }
 }
@@ -299,14 +428,23 @@ module.exports.writeFFMetadataFile = writeFFMetadataFile
  * @param {function(string, string): Promise<void>} copyFunc - The function to use for copying files (optional). Used for dependency injection in tests.
  * @returns {Promise<void>} A promise that resolves if the operation is successful, rejects otherwise.
  */
-async function addCoverAndMetadataToFile(audioFilePath, coverFilePath, metadataFilePath, track, mimeType, progressCB = null, ffmpeg = Ffmpeg(), copyFunc = copyToExisting) {
+async function addCoverAndMetadataToFile(
+  audioFilePath: string,
+  coverFilePath: string | null,
+  metadataFilePath: string,
+  track: number,
+  mimeType: string,
+  progressCB: ((percent: number) => void) | null = null,
+  ffmpeg: FfmpegHelpersCommand = FfmpegHelpersFfmpeg(),
+  copyFunc: (source: string, destination: string) => Promise<void> = ffmpegHelpersCopyToExisting
+): Promise<void> {
   const isMp4 = mimeType === 'audio/mp4'
   const isMp3 = mimeType === 'audio/mpeg'
 
-  const audioFileDir = Path.dirname(audioFilePath)
-  const audioFileExt = Path.extname(audioFilePath)
-  const audioFileBaseName = Path.basename(audioFilePath, audioFileExt)
-  const tempFilePath = filePathToPOSIX(Path.join(audioFileDir, `${audioFileBaseName}.tmp${audioFileExt}`))
+  const audioFileDir = FfmpegHelpersPath.dirname(audioFilePath)
+  const audioFileExt = FfmpegHelpersPath.extname(audioFilePath)
+  const audioFileBaseName = FfmpegHelpersPath.basename(audioFilePath, audioFileExt)
+  const tempFilePath = ffmpegHelpersFilePathToPOSIX(FfmpegHelpersPath.join(audioFileDir, `${audioFileBaseName}.tmp${audioFileExt}`))
 
   return new Promise((resolve, reject) => {
     ffmpeg.input(audioFilePath).input(metadataFilePath).outputOptions([
@@ -340,7 +478,7 @@ async function addCoverAndMetadataToFile(audioFilePath, coverFilePath, metadataF
         '-metadata:s:v',
         'comment=Cover' // add comment metadata to cover image stream
       ])
-      const ext = Path.extname(coverFilePath).toLowerCase()
+      const ext = FfmpegHelpersPath.extname(coverFilePath).toLowerCase()
       if (ext === '.webp') {
         ffmpeg.outputOptions([
           '-c:v mjpeg' // convert webp images to jpeg
@@ -355,34 +493,34 @@ async function addCoverAndMetadataToFile(audioFilePath, coverFilePath, metadataF
     ffmpeg
       .output(tempFilePath)
       .on('start', (commandLine) => {
-        Logger.debug('[ffmpegHelpers] Spawned Ffmpeg with command: ' + commandLine)
+        FfmpegHelpersLogger.debug('[ffmpegHelpers] Spawned Ffmpeg with command: ' + commandLine)
       })
       .on('progress', (progress) => {
         if (!progressCB || !progress.percent) return
-        Logger.debug(`[ffmpegHelpers] Progress: ${progress.percent}%`)
-        progressCB(progress.percent)
+        FfmpegHelpersLogger.debug(`[ffmpegHelpers] Progress: ${progress.percent}%`)
+        progressCB(progress.percent as number)
       })
       .on('end', async (stdout, stderr) => {
-        Logger.debug('[ffmpegHelpers] ffmpeg stdout:', stdout)
-        Logger.debug('[ffmpegHelpers] ffmpeg stderr:', stderr)
-        Logger.debug('[ffmpegHelpers] Moving temp file to audio file path:', `"${tempFilePath}"`, '->', `"${audioFilePath}"`)
+        FfmpegHelpersLogger.debug('[ffmpegHelpers] ffmpeg stdout:', stdout)
+        FfmpegHelpersLogger.debug('[ffmpegHelpers] ffmpeg stderr:', stderr)
+        FfmpegHelpersLogger.debug('[ffmpegHelpers] Moving temp file to audio file path:', `"${tempFilePath}"`, '->', `"${audioFilePath}"`)
         try {
           await copyFunc(tempFilePath, audioFilePath)
-          await fs.remove(tempFilePath)
+          await FfmpegHelpersFs.remove(tempFilePath)
           resolve()
         } catch (error) {
-          Logger.error(`[ffmpegHelpers] Failed to move temp file to audio file path: "${tempFilePath}" -> "${audioFilePath}"`, error)
+          FfmpegHelpersLogger.error(`[ffmpegHelpers] Failed to move temp file to audio file path: "${tempFilePath}" -> "${audioFilePath}"`, error)
           reject(error)
         }
       })
       .on('error', (err, stdout, stderr) => {
         if (err.message && err.message.includes('SIGKILL')) {
-          Logger.info(`[ffmpegHelpers] addCoverAndMetadataToFile Killed by User`)
+          FfmpegHelpersLogger.info(`[ffmpegHelpers] addCoverAndMetadataToFile Killed by User`)
           reject(new Error('FFMPEG_CANCELED'))
         } else {
-          Logger.error('Error adding cover image and metadata:', err)
-          Logger.error('ffmpeg stdout:', stdout)
-          Logger.error('ffmpeg stderr:', stderr)
+          FfmpegHelpersLogger.error('Error adding cover image and metadata:', err)
+          FfmpegHelpersLogger.error('ffmpeg stdout:', stdout)
+          FfmpegHelpersLogger.error('ffmpeg stderr:', stderr)
           reject(err)
         }
       })
@@ -393,7 +531,7 @@ async function addCoverAndMetadataToFile(audioFilePath, coverFilePath, metadataF
 
 module.exports.addCoverAndMetadataToFile = addCoverAndMetadataToFile
 
-function escapeFFMetadataValue(value) {
+function escapeFFMetadataValue(value: string): string {
   return value.replace(/([;=\n\\#])/g, '\\$1')
 }
 
@@ -404,8 +542,8 @@ function escapeFFMetadataValue(value) {
  * @param {number} audioFilesLength - The length of the audio files.
  * @returns {Object} - The FFmpeg metadata object.
  */
-function getFFMetadataObject(libraryItem, audioFilesLength) {
-  const ffmetadata = {
+function getFFMetadataObject(libraryItem: FfmpegHelpersLibraryItem, audioFilesLength: number): Record<string, unknown> {
+  const ffmetadata: Record<string, unknown> = {
     title: libraryItem.media.title,
     artist: libraryItem.media.authorName,
     album_artist: libraryItem.media.authorName,
@@ -441,10 +579,18 @@ module.exports.getFFMetadataObject = getFFMetadataObject
  * @param {string} outputFilePath - The path to the output file.
  * @param {import('../managers/AbMergeManager').AbMergeEncodeOptions} encodingOptions - The options for encoding the audio.
  * @param {Function} [progressCB=null] - The callback function to track the progress of the merge.
- * @param {import('../libs/fluentFfmpeg/index').FfmpegCommand} [ffmpeg=Ffmpeg()] - The FFmpeg instance to use for merging.
+ * @param {import('../libs/fluentFfmpeg/index').FfmpegCommand} [ffmpeg=FfmpegHelpersFfmpeg()] - The FFmpeg instance to use for merging.
  * @returns {Promise<void>} A promise that resolves when the audio files are merged successfully.
  */
-async function mergeAudioFiles(audioTracks, duration, itemCachePath, outputFilePath, encodingOptions, progressCB = null, ffmpeg = Ffmpeg()) {
+async function mergeAudioFiles(
+  audioTracks: FfmpegHelpersTrack[],
+  duration: number,
+  itemCachePath: string,
+  outputFilePath: string,
+  encodingOptions: FfmpegHelpersEncodingOptions,
+  progressCB: ((percent: number) => void) | null = null,
+  ffmpeg: FfmpegHelpersCommand = FfmpegHelpersFfmpeg()
+): Promise<void> {
   const audioBitrate = encodingOptions.bitrate || '128k'
   const audioCodec = encodingOptions.codec || 'aac'
   const audioChannels = encodingOptions.channels || 2
@@ -458,7 +604,7 @@ async function mergeAudioFiles(audioTracks, duration, itemCachePath, outputFileP
 
   let concatFilePath = null
   if (!isOneTrack) {
-    concatFilePath = Path.join(itemCachePath, 'files.txt')
+    concatFilePath = FfmpegHelpersPath.join(itemCachePath, 'files.txt')
     if ((await writeConcatFile(audioTracks, concatFilePath)) == null) {
       throw new Error('Failed to write concat file')
     }
@@ -487,30 +633,30 @@ async function mergeAudioFiles(audioTracks, duration, itemCachePath, outputFileP
   return new Promise((resolve, reject) => {
     ffmpeg
       .on('start', (cmd) => {
-        Logger.debug(`[ffmpegHelpers] Merge Audio Files ffmpeg command: ${cmd}`)
+        FfmpegHelpersLogger.debug(`[ffmpegHelpers] Merge Audio Files ffmpeg command: ${cmd}`)
       })
       .on('progress', (progress) => {
         if (!progressCB || !progress.timemark || !duration) return
         // Cannot rely on progress.percent as it is not accurate for concat
-        const percent = (ffmpgegUtils.timemarkToSeconds(progress.timemark) / duration) * 100
+        const percent = (FfmpegHelpersFfmpegUtils.timemarkToSeconds(progress.timemark as string) / duration) * 100
         progressCB(percent)
       })
       .on('end', async (stdout, stderr) => {
-        if (concatFilePath) await fs.remove(concatFilePath)
-        Logger.debug('[ffmpegHelpers] ffmpeg stdout:', stdout)
-        Logger.debug('[ffmpegHelpers] ffmpeg stderr:', stderr)
-        Logger.debug(`[ffmpegHelpers] Audio Files Merged Successfully`)
+        if (concatFilePath) await FfmpegHelpersFs.remove(concatFilePath)
+        FfmpegHelpersLogger.debug('[ffmpegHelpers] ffmpeg stdout:', stdout)
+        FfmpegHelpersLogger.debug('[ffmpegHelpers] ffmpeg stderr:', stderr)
+        FfmpegHelpersLogger.debug(`[ffmpegHelpers] Audio Files Merged Successfully`)
         resolve()
       })
       .on('error', async (err, stdout, stderr) => {
-        if (concatFilePath) await fs.remove(concatFilePath)
+        if (concatFilePath) await FfmpegHelpersFs.remove(concatFilePath)
         if (err.message && err.message.includes('SIGKILL')) {
-          Logger.info(`[ffmpegHelpers] Merge Audio Files Killed by User`)
+          FfmpegHelpersLogger.info(`[ffmpegHelpers] Merge Audio Files Killed by User`)
           reject(new Error('FFMPEG_CANCELED'))
         } else {
-          Logger.error(`[ffmpegHelpers] Merge Audio Files Error ${err}`)
-          Logger.error('ffmpeg stdout:', stdout)
-          Logger.error('ffmpeg stderr:', stderr)
+          FfmpegHelpersLogger.error(`[ffmpegHelpers] Merge Audio Files Error ${err}`)
+          FfmpegHelpersLogger.error('ffmpeg stdout:', stdout)
+          FfmpegHelpersLogger.error('ffmpeg stderr:', stderr)
           reject(err)
         }
       })
