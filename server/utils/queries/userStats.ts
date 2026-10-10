@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize') as typeof import('sequelize')
+const Database = require('../../Database') as UserStatsDatabase
 const PlaybackSession = require('../../models/PlaybackSession')
 const MediaProgress = require('../../models/MediaProgress')
 const fsExtra = require('../../libs/fsExtra') as {
@@ -50,8 +51,6 @@ interface UserStatsModule {
   getUserListeningSessionsForYear(userId: string, year: number): Promise<ListeningSession[]>
   getBookMediaProgressFinishedForYear(userId: string, year: number): Promise<FinishedBookProgress[]>
 }
-
-const Database = require('../../Database') as UserStatsDatabase
 
 const userStats = {
   /**

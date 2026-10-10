@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) in progress; Batches 01–02 accepted, **8/46 migrated, 38 remaining**. Stage 2–8 are outside this run; stop after Stage 1 and report to the user. If the Codex five-hour usage window is too low to implement and verify the next batch, stop at the last accepted batch and report partial progress.
+Status: Stage 1 (`server/utils/`) in progress; Batches 01–03 accepted, **11/46 migrated, 35 remaining**. Stage 2–8 are outside this run; stop after Stage 1 and report to the user. If the Codex five-hour usage window is too low to implement and verify the next batch, stop at the last accepted batch and report partial progress.
 
 ## Starting point
 
@@ -33,5 +33,6 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | --- | --- | --- | --- |
 | 01 | `globals`, `longTimeout`, `requestUtils`, `stringifySequelizeQuery` | Fresh strict build 0 errors; unchanged tests 356/356; fixed sample equal to Phase 2 baseline; emitted JS review | Accepted; see `stage1-run.md` and `logs/batch-01-*` |
 | 02 | `parseNfoMetadata`, `parseOPML`, `parseUserAgent`, `opmlGenerator` | Fresh strict build 0 errors; unchanged tests 356/356; fixed parser/OPML sample equal to baseline; emitted JS review | Accepted after main-agent export-shape repair; see `stage1-run.md` and `logs/batch-02-*` |
+| 03 | `authorFilters`, `userStats`, `adminStats` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline query sample equal to baseline; emitted JS review | Accepted after main-agent require-order repair; see `stage1-run.md` and `logs/batch-03-*` |
 
-Next: integrate isolated Batch 03 query agent commit with independent clean build, tests and behavior review.
+Next: complete Batch 04 static definitions and HTML utilities. Quota is checked before each new batch.
