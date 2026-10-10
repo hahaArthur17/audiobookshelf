@@ -27,7 +27,7 @@ Client files changed against the public baseline 7d10b8fc (git diff --stat 7d10b
 - Server on Windows with Node 24: started from the compiled output, created a new database, loaded the nunicode extension and initialised all 25 models.
 - Setup, login, socket connection, library create and scan (1 item each time), library delete and backup creation all worked (confirmed by the server log).
 - Console of both sessions: no WARN, ERROR or FATAL line. Search of the saved daily log after both sessions: 0 matching lines.
-- HLS through the API (my own PowerShell output): playMethod 2; playlist status 200 with 4 segments (6, 6, 6 and 2.04 s) and #EXT-X-ENDLIST; segment output-0.ts status 200, 53,016 bytes. HlsRouter and hlsPlaylistGenerator (both converted) were on this path.
+- HLS through the API (my own PowerShell output, copied from the terminal into the advisor chat; the output was not saved as a file because it showed a typed password; the saved server log has the matching STREAM START line with 4 segments): playMethod 2; playlist status 200 with 4 segments (6, 6, 6 and 2.04 s) and #EXT-X-ENDLIST; segment output-0.ts status 200, 53,016 bytes. HlsRouter and hlsPlaylistGenerator (both converted) were on this path.
 - Browser checklist, second pass: I reported "all good" for the home page, item page, playback, settings pages and the Console and Network tabs. I did not write a per-point list or count the Console and Network entries, so this is a summary statement, not an itemised record.
 - Browser checklist, first pass: only points 1, 2 and 7 are confirmed (by the log). The rest was not recorded.
 
