@@ -329,7 +329,7 @@ class Playlist extends Model {
     if (episodeId) {
       return this.playlistMediaItems.some((pmi) => pmi.mediaItemId === episodeId)
     }
-    return this.playlistMediaItems.some((pmi) => pmi.mediaItem.libraryItem.id === libraryItemId)
+    return this.playlistMediaItems.some((pmi) => pmi.mediaItem.libraryItem?.id === libraryItemId)
   }
 
   toOldJSON() {
