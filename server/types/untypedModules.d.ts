@@ -4,6 +4,9 @@
 
 declare module 'uuid' {
   export function v4(): string
+  // Used by server/controllers/ShareController.ts to check the share session cookie.
+  export function validate(uuid: string): boolean
+  export function version(uuid: string): number
 }
 
 // Used by server/managers/EmailManager.ts. from/to allow null because EmailSettings.fromAddress starts as null.

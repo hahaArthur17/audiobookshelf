@@ -1,16 +1,41 @@
-const { Request, Response } = require('express')
-const uuid = require('uuid')
-const Path = require('path')
-const { Op } = require('sequelize')
-const Logger = require('../Logger')
-const Database = require('../Database')
+/// <reference path="../types/untypedModules.d.ts" />
+import type { Request, Response } from 'express'
+import type { Model, ModelStatic } from 'sequelize'
+import uuid = require('uuid')
+import Path = require('path')
+import sequelizeModule = require('sequelize')
+const { Op } = sequelizeModule
+import Logger = require('../Logger')
+import Database = require('../Database')
 
-const { PlayMethod } = require('../utils/constants')
-const { getAudioMimeTypeFromExtname, encodeUriPath } = require('../utils/fileUtils')
-const zipHelpers = require('../utils/zipHelpers')
+import constants = require('../utils/constants')
+const { PlayMethod } = constants
+import fileUtils = require('../utils/fileUtils')
+const { getAudioMimeTypeFromExtname, encodeUriPath } = fileUtils
+import zipHelpers = require('../utils/zipHelpers')
 
-const PlaybackSession = require('../objects/PlaybackSession')
-const ShareManager = require('../managers/ShareManager')
+import PlaybackSession = require('../objects/PlaybackSession')
+import ShareManager = require('../managers/ShareManager')
+type User = import('../models/User')
+type PublicRouter = import('../routers/PublicRouter')
+type MediaItemShareForClient = import('../models/MediaItemShare').MediaItemShareForClient
+type LibraryItem = import('../models/LibraryItem')
+type LibraryItemExpanded = import('../models/LibraryItem').LibraryItemExpanded
+type BookExpanded = import('../models/Book').BookExpanded
+type Library = import('../models/Library')
+type PlaybackSessionManager = import('../managers/PlaybackSessionManager')
+
+declare const global: typeof globalThis & { XAccel?: string; RouterBasePath: string }
+// lib.d.ts types isNaN(number), but the built-in coerces every value and the handlers pass a query string and body fields. Widens the type for this file only; emits no code.
+declare function isNaN(value: unknown): boolean
+
+// Query values are assumed to be strings (the original code assumes this when it calls parseInt on t)
+type ShareQuery = { t?: string }
+// Body fields have the types the handlers assume after their own checks
+type ShareBody = { currentTime: number; slug: string; expiresAt: number; mediaItemType: string; mediaItemId: string; isDownloadable: boolean }
+type ShareRequest = Request<Request['params'], unknown, ShareBody, ShareQuery>
+type RequestUserObject = { user: User }
+type RequestWithUser = ShareRequest & RequestUserObject
 
 /**
  * @typedef RequestUserObject
@@ -32,12 +57,12 @@ class ShareController {
    * @param {Request} req
    * @param {Response} res
    */
-  async getMediaItemShareBySlug(req, res) {
+  async getMediaItemShareBySlug(this: PublicRouter, req: ShareRequest, res: Response) {
     const { slug } = req.params
     // Optional start time
     let startTime = req.query.t && !isNaN(req.query.t) ? Math.max(0, parseInt(req.query.t)) : 0
 
-    const mediaItemShare = ShareManager.findBySlug(slug)
+    const mediaItemShare: (MediaItemShareForClient & { playbackSession?: ReturnType<PlaybackSession['toJSONForClient']> }) | null = ShareManager.findBySlug(slug)
     if (!mediaItemShare) {
       Logger.warn(`[ShareController] Media item share not found with slug ${slug}`)
       return res.sendStatus(404)
@@ -74,7 +99,7 @@ class ShareController {
     }
 
     try {
-      const libraryItem = await Database.mediaItemShareModel.getMediaItemsLibraryItem(mediaItemShare.mediaItemId, mediaItemShare.mediaItemType)
+      const libraryItem = await Database.mediaItemShareModel.getMediaItemsLibraryItem(mediaItemShare.mediaItemId, mediaItemShare.mediaItemType) as (LibraryItemExpanded & { media: BookExpanded; library: Library }) | null // boundary: the typedef of LibraryItem.js (JS) does not say that this query only returns a book and includes the library
       if (!libraryItem) {
         return res.status(404).send('Media item not found')
       }
@@ -105,7 +130,7 @@ class ShareController {
         clientName: 'Abs Web Share',
         deviceId: shareSessionId
       }
-      const deviceInfo = await this.playbackSessionManager.getDeviceInfo(req, clientDeviceInfo)
+      const deviceInfo = await this.playbackSessionManager.getDeviceInfo(req as Parameters<PlaybackSessionManager['getDeviceInfo']>[0], clientDeviceInfo) // boundary: the JSDoc of PlaybackSessionManager.js (JS) names the request type of LibraryItemController, but getDeviceInfo() only reads headers, the ip address and user?.id
 
       const newPlaybackSession = new PlaybackSession()
       newPlaybackSession.setData(libraryItem, null, 'web-share', deviceInfo, startTime)
@@ -137,7 +162,7 @@ class ShareController {
    * @param {Request} req
    * @param {Response} res
    */
-  async getMediaItemShareCoverImage(req, res) {
+  async getMediaItemShareCoverImage(req: ShareRequest, res: Response) {
     if (!req.cookies.share_session_id) {
       return res.status(404).send('Share session not set')
     }
@@ -177,7 +202,7 @@ class ShareController {
    * @param {Request} req
    * @param {Response} res
    */
-  async getMediaItemShareAudioTrack(req, res) {
+  async getMediaItemShareAudioTrack(req: ShareRequest, res: Response) {
     if (!req.cookies.share_session_id) {
       return res.status(404).send('Share session not set')
     }
@@ -223,7 +248,7 @@ class ShareController {
    * @param {Request} req
    * @param {Response} res
    */
-  async downloadMediaItemShare(req, res) {
+  async downloadMediaItemShare(req: ShareRequest, res: Response) {
     if (!req.cookies.share_session_id) {
       return res.status(404).send('Share session not set')
     }
@@ -242,7 +267,7 @@ class ShareController {
       return res.status(404).send('Share session not found')
     }
 
-    const libraryItem = await Database.libraryItemModel.findByPk(playbackSession.libraryItemId, {
+    const libraryItem = await (Database.libraryItemModel as { findByPk(identifier: string, options: { attributes: string[] }): Promise<LibraryItem | null> }).findByPk(playbackSession.libraryItemId, { // boundary: LibraryItem.js is still JavaScript, and its inferred static side makes the inherited findByPk() uncallable from TypeScript (its 'this' context is not assignable to ModelStatic)
       attributes: ['id', 'path', 'relPath', 'isFile']
     })
     if (!libraryItem) {
@@ -260,7 +285,7 @@ class ShareController {
         if (audioMimeType) {
           res.setHeader('Content-Type', audioMimeType)
         }
-        await new Promise((resolve, reject) => res.download(itemPath, libraryItem.relPath, (error) => (error ? reject(error) : resolve())))
+        await new Promise<void>((resolve, reject) => res.download(itemPath, libraryItem.relPath, (error) => (error ? reject(error) : resolve())))
       } else {
         const filename = `${itemTitle}.zip`
         await zipHelpers.zipDirectoryPipe(itemPath, filename, res)
@@ -282,7 +307,7 @@ class ShareController {
    * @param {Request} req
    * @param {Response} res
    */
-  async updateMediaItemShareProgress(req, res) {
+  async updateMediaItemShareProgress(req: ShareRequest, res: Response) {
     if (!req.cookies.share_session_id) {
       return res.status(404).send('Share session not set')
     }
@@ -316,7 +341,7 @@ class ShareController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async createMediaItemShare(req, res) {
+  async createMediaItemShare(req: RequestWithUser, res: Response) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[ShareController] Non-admin user "${req.user.username}" attempted to create item share`)
       return res.sendStatus(403)
@@ -350,7 +375,7 @@ class ShareController {
       }
 
       // Check that media item exists
-      const mediaItemModel = mediaItemType === 'book' ? Database.bookModel : Database.podcastEpisodeModel
+      const mediaItemModel: ModelStatic<Model> = mediaItemType === 'book' ? Database.bookModel : Database.podcastEpisodeModel
       const mediaItem = await mediaItemModel.findByPk(mediaItemId)
       if (!mediaItem) {
         return res.status(404).send('Media item not found')
@@ -381,7 +406,7 @@ class ShareController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async deleteMediaItemShare(req, res) {
+  async deleteMediaItemShare(req: RequestWithUser, res: Response) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[ShareController] Non-admin user "${req.user.username}" attempted to delete item share`)
       return res.sendStatus(403)
@@ -403,4 +428,4 @@ class ShareController {
     }
   }
 }
-module.exports = new ShareController()
+export = new ShareController()
