@@ -1,9 +1,56 @@
-const { DataTypes, Model, Op } = require('sequelize')
-const Logger = require('../Logger')
-const SocketAuthority = require('../SocketAuthority')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model, Op } = sequelizeModule
+import type { BuildOptions, CreationAttributes, HasManyGetAssociationsMixin, Sequelize } from 'sequelize'
+import Logger = require('../Logger')
+import SocketAuthority = require('../SocketAuthority')
+
+type LibraryItem = import('./LibraryItem')
+type PodcastEpisode = import('./PodcastEpisode')
+type PlaylistMediaItem = import('./PlaylistMediaItem')
+
+/** Registry entries this file reads by name, with their model classes */
+type RegisteredModels = { playlistMediaItem: typeof import('./PlaylistMediaItem') }
+
+/** A book of a playlist as the queries in this file load it: with its library item */
+type PlaylistBook = import('./Book').BookExpandedWithLibraryItem
+
+/** A podcast episode of a playlist as the queries in this file load it: its podcast carries the library item, and the episode has no libraryItem of its own (checkHasMediaItem() reads it with ?.) */
+type PlaylistEpisode = PodcastEpisode & { podcast: import('./Podcast') & { libraryItem: LibraryItem }; libraryItem?: undefined }
+
+/** The columns and methods of a playlistMediaItem without the four properties that depend on mediaItemType */
+type PlaylistMediaItemBase = Omit<PlaylistMediaItem, 'mediaItemType' | 'mediaItem' | 'book' | 'podcastEpisode'> & { book?: PlaylistBook; podcastEpisode?: PlaylistEpisode }
+
+/** A playlistMediaItem as the queries in this file load it: mediaItemType tells which model mediaItem holds */
+type PlaylistMediaItemExpanded = (PlaylistMediaItemBase & { mediaItemType: 'book'; mediaItem: PlaylistBook }) | (PlaylistMediaItemBase & { mediaItemType: 'podcastEpisode'; mediaItem: PlaylistEpisode })
+
+/** Return of toOldJSON(); toOldJSONExpanded() adds items */
+type OldPlaylistJson = {
+  id: string
+  name: string
+  libraryId: string
+  userId: string
+  description: string
+  lastUpdate: number
+  createdAt: number
+  items?: (
+    | { libraryItemId: string; libraryItem: ReturnType<LibraryItem['toOldJSONExpanded']> }
+    | { episodeId: string; episode: ReturnType<PodcastEpisode['toOldJSONExpanded']>; libraryItemId: string; libraryItem: ReturnType<LibraryItem['toOldJSONMinified']> }
+  )[]
+}
 
 class Playlist extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare name: string
+  declare description: string
+  declare libraryId: string
+  declare userId: string
+  declare createdAt: Date
+  declare updatedAt: Date
+  declare playlistMediaItems: PlaylistMediaItemExpanded[] // the JSDoc says PlaylistMediaItem[]; the expanded type adds what the includes and the afterFind hook set
+  declare getPlaylistMediaItems: HasManyGetAssociationsMixin<PlaylistMediaItemExpanded> // mixin added by playlist.hasMany(PlaylistMediaItem) in PlaylistMediaItem.init(); the one call here includes the books and podcast episodes
+  declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entry this file reads
+
+  constructor(values?: CreationAttributes<Playlist>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -34,10 +81,10 @@ class Playlist extends Model {
    * @param {string} libraryId
    * @async
    */
-  static async getOldPlaylistsForUserAndLibrary(userId, libraryId) {
+  static async getOldPlaylistsForUserAndLibrary(userId: string, libraryId: string) {
     if (!userId && !libraryId) return []
 
-    const whereQuery = {}
+    const whereQuery: { userId?: string; libraryId?: string } = {}
     if (userId) {
       whereQuery.userId = userId
     }
@@ -71,10 +118,12 @@ class Playlist extends Model {
           },
           {
             model: this.sequelize.models.podcastEpisode,
-            include: {
-              model: this.sequelize.models.podcast,
-              include: this.sequelize.models.libraryItem
-            }
+            include: [
+              {
+                model: this.sequelize.models.podcast,
+                include: [this.sequelize.models.libraryItem]
+              }
+            ]
           }
         ]
       },
@@ -93,7 +142,7 @@ class Playlist extends Model {
    * @param {string} libraryId
    * @returns
    */
-  static async getNumPlaylistsForUserAndLibrary(userId, libraryId) {
+  static async getNumPlaylistsForUserAndLibrary(userId: string, libraryId: string) {
     return this.count({
       where: {
         userId,
@@ -107,7 +156,7 @@ class Playlist extends Model {
    * @param {string[]} mediaItemIds
    * @returns {Promise<Playlist[]>}
    */
-  static async getPlaylistsForMediaItemIds(mediaItemIds) {
+  static async getPlaylistsForMediaItemIds(mediaItemIds: string[]) {
     if (!mediaItemIds?.length) return []
 
     const playlistMediaItemsExpanded = await this.sequelize.models.playlistMediaItem.findAll({
@@ -119,28 +168,32 @@ class Playlist extends Model {
       include: [
         {
           model: this.sequelize.models.playlist,
-          include: {
-            model: this.sequelize.models.playlistMediaItem,
-            include: [
-              {
-                model: this.sequelize.models.book,
-                include: this.sequelize.models.libraryItem
-              },
-              {
-                model: this.sequelize.models.podcastEpisode,
-                include: {
-                  model: this.sequelize.models.podcast,
-                  include: this.sequelize.models.libraryItem
+          include: [
+            {
+              model: this.sequelize.models.playlistMediaItem,
+              include: [
+                {
+                  model: this.sequelize.models.book,
+                  include: [this.sequelize.models.libraryItem]
+                },
+                {
+                  model: this.sequelize.models.podcastEpisode,
+                  include: [
+                    {
+                      model: this.sequelize.models.podcast,
+                      include: [this.sequelize.models.libraryItem]
+                    }
+                  ]
                 }
-              }
-            ]
-          }
+              ]
+            }
+          ]
         }
       ],
       order: [['playlist', 'playlistMediaItems', 'order', 'ASC']]
     })
 
-    const playlists = []
+    const playlists: Playlist[] = []
     for (const playlistMediaItem of playlistMediaItemsExpanded) {
       const playlist = playlistMediaItem.playlist
       if (playlists.some((p) => p.id === playlist.id)) continue
@@ -169,7 +222,7 @@ class Playlist extends Model {
    *
    * @param {string[]} mediaItemIds
    */
-  static async removeMediaItemsFromPlaylists(mediaItemIds) {
+  static async removeMediaItemsFromPlaylists(mediaItemIds: string[]) {
     if (!mediaItemIds?.length) return
 
     const playlistsWithItem = await this.getPlaylistsForMediaItemIds(mediaItemIds)
@@ -207,11 +260,13 @@ class Playlist extends Model {
     }
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -237,7 +292,7 @@ class Playlist extends Model {
     })
     Playlist.belongsTo(user)
 
-    Playlist.addHook('afterFind', (findResult) => {
+    Playlist.addHook('afterFind', (findResult: Playlist | Playlist[] | null) => {
       if (!findResult) return
 
       if (!Array.isArray(findResult)) findResult = [findResult]
@@ -297,7 +352,7 @@ class Playlist extends Model {
           include: [
             {
               model: this.sequelize.models.podcast,
-              include: this.sequelize.models.libraryItem
+              include: [this.sequelize.models.libraryItem]
             }
           ]
         }
@@ -322,7 +377,7 @@ class Playlist extends Model {
    * @param {string} libraryItemId
    * @param {string} [episodeId]
    */
-  checkHasMediaItem(libraryItemId, episodeId) {
+  checkHasMediaItem(libraryItemId: string, episodeId?: string) {
     if (!this.playlistMediaItems) {
       throw new Error('playlistMediaItems are required to check Playlist')
     }
@@ -332,7 +387,7 @@ class Playlist extends Model {
     return this.playlistMediaItems.some((pmi) => pmi.mediaItem.libraryItem?.id === libraryItemId)
   }
 
-  toOldJSON() {
+  toOldJSON(): OldPlaylistJson {
     return {
       id: this.id,
       name: this.name,
@@ -353,7 +408,8 @@ class Playlist extends Model {
     json.items = this.playlistMediaItems.map((pmi) => {
       if (pmi.mediaItemType === 'book') {
         const libraryItem = pmi.mediaItem.libraryItem
-        delete pmi.mediaItem.libraryItem
+        const bookWithOptionalItem: { libraryItem?: LibraryItem } = pmi.mediaItem // the same object, seen with libraryItem optional: TypeScript only allows delete on an optional property (TS2790)
+        delete bookWithOptionalItem.libraryItem
         libraryItem.media = pmi.mediaItem
         return {
           libraryItemId: libraryItem.id,
@@ -362,7 +418,8 @@ class Playlist extends Model {
       }
 
       const libraryItem = pmi.mediaItem.podcast.libraryItem
-      delete pmi.mediaItem.podcast.libraryItem
+      const podcastWithOptionalItem: { libraryItem?: LibraryItem } = pmi.mediaItem.podcast // the same object, seen with libraryItem optional (TS2790, as above)
+      delete podcastWithOptionalItem.libraryItem
       libraryItem.media = pmi.mediaItem.podcast
       return {
         episodeId: pmi.mediaItemId,
@@ -376,4 +433,4 @@ class Playlist extends Model {
   }
 }
 
-module.exports = Playlist
+export = Playlist
