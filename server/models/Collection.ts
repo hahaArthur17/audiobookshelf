@@ -1,7 +1,38 @@
-const { DataTypes, Model, Sequelize } = require('sequelize')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model, Sequelize } = sequelizeModule
+import type { BelongsToManyGetAssociationsMixin, BuildOptions, CreationAttributes, HasManyGetAssociationsMixin } from 'sequelize'
+
+type User = import('./User')
+type LibraryItem = import('./LibraryItem')
+type Feed = import('./Feed')
+type BookExpandedWithLibraryItem = import('./Book').BookExpandedWithLibraryItem
+
+/** Return of toOldJSON(). toOldJSONExpanded() replaces the library item ids in books with expanded library items, and the callers that include 'rssfeed' add rssFeed */
+type OldCollectionJson = {
+  id: string
+  libraryId: string
+  name: string
+  description: string | null
+  books: string[] | ReturnType<LibraryItem['toOldJSONExpanded']>[]
+  lastUpdate: number
+  createdAt: number
+  rssFeed?: ReturnType<Feed['toOldJSON']>
+}
 
 class Collection extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare name: string
+  declare description: string | null // null when the collection was saved without one (Feed.getFeedObjForCollection() tests it); the JSDoc says string
+  declare libraryId: string
+  declare updatedAt: Date
+  declare createdAt: Date
+  declare books: BookExpandedWithLibraryItem[]
+  declare feeds?: Feed[] // only set by a query that includes feed (getOldCollectionsJsonExpanded with 'rssfeed'); not listed in the constructor
+  declare getBooks: BelongsToManyGetAssociationsMixin<BookExpandedWithLibraryItem> // mixin added by collection.belongsToMany(book) in CollectionBook.init(); the one call here includes libraryItem, authors and series
+  declare getFeeds: HasManyGetAssociationsMixin<Feed> // mixin added by collection.hasMany(Feed) in Feed.init()
+  declare static readonly sequelize: sequelizeModule.Sequelize // set by init() before any query runs (optional in Sequelize's typings). Written with the module name because Sequelize is a runtime value in this file
+
+  constructor(values?: CreationAttributes<Collection>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -31,7 +62,7 @@ class Collection extends Model {
    * @param {string[]} [include]
    * @async
    */
-  static async getOldCollectionsJsonExpanded(user, libraryId, include) {
+  static async getOldCollectionsJsonExpanded(user: User | null, libraryId?: string, include?: string[]) {
     let collectionWhere = null
     if (libraryId) {
       collectionWhere = {
@@ -48,7 +79,7 @@ class Collection extends Model {
     }
 
     const collections = await this.findAll({
-      where: collectionWhere,
+      ...(collectionWhere && { where: collectionWhere }), // where is left out when there is no libraryId: Sequelize's typings reject where: null, which it treats like no where
       include: [
         {
           model: this.sequelize.models.book,
@@ -115,7 +146,7 @@ class Collection extends Model {
    * @param {string} collectionId
    * @returns {Promise<Collection>}
    */
-  static async getExpandedById(collectionId) {
+  static async getExpandedById(collectionId: string) {
     return this.findByPk(collectionId, {
       include: [
         {
@@ -148,7 +179,7 @@ class Collection extends Model {
    * @param {string} libraryId
    * @returns {Promise<number>} number of collections destroyed
    */
-  static async removeAllForLibrary(libraryId) {
+  static async removeAllForLibrary(libraryId: string) {
     if (!libraryId) return 0
     return this.destroy({
       where: {
@@ -157,11 +188,13 @@ class Collection extends Model {
     })
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: sequelizeModule.Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: sequelizeModule.Sequelize): void {
     super.init(
       {
         id: {
@@ -219,7 +252,7 @@ class Collection extends Model {
    * @param {string[]} [include]
    * @async
    */
-  async getOldJsonExpanded(user, include) {
+  async getOldJsonExpanded(user: User | null, include?: string[]) {
     this.books = await this.getBooksExpandedWithLibraryItem()
 
     // Filter books using user permissions
@@ -260,7 +293,7 @@ class Collection extends Model {
    * @param {string[]} [libraryItemIds=[]]
    * @returns
    */
-  toOldJSON(libraryItemIds = []) {
+  toOldJSON(libraryItemIds: string[] = []): OldCollectionJson {
     return {
       id: this.id,
       libraryId: this.libraryId,
@@ -280,7 +313,8 @@ class Collection extends Model {
     const json = this.toOldJSON()
     json.books = this.books.map((book) => {
       const libraryItem = book.libraryItem
-      delete book.libraryItem
+      const bookWithOptionalItem: { libraryItem?: LibraryItem } = book // the same object, seen with libraryItem optional: TypeScript only allows delete on an optional property (TS2790)
+      delete bookWithOptionalItem.libraryItem
       libraryItem.media = book
       return libraryItem.toOldJSONExpanded()
     })
@@ -289,4 +323,4 @@ class Collection extends Model {
   }
 }
 
-module.exports = Collection
+export = Collection
