@@ -1,8 +1,34 @@
-const { DataTypes, Model } = require('sequelize')
-const { getTitlePrefixAtEnd, getTitleIgnorePrefix } = require('../utils')
-const Logger = require('../Logger')
-const libraryItemsPodcastFilters = require('../utils/queries/libraryItemsPodcastFilters')
-const htmlSanitizer = require('../utils/htmlSanitizer')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model } = sequelizeModule
+import type { BuildOptions, CreationAttributes, Sequelize, Transaction } from 'sequelize'
+import utils = require('../utils')
+const { getTitlePrefixAtEnd, getTitleIgnorePrefix }: {
+  // Method signatures: both also accept a missing title (getTitleParts() tests it), although their JSDoc in utils/index.js says string
+  getTitlePrefixAtEnd(title: string | null): string | null
+  getTitleIgnorePrefix(title: string | null): string
+} = utils
+import Logger = require('../Logger')
+import libraryItemsPodcastFilters = require('../utils/queries/libraryItemsPodcastFilters')
+import htmlSanitizer = require('../utils/htmlSanitizer')
+
+declare const global: typeof globalThis & { ServerSettings: { podcastEpisodeSchedule: string } }
+
+type PodcastEpisode = import('./PodcastEpisode')
+type RssPodcastEpisode = import('../utils/podcastUtils').RssPodcastEpisode
+
+// Type-only: keeps Podcast.PodcastExpanded and Podcast.PodcastExpandedProperties (named in LibraryItem's typedefs) resolvable after export = Podcast
+declare namespace Podcast {
+  interface PodcastExpandedProperties {
+    podcastEpisodes: PodcastEpisode[]
+  }
+  type PodcastExpanded = Podcast & PodcastExpandedProperties
+}
+
+/** Body of the podcast create and update requests: JSON from the client, so each value is checked with typeof before it is used */
+interface PodcastRequestPayload {
+  metadata: { [key: string]: unknown } // read and written by a dynamic key (stringKeys.forEach)
+  [key: string]: unknown // read by a dynamic key (numberKeys.forEach)
+}
 
 /**
  * @typedef PodcastExpandedProperties
@@ -12,7 +38,35 @@ const htmlSanitizer = require('../utils/htmlSanitizer')
  */
 
 class Podcast extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare title: string | null // null when the request has no string for it (createFromRequest) or sends null or an empty string (updateFromRequest); the JSDoc says string. The same holds for the ten string columns marked below
+  declare titleIgnorePrefix: string
+  declare author: string | null // see title
+  declare releaseDate: string | null // see title
+  declare feedURL: string | null // see title
+  declare imageURL: string | null // see title
+  declare description: string | null // see title
+  declare itunesPageURL: string | null // see title
+  declare itunesId: string | null // see title
+  declare itunesArtistId: string | null // see title
+  declare language: string | null // see title
+  declare podcastType: string | null // see title
+  declare explicit: boolean
+  declare autoDownloadEpisodes: boolean
+  declare autoDownloadSchedule: string
+  declare lastEpisodeCheck: Date | number // updateFromRequest() assigns the request's Unix timestamp as it is, so it is a number until the row is read again; the JSDoc says Date
+  declare maxEpisodesToKeep: number
+  declare maxNewEpisodesToDownload: number
+  declare coverPath: string | null // not set by createFromRequest(), so null until a cover is saved; the JSDoc says string
+  declare tags: string[]
+  declare genres: string[]
+  declare createdAt: Date
+  declare updatedAt: Date
+  declare numEpisodes: number
+  declare podcastEpisodes: PodcastEpisode[];
+  [key: string]: unknown // updateFromRequest() reads and assigns columns by a dynamic key (this[newKey], this[key])
+
+  constructor(values?: CreationAttributes<Podcast>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {string} */
@@ -76,7 +130,7 @@ class Podcast extends Model {
    * @param {Object} payload
    * @param {import('sequelize').Transaction} transaction
    */
-  static async createFromRequest(payload, transaction) {
+  static async createFromRequest(payload: PodcastRequestPayload, transaction: Transaction) {
     const title = typeof payload.metadata.title === 'string' ? payload.metadata.title : null
     // cron expression validated in controller
     const autoDownloadSchedule = typeof payload.autoDownloadSchedule === 'string' ? payload.autoDownloadSchedule : null
@@ -120,11 +174,13 @@ class Podcast extends Model {
     )
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -208,7 +264,7 @@ class Podcast extends Model {
    * @param {Object} payload - Old podcast object
    * @returns {Promise<boolean>}
    */
-  async updateFromRequest(payload) {
+  async updateFromRequest(payload: PodcastRequestPayload) {
     if (!payload) return false
 
     let hasUpdates = false
@@ -299,7 +355,7 @@ class Podcast extends Model {
     return hasUpdates
   }
 
-  checkCanDirectPlay(supportedMimeTypes, episodeId) {
+  checkCanDirectPlay(supportedMimeTypes: string[], episodeId: string) {
     if (!Array.isArray(supportedMimeTypes)) {
       Logger.error(`[Podcast] checkCanDirectPlay: supportedMimeTypes is not an array`, supportedMimeTypes)
       return false
@@ -321,7 +377,7 @@ class Podcast extends Model {
    * @param {string} episodeId
    * @returns {import('./Book').AudioTrack[]}
    */
-  getTracklist(libraryItemId, episodeId) {
+  getTracklist(libraryItemId: string, episodeId: string) {
     const episode = this.podcastEpisodes.find((ep) => ep.id === episodeId)
     if (!episode) {
       Logger.error(`[Podcast] getTracklist: episode not found`, episodeId)
@@ -337,7 +393,7 @@ class Podcast extends Model {
    * @param {string} episodeId
    * @returns {import('./PodcastEpisode').ChapterObject[]}
    */
-  getChapters(episodeId) {
+  getChapters(episodeId: string) {
     const episode = this.podcastEpisodes.find((ep) => ep.id === episodeId)
     if (!episode) {
       Logger.error(`[Podcast] getChapters: episode not found`, episodeId)
@@ -347,7 +403,7 @@ class Podcast extends Model {
     return structuredClone(episode.chapters) || []
   }
 
-  getPlaybackTitle(episodeId) {
+  getPlaybackTitle(episodeId: string) {
     const episode = this.podcastEpisodes.find((ep) => ep.id === episodeId)
     if (!episode) {
       Logger.error(`[Podcast] getPlaybackTitle: episode not found`, episodeId)
@@ -361,7 +417,7 @@ class Podcast extends Model {
     return this.author
   }
 
-  getPlaybackDuration(episodeId) {
+  getPlaybackDuration(episodeId: string) {
     const episode = this.podcastEpisodes.find((ep) => ep.id === episodeId)
     if (!episode) {
       Logger.error(`[Podcast] getPlaybackDuration: episode not found`, episodeId)
@@ -390,7 +446,7 @@ class Podcast extends Model {
    * @param {import('../utils/podcastUtils').RssPodcastEpisode} feedEpisode - object from rss feed
    * @returns {boolean}
    */
-  checkHasEpisodeByFeedEpisode(feedEpisode) {
+  checkHasEpisodeByFeedEpisode(feedEpisode: RssPodcastEpisode) {
     const guid = feedEpisode.guid
     const url = feedEpisode.enclosure.url
     return this.podcastEpisodes.some((ep) => ep.checkMatchesGuidOrEnclosureUrl(guid, url))
@@ -418,7 +474,7 @@ class Podcast extends Model {
   }
 
   oldMetadataToJSONExpanded() {
-    const oldMetadataJSON = this.oldMetadataToJSON()
+    const oldMetadataJSON: ReturnType<Podcast['oldMetadataToJSON']> & { titleIgnorePrefix?: string | null } = this.oldMetadataToJSON()
     oldMetadataJSON.titleIgnorePrefix = getTitlePrefixAtEnd(this.title)
     return oldMetadataJSON
   }
@@ -428,7 +484,7 @@ class Podcast extends Model {
    *
    * @param {string} libraryItemId
    */
-  toOldJSON(libraryItemId) {
+  toOldJSON(libraryItemId: string) {
     if (!libraryItemId) {
       throw new Error(`[Podcast] Cannot convert to old JSON because libraryItemId is not provided`)
     }
@@ -479,7 +535,7 @@ class Podcast extends Model {
    *
    * @param {string} libraryItemId
    */
-  toOldJSONExpanded(libraryItemId) {
+  toOldJSONExpanded(libraryItemId: string) {
     if (!libraryItemId) {
       throw new Error(`[Podcast] Cannot convert to old JSON because libraryItemId is not provided`)
     }
@@ -495,4 +551,4 @@ class Podcast extends Model {
   }
 }
 
-module.exports = Podcast
+export = Podcast

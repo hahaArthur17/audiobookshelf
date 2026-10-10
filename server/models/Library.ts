@@ -1,5 +1,31 @@
-const { DataTypes, Model } = require('sequelize')
-const Logger = require('../Logger')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model } = sequelizeModule
+import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
+import Logger = require('../Logger')
+
+type LibraryFolder = import('./LibraryFolder')
+
+// Type-only: keeps import('../models/Library').LibrarySettingsObject (used by the scanners) resolvable after export = Library
+declare namespace Library {
+  // The typedef lists every key as required. The keys marked optional are the ones getDefaultLibrarySettingsForMediaType() leaves out for one of the two media types;
+  // epubsAllowScriptedContent and podcastSearchRegion are set there but missing from the typedef; the two null defaults are typed as nullable.
+  interface LibrarySettingsObject {
+    coverAspectRatio: number
+    disableWatcher: boolean
+    skipMatchingMediaWithAsin?: boolean
+    skipMatchingMediaWithIsbn?: boolean
+    autoScanCronExpression: string | null
+    audiobooksOnly?: boolean
+    epubsAllowScriptedContent?: boolean
+    hideSingleBookSeries?: boolean
+    onlyShowLaterBooksInContinueSeries?: boolean
+    metadataPrecedence?: string[]
+    podcastSearchRegion?: string
+    markAsFinishedTimeRemaining: number
+    markAsFinishedPercentComplete: number | null
+  }
+}
+type LibrarySettingsObject = Library.LibrarySettingsObject
 
 /**
  * @typedef LibrarySettingsObject
@@ -17,7 +43,22 @@ const Logger = require('../Logger')
  */
 
 class Library extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare name: string
+  declare displayOrder: number
+  declare icon: string
+  declare mediaType: string
+  declare provider: string
+  declare lastScan: Date | null // null until the first scan (toOldJSON() reads it with ?.); the JSDoc says Date
+  declare lastScanVersion: string
+  declare settings: LibrarySettingsObject
+  declare extraData: { lastScanMetadataPrecedence?: string[] } | null // the JSDoc says Object; lastScanMetadataPrecedence is the only key this file reads, and it reads it with ?.
+  declare createdAt: Date
+  declare updatedAt: Date
+  declare libraryFolders?: LibraryFolder[]
+  declare static readonly sequelize: Sequelize // set by init() before any query runs (optional in Sequelize's typings)
+
+  constructor(values?: CreationAttributes<Library>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -53,7 +94,7 @@ class Library extends Model {
    * @param {string} mediaType
    * @returns
    */
-  static getDefaultLibrarySettingsForMediaType(mediaType) {
+  static getDefaultLibrarySettingsForMediaType(mediaType: string) {
     if (mediaType === 'podcast') {
       return {
         coverAspectRatio: 1, // Square
@@ -101,7 +142,7 @@ class Library extends Model {
    * @param {string} libraryId
    * @returns {Promise<Library>}
    */
-  static findByIdWithFolders(libraryId) {
+  static findByIdWithFolders(libraryId: string) {
     return this.findByPk(libraryId, {
       include: this.sequelize.models.libraryFolder
     })
@@ -125,7 +166,7 @@ class Library extends Model {
    * @returns {Promise<number>}
    */
   static getMaxDisplayOrder() {
-    return this.max('displayOrder') || 0
+    return this.max<number, Library>('displayOrder') || 0
   }
 
   /**
@@ -147,11 +188,13 @@ class Library extends Model {
     }
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -192,7 +235,7 @@ class Library extends Model {
   /**
    * @returns {LibrarySettingsObject}
    */
-  get librarySettings() {
+  get librarySettings(): LibrarySettingsObject {
     return this.settings || Library.getDefaultLibrarySettingsForMediaType(this.mediaType)
   }
 
@@ -219,4 +262,4 @@ class Library extends Model {
   }
 }
 
-module.exports = Library
+export = Library

@@ -1,4 +1,42 @@
-const { DataTypes, Model } = require('sequelize')
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model } = sequelizeModule
+import type { BelongsToGetAssociationMixin, BindOrReplacements, BuildOptions, CreationAttributes, FindOptions, IncludeOptions, Sequelize, WhereOptions } from 'sequelize'
+
+type Book = import('./Book')
+type PodcastEpisode = import('./PodcastEpisode')
+
+type LibraryItemExpanded = import('./LibraryItem').LibraryItemExpanded
+
+/** Registry entry this file reads by name. LibraryItem is still JavaScript and its JSDoc marks replacements and include as optional, while both default to null and the call below passes null, so the one static used here is described by hand */
+type RegisteredModels = { libraryItem: { findOneExpanded(where: WhereOptions, replacements?: BindOrReplacements | null, include?: IncludeOptions | null): Promise<LibraryItemExpanded> } }
+
+// Type-only: keeps import('../models/MediaItemShare').MediaItemShareObject, .MediaItemShareModel and .MediaItemShareForClient (read by managers/ShareManager.ts) resolvable after export = MediaItemShare
+declare namespace MediaItemShare {
+  interface MediaItemShareObject {
+    id: string
+    mediaItemId: string
+    mediaItemType: string
+    slug: string
+    pash: string
+    userId: string
+    expiresAt: Date | null // null for a permanent share (ShareManager only schedules a share that has expiresAt); the typedef says Date
+    extraData: Record<string, unknown>
+    createdAt: Date
+    updatedAt: Date
+    isDownloadable: boolean
+  }
+  type MediaItemShareModel = MediaItemShareObject & MediaItemShare
+  interface MediaItemShareForClient {
+    id: string
+    mediaItemId: string
+    mediaItemType: string
+    slug: string
+    expiresAt: Date | null // null for a permanent share; the typedef says Date
+    createdAt: Date
+    updatedAt: Date
+    isDownloadable: boolean
+  }
+}
 
 /**
  * @typedef MediaItemShareObject
@@ -30,7 +68,26 @@ const { DataTypes, Model } = require('sequelize')
  */
 
 class MediaItemShare extends Model {
-  constructor(values, options) {
+  declare id: string
+  declare mediaItemId: string
+  declare mediaItemType: 'book' | 'podcastEpisode' // the JSDoc says string; these are the two values the associations in init() are scoped to, and getMediaItem() builds a mixin name from them
+  declare slug: string
+  declare pash: string
+  declare userId: string
+  declare expiresAt: Date | null // null for a permanent share (ShareManager only schedules a share that has expiresAt); the JSDoc says Date
+  declare extraData: Record<string, unknown>
+  declare createdAt: Date
+  declare updatedAt: Date
+  declare isDownloadable: boolean
+  declare mediaItem: Book | PodcastEpisode
+  declare book?: Book // set by a query that includes book; the afterFind hook moves it to mediaItem and deletes it
+  declare podcastEpisode?: PodcastEpisode // set by a query that includes podcastEpisode; the afterFind hook moves it to mediaItem and deletes it
+  declare getBook: BelongsToGetAssociationMixin<Book> // mixin added by belongsTo(book) in init()
+  declare getPodcastEpisode: BelongsToGetAssociationMixin<PodcastEpisode> // mixin added by belongsTo(podcastEpisode) in init()
+  declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entry this file reads
+  declare readonly sequelize: Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> } // Database.js adds uppercaseFirst to the Sequelize instance before any model is used
+
+  constructor(values?: CreationAttributes<MediaItemShare>, options?: BuildOptions) {
     super(values, options)
 
     /** @type {UUIDV4} */
@@ -82,7 +139,7 @@ class MediaItemShare extends Model {
    * @param {string} mediaItemType
    * @returns {Promise<import('./LibraryItem').LibraryItemExpanded>}
    */
-  static async getMediaItemsLibraryItem(mediaItemId, mediaItemType) {
+  static async getMediaItemsLibraryItem(mediaItemId: string, mediaItemType: string) {
     /** @type {typeof import('./LibraryItem')} */
     const libraryItemModel = this.sequelize.models.libraryItem
 
@@ -102,18 +159,20 @@ class MediaItemShare extends Model {
    * @param {import('sequelize').FindOptions} options
    * @returns {Promise<import('./Book')|import('./PodcastEpisode')>}
    */
-  getMediaItem(options) {
+  getMediaItem(options?: FindOptions) {
     if (!this.mediaItemType) return Promise.resolve(null)
-    const mixinMethodName = `get${this.sequelize.uppercaseFirst(this.mediaItemType)}`
+    const mixinMethodName: 'getBook' | 'getPodcastEpisode' = `get${this.sequelize.uppercaseFirst(this.mediaItemType)}`
     return this[mixinMethodName](options)
   }
 
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
   /**
    * Initialize model
    *
    * @param {import('../Database').sequelize} sequelize
    */
-  static init(sequelize) {
+  static init(sequelize: Sequelize): void {
     super.init(
       {
         id: {
@@ -158,7 +217,7 @@ class MediaItemShare extends Model {
     })
     MediaItemShare.belongsTo(podcastEpisode, { foreignKey: 'mediaItemId', constraints: false })
 
-    MediaItemShare.addHook('afterFind', (findResult) => {
+    MediaItemShare.addHook('afterFind', (findResult: MediaItemShare | MediaItemShare[] | null) => {
       if (!findResult) return
 
       if (!Array.isArray(findResult)) findResult = [findResult]
@@ -181,4 +240,4 @@ class MediaItemShare extends Model {
   }
 }
 
-module.exports = MediaItemShare
+export = MediaItemShare
