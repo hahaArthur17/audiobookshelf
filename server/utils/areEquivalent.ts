@@ -17,7 +17,14 @@
  @param value2 Other item to compare
  @param stack Used internally to track circular refs - don't set it
  */
-module.exports = function areEquivalent(value1, value2, numToString = false, stack = []) {
+
+// Type-only notes; nothing in this block emits code.
+// - The header above is kept detached (blank line after it) because the compiler drops a comment attached to `export =`, which would strip the attribution from the compiled file.
+// - isNaN: lib.d.ts types isNaN(number), but the built-in coerces every value and the values compared here can be anything, so it is widened for this file only.
+// - The `as` assertions on value1/value2 in the body sit behind runtime checks (typeof via `type1`, then the Date and array branches) that the compiler cannot use to narrow the two values.
+declare function isNaN(value: unknown): boolean
+
+export = function areEquivalent(value1: unknown, value2: unknown, numToString = false, stack: unknown[] = []): boolean {
   if (numToString) {
     if (value1 !== null && !isNaN(value1)) value1 = String(value1)
     if (value2 !== null && !isNaN(value2)) value2 = String(value2)
@@ -56,12 +63,13 @@ module.exports = function areEquivalent(value1, value2, numToString = false, sta
     // Failed initial equals test, but could still have equivalent
     // implementations - note, will match on functions that have same name
     // and are native code: `function abc() { [native code] }`
-    return value1.toString() === value2.toString()
+    return (value1 as Function).toString() === (value2 as Function).toString()
   }
 
   // For these types, cannot still be equal at this point, so fast-fail
+  // ('function' already returned above, so the compiler rejects that comparison as impossible; asserted to keep the original check as written)
   if (type1 === 'bigint' || type1 === 'boolean' ||
-    type1 === 'function' || type1 === 'string' ||
+    (type1 as string) === 'function' || type1 === 'string' ||
     type1 === 'symbol') {
     // console.log('no match for values', value1, value2)
     return false
@@ -113,8 +121,8 @@ module.exports = function areEquivalent(value1, value2, numToString = false, sta
   // Final case: object
 
   // get both key lists and check length
-  const keys1 = Object.keys(value1)
-  const keys2 = Object.keys(value2)
+  const keys1 = Object.keys(value1 as object)
+  const keys2 = Object.keys(value2 as object)
   const numKeys = keys1.length
 
   if (keys2.length !== numKeys) {
@@ -142,7 +150,7 @@ module.exports = function areEquivalent(value1, value2, numToString = false, sta
 
   // Ensure perfect match across all values
   for (let i = 0; i < numKeys; i++) {
-    if (!areEquivalent(value1[keys1[i]], value2[keys1[i]], numToString, stack)) {
+    if (!areEquivalent((value1 as Record<string, unknown>)[keys1[i]], (value2 as Record<string, unknown>)[keys1[i]], numToString, stack)) {
       // console.log('2 subobjects not equiv', keys1[i], value1[keys1[i]], value2[keys1[i]])
       return false
     }
