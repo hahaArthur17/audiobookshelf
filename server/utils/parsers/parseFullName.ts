@@ -1,13 +1,24 @@
 
 
 // https://github.com/RateGravity/parse-full-name/blob/master/index.js
-module.exports = (nameToParse, partToReturn, fixCase, stopOnError, useLongLists) => {
+interface ParsedName {
+  title: string
+  first: string | undefined
+  middle: string
+  last: string | undefined
+  nick: string
+  suffix: string
+  error: string[]
+  [key: string]: string | string[] | undefined
+}
 
-  var i, j, k, l, m, n, part, comma, titleList, suffixList, prefixList, regex,
-    partToCheck, partFound, partsFoundCount, firstComma, remainingCommas,
-    nameParts = [], nameCommas = [null], partsFound = [],
+module.exports = (nameToParse: unknown, partToReturn?: string, fixCase?: boolean | number | string, stopOnError?: boolean | number, useLongLists?: boolean | number) => {
+
+  var i: number, j: number, k: unknown, l: number, m: number, n: string[], part: string, comma: string | null, titleList: string[], suffixList: string[], prefixList: string[], regex: RegExp,
+    partToCheck: string, partFound: RegExpMatchArray | null, partsFoundCount: number, firstComma: number, remainingCommas: number,
+    nameParts: string[] = [], nameCommas: (string | null)[] = [null], partsFound: string[] = [],
     conjunctionList = ['&', 'and', 'et', 'e', 'of', 'the', 'und', 'y'],
-    parsedName = {
+    parsedName: ParsedName = {
       title: '', first: '', middle: '', last: '', nick: '', suffix: '', error: []
     };
 
@@ -27,7 +38,7 @@ module.exports = (nameToParse, partToReturn, fixCase, stopOnError, useLongLists)
   useLongLists = useLongLists && useLongLists === 1 ? 1 : 0; // 0 = short lists
 
   // If stopOnError = 1, throw error, otherwise return error messages in array
-  function handleError(errorMessage) {
+  function handleError(errorMessage: string) {
     if (stopOnError) {
       throw 'Error: ' + errorMessage;
     } else {
@@ -36,13 +47,13 @@ module.exports = (nameToParse, partToReturn, fixCase, stopOnError, useLongLists)
   }
 
   // If fixCase = 1, fix case of parsedName parts before returning
-  function fixParsedNameCase(fixedCaseName, fixCaseNow) {
+  function fixParsedNameCase(fixedCaseName: ParsedName, fixCaseNow: boolean | number | string | undefined): ParsedName {
     var forceCaseList = ['e', 'y', 'av', 'af', 'da', 'dal', 'de', 'del', 'der', 'di',
       'la', 'le', 'van', 'der', 'den', 'vel', 'von', 'II', 'III', 'IV', 'J.D.', 'LL.M.',
       'M.D.', 'D.O.', 'D.C.', 'Ph.D.'];
-    var forceCaseListIndex;
-    var namePartLabels = [];
-    var namePartWords;
+    var forceCaseListIndex: number;
+    var namePartLabels: string[] = [];
+    var namePartWords: string[];
     if (fixCaseNow) {
       namePartLabels = Object.keys(parsedName)
         .filter(function (v) { return v !== 'error'; });
@@ -100,8 +111,8 @@ module.exports = (nameToParse, partToReturn, fixCase, stopOnError, useLongLists)
   // Auto-detect fixCase: fix if nameToParse is all upper or all lowercase
   if (fixCase === -1) {
     fixCase = (
-      nameToParse === nameToParse.toUpperCase() ||
-        nameToParse === nameToParse.toLowerCase() ? 1 : 0
+      nameToParse === (nameToParse as string).toUpperCase() ||
+        nameToParse === (nameToParse as string).toLowerCase() ? 1 : 0
     );
   }
 
@@ -186,13 +197,13 @@ module.exports = (nameToParse, partToReturn, fixCase, stopOnError, useLongLists)
     parsedName.nick = partsFound.join(', ');
     partsFound = [];
   }
-  if (!nameToParse.trim().length) {
+  if (!(nameToParse as string).trim().length) {
     parsedName = fixParsedNameCase(parsedName, fixCase);
     return partToReturn === 'all' ? parsedName : parsedName[partToReturn];
   }
 
   // Split remaining nameToParse into parts, remove and store preceding commas
-  for (i = 0, n = nameToParse.split(' '), l = n.length; i < l; i++) {
+  for (i = 0, n = (nameToParse as string).split(' '), l = n.length; i < l; i++) {
     part = n[i];
     comma = null;
     if (part.slice(-1) === ',') {
@@ -344,3 +355,5 @@ module.exports = (nameToParse, partToReturn, fixCase, stopOnError, useLongLists)
   parsedName = fixParsedNameCase(parsedName, fixCase);
   return partToReturn === 'all' ? parsedName : parsedName[partToReturn];
 };
+
+export = module.exports
