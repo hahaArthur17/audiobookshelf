@@ -40,6 +40,13 @@ Status: in progress. This file records observed events, not planned outcomes.
 - Fresh `npm run build:server` exited 0 with zero errors (`logs/batch-04-clean-build.log`); `npm run coverage` exited 0 with 356 passing (`logs/batch-04-coverage.log`). `check-batch-04.cjs` compared exact constants, notification/entity hashes and selected HTML sanitization results with Phase 2; output files matched. Phase 2 metadata behavior script also produced the same `BEHAVIOR_JSON` line; timestamped logger lines were excluded from the comparison. Evidence: `logs/batch-04-*`.
 - Accepted at approximately 2026-10-10 06:53 UTC. Account snapshot: five-hour window 41% used, weekly window 27% used. Fifteen of 46 Stage 1 targets migrated; 31 remain. Exact token/fee unavailable. The fixed HTML sample does not cover every entity or malformed HTML case, though the complete entity map hash matched.
 
+## Batch 07 — HLS, profiler and rate limiter
+
+- Owner: main Agent. Three JS→TS targets; contract `batch-07-contract.md`. Strict TS initially reported global-script identifier collisions. The original CommonJS assignments were retained and typed `export =` self-assignments were added at the end of each file so emitted code keeps the original export object/function identity; emitted JS is otherwise the same as baseline.
+- The initial offline profiler fixture returned in under 1 ms and exposed an **existing baseline bug**: the original profiler records rounded duration 0 into Node's histogram, which throws `ERR_OUT_OF_RANGE`. This was not fixed during language migration. The repeatable sample uses a short awaited delay and records result/error/option mutation without comparing nondeterministic durations.
+- Fresh `npm run build:server` exited 0 with zero errors (`logs/batch-07-clean-build.log`); `npm run coverage` exited 0 with 356 passing (`logs/batch-07-coverage.log`). `check-batch-07.cjs` baseline and candidate output files matched. Batches 01–04 fixed samples were rerun on the integrated build and all matched their stored baselines (`logs/batch-07-prior-*.log`).
+- Accepted at approximately 2026-10-10 06:56 UTC. Account snapshot: five-hour window 51% used, weekly window 29% used. Eighteen of 46 Stage 1 targets migrated; 28 remain. Exact token/fee unavailable. The rate-limit sample covers only the disabled-by-environment path, not live proxy IP or 429 behavior.
+
 Record subsequent batches with exact file ownership and prompt, model requested versus verified, context/contract version, start/end time, code commit, clean build exit/error count, coverage result, baseline/previous-commit behavior samples and differences, repair work, current usage snapshot, migrated and remaining count.
 
 ## Known limits
