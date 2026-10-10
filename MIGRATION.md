@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) **partially completed and paused at an accepted batch boundary**; Batches 01–10 accepted, **27/46 migrated, 19 remaining**. The current five-hour account window was 82% used after Batch 10, so no new batch was started. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run; do not start them without the user's explicit continuation.
+Status: Stage 1 (`server/utils/`) resumed on 2026-10-11 Auckland time from accepted commit `54bd5be7`; Batches 01–10 and 12 accepted, **28/46 migrated, 18 remaining**. Batch 11 (OPF/EPUB) is assigned in an isolated parser worktree. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
 
 ## Starting point
 
@@ -41,8 +41,9 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 08 | `parseComicInfoMetadata`, `parseComicMetadata`, `parseEbookMetadata` | Fresh strict build 0 errors; unchanged tests 356/356; fixed mock archive/XML/EPUB sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-08-*` |
 | 09 | `areEquivalent` | Fresh strict build 0 errors; unchanged tests 356/356; fixed nested/function/date/circular sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-09-*` |
 | 10 | `parseNameString` | Fresh strict build 0 errors; unchanged tests 356/356; fixed name/CJK/invalid-input sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-10-*` |
+| 12 | `parseOverdriveMediaMarkers` | Fresh strict build 0 errors; unchanged tests 356/356; fixed XML/marker/time/error sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-12-*` |
 
-Next, after the user explicitly requests continuation: reread `stage1-context.md`, `stage1-contract.md`, `stage1-run.md` and this index; confirm the HEAD/working tree and usage window; choose a small next batch from the 19 paths below; verify against the immediately prior accepted commit and Phase 2 baseline. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
+Next: integrate and independently verify Batch 11 when its isolated parser work is ready; review the read-only query survey, freeze a bounded contract, then continue Stage 1 in small batches. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
 
 Remaining Stage 1 targets:
 
@@ -58,7 +59,6 @@ server/utils/migrations/oldDbFiles.js
 server/utils/parsers/parseEpubMetadata.js
 server/utils/parsers/parseFullName.js
 server/utils/parsers/parseOpfMetadata.js
-server/utils/parsers/parseOverdriveMediaMarkers.js
 server/utils/podcastUtils.js
 server/utils/prober.js
 server/utils/queries/libraryFilters.js

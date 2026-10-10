@@ -1,0 +1,7 @@
+# Batch 12 contract: OverDrive media markers
+
+Target: `server/utils/parsers/parseOverdriveMediaMarkers.js` only. Main Agent owns this file. This contract is frozen before implementation.
+
+- The direct CommonJS object has one named arrow export, `parseOverdriveMediaMarkersAsChapters`. It consumes ordered audio files with `duration` and `metaTags.tagOverdriveMediaMarker`. No truthy markers returns `null`. If parsed marker-bearing tracks do not match the total audio-file count, it returns `null`.
+- `xml2js.parseString` is invoked with its existing callback form inside the synchronous helper. Preserve the observable synchronous return, XML conversion and the current behavior on malformed XML. The parser mutates marker objects by converting array values to strings, removes names matching the existing weird-chapter regex, computes starts from track durations and colon-separated times, and sets each end to the next start or total duration. Preserve title/order/IDs, `NaN` behavior and existing exceptions on malformed shapes.
+- Debug-log calls and ordering are observable. Preserve direct caller behavior in `AudioFileScanner.getBookChaptersFromAudioFiles`; do not edit scanner, tests, XML library, config, lockfiles or shared types. Compare baseline and candidate on empty, one/multiple tracks, removed subchapters, mismatch, malformed XML and invalid time. Review emitted CommonJS callable shape and run fresh strict build plus all 356 original tests before acceptance.
