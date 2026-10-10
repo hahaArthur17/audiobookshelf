@@ -1,14 +1,100 @@
-const Sequelize = require('sequelize')
-const Logger = require('../../Logger')
-const Database = require('../../Database')
-const libraryItemsBookFilters = require('./libraryItemsBookFilters')
+const Sequelize = require('sequelize') as typeof import('sequelize')
+const Logger = require('../../Logger') as { warn(message: string): void }
 
-module.exports = {
-  decode(text) {
+interface OldSeries extends Record<string, unknown> {
+  totalDuration?: number
+  rssFeed?: unknown
+  books?: unknown[]
+}
+
+interface LibraryItemRow {
+  media?: BookRow | PodcastRow
+  toOldJSONMinified(): unknown
+}
+
+interface BookRow {
+  libraryItem: LibraryItemRow
+}
+
+interface PodcastRow {}
+
+interface BookSeriesRow {
+  sequence: string | null
+  book: BookRow
+}
+
+interface SeriesRow {
+  dataValues: { totalDuration?: number | null }
+  feeds?: Array<{ toOldJSONMinified(): unknown }>
+  bookSeries: BookSeriesRow[]
+  toOldJSON(): OldSeries
+}
+
+interface SeriesModel {
+  findAndCountAll(options: object): Promise<{ rows: SeriesRow[]; count: number }>
+}
+
+interface DatabaseModule {
+  feedModel: unknown
+  bookSeriesModel: unknown
+  bookModel: unknown
+  libraryItemModel: unknown
+  authorModel: unknown
+  seriesModel: SeriesModel
+  sequelize: { random(): unknown }
+}
+
+interface UserPermissionBookWhere {
+  bookWhere: unknown[]
+  replacements: Record<string, unknown>
+}
+
+interface LibraryItemsBookFilters {
+  getUserPermissionBookWhereQuery(user: SeriesUser): UserPermissionBookWhere
+}
+
+interface SeriesUser {
+  id: string
+  canAccessExplicitContent: boolean
+  permissions?: {
+    accessAllTags?: boolean
+    itemTagsSelected?: string[] | null
+    selectedTagsNotAccessible?: boolean
+  }
+}
+
+interface SeriesLibrary {
+  id: string
+  settings: { hideSingleBookSeries: boolean }
+}
+
+interface SeriesFiltersModule {
+  decode(text: string): string | null
+  getFilteredSeries(
+    library: SeriesLibrary,
+    user: SeriesUser,
+    filterBy: string | undefined,
+    sortBy: string | undefined,
+    sortDesc: boolean,
+    include: string[],
+    limit: number | string,
+    offset: number
+  ): Promise<{ series: OldSeries[]; count: number }>
+}
+
+const Database = require('../../Database') as DatabaseModule
+const libraryItemsBookFilters = require('./libraryItemsBookFilters') as LibraryItemsBookFilters
+const serverGlobals = globalThis as typeof globalThis & {
+  ServerSettings: { sortingIgnorePrefix: boolean }
+}
+
+const seriesFilters = {
+  decode(text: string): string | null {
     try {
       return Buffer.from(decodeURIComponent(text), 'base64').toString()
     } catch (error) {
-      Logger.warn(`[seriesFilters] Failed to decode filter value "${text}": ${error.message}`)
+      const message = (error as { message: unknown }).message
+      Logger.warn(`[seriesFilters] Failed to decode filter value "${text}": ${message}`)
       return null
     }
   },
@@ -26,9 +112,19 @@ module.exports = {
    * @param {number} offset
    * @returns {Promise<{ series:object[], count:number }>}
    */
-  async getFilteredSeries(library, user, filterBy, sortBy, sortDesc, include, limit, offset) {
-    let filterValue = null
-    let filterGroup = null
+  async getFilteredSeries(
+    this: SeriesFiltersModule,
+    library: SeriesLibrary,
+    user: SeriesUser,
+    filterBy: string | undefined,
+    sortBy: string | undefined,
+    sortDesc: boolean,
+    include: string[],
+    limit: number | string,
+    offset: number
+  ): Promise<{ series: OldSeries[]; count: number }> {
+    let filterValue: string | null = null
+    let filterGroup: string | null = null
     if (filterBy) {
       const searchGroups = ['genres', 'tags', 'authors', 'progress', 'narrators', 'publishers', 'languages']
       const group = searchGroups.find((_group) => filterBy.startsWith(_group + '.'))
@@ -36,7 +132,7 @@ module.exports = {
       filterValue = group ? this.decode(filterBy.replace(`${group}.`, '')) : null
     }
 
-    const seriesIncludes = []
+    const seriesIncludes: Array<Record<string, unknown>> = []
     if (include.includes('rssfeed')) {
       seriesIncludes.push({
         model: Database.feedModel
@@ -45,7 +141,7 @@ module.exports = {
 
     const userPermissionBookWhere = libraryItemsBookFilters.getUserPermissionBookWhereQuery(user)
 
-    const seriesWhere = [
+    const seriesWhere: object[] = [
       {
         libraryId: library.id
       }
@@ -63,8 +159,8 @@ module.exports = {
 
     // Handle filters
     // TODO: Simplify and break-out
-    let attrQuery = null
-    if (['genres', 'tags', 'narrators'].includes(filterGroup)) {
+    let attrQuery: string | null = null
+    if (['genres', 'tags', 'narrators'].includes(filterGroup || '')) {
       attrQuery = `SELECT count(*) FROM books b, bookSeries bs WHERE bs.seriesId = series.id AND bs.bookId = b.id AND (SELECT count(*) FROM json_each(b.${filterGroup}) WHERE json_valid(b.${filterGroup}) AND json_each.value = :filterValue) > 0`
       userPermissionBookWhere.replacements.filterValue = filterValue
     } else if (filterGroup === 'authors') {
@@ -119,8 +215,8 @@ module.exports = {
       )
     }
 
-    const order = []
-    let seriesAttributes = {
+    const order: unknown[] = []
+    const seriesAttributes: { include: unknown[] } = {
       include: []
     }
 
@@ -132,7 +228,7 @@ module.exports = {
     } else if (sortBy === 'addedAt') {
       order.push(['createdAt', dir])
     } else if (sortBy === 'name') {
-      if (global.ServerSettings.sortingIgnorePrefix) {
+      if (serverGlobals.ServerSettings.sortingIgnorePrefix) {
         order.push([Sequelize.literal('nameIgnorePrefix COLLATE NOCASE'), dir])
       } else {
         order.push([Sequelize.literal('`series`.`name` COLLATE NOCASE'), dir])
@@ -184,7 +280,7 @@ module.exports = {
     })
 
     // Map series to old series
-    const allOldSeries = []
+    const allOldSeries: OldSeries[] = []
     for (const s of series) {
       const oldSeries = s.toOldJSON()
 
@@ -207,7 +303,8 @@ module.exports = {
       })
       oldSeries.books = s.bookSeries.map((bs) => {
         const libraryItem = bs.book.libraryItem
-        delete bs.book.libraryItem
+        const bookWithoutLibraryItem: { libraryItem?: LibraryItemRow } = bs.book
+        delete bookWithoutLibraryItem.libraryItem
         libraryItem.media = bs.book
         const oldLibraryItem = libraryItem.toOldJSONMinified()
         return oldLibraryItem
@@ -221,3 +318,5 @@ module.exports = {
     }
   }
 }
+
+export = seriesFilters
