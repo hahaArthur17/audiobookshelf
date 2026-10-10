@@ -151,8 +151,8 @@ Status: in progress. This file records observed events, not planned outcomes.
 
 ## Session 2 pause checkpoint
 
-- Resumed from accepted commit `54bd5be7` at approximately 2026-10-10 11:20 UTC. After Batches 12–19 were accepted in this session, the manifest audit found **37 converted, 9 remaining, 0 unaccounted** (`logs/stage1-session2-audit.log`). The final integrated build and original suite are recorded in Batch 18 logs. No Stage 2 target was changed.
-- Five-hour Codex account usage moved from 0% at this session's start to 74% at the Batch 18 acceptance snapshot; weekly usage moved from 36% to 47%. These account-wide percentages are a proxy, not exact token counts or cost. No reset credit was used. The session stopped at an accepted green boundary to retain quota for later work. The exact elapsed wall time is recorded in the external partial-results Markdown after closing this session.
+- Resumed from accepted commit `54bd5be7` at approximately 2026-10-10 11:20 UTC. After Batches 11–19 were accepted in this session, the manifest audit found **37 converted, 9 remaining, 0 unaccounted** (`logs/stage1-session2-audit.log`). The final integrated build and original suite are recorded in Batch 18 logs. No Stage 2 target was changed.
+- Five-hour Codex account usage moved from 0% at this session's start to 74% at the Batch 18 acceptance snapshot; weekly usage moved from 36% to 47%. These account-wide percentages are a proxy, not exact token counts or cost. No reset credit was used. The session stopped at an accepted green boundary to retain quota for later work. Approximate elapsed wall time is recorded in the external partial-results Markdown.
 
 ## Batch 19 — legacy database files
 
