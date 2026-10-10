@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) resumed on 2026-10-11 Auckland time from accepted commit `54bd5be7`; Batches 01–10 and 12 accepted, **28/46 migrated, 18 remaining**. Batch 11 (OPF/EPUB) is assigned in an isolated parser worktree. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
+Status: Stage 1 (`server/utils/`) resumed on 2026-10-11 Auckland time from accepted commit `54bd5be7`; Batches 01–10, 12 and 14 accepted, **29/46 migrated, 17 remaining**. Batches 11 (OPF/EPUB) and 13 (podcast queries) are assigned in isolated worktrees. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
 
 ## Starting point
 
@@ -42,8 +42,9 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 09 | `areEquivalent` | Fresh strict build 0 errors; unchanged tests 356/356; fixed nested/function/date/circular sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-09-*` |
 | 10 | `parseNameString` | Fresh strict build 0 errors; unchanged tests 356/356; fixed name/CJK/invalid-input sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-10-*` |
 | 12 | `parseOverdriveMediaMarkers` | Fresh strict build 0 errors; unchanged tests 356/356; fixed XML/marker/time/error sample and all prior batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-12-*` |
+| 14 | `zipHelpers` | Fresh strict build 0 errors; unchanged tests 356/356; fixed offline archive/response event sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-run.md` and `logs/batch-14-*` |
 
-Next: integrate and independently verify Batch 11 when its isolated parser work is ready; review the read-only query survey, freeze a bounded contract, then continue Stage 1 in small batches. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
+Next: integrate and independently verify Batches 11 and 13 when their isolated work is ready, then continue Stage 1 in small batches. Do not count isolated or unverified work as complete. The larger query, media and migration files require their own later batches.
 
 Remaining Stage 1 targets:
 
@@ -65,5 +66,4 @@ server/utils/queries/libraryFilters.js
 server/utils/queries/libraryItemsBookFilters.js
 server/utils/queries/libraryItemsPodcastFilters.js
 server/utils/scandir.js
-server/utils/zipHelpers.js
 ```
