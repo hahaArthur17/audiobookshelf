@@ -1,17 +1,20 @@
 const xml = require('../../libs/xml')
 const escapeForXML = require('../../libs/xml/escapeForXML')
 
-/**
- * Generate OPML file string for podcasts in a library
- * @param {import('../../models/Podcast')[]} podcasts 
- * @param {boolean} [indent=true] 
- * @returns {string}
- */
-module.exports.generate = (podcasts, indent = true) => {
-  const bodyItems = []
+interface PodcastForOpml {
+  feedURL?: string | null
+  title?: string | null
+  description?: string | null
+  itunesPageUrl?: string | null
+  language?: string | null
+}
+
+/** Generate an OPML file string for podcasts in a library. */
+function generate(podcasts: PodcastForOpml[], indent = true): string {
+  const bodyItems: Array<{ outline: { _attr: Record<string, string | null | undefined> } }> = []
   podcasts.forEach((podcast) => {
     if (!podcast.feedURL) return
-    const feedAttributes = {
+    const feedAttributes: Record<string, string | null | undefined> = {
       type: 'rss',
       text: escapeForXML(podcast.title),
       title: escapeForXML(podcast.title),
@@ -57,3 +60,4 @@ module.exports.generate = (podcasts, indent = true) => {
 
   return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml(data, indent)
 }
+module.exports.generate = generate

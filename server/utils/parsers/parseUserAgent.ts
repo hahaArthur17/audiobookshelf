@@ -1,14 +1,20 @@
 const uaParserJs = require('../../libs/uaParser')
 
-/**
- * @param {string|null|undefined} userAgent
- * @returns {{ browserName?:string, browserVersion?:string, osName?:string, osVersion?:string, deviceType?:string, model?:string, vendor?:string }|null}
- */
-function parseUserAgent(userAgent) {
+interface UserAgentInfo {
+  browserName?: string
+  browserVersion?: string
+  osName?: string
+  osVersion?: string
+  deviceType?: string
+  model?: string
+  vendor?: string
+}
+
+function parseUserAgent(userAgent: string | null | undefined): UserAgentInfo | null {
   if (!userAgent) return null
 
   const ua = uaParserJs(userAgent)
-  const deviceInfo = {
+  const deviceInfo: UserAgentInfo = {
     browserName: ua?.browser?.name || undefined,
     browserVersion: ua?.browser?.version || undefined,
     osName: ua?.os?.name || undefined,
@@ -19,7 +25,8 @@ function parseUserAgent(userAgent) {
   }
 
   for (const key in deviceInfo) {
-    if (deviceInfo[key] === undefined) delete deviceInfo[key]
+    const infoKey = key as keyof UserAgentInfo
+    if (deviceInfo[infoKey] === undefined) delete deviceInfo[infoKey]
   }
 
   return Object.keys(deviceInfo).length ? deviceInfo : null
