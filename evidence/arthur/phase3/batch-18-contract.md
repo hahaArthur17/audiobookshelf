@@ -1,0 +1,7 @@
+# Batch 18 contract: comic-book extractors
+
+Target: `server/utils/comicBookExtractors.js` only. Parser/Archive Sub-Agent owns the isolated code rename; main Agent owns integration and acceptance. This contract is frozen before implementation.
+
+- Preserve the direct CommonJS `{ createComicBookExtractor }` export and factory dispatch by lowercased extension. `.cbr` constructs the RAR extractor, `.cbz` constructs the stream ZIP extractor, and unsupported extensions throw with the original message. Preserve class prototypes, constructor property insertion order and `close()` return behavior; use erased `declare` fields if needed rather than emitted class-field initializers.
+- Preserve archive path sanitization and rejection of traversal/absolute paths, temp-directory selection, writability check, file ordering, extraction/cleanup and the original async error/log paths. Keep the currently unused legacy CBZ class behavior too; do not simplify it away. Do not change actual filesystem operations or archive library calls.
+- No edits to other source files, tests, package/config/lockfiles or shared contracts. In the isolated worktree, run a fresh strict build and all 356 unchanged tests; compare offline mocked CBR/CBZ success/failure and factory behavior against its JS baseline. Report emitted-JS differences, constructor field order and unexercised real-archive paths. Commit only the source rename. Main Agent will independently verify the integrated result before counting it.
