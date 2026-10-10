@@ -187,7 +187,7 @@ class Playlist extends Model {
           numMediaItems--
         } else {
           if (playlistMediaItem.order !== order) {
-            playlistMediaItem.update({
+            await playlistMediaItem.update({
               order
             })
           }
