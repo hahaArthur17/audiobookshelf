@@ -1,0 +1,153 @@
+PO-S07 pre-flight, 2026-10-10 20:17:19
+== Branch and last 3 commits ==
+Aung-Min-Myat/po-s01
+33931ea9 [PO-S05] evidence: all-remaining-models run, results and measurements
+053a778b [PO-S05] models: BookSeries, BookAuthor, Book: migrate to TypeScript
+4186309f [PO-S05] models: CustomMetadataProvider, Device, MediaProgress, ApiKey: migrate to TypeScript
+== Working tree (an empty list means clean) ==
+?? evidence/test-results/PO-S07/
+== server\models ==
+ts: 17   js: 8
+Author.js   208 lines
+Collection.js   292 lines
+Feed.js   682 lines
+FeedEpisode.js   349 lines
+LibraryItem.js   1044 lines
+PlaybackSession.js   257 lines
+Playlist.js   379 lines
+User.js   1026 lines
+== Permission rules in the settings files ==
+-- .claude\settings.json : not found
+-- .claude\settings.local.json
+{
+  "defaultMode": "acceptEdits",
+  "allow": [
+    "Bash(npm run build:server)",
+    "Bash(npm test)",
+    "Bash(git status)",
+    "Bash(git diff *)",
+    "Bash(git add *)",
+    "Bash(git commit *)",
+    "Bash(git mv *)",
+    "Bash(git log *)",
+    "Bash(git show *)",
+    "Bash(git grep *)",
+    "Bash(grep *)",
+    "Bash(ls *)",
+    "Bash(wc *)",
+    "Bash(head *)",
+    "Bash(tail *)",
+    "Bash(npx tsc -p tsconfig.check.json)",
+    "Bash(npx tsc -p tsconfig.check.json *)"
+  ],
+  "deny": [
+    "Bash(git push *)",
+    "Bash(git merge *)",
+    "Bash(git rebase *)",
+    "Bash(git reset --hard *)",
+    "Bash(npm install *)",
+    "Bash(npm i *)",
+    "Edit(test/**)",
+    "Bash(git remote *)",
+    "Edit(tsconfig.server.json)",
+    "Edit(package.json)",
+    "Edit(package-lock.json)",
+    "Edit(server/libs/**)",
+    "Bash(git reset *)",
+    "Bash(git clean *)",
+    "Edit(tsconfig.check.json)"
+  ]
+}
+-- C:\Users\WatCHoUT\.claude\settings.json
+null
+== test folder ==
+test files: 35
+test\server
+test\server\auth
+test\server\controllers
+test\server\finders
+test\server\managers
+test\server\migrations
+test\server\models
+test\server\objects
+test\server\providers
+test\server\utils
+test\server\managers\migrations
+test\server\utils\parsers
+-- test files that load one of the 8 models:
+
+== package.json scripts ==
+{
+  "build:server": "tsc -p tsconfig.server.json",
+  "dev": "nodemon --watch server --watch index.js --watch test --watch dev.js --ext js,ts --exec \"npm run build:server && node dist-server/index.js\" -- --dev",
+  "start": "node dist-server/index.js",
+  "start-dev": "node dist-server/index.js --prod-with-dev-env",
+  "client": "cd client && npm ci && npm run generate",
+  "prod": "npm run client && npm ci && npm run build:server && npm run start",
+  "build-win": "npm run client && npm run build:server && pkg --config package.json -t node24-win-x64 -o ./dist/win/audiobookshelf -C GZip dist-server/index.js",
+  "build-win-no-compress": "npm run client && npm run build:server && pkg --config package.json -t node24-win-x64 -o ./dist/win/audiobookshelf dist-server/index.js",
+  "build-linux": "build/linuxpackager",
+  "docker": "docker buildx build --platform linux/amd64,linux/arm64 --push .  -t advplyr/audiobookshelf",
+  "docker-amd64-local": "docker buildx build --platform linux/amd64 --load .  -t advplyr/audiobookshelf-amd64-local",
+  "docker-arm64-local": "docker buildx build --platform linux/arm64 --load .  -t advplyr/audiobookshelf-arm64-local",
+  "deploy-linux": "node deploy/linux",
+  "test": "npm run build:server && mocha dist-server/test",
+  "coverage": "npm run build:server && nyc mocha dist-server/test",
+  "lint": "eslint ."
+}
+== Baseline build and test at HEAD ==
+build errors (lines with 'error TS'): 0
+passing line: 356 passing (6s)
+failing lines: 0
+files in dist-server: 464
+seconds for build and test: 80
+baseline copy, files: 464
+== CLAUDE.md (with line numbers) ==
+  1: # Context for the JavaScript to TypeScript migration of server/
+  2: 
+  3: Goal: migrate the Audiobookshelf server (server/, minus the out-of-scope list below) from JavaScript to TypeScript with meaningful types, type-only.
+  4: Done so far: server/finders/ and 11 more files (see git log for [PO-S01]). Use them as worked examples.
+  5: The spec and plan for the finders are in evidence/plans/ (reference only).
+  6: 
+  7: ## Scope and order
+  8: - Out of scope: server/libs/ (vendored), server/migrations/ (MigrationManager copies and loads these by name), server/utils/htmlEntities.js (a data table), server/models/ is IN scope from stage PO-S03, using the uncallable-overload pattern below. Convert models only after the settings classes they depend on.
+  9: - Work leaf-first: files with no relative require() first, preferring files that have tests; then files whose relative requires point only at files already converted.
+ 10: - Leave the root files (Server.js, Database.js, Auth.js and the like) for last.
+ 11: 
+ 12: ## Rules
+ 13: 1. Type-only: no change in runtime behaviour, no bug fixes. List any bug you find in the bug log named in the task.
+ 14: 2. Rename with `git mv x.js x.ts`.
+ 15: 3. Keep the CommonJS shape: `import x = require('...')` and `export = ...`. What a JavaScript caller gets from require() must stay identical. For types from a package use `import type { ... } from '...'` (erased when compiled).
+ 16: 4. Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, as any, as unknown as.
+ 17: 5. Allowed, with a one-line comment each time: a class or payload/data-interface index signature ([key: string]: unknown) where the code assigns or reads by a dynamic key; an import type that replaces a require of names that are undefined at runtime (name it in the commit message); and, as before: a non-null assertion (!) where a field starts as null and is set before it is read; a class index signature ([key: string]: unknown) where the code assigns by a dynamic key; a single-step `as` cast only at a boundary where an untyped module returns a wrong or too-vague type.
+ 18: 6. Do not edit test/, tsconfig.server.json, package.json, package-lock.json or server/libs/. Do not install packages. Do not push, merge, rebase, reset or clean.
+ 19: 7. Leave existing JSDoc comments unchanged. Use targeted edits, not whole-file rewrites.
+ 20: 
+ 21: ## Checks (after every file or small group)
+ 22: - npm run build:server must pass, and npm test must show 356 passing.
+ 23: - Commit each passing step with the prefix given in the task.
+ 24: - If a file cannot pass within these rules, restore it (git mv back, git restore that one file), say why, and do not commit it.
+ 25: 
+ 26: ## Pitfalls found so far
+ 27: - Class fields: declare them with `declare` (the target is ES2022; a plain field would compile to a real field that starts as undefined and changes behaviour).
+ 28: - Comments: a comment directly above an interface or type disappears when compiled, and TypeScript drops comments placed above `export =`. Put new types above existing JSDoc blocks, and leave a blank line after a file-header comment.
+ 29: - TypeScript 5.9.3 can crash ("Debug Failure. False expression") in an incremental build right after a bare rename, or with `declare global`. Add the imports and types in the same edit as the rename. A non-incremental, no-emit check shows the real errors (see evidence/test-results/SP-S01/tsconfig.redcheck.json). Never run `tsc --declaration` on the whole program.
+ 30: - Globals set elsewhere: declare them in the file (`declare const global: typeof globalThis & { MetadataPath: string }`). Never use `declare global`.
+ 31: - Untyped npm packages: describe only what is used in server/types/untypedModules.d.ts and pull it in with `/// <reference path="...">` (tsconfig excludes *.d.ts). Types for express, cookie-parser, express-session, passport and passport-jwt are installed (@types).
+ 32: - Untyped helpers in server/utils return any. Annotate the destructured import once instead of casting at each call.
+ 33: - `export =` moves `module.exports = ...` to the end of the compiled file. That is only safe when nothing but function declarations follow it.
+ 34: - server/libs/fsExtra has an inferred type without writeFile and other methods, because they are added in a loop. One boundary cast per call site is allowed, with a comment.
+ 35: 
+ 36: ## Sequelize models (D3, from the PO-S02 spike on Setting.js)
+ 37: - Do not touch the base class. Declare fields with `declare`. Write init as two overloads followed by the implementation, in this order. First the uncallable overload: `static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces`. Then the real signature as a second overload: `static init(sequelize: Sequelize): void` (without it, a TypeScript caller of init gets TS2684). Then the JSDoc of init. Then the implementation: `static init(sequelize: Sequelize): void { ... }`.
+ 38: - The JSDoc of init goes BELOW both overloads, directly above the implementation. TypeScript erases overloads together with any comment attached to them, so a JSDoc above the first overload disappears from the compiled file (checked in PO-S04).
+ 39: - Declare the constructor parameters as optional: `constructor(values?: CreationAttributes<X>, options?: BuildOptions)`. Sequelize needs the class to be callable as `new () => X` for calls such as `this.findAll()` and `hasMany`; required parameters fail with TS2684.
+ 40: - Import shape that worked in PO-S04 (the compiled file stays almost equal to the original): `import sequelizeModule = require('sequelize')`, then `const { DataTypes, Model } = sequelizeModule`, then `import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'`. After each model, compare its compiled file with the baseline copy if the task names one: only the require lines may differ.
+ 41: - Untyped JS constructors with a `settings = null` default are inferred as taking null: convert those classes first (EmailSettings, NotificationSettings, ServerSettings), then the models that use them. A cast at a constructor call is a last resort and needs a comment.
+ 42: - Convert models one at a time, with a build and 356 tests after each. If a model does not fit, restore it, record the compiler errors in the commit-free notes, and move on.
+ 43: 
+ 44: ## Settings (important)
+ 45: - Only Edit(path) deny rules work; Write(path) rules are ignored (Claude Code warns about them). Edit rules cover all file-editing tools. Shell commands that write files are not covered by any rule.
+ 46: ## Type check without building (PO-S03)
+ 47: - Run `npx tsc -p tsconfig.check.json` for a no-emit check. It writes nothing, so it is safe to run while other agents work. Filter its output to your own folder (for example with grep "^server/utils/").
+ 48: - Only the main agent runs `npm run build:server` and `npm test`, and only the main agent commits.
