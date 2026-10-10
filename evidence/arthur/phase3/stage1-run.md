@@ -19,6 +19,13 @@ Status: in progress. This file records observed events, not planned outcomes.
 - `check-batch-01.cjs` exercised direct CommonJS export types, global extension arrays, timeout callback and property order, forwarded protocol cases, symbol/class serialization and circular-input error. Final Phase 2 and candidate output files are byte-equal (`logs/batch-01-baseline.log`, `logs/batch-01-candidate.log`). Emitted JS of `longTimeout`, `globals` and `stringifySequelizeQuery` is the same as the Phase 2 build; `requestUtils` differs only by removed JSDoc comments.
 - Accepted at approximately 2026-10-10 06:46 UTC. Account snapshot: five-hour window 20% used, weekly window 24% used. Exact token/fee and main Agent model billing identity unavailable. Four of 46 Stage 1 targets migrated; 42 remain. No unresolved new behavior difference in the exercised paths. This sample does not cover every possible input.
 
+## Batch 02 — parsers and OPML generator
+
+- Isolated Parser Sub-Agent requested `gpt-6-luna` / `xhigh` and owned only four files. Actual billed variant/effort was not exposed. Agent commit `517a6ad5ec0c2f4664b011c1293180b60304b83a` was cherry-picked as `47cb05ae`. Agent reported about three minutes of elapsed work, strict build and 356 original tests passing, and equal local fixed samples.
+- Main Agent independently ran a fresh strict build (0 errors), `npm run coverage` (356 passing), and `check-batch-02.cjs` against Phase 2 and candidate builds. The fixed parser/OPML outputs matched; Batch 01 regression sample also remained equal. Raw logs are `logs/batch-02-*`.
+- Emitted-JS review found a semantic export change overlooked by the initial sample: `opmlGenerator.generate` had changed from an arrow function to a normal function, adding a constructible prototype. Main Agent restored the arrow export and added callable-shape checks to the fixture. Final fixed outputs match the Phase 2 build and the generator's emitted JavaScript differs only in its comment. This is one integration repair after a green build/test result.
+- Accepted at approximately 2026-10-10 06:49 UTC. Account snapshot: five-hour window 29% used, weekly window 25% used. Eight of 46 Stage 1 targets migrated; 38 remain. Exact token/fee per agent unavailable. Real external feeds and all malformed parser inputs were not exercised.
+
 Record subsequent batches with exact file ownership and prompt, model requested versus verified, context/contract version, start/end time, code commit, clean build exit/error count, coverage result, baseline/previous-commit behavior samples and differences, repair work, current usage snapshot, migrated and remaining count.
 
 ## Known limits

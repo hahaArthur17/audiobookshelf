@@ -10,7 +10,7 @@ interface PodcastForOpml {
 }
 
 /** Generate an OPML file string for podcasts in a library. */
-function generate(podcasts: PodcastForOpml[], indent = true): string {
+module.exports.generate = (podcasts: PodcastForOpml[], indent = true): string => {
   const bodyItems: Array<{ outline: { _attr: Record<string, string | null | undefined> } }> = []
   podcasts.forEach((podcast) => {
     if (!podcast.feedURL) return
@@ -60,4 +60,3 @@ function generate(podcasts: PodcastForOpml[], indent = true): string {
 
   return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml(data, indent)
 }
-module.exports.generate = generate
