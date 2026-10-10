@@ -1,0 +1,39 @@
+diff --git "a/D:\\SEM-2\\574\\Project\\po-s04-baseline\\dist-server\\server\\models\\Setting.js" "b/D:\\SEM-2\\574\\Project\\audiobookshelf-po\\dist-server\\server\\models\\Setting.js"
+index 2a924a4c..a2239666 100644
+--- "a/D:\\SEM-2\\574\\Project\\po-s04-baseline\\dist-server\\server\\models\\Setting.js"
++++ "b/D:\\SEM-2\\574\\Project\\audiobookshelf-po\\dist-server\\server\\models\\Setting.js"
+@@ -1,7 +1,8 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-const oldEmailSettings = require('../objects/settings/EmailSettings');
+-const oldServerSettings = require('../objects/settings/ServerSettings');
+-const oldNotificationSettings = require('../objects/settings/NotificationSettings');
++const sequelizeModule = require("sequelize");
++const { DataTypes, Model } = sequelizeModule;
++const oldEmailSettings = require("../objects/settings/EmailSettings");
++const oldServerSettings = require("../objects/settings/ServerSettings");
++const oldNotificationSettings = require("../objects/settings/NotificationSettings");
+ class Setting extends Model {
+     constructor(values, options) {
+diff --git "a/D:\\SEM-2\\574\\Project\\po-s04-baseline\\dist-server\\server\\models\\LibraryFolder.js" "b/D:\\SEM-2\\574\\Project\\audiobookshelf-po\\dist-server\\server\\models\\LibraryFolder.js"
+index eb53320d..38e7be53 100644
+--- "a/D:\\SEM-2\\574\\Project\\po-s04-baseline\\dist-server\\server\\models\\LibraryFolder.js"
++++ "b/D:\\SEM-2\\574\\Project\\audiobookshelf-po\\dist-server\\server\\models\\LibraryFolder.js"
+@@ -1,4 +1,5 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
++const sequelizeModule = require("sequelize");
++const { DataTypes, Model } = sequelizeModule;
+ class LibraryFolder extends Model {
+     constructor(values, options) {
+diff --git "a/D:\\SEM-2\\574\\Project\\po-s04-baseline\\dist-server\\server\\models\\Session.js" "b/D:\\SEM-2\\574\\Project\\audiobookshelf-po\\dist-server\\server\\models\\Session.js"
+index 9350480e..9e565248 100644
+--- "a/D:\\SEM-2\\574\\Project\\po-s04-baseline\\dist-server\\server\\models\\Session.js"
++++ "b/D:\\SEM-2\\574\\Project\\audiobookshelf-po\\dist-server\\server\\models\\Session.js"
+@@ -1,4 +1,5 @@
+ "use strict";
+-const { DataTypes, Model, Op } = require('sequelize');
++const sequelizeModule = require("sequelize");
++const { DataTypes, Model, Op } = sequelizeModule;
+ class Session extends Model {
+     constructor(values, options) {
