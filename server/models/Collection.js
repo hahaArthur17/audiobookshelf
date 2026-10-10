@@ -96,7 +96,7 @@ class Collection extends Model {
           return null
         }
 
-        this.books = books
+        c.books = books
 
         const collectionExpanded = c.toOldJSONExpanded()
 
