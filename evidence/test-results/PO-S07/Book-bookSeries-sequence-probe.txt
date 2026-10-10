@@ -1,0 +1,121 @@
+# PO-S07 Book, reported bug: bookSeries.sequence is read without the ?. guard used elsewhere (Book.ts:651-653 and 686; lines 517-519 and 552 of the old Book.js)
+# RESULT: NOT CONFIRMED as a bug to fix. The crash is real, but the intended behaviour is not clear from the code, so the code was not changed and no test was added.
+# This is a probe, not a test of the suite: it was run from outside the repo against the compiled server at HEAD ed903cc1. 2026-10-10 21:35:42
+# Command: REPO_ROOT=<repo> npx mocha <scratchpad>/Book.bookSeries.probe.test.js
+# All six cases PASS: they describe what the unchanged code does. The probe source follows the output.
+#
+# What the probe shows:
+#  - A series loaded without its join row (through: { attributes: [] }) has no bookSeries. Both reported places then throw a TypeError.
+#  - The three guarded reads (seriesName, oldMetadataToJSONMinified, getAbsMetadataJson) build display text and report such a series as having no sequence.
+# Why the intended behaviour is not clear:
+#  - Line 686 (oldMetadataToJSON) returns the sequence as data. Without the join row the sequence is not known. A ?. would return undefined, a value the
+#    old JSON never has (it is a string or null); null or '' would be two other guesses. The method family throws on purpose when a required include is
+#    missing (toOldJSON: 'authors are not loaded'), so a clear error is a fourth candidate, and it is the closest to what happens now.
+#  - Lines 651-653 (updateSeriesFromRequest) read the sequence and then WRITE it to the same join row and save it. A ?. on the read would only move the
+#    TypeError to the next line. Whether the method should skip the update, load the join row or create it is not said anywhere.
+#  - No caller reaches either line today: the only query in server/ that loads series without the join row is the 'no series' filter of
+#    utils/queries/libraryItemsBookFilters.js:476, whose books have no series. The two callers of updateSeriesFromRequest() (LibraryItemController) load
+#    the book with getExpandedById(), which loads the join row.
+
+
+
+  PROBE Book and a series loaded without its bookSeries join row (current code, no fix)
+    ✔ with the join row loaded (the include of every expanded query): the old metadata has the sequence
+    ✔ without the join row (through: { attributes: [] }): series[0].bookSeries is undefined
+    ✔ without the join row: the guarded reads work and report the series as having no sequence
+    ✔ without the join row: oldMetadataToJSON() throws a TypeError (Book.ts:686, the reported line)
+    ✔ without the join row: updateSeriesFromRequest() rejects with a TypeError (Book.ts:651, the other reported lines)
+    ✔ for comparison: toOldJSON() throws on purpose when a required include is missing
+
+
+  6 passing (2s)
+
+exit code: 0
+
+# ---------------- probe source ----------------
+// PO-S07 probe for the reported bug in Book.ts (lines 517-519 and 552 of the old Book.js; Book.ts:651-653 and 686 now):
+//   bookSeries.sequence is read without the ?. guard used elsewhere.
+// Question: what does the current code do when a series is loaded without its join row, and does the code say what it should do?
+// This file is NOT part of the test suite. It is run from outside the repo against the compiled server.
+// Usage: REPO_ROOT=<repo> npx mocha <this file>
+const path = require('path')
+const root = process.env.REPO_ROOT
+const { expect } = require(path.join(root, 'node_modules/chai'))
+const { Sequelize } = require(path.join(root, 'node_modules/sequelize'))
+const Database = require(path.join(root, 'dist-server/server/Database'))
+
+describe('PROBE Book and a series loaded without its bookSeries join row (current code, no fix)', () => {
+  let bookId
+  let libraryId
+
+  /**
+   * @param {string[]} throughAttributes attributes of the join row to load; [] loads no join row
+   */
+  function loadBook(throughAttributes) {
+    return Database.bookModel.findByPk(bookId, {
+      include: [
+        { model: Database.authorModel, through: { attributes: [] } },
+        { model: Database.seriesModel, through: { attributes: throughAttributes } }
+      ]
+    })
+  }
+
+  beforeEach(async () => {
+    global.ServerSettings = {}
+    Database.sequelize = new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false })
+    Database.sequelize.uppercaseFirst = (str) => (str ? `${str[0].toUpperCase()}${str.substr(1)}` : '')
+    await Database.buildModels()
+
+    const library = await Database.libraryModel.create({ name: 'Books', mediaType: 'book' })
+    libraryId = library.id
+    const book = await Database.bookModel.create({ title: 'Test Book', audioFiles: [], tags: [], narrators: [], genres: [], chapters: [] })
+    bookId = book.id
+    const series = await Database.seriesModel.create({ name: 'Test Series', libraryId })
+    await Database.bookSeriesModel.create({ bookId, seriesId: series.id, sequence: '2' })
+  })
+
+  afterEach(async () => {
+    await Database.sequelize.sync({ force: true })
+  })
+
+  it('with the join row loaded (the include of every expanded query): the old metadata has the sequence', async () => {
+    const book = await loadBook(['sequence'])
+    expect(book.series[0].bookSeries.sequence).to.equal('2')
+    expect(book.oldMetadataToJSON().series).to.deep.equal([{ id: book.series[0].id, name: 'Test Series', sequence: '2' }])
+  })
+
+  it('without the join row (through: { attributes: [] }): series[0].bookSeries is undefined', async () => {
+    const book = await loadBook([])
+    expect(book.series).to.have.lengthOf(1)
+    expect(book.series[0].bookSeries).to.be.undefined
+  })
+
+  it('without the join row: the guarded reads work and report the series as having no sequence', async () => {
+    const book = await loadBook([])
+    expect(book.seriesName).to.equal('Test Series')
+    expect(book.oldMetadataToJSONMinified().seriesName).to.equal('Test Series')
+    expect(book.getAbsMetadataJson().series).to.deep.equal(['Test Series'])
+  })
+
+  it('without the join row: oldMetadataToJSON() throws a TypeError (Book.ts:686, the reported line)', async () => {
+    const book = await loadBook([])
+    expect(() => book.oldMetadataToJSON()).to.throw(TypeError, "Cannot read properties of undefined (reading 'sequence')")
+  })
+
+  it('without the join row: updateSeriesFromRequest() rejects with a TypeError (Book.ts:651, the other reported lines)', async () => {
+    const book = await loadBook([])
+    let error = null
+    try {
+      await book.updateSeriesFromRequest([{ name: 'Test Series', sequence: '3' }], libraryId)
+    } catch (err) {
+      error = err
+    }
+    expect(error).to.be.instanceOf(TypeError)
+    expect(error.message).to.equal("Cannot read properties of undefined (reading 'sequence')")
+  })
+
+  it('for comparison: toOldJSON() throws on purpose when a required include is missing', async () => {
+    const book = await Database.bookModel.findByPk(bookId)
+    expect(() => book.toOldJSON('some-library-item-id')).to.throw('[Book] Cannot convert to old JSON because authors are not loaded')
+  })
+})
