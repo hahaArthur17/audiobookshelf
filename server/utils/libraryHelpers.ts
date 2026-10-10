@@ -364,7 +364,7 @@ const libraryHelpers: LibraryHelpersModule = {
 
           // If collapsing by series and filtering by a series, generate the list of sequences the collapsed
           // series represents in the filtered series
-          json.collapsedSeries.seriesSequenceList = naturalSort(li.collapsedSeries.books.filter((b): b is OldLibraryItemJson & { filterSeriesSequence: string | number } => !!b.filterSeriesSequence).map((b) => b.filterSeriesSequence))
+          json.collapsedSeries.seriesSequenceList = naturalSort((li.collapsedSeries.books.filter((b) => b.filterSeriesSequence) as Array<OldLibraryItemJson & { filterSeriesSequence: string | number }>).map((b) => b.filterSeriesSequence))
             .asc()
             .reduce<SequenceRange[]>((ranges, currentSequence) => {
               let lastRange = ranges.at(-1)

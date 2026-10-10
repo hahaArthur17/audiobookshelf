@@ -1,0 +1,41 @@
+--- /Users/miao/Documents/B学期574/Open Project/audiobookshelf-phase2/dist-server/server/utils/libraryHelpers.js	2026-10-03 21:34:39
++++ dist-server/server/utils/libraryHelpers.js	2026-10-11 09:54:47
+@@ -1,13 +1,13 @@
+ "use strict";
+ const { createNewSortInstance } = require('../libs/fastSort');
+ const Database = require('../Database');
+-const Logger = require('../Logger');
++const LibraryLogger = require('../Logger');
+ const { getTitlePrefixAtEnd, isNullOrNaN, getTitleIgnorePrefix } = require('../utils/index');
+ const naturalSort = createNewSortInstance({
+     comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+ });
+ const VALID_COLLAPSE_SUBSERIES_SORTS = new Set(['addedAt', 'size', 'birthtimeMs', 'mtimeMs', 'media.duration', 'media.metadata.publishedYear', 'media.metadata.authorName', 'media.metadata.authorNameLF', 'media.metadata.title', 'sequence', 'progress', 'progress.createdAt', 'progress.finishedAt', 'random']);
+-module.exports = {
++const libraryHelpers = {
+     /**
+      *
+      * @param {import('../models/LibraryItem')[]} libraryItems
+@@ -96,7 +96,7 @@
+      */
+     async handleCollapseSubseries(payload, seriesId, user, library) {
+         if (payload.sortBy && !VALID_COLLAPSE_SUBSERIES_SORTS.has(payload.sortBy)) {
+-            Logger.warn(`[libraryHelpers] Invalid "sort" query string "${payload.sortBy}"`);
++            LibraryLogger.warn(`[libraryHelpers] Invalid "sort" query string "${payload.sortBy}"`);
+             payload.sortBy = undefined;
+         }
+         const seriesWithBooks = await Database.seriesModel.findByPk(seriesId, {
+@@ -227,7 +227,7 @@
+                 };
+                 // If collapsing by series and filtering by a series, generate the list of sequences the collapsed
+                 // series represents in the filtered series
+-                json.collapsedSeries.seriesSequenceList = naturalSort(li.collapsedSeries.books.filter((b) => b.filterSeriesSequence).map((b) => b.filterSeriesSequence))
++                json.collapsedSeries.seriesSequenceList = naturalSort(li.collapsedSeries.books.filter((b) => !!b.filterSeriesSequence).map((b) => b.filterSeriesSequence))
+                     .asc()
+                     .reduce((ranges, currentSequence) => {
+                     let lastRange = ranges.at(-1);
+@@ -249,3 +249,4 @@
+         }));
+     }
+ };
++module.exports = libraryHelpers;
