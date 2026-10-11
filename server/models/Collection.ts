@@ -1,6 +1,6 @@
 import sequelizeModule = require('sequelize')
 const { DataTypes, Model, Sequelize } = sequelizeModule
-import type { BelongsToManyGetAssociationsMixin, BuildOptions, CreationAttributes, HasManyGetAssociationsMixin } from 'sequelize'
+import type { BelongsToManyGetAssociationsMixin, BuildOptions, CreationAttributes, HasManyGetAssociationsMixin, HasManyGetAssociationsMixinOptions } from 'sequelize'
 
 type User = import('./User')
 type LibraryItem = import('./LibraryItem')
@@ -31,7 +31,7 @@ class Collection extends Model {
   declare feeds?: Feed[] // only set by a query that includes feed (getOldCollectionsJsonExpanded with 'rssfeed'); not listed in the constructor
   declare getBooks: BelongsToManyGetAssociationsMixin<BookExpandedWithLibraryItem> // mixin added by collection.belongsToMany(book) in CollectionBook.init(); the one call here includes libraryItem, authors and series
   declare getFeeds: HasManyGetAssociationsMixin<Feed> // mixin added by collection.hasMany(Feed) in Feed.init()
-  declare getCollectionBooks: HasManyGetAssociationsMixin<CollectionBook> // mixin added by collection.hasMany(CollectionBook) in CollectionBook.init()
+  declare getCollectionBooks: (options?: Omit<HasManyGetAssociationsMixinOptions, 'include'> & { include?: { model: typeof import('./Book'); include: typeof import('./LibraryItem') } }) => Promise<CollectionBook[]> // mixin added by collection.hasMany(CollectionBook) in CollectionBook.init(). include is the one that CollectionController passes: Sequelize accepts a single nested include at runtime, but its IncludeOptions type wants an array
   declare static readonly sequelize: sequelizeModule.Sequelize // set by init() before any query runs (optional in Sequelize's typings). Written with the module name because Sequelize is a runtime value in this file
 
   constructor(values?: CreationAttributes<Collection>, options?: BuildOptions) {
