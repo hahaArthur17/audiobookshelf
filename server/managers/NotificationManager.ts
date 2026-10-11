@@ -1,10 +1,28 @@
-const axios = require('axios')
-const Logger = require('../Logger')
-const SocketAuthority = require('../SocketAuthority')
-const Database = require('../Database')
-const { notificationData } = require('../utils/notifications')
+import axiosModule = require('axios')
+const axios = axiosModule.default
+import Logger = require('../Logger')
+import SocketAuthority = require('../SocketAuthority')
+import Database = require('../Database')
+import notifications = require('../utils/notifications')
+const { notificationData } = notifications
+type LibraryItem = import('../models/LibraryItem')
+type PodcastExpanded = import('../models/Podcast').PodcastExpanded
+type PodcastEpisode = import('../models/PodcastEpisode')
+type Backup = import('../objects/Backup')
+type Notification = import('../objects/Notification')
+
+// Template data of an event: variable name -> value (the JSDoc leaves the type open; these are the value types the events below build)
+type NotificationEventData = Record<string, string | number | boolean | null>
+
+interface QueuedNotificationEvent {
+  eventName: string
+  eventData?: NotificationEventData
+}
 
 class NotificationManager {
+  declare sendingNotification: boolean
+  declare notificationQueue: QueuedNotificationEvent[]
+
   constructor() {
     this.sendingNotification = false
     this.notificationQueue = []
@@ -19,7 +37,7 @@ class NotificationManager {
    * @param {import('../models/LibraryItem')} libraryItem
    * @param {import('../models/PodcastEpisode')} episode
    */
-  async onPodcastEpisodeDownloaded(libraryItem, episode) {
+  async onPodcastEpisodeDownloaded(libraryItem: LibraryItem & { media: PodcastExpanded }, episode: PodcastEpisode) {
     if (!Database.notificationSettings.isUseable) return
 
     if (!Database.notificationSettings.getHasActiveNotificationsForEvent('onPodcastEpisodeDownloaded')) {
@@ -52,7 +70,7 @@ class NotificationManager {
    * @param {number} totalBackupCount
    * @param {boolean} removedOldest - If oldest backup was removed
    */
-  async onBackupCompleted(backup, totalBackupCount, removedOldest) {
+  async onBackupCompleted(backup: Backup, totalBackupCount: number, removedOldest: boolean) {
     if (!Database.notificationSettings.isUseable) return
 
     if (!Database.notificationSettings.getHasActiveNotificationsForEvent('onBackupCompleted')) {
@@ -78,7 +96,7 @@ class NotificationManager {
    * @param {number} numFailed
    * @param {string} title
    */
-  async onRSSFeedFailed(feedUrl, numFailed, title) {
+  async onRSSFeedFailed(feedUrl: string | null, numFailed: number, title: string | null) {
     if (!Database.notificationSettings.isUseable) return
 
     if (!Database.notificationSettings.getHasActiveNotificationsForEvent('onRSSFeedFailed')) {
@@ -102,7 +120,7 @@ class NotificationManager {
    * @param {number} numFailed
    * @param {string} title
    */
-  async onRSSFeedDisabled(feedUrl, numFailed, title) {
+  async onRSSFeedDisabled(feedUrl: string | null, numFailed: number, title: string | null) {
     if (!Database.notificationSettings.isUseable) return
 
     if (!Database.notificationSettings.getHasActiveNotificationsForEvent('onRSSFeedDisabled')) {
@@ -123,7 +141,7 @@ class NotificationManager {
    *
    * @param {string} errorMsg
    */
-  async onBackupFailed(errorMsg) {
+  async onBackupFailed(errorMsg: string) {
     if (!Database.notificationSettings.isUseable) return
 
     if (!Database.notificationSettings.getHasActiveNotificationsForEvent('onBackupFailed')) {
@@ -148,7 +166,7 @@ class NotificationManager {
    * @param {any} eventData
    * @param {boolean} [intentionallyFail=false] - If true, will intentionally fail the notification
    */
-  async triggerNotification(eventName, eventData, intentionallyFail = false) {
+  async triggerNotification(eventName: string, eventData?: NotificationEventData, intentionallyFail = false) {
     if (!Database.notificationSettings.isUseable) return
 
     // Will queue the notification if sendingNotification and queue is not full
@@ -183,7 +201,7 @@ class NotificationManager {
    * @param {any} eventData
    * @returns {boolean} - TRUE if notification should be triggered now
    */
-  checkTriggerNotification(eventName, eventData) {
+  checkTriggerNotification(eventName: string, eventData?: NotificationEventData): boolean {
     if (this.sendingNotification) {
       if (this.notificationQueue.length >= Database.notificationSettings.maxNotificationQueue) {
         Logger.warn(`[NotificationManager] Notification queue is full - ignoring event ${eventName}`)
@@ -203,13 +221,13 @@ class NotificationManager {
       this.sendingNotification = false
       if (this.notificationQueue.length) {
         // Send next notification in queue
-        const nextNotificationEvent = this.notificationQueue.shift()
+        const nextNotificationEvent = this.notificationQueue.shift()! // non-null assertion: the queue length was tested on the line above, so shift() returns an item
         this.triggerNotification(nextNotificationEvent.eventName, nextNotificationEvent.eventData)
       }
     }, Database.notificationSettings.notificationDelay)
   }
 
-  sendTestNotification(notification) {
+  sendTestNotification(notification: Notification) {
     const eventData = notificationData.events.find((e) => e.name === notification.eventName)
     if (!eventData) {
       Logger.error(`[NotificationManager] sendTestNotification: Event not found ${notification.eventName}`)
@@ -219,10 +237,11 @@ class NotificationManager {
     return this.sendNotification(notification, eventData.testData)
   }
 
-  sendNotification(notification, eventData) {
-    const payload = notification.getApprisePayload(eventData)
+  sendNotification(notification: Notification, eventData?: NotificationEventData): Promise<boolean> {
+    // Allowance 3: Notification.getApprisePayload (converted) takes Record<string, string>, but the event data also holds numbers, booleans and null, and onTest() passes none
+    const payload = notification.getApprisePayload(eventData as Parameters<Notification['getApprisePayload']>[0])
     return axios
-      .post(Database.notificationSettings.appriseApiUrl, payload, { timeout: 6000 })
+      .post(Database.notificationSettings.appriseApiUrl!, payload, { timeout: 6000 }) // non-null assertion: appriseApiUrl starts as null; every caller tests notificationSettings.isUseable (the url is set) before it gets here
       .then((response) => {
         Logger.debug(`[NotificationManager] sendNotification: ${notification.eventName}/${notification.id} response=`, response.data)
         return true
@@ -233,4 +252,4 @@ class NotificationManager {
       })
   }
 }
-module.exports = new NotificationManager()
+export = new NotificationManager()
