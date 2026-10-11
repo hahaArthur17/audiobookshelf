@@ -1,20 +1,36 @@
-const fs = require('../libs/fsExtra')
-const Path = require('path')
-const Logger = require('../Logger')
-const readChunk = require('../libs/readChunk')
-const imageType = require('../libs/imageType')
+import fs = require('../libs/fsExtra')
+import Path = require('path')
+import Logger = require('../Logger')
+import readChunk = require('../libs/readChunk')
+import imageType = require('../libs/imageType')
 
-const globals = require('../utils/globals')
-const { downloadImageFile, filePathToPOSIX, checkPathIsFile } = require('../utils/fileUtils')
-const { extractCoverArt } = require('../utils/ffmpegHelpers')
-const parseEbookMetadata = require('../utils/parsers/parseEbookMetadata')
+import globals = require('../utils/globals')
+import fileUtils = require('../utils/fileUtils')
+const { downloadImageFile, filePathToPOSIX, checkPathIsFile } = fileUtils
+import ffmpegHelpers = require('../utils/ffmpegHelpers')
+const { extractCoverArt } = ffmpegHelpers
+import parseEbookMetadata = require('../utils/parsers/parseEbookMetadata')
 
-const CacheManager = require('../managers/CacheManager')
+import CacheManager = require('../managers/CacheManager')
+
+declare const global: typeof globalThis & { MetadataPath: string; ServerSettings: { storeCoverWithItem: boolean } }
+
+type LibraryItem = import('../models/LibraryItem')
+// AudioFileObject in models/Book.ts has no embeddedCoverArt, which AudioFile.toJSON() stores (null or the codec name of the embedded cover)
+type AudioFileObject = import('../models/Book').AudioFileObject & { embeddedCoverArt?: string | null }
+type EBookFileScanData = import('../utils/parsers/parseEbookMetadata').EBookFileScanData
+// libs/fsExtra adds the promisified fs methods in a loop (exports[method] = u(fs[method])), so its inferred type lacks them
+type FsWithNodeMethods = typeof fs & { readdir(path: string): Promise<string[]>; unlink(path: string): Promise<void>; rename(oldPath: string, newPath: string): Promise<void> }
+// A file from req.files (express-fileupload): only the members that uploadCover() uses
+type UploadedCoverFile = { name: string; mv(path: string): Promise<void> }
+// checkFileIsValidImage() returns the image type or an error object; the callers tell them apart by reading .error
+type ImageTypeResult = { ext: string; mime: string; error?: undefined }
+type ImageErrorResult = { error: string; ext?: undefined; mime?: undefined }
 
 class CoverManager {
   constructor() {}
 
-  getCoverDirectory(libraryItem) {
+  getCoverDirectory(libraryItem: LibraryItem): string {
     if (global.ServerSettings.storeCoverWithItem && !libraryItem.isFile) {
       return libraryItem.path
     } else {
@@ -22,20 +38,20 @@ class CoverManager {
     }
   }
 
-  getFilesInDirectory(dir) {
+  getFilesInDirectory(dir: string): Promise<string[]> | string[] {
     try {
-      return fs.readdir(dir)
+      return (fs as FsWithNodeMethods).readdir(dir) // boundary: libs/fsExtra, see FsWithNodeMethods
     } catch (error) {
       Logger.error(`[CoverManager] Failed to get files in dir ${dir}`, error)
       return []
     }
   }
 
-  removeFile(filepath) {
+  removeFile(filepath: string): Promise<void | false> | false {
     try {
-      return fs.pathExists(filepath).then((exists) => {
+      return fs.pathExists(filepath).then((exists: boolean) => {
         if (!exists) Logger.warn(`[CoverManager] Attempting to remove file that does not exist ${filepath}`)
-        return exists ? fs.unlink(filepath) : false
+        return exists ? (fs as FsWithNodeMethods).unlink(filepath) : false // boundary: libs/fsExtra, see FsWithNodeMethods
       })
     } catch (error) {
       Logger.error(`[CoverManager] Failed to remove file "${filepath}"`, error)
@@ -44,7 +60,7 @@ class CoverManager {
   }
 
   // Remove covers that dont have the same filename as the new cover
-  async removeOldCovers(dirpath, newCoverExt) {
+  async removeOldCovers(dirpath: string, newCoverExt: string): Promise<void> {
     var filesInDir = await this.getFilesInDirectory(dirpath)
 
     const imageExtensions = ['.jpeg', '.jpg', '.png', '.webp', '.jiff']
@@ -60,7 +76,7 @@ class CoverManager {
     }
   }
 
-  async checkFileIsValidImage(imagepath, removeOnInvalid = false) {
+  async checkFileIsValidImage(imagepath: string, removeOnInvalid = false): Promise<ImageTypeResult | ImageErrorResult> {
     const buffer = await readChunk(imagepath, 0, 12)
     const imgType = imageType(buffer)
     if (!imgType) {
@@ -85,7 +101,7 @@ class CoverManager {
    * @param {*} coverFile - file object from req.files
    * @returns {Promise<{error:string}|{cover:string}>}
    */
-  async uploadCover(libraryItem, coverFile) {
+  async uploadCover(libraryItem: LibraryItem, coverFile: UploadedCoverFile): Promise<{ error: string } | { cover: string }> {
     const extname = Path.extname(coverFile.name.toLowerCase())
     if (!extname || !globals.SupportedImageTypes.includes(extname.slice(1))) {
       return {
@@ -129,7 +145,7 @@ class CoverManager {
    * @param {import('../models/LibraryItem')} libraryItem
    * @returns {Promise<{error:string}|{cover:string,updated:boolean}>}
    */
-  async validateCoverPath(coverPath, libraryItem) {
+  async validateCoverPath(coverPath: string, libraryItem: LibraryItem): Promise<{ error: string } | { cover: string; updated: boolean }> {
     // Invalid cover path
     if (!coverPath || coverPath.startsWith('http:') || coverPath.startsWith('https:')) {
       Logger.error(`[CoverManager] validate cover path invalid http url "${coverPath}"`)
@@ -189,8 +205,9 @@ class CoverManager {
       var newCoverPath = Path.posix.join(coverDirPath, coverFilename)
       Logger.debug(`[CoverManager] validate cover path copy cover from "${coverPath}" to "${newCoverPath}"`)
 
-      var copySuccess = await fs
-        .copy(coverPath, newCoverPath, { overwrite: true })
+      // boundary: libs/fsExtra wraps copy with universalify, whose inferred return type is Promise | undefined (undefined only when a callback is passed)
+      var copySuccess = await (fs
+        .copy(coverPath, newCoverPath, { overwrite: true }) as Promise<void>)
         .then(() => true)
         .catch((error) => {
           Logger.error(`[CoverManager] validate cover path failed to copy cover`, error)
@@ -222,7 +239,7 @@ class CoverManager {
    * @param {string} [libraryItemPath] null for isFile library items
    * @returns {Promise<string>} returns cover path
    */
-  async saveEmbeddedCoverArt(audioFiles, libraryItemId, libraryItemPath) {
+  async saveEmbeddedCoverArt(audioFiles: AudioFileObject[], libraryItemId: string, libraryItemPath?: string | null): Promise<string | null> {
     let audioFileWithCover = audioFiles.find((af) => af.embeddedCoverArt)
     if (!audioFileWithCover) return null
 
@@ -259,7 +276,7 @@ class CoverManager {
    * @param {string} [libraryItemPath] null for isFile library items
    * @returns {Promise<string>} returns cover path
    */
-  async saveEbookCoverArt(ebookFileScanData, libraryItemId, libraryItemPath) {
+  async saveEbookCoverArt(ebookFileScanData: EBookFileScanData | null, libraryItemId: string, libraryItemPath?: string | null): Promise<string | null> {
     if (!ebookFileScanData?.ebookCoverPath) return null
 
     let coverDirPath = null
@@ -297,7 +314,7 @@ class CoverManager {
    * @param {boolean} [forceLibraryItemFolder=false] - force save cover with library item (used for adding new podcasts)
    * @returns {Promise<{error:string}|{cover:string}>}
    */
-  async downloadCoverFromUrlNew(url, libraryItemId, libraryItemPath, forceLibraryItemFolder = false) {
+  async downloadCoverFromUrlNew(url: string, libraryItemId: string, libraryItemPath?: string | null, forceLibraryItemFolder = false): Promise<{ error: string } | { cover: string }> {
     try {
       let coverDirPath = null
       if ((global.ServerSettings.storeCoverWithItem || forceLibraryItemFolder) && libraryItemPath) {
@@ -327,7 +344,7 @@ class CoverManager {
       }
 
       const coverFullPath = Path.posix.join(coverDirPath, `cover.${imgtype.ext}`)
-      await fs.rename(temppath, coverFullPath)
+      await (fs as FsWithNodeMethods).rename(temppath, coverFullPath) // boundary: libs/fsExtra, see FsWithNodeMethods
 
       await this.removeOldCovers(coverDirPath, '.' + imgtype.ext)
       await CacheManager.purgeCoverCache(libraryItemId)
@@ -344,4 +361,4 @@ class CoverManager {
     }
   }
 }
-module.exports = new CoverManager()
+export = new CoverManager()

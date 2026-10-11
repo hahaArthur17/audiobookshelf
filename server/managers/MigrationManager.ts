@@ -1,20 +1,63 @@
-const { Umzug, SequelizeStorage } = require('../libs/umzug')
-const { Sequelize, DataTypes } = require('sequelize')
-const semver = require('semver')
-const path = require('path')
-const Module = require('module')
-const fs = require('../libs/fsExtra')
-const Logger = require('../Logger')
+/// <reference path="../types/untypedModules.d.ts" />
+import umzugLib = require('../libs/umzug')
+// boundary: libs/umzug re-exports with __exportStar, so its inferred module type has no Umzug and no SequelizeStorage (TS2305)
+const { Umzug, SequelizeStorage } = umzugLib as typeof umzugLib & UmzugExports
+import sequelizeModule = require('sequelize')
+// boundary: the sequelize types do not declare the static Sequelize.QueryTypes that lib/sequelize.js sets at runtime (TS2339)
+const { Sequelize, DataTypes } = sequelizeModule as typeof sequelizeModule & { Sequelize: { QueryTypes: typeof sequelizeModule.QueryTypes } }
+import semver = require('semver')
+import path = require('path')
+import Module = require('module')
+import fs = require('../libs/fsExtra')
+import Logger = require('../Logger')
+
+declare const global: typeof globalThis & { configPath?: string }
+
+type SequelizeInstance = sequelizeModule.Sequelize
+// libs/fsExtra adds the promisified fs methods in a loop (exports[method] = u(fs[method])), so its inferred type lacks them
+type FsWithNodeMethods = typeof fs & { readdir(path: string): Promise<string[]>; readFileSync(path: string, encoding: 'utf8'): string }
+
+// Only the members of libs/umzug that this file uses
+type MigrationMeta = { name: string }
+type MigrationScript = { name: string; path: string; up: unknown; down: unknown }
+interface UmzugOptions {
+  migrations: { files: string[]; resolve: (params: { name: string; path: string }) => MigrationScript } | (() => Promise<MigrationMeta[]>)
+  context: { queryInterface: sequelizeModule.QueryInterface; logger: typeof Logger }
+  storage: object
+  logger: typeof Logger
+}
+interface UmzugInstance {
+  options: UmzugOptions
+  migrations(): Promise<MigrationMeta[]>
+  executed(): Promise<MigrationMeta[]>
+  up(options: { migrations: string[]; rerun: 'ALLOW' }): Promise<unknown>
+  down(options: { migrations: string[]; rerun: 'ALLOW' }): Promise<unknown>
+}
+type UmzugExports = {
+  Umzug: new (options: UmzugOptions) => UmzugInstance
+  SequelizeStorage: new (options: { sequelize: SequelizeInstance }) => object
+}
 
 class MigrationManager {
   static MIGRATIONS_META_TABLE = 'migrationsMeta'
+
+  declare sequelize: SequelizeInstance
+  declare isDatabaseNew: boolean
+  declare configPath: string
+  declare migrationsSourceDir: string
+  declare initialized: boolean
+  declare migrationsDir: string | null
+  declare maxVersion: string | null
+  declare databaseVersion: string | null
+  declare serverVersion: string | null
+  declare umzug: UmzugInstance | null
 
   /**
    * @param {import('../Database').sequelize} sequelize
    * @param {boolean} isDatabaseNew
    * @param {string} [configPath]
    */
-  constructor(sequelize, isDatabaseNew, configPath = global.configPath) {
+  constructor(sequelize: SequelizeInstance, isDatabaseNew: boolean, configPath = global.configPath) {
     if (!sequelize || !(sequelize instanceof Sequelize)) throw new Error('Sequelize instance is required for MigrationManager.')
     this.sequelize = sequelize
     this.isDatabaseNew = isDatabaseNew
@@ -34,14 +77,14 @@ class MigrationManager {
    *
    * @param {string} serverVersion
    */
-  async init(serverVersion) {
+  async init(serverVersion: string): Promise<void> {
     if (!(await fs.pathExists(this.configPath))) throw new Error(`Config path does not exist: ${this.configPath}`)
 
     this.migrationsDir = path.join(this.configPath, 'migrations')
     try {
       await fs.ensureDir(this.migrationsDir)
     } catch (error) {
-      Logger.error(`[MigrationManager] Failed to create migrations directory at "${this.migrationsDir}": ${error.message}`)
+      Logger.error(`[MigrationManager] Failed to create migrations directory at "${this.migrationsDir}": ${(error as Error).message}`) // a catch variable is unknown; libs/fsExtra ensureDir rejects with a Node fs Error
       throw new Error(`[MigrationManager] Failed to create migrations directory at "${this.migrationsDir}"`, { cause: error })
     }
 
@@ -69,7 +112,7 @@ class MigrationManager {
     this.initialized = true
   }
 
-  async runMigrations() {
+  async runMigrations(): Promise<void> {
     if (!this.initialized) throw new Error('MigrationManager is not initialized. Call init() first.')
 
     if (this.isDatabaseNew) {
@@ -77,19 +120,19 @@ class MigrationManager {
       return
     }
 
-    const versionCompare = semver.compare(this.serverVersion, this.databaseVersion)
+    const versionCompare = semver.compare(this.serverVersion!, this.databaseVersion!) // both start as null and are set by init(): this.initialized (tested above) is only true after init() has set them or thrown
     if (versionCompare == 0) {
       Logger.info('[MigrationManager] Database is already up to date.')
       return
     }
 
     await this.initUmzug()
-    const migrations = await this.umzug.migrations()
-    const executedMigrations = (await this.umzug.executed()).map((m) => m.name)
+    const migrations = await this.umzug!.migrations() // umzug starts as null and is set by initUmzug() on the line above
+    const executedMigrations = (await this.umzug!.executed()).map((m) => m.name) // umzug: set by initUmzug() above
 
     const migrationDirection = versionCompare == 1 ? 'up' : 'down'
 
-    let migrationsToRun = []
+    let migrationsToRun: string[] = []
     migrationsToRun = this.findMigrationsToRun(migrations, executedMigrations, migrationDirection)
 
     // Only proceed with migration if there are migrations to run
@@ -104,7 +147,7 @@ class MigrationManager {
         Logger.info('Created a backup of the original database.')
 
         // Run migrations
-        await this.umzug[migrationDirection]({ migrations: migrationsToRun, rerun: 'ALLOW' })
+        await this.umzug![migrationDirection]({ migrations: migrationsToRun, rerun: 'ALLOW' }) // umzug: set by initUmzug() above
 
         // Clean up the backup
         await fs.remove(backupDbPath)
@@ -135,12 +178,13 @@ class MigrationManager {
 
   async initUmzug(umzugStorage = new SequelizeStorage({ sequelize: this.sequelize })) {
     // This check is for dependency injection in tests
-    const files = (await fs.readdir(this.migrationsDir))
+    // boundary: libs/fsExtra, see FsWithNodeMethods. migrationsDir starts as null and is set by init() before runMigrations() calls this method
+    const files = (await (fs as FsWithNodeMethods).readdir(this.migrationsDir!))
       .filter((file) => {
         // Only include .js files and exclude dot files
         return !file.startsWith('.') && path.extname(file).toLowerCase() === '.js'
       })
-      .map((file) => path.join(this.migrationsDir, file))
+      .map((file) => path.join(this.migrationsDir!, file)) // migrationsDir: set by init(), as above
 
     // Validate migration names
     for (const file of files) {
@@ -158,12 +202,13 @@ class MigrationManager {
           // make script think it's in migrationsSourceDir
           const migrationPath = params.path
           const migrationName = params.name
-          const contents = fs.readFileSync(migrationPath, 'utf8')
+          const contents = (fs as FsWithNodeMethods).readFileSync(migrationPath, 'utf8') // boundary: libs/fsExtra, see FsWithNodeMethods
           const fakePath = path.join(this.migrationsSourceDir, path.basename(migrationPath))
           const module = new Module(fakePath)
           module.filename = fakePath
-          module.paths = Module._nodeModulePaths(this.migrationsSourceDir)
-          module._compile(contents, fakePath)
+          // boundary (both casts): Node's internal Module._nodeModulePaths and module._compile are not in @types/node
+          module.paths = (Module as typeof Module & { _nodeModulePaths(from: string): string[] })._nodeModulePaths(this.migrationsSourceDir)
+          ;(module as Module & { _compile(content: string, filename: string): unknown })._compile(contents, fakePath)
           const script = module.exports
           return {
             name: migrationName,
@@ -185,34 +230,34 @@ class MigrationManager {
         (await parent.migrations()).sort((a, b) => {
           const versionA = this.extractVersionFromTag(a.name)
           const versionB = this.extractVersionFromTag(b.name)
-          return semver.compare(versionA, versionB)
+          return semver.compare(versionA!, versionB!) // the "Validate migration names" loop above throws when a migration file name has no version
         })
     })
   }
 
-  async fetchVersionsFromDatabase() {
+  async fetchVersionsFromDatabase(): Promise<void> {
     await this.checkOrCreateMigrationsMetaTable()
 
-    const [{ version }] = await this.sequelize.query("SELECT value as version FROM :migrationsMeta WHERE key = 'version'", {
+    const [{ version }] = await this.sequelize.query<{ version: string }>("SELECT value as version FROM :migrationsMeta WHERE key = 'version'", {
       replacements: { migrationsMeta: MigrationManager.MIGRATIONS_META_TABLE },
       type: Sequelize.QueryTypes.SELECT
     })
     this.databaseVersion = version
 
-    const [{ maxVersion }] = await this.sequelize.query("SELECT value as maxVersion FROM :migrationsMeta WHERE key = 'maxVersion'", {
+    const [{ maxVersion }] = await this.sequelize.query<{ maxVersion: string }>("SELECT value as maxVersion FROM :migrationsMeta WHERE key = 'maxVersion'", {
       replacements: { migrationsMeta: MigrationManager.MIGRATIONS_META_TABLE },
       type: Sequelize.QueryTypes.SELECT
     })
     this.maxVersion = maxVersion
   }
 
-  async checkOrCreateMigrationsMetaTable() {
+  async checkOrCreateMigrationsMetaTable(): Promise<void> {
     const queryInterface = this.sequelize.getQueryInterface()
     let migrationsMetaTableExists = await queryInterface.tableExists(MigrationManager.MIGRATIONS_META_TABLE)
 
     // If the table exists, check that the `version` and `maxVersion` rows exist
     if (migrationsMetaTableExists) {
-      const [{ count }] = await this.sequelize.query("SELECT COUNT(*) as count FROM :migrationsMeta WHERE key IN ('version', 'maxVersion')", {
+      const [{ count }] = await this.sequelize.query<{ count: number }>("SELECT COUNT(*) as count FROM :migrationsMeta WHERE key IN ('version', 'maxVersion')", {
         replacements: { migrationsMeta: MigrationManager.MIGRATIONS_META_TABLE },
         type: Sequelize.QueryTypes.SELECT
       })
@@ -249,22 +294,22 @@ class MigrationManager {
     }
   }
 
-  extractVersionFromTag(tag) {
+  extractVersionFromTag(tag: string): string | null {
     if (!tag) return null
     const versionMatch = tag.match(/^v?(\d+\.\d+\.\d+)/)
     return versionMatch ? versionMatch[1] : null
   }
 
-  async copyMigrationsToConfigDir() {
+  async copyMigrationsToConfigDir(): Promise<void> {
     if (!(await fs.pathExists(this.migrationsSourceDir))) return
 
-    const files = await fs.readdir(this.migrationsSourceDir)
+    const files = await (fs as FsWithNodeMethods).readdir(this.migrationsSourceDir) // boundary: libs/fsExtra, see FsWithNodeMethods
     await Promise.all(
       files
         .filter((file) => path.extname(file) === '.js')
         .map(async (file) => {
           const sourceFile = path.join(this.migrationsSourceDir, file)
-          const targetFile = path.join(this.migrationsDir, file)
+          const targetFile = path.join(this.migrationsDir!, file) // migrationsDir starts as null and is set by init() before it calls this method
           await fs.copy(sourceFile, targetFile) // Asynchronously copy the files
         })
     )
@@ -278,15 +323,16 @@ class MigrationManager {
    * @param {string} direction - 'up' or 'down'
    * @returns {string[]} - names of migrations to run
    */
-  findMigrationsToRun(migrations, executedMigrations, direction) {
+  findMigrationsToRun(migrations: MigrationMeta[], executedMigrations: string[], direction: string): string[] {
     const migrationsToRun = migrations
       .filter((migration) => {
         const migrationVersion = this.extractVersionFromTag(migration.name)
+        // migrationVersion: initUmzug() throws when a migration file name has no version. databaseVersion and serverVersion start as null and are set by init() (runMigrations() tests this.initialized)
         if (direction === 'up') {
-          return semver.gt(migrationVersion, this.databaseVersion) && semver.lte(migrationVersion, this.serverVersion) && !executedMigrations.includes(migration.name)
+          return semver.gt(migrationVersion!, this.databaseVersion!) && semver.lte(migrationVersion!, this.serverVersion!) && !executedMigrations.includes(migration.name)
         } else {
           // A down migration should be run even if the associated up migration wasn't executed before
-          return semver.lte(migrationVersion, this.databaseVersion) && semver.gt(migrationVersion, this.serverVersion)
+          return semver.lte(migrationVersion!, this.databaseVersion!) && semver.gt(migrationVersion!, this.serverVersion!) // same reasons as in the 'up' branch
         }
       })
       .map((migration) => migration.name)
@@ -297,7 +343,7 @@ class MigrationManager {
     }
   }
 
-  async updateMaxVersion() {
+  async updateMaxVersion(): Promise<void> {
     try {
       await this.sequelize.query("UPDATE :migrationsMeta SET value = :maxVersion WHERE key = 'maxVersion'", {
         replacements: { maxVersion: this.serverVersion, migrationsMeta: MigrationManager.MIGRATIONS_META_TABLE },
@@ -309,7 +355,7 @@ class MigrationManager {
     this.maxVersion = this.serverVersion
   }
 
-  async updateDatabaseVersion() {
+  async updateDatabaseVersion(): Promise<void> {
     try {
       await this.sequelize.query("UPDATE :migrationsMeta SET value = :version WHERE key = 'version'", {
         replacements: { version: this.serverVersion, migrationsMeta: MigrationManager.MIGRATIONS_META_TABLE },
@@ -322,4 +368,4 @@ class MigrationManager {
   }
 }
 
-module.exports = MigrationManager
+export = MigrationManager

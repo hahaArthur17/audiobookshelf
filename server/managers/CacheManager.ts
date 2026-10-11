@@ -1,17 +1,34 @@
-const Path = require('path')
-const fs = require('../libs/fsExtra')
-const stream = require('stream')
-const Logger = require('../Logger')
-const { resizeImage } = require('../utils/ffmpegHelpers')
-const { encodeUriPath } = require('../utils/fileUtils')
-const { isUUID } = require('../utils/index')
-const Database = require('../Database')
+import Path = require('path')
+import fs = require('../libs/fsExtra')
+import stream = require('stream')
+import Logger = require('../Logger')
+import ffmpegHelpers = require('../utils/ffmpegHelpers')
+const { resizeImage } = ffmpegHelpers
+import fileUtils = require('../utils/fileUtils')
+const { encodeUriPath } = fileUtils
+import utils = require('../utils/index')
+const { isUUID } = utils
+import Database = require('../Database')
+import type { Response } from 'express'
+import type { ReadStream } from 'fs'
 
-function isValidCacheDimension(dimension) {
+declare const global: typeof globalThis & { MetadataPath: string; XAccel?: string }
+
+// libs/fsExtra adds the promisified fs methods in a loop (exports[method] = u(fs[method])), so its inferred type lacks them
+type FsWithNodeMethods = typeof fs & { createReadStream(path: string): ReadStream; readdir(path: string): Promise<string[]>; unlink(path: string): Promise<void> }
+// width and height may be null: the controllers pass the result of clampPositiveInt(), and both handlers fall back to a default
+type CacheImageOptions = { format?: string; width?: number | null; height?: number | null }
+
+function isValidCacheDimension(dimension: number): boolean {
   return Number.isSafeInteger(dimension) && dimension > 0
 }
 
 class CacheManager {
+  declare CachePath: string | null
+  declare CoverCachePath: string | null
+  declare ImageCachePath: string | null
+  declare ItemCachePath: string | null
+
   constructor() {
     this.CachePath = null
     this.CoverCachePath = null
@@ -22,7 +39,7 @@ class CacheManager {
   /**
    * Create cache directory paths if they dont exist
    */
-  async ensureCachePaths() {
+  async ensureCachePaths(): Promise<void> {
     // Creates cache paths if necessary and sets owner and permissions
     this.CachePath = Path.join(global.MetadataPath, 'cache')
     this.CoverCachePath = Path.join(this.CachePath, 'covers')
@@ -35,12 +52,12 @@ class CacheManager {
       await fs.ensureDir(this.ImageCachePath)
       await fs.ensureDir(this.ItemCachePath)
     } catch (error) {
-      Logger.error(`[CacheManager] Failed to create cache directories at "${this.CachePath}": ${error.message}`)
+      Logger.error(`[CacheManager] Failed to create cache directories at "${this.CachePath}": ${(error as Error).message}`) // a catch variable is unknown; libs/fsExtra ensureDir rejects with a Node fs Error
       throw new Error(`[CacheManager] Failed to create cache directories at "${this.CachePath}"`, { cause: error })
     }
   }
 
-  async handleCoverCache(res, libraryItemId, options = {}) {
+  async handleCoverCache(res: Response, libraryItemId: string, options: CacheImageOptions = {}) {
     const format = options.format || 'webp'
     const width = options.width || 400
     const height = options.height || null
@@ -50,7 +67,7 @@ class CacheManager {
     }
     res.type(`image/${format}`)
 
-    const cachePath = Path.join(this.CoverCachePath, `${libraryItemId}_${width}${height ? `x${height}` : ''}`) + '.' + format
+    const cachePath = Path.join(this.CoverCachePath!, `${libraryItemId}_${width}${height ? `x${height}` : ''}`) + '.' + format // CoverCachePath starts as null and is set by ensureCachePaths(), which Server.init() awaits before requests are served
 
     // Cache exists
     if (await fs.pathExists(cachePath)) {
@@ -60,7 +77,7 @@ class CacheManager {
         return res.status(204).header({ 'X-Accel-Redirect': encodedURI }).send()
       }
 
-      const r = fs.createReadStream(cachePath)
+      const r = (fs as FsWithNodeMethods).createReadStream(cachePath) // boundary: libs/fsExtra, see FsWithNodeMethods
       const ps = new stream.PassThrough()
       stream.pipeline(r, ps, (err) => {
         if (err) {
@@ -86,22 +103,22 @@ class CacheManager {
       return res.status(204).header({ 'X-Accel-Redirect': encodedURI }).send()
     }
 
-    var readStream = fs.createReadStream(writtenFile)
+    var readStream = (fs as FsWithNodeMethods).createReadStream(writtenFile) // boundary: libs/fsExtra, see FsWithNodeMethods
     readStream.pipe(res)
   }
 
-  purgeCoverCache(libraryItemId) {
+  purgeCoverCache(libraryItemId: string) {
     return this.purgeEntityCache(libraryItemId, this.CoverCachePath)
   }
 
-  purgeImageCache(entityId) {
+  purgeImageCache(entityId: string) {
     return this.purgeEntityCache(entityId, this.ImageCachePath)
   }
 
-  async purgeEntityCache(entityId, cachePath) {
+  async purgeEntityCache(entityId: string, cachePath: string | null): Promise<boolean[]> {
     if (!entityId || !cachePath) return []
     return Promise.all(
-      (await fs.readdir(cachePath)).reduce((promises, file) => {
+      (await (fs as FsWithNodeMethods).readdir(cachePath)).reduce<(false | Promise<boolean>)[]>((promises, file) => { // boundary: libs/fsExtra, see FsWithNodeMethods
         if (file.startsWith(entityId)) {
           Logger.debug(`[CacheManager] Going to purge ${file}`)
           promises.push(this.removeCache(Path.join(cachePath, file)))
@@ -111,11 +128,11 @@ class CacheManager {
     )
   }
 
-  removeCache(path) {
+  removeCache(path: string): false | Promise<boolean> {
     if (!path) return false
-    return fs.pathExists(path).then((exists) => {
+    return fs.pathExists(path).then((exists: boolean) => {
       if (!exists) return false
-      return fs
+      return (fs as FsWithNodeMethods) // boundary: libs/fsExtra, see FsWithNodeMethods
         .unlink(path)
         .then(() => true)
         .catch((err) => {
@@ -125,20 +142,22 @@ class CacheManager {
     })
   }
 
-  async purgeAll() {
+  async purgeAll(): Promise<void> {
     Logger.info(`[CacheManager] Purging all cache at "${this.CachePath}"`)
     if (await fs.pathExists(this.CachePath)) {
-      await fs.remove(this.CachePath).catch((error) => {
+      // boundary: libs/fsExtra wraps remove with universalify, whose inferred return type is Promise | undefined (undefined only when a callback is passed)
+      await (fs.remove(this.CachePath) as Promise<void>).catch((error) => {
         Logger.error(`[CacheManager] Failed to remove cache dir "${this.CachePath}"`, error)
       })
     }
     await this.ensureCachePaths()
   }
 
-  async purgeItems() {
+  async purgeItems(): Promise<void> {
     Logger.info(`[CacheManager] Purging items cache at "${this.ItemCachePath}"`)
     if (await fs.pathExists(this.ItemCachePath)) {
-      await fs.remove(this.ItemCachePath).catch((error) => {
+      // boundary: libs/fsExtra remove, same as in purgeAll()
+      await (fs.remove(this.ItemCachePath) as Promise<void>).catch((error) => {
         Logger.error(`[CacheManager] Failed to remove items cache dir "${this.ItemCachePath}"`, error)
       })
     }
@@ -152,7 +171,7 @@ class CacheManager {
    * @param {{ format?: string, width?: number, height?: number }} options
    * @returns
    */
-  async handleAuthorCache(res, authorId, options = {}) {
+  async handleAuthorCache(res: Response, authorId: string, options: CacheImageOptions = {}) {
     const format = options.format || 'webp'
     const width = options.width || 400
     const height = options.height || null
@@ -162,11 +181,11 @@ class CacheManager {
     }
     res.type(`image/${format}`)
 
-    var cachePath = Path.join(this.ImageCachePath, `${authorId}_${width}${height ? `x${height}` : ''}`) + '.' + format
+    var cachePath = Path.join(this.ImageCachePath!, `${authorId}_${width}${height ? `x${height}` : ''}`) + '.' + format // ImageCachePath starts as null and is set by ensureCachePaths(), which Server.init() awaits before requests are served
 
     // Cache exists
     if (await fs.pathExists(cachePath)) {
-      const r = fs.createReadStream(cachePath)
+      const r = (fs as FsWithNodeMethods).createReadStream(cachePath) // boundary: libs/fsExtra, see FsWithNodeMethods
       const ps = new stream.PassThrough()
       stream.pipeline(r, ps, (err) => {
         if (err) {
@@ -185,8 +204,8 @@ class CacheManager {
     let writtenFile = await resizeImage(author.imagePath, cachePath, width, height)
     if (!writtenFile) return res.sendStatus(500)
 
-    var readStream = fs.createReadStream(writtenFile)
+    var readStream = (fs as FsWithNodeMethods).createReadStream(writtenFile) // boundary: libs/fsExtra, see FsWithNodeMethods
     readStream.pipe(res)
   }
 }
-module.exports = new CacheManager()
+export = new CacheManager()
