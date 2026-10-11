@@ -10,11 +10,13 @@ on:
       - 'test/characterization/**'
       - 'scripts/characterization-audit/**'
       - '.github/workflows/characterization-guard.yml'
+      - '.github/workflows/unit-tests.yml'
   push:
     paths:
       - 'test/characterization/**'
       - 'scripts/characterization-audit/**'
       - '.github/workflows/characterization-guard.yml'
+      - '.github/workflows/unit-tests.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -44,11 +46,19 @@ jobs:
           if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BASE" 2>/dev/null; then
             echo "no comparable base commit, skipping"; exit 0
           fi
-          CHANGED=$(git diff --name-only "$BASE" HEAD -- test/characterization)
+          GUARDED="test/characterization scripts/characterization-audit .github/workflows/characterization-guard.yml .github/workflows/unit-tests.yml"
+          CHANGED=$(git diff --name-only "$BASE" HEAD -- $GUARDED)
           if [ -z "$CHANGED" ]; then echo "oracle unchanged"; exit 0; fi
-          if git log --format=%B "$BASE"..HEAD | grep -q '\[oracle-update\]'; then
-            echo "oracle changed with an [oracle-update] marker:"; echo "$CHANGED"; exit 0
+          # every commit that touches the oracle, the audit or these workflows needs its own marker
+          BAD=""
+          for C in $(git rev-list "$BASE"..HEAD); do
+            if [ -n "$(git diff-tree --no-commit-id --name-only -r -m --first-parent "$C" -- $GUARDED)" ] && ! git log -1 --format=%B "$C" | grep -q '\[oracle-update\]'; then
+              BAD="$BAD $C"
+            fi
+          done
+          if [ -z "$BAD" ]; then
+            echo "oracle changed, every touching commit carries [oracle-update]:"; echo "$CHANGED"; exit 0
           fi
-          echo "::error::test/characterization changed without [oracle-update] in a commit message"
+          echo "::error::these commits change the oracle, the audit or its workflows without [oracle-update]:$BAD"
           echo "$CHANGED"
           exit 1
