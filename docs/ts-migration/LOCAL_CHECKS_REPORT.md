@@ -1,6 +1,8 @@
 # Local checks report (macOS / Node 24)
 
-HEAD SHA: `d5c6cba6ef99874795f16d9042eff2e2975375de` (branch `claude/dreamy-ramanujan-l3ozd4`)
+HEAD SHA of the main run: `d5c6cba6ef99874795f16d9042eff2e2975375de` (branch `claude/dreamy-ramanujan-l3ozd4`)
+
+**Update:** the failures below were re-verified at `a33335f0` (the fix commit); `npm test` and `audit:characterization` both pass. See section 6. Sections 1-5 describe the original run at `d5c6cba6`.
 
 ## 1. Summary
 
@@ -124,3 +126,45 @@ No snapshot depended on TZ or the working-copy path. The copy was a `cp -R` of t
 
 - `audit:characterization` counts and warnings: the run was aborted by the ServerBoot failure. To get them, rerun after the ServerBoot test is isolated from `client/dist` (or with `client/dist` moved aside); I did not do that because the instructions say not to edit or repair anything.
 - No other step was skipped.
+
+## 6. Re-verification at `a33335f0`
+
+Commit `a33335f0` ("isolate ServerBoot from a locally built client, stop snapshotting ScanLogger elapsed ms") was pulled (fast-forward from `c8dc83d7`), `build:server` re-run, then:
+
+| Check | Result |
+| --- | --- |
+| `npm test` | **pass**: 1286 passing, 7 pending, 0 failing, 71 s (matches the Linux baseline) |
+| `npm run oracle:check` | pass: 86 files match the manifest |
+| `npm run audit:characterization` | **pass**: exit 0, "audit passed", 72 s; embedded suite 1286 passing, 7 pending, 0 failing |
+| `git status --short` after each | empty |
+
+`client/dist` is still present in this working copy, so the ServerBoot fix holds with a locally built client. The ScanLogger `elapsed` flake did not occur in either full run (2 runs; earlier rate was about 1 in 4, so this is evidence, not proof).
+
+Audit output:
+
+```
+35 test files, 937 it() blocks (7 skipped), 2485 snapshot entries
+all 2485 snapshot entries were compared by a test in the last run
+routes: 202 handlers, 202 hit, 202 with a success response
+```
+
+"identical snapshot value repeated" warnings (14, not edited, count is repetitions of the first-named entry's value):
+
+| Times | First entry |
+| --- | --- |
+| 34x | ApiKeyController > DELETE /api/api-keys/:id > deletes a key and 404s afterwards > admin deletes |
+| 121x | ApiKeyController > DELETE /api/api-keys/:id > deletes a key and 404s afterwards > again |
+| 210x | ApiKeyController > DELETE /api/api-keys/:id > requires authentication and admin > guest |
+| 154x | ApiKeyController > DELETE /api/api-keys/:id > requires authentication and admin > unauthenticated |
+| 54x | ApiKeyController > PATCH /api/api-keys/:id > validates the body > isActive not boolean |
+| 15x | BackupController > permissions > every route requires authentication and admin > DELETE /api/backups/2020-01-01T0000 anonymous |
+| 22x | BackupController > permissions > every route requires authentication and admin > DELETE /api/backups/2020-01-01T0000 guest |
+| 19x | CollectionController > modify routes > adds and removes batches > batch add empty |
+| 9x | FileSystemController > GET /api/filesystem > requires authentication and admin > guest |
+| 18x | HlsRouter > playlist and file parameter handling > answers 404 for missing .ts and .m3u8 files ... > missing files, fresh stream: extraDashes |
+| 18x | HlsRouter > playlist and file parameter handling > rejects files whose extension is not .ts or .m3u8 with 400 ... > extension validation: concatFile |
+| 14x | LibraryController > DELETE /api/libraries/:id > deletes a library ... > delete again |
+| 14x | LibraryItemController > GET /api/items/:id/cover > serves the raw cover file > raw cover file missing on disk |
+| 11x | MiscController > auth settings > PATCH ignores wrongly typed values |
+
+The one item from section 5 that could not be run (audit counts and warnings) is now covered above.
