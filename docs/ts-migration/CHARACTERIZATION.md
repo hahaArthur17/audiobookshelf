@@ -182,6 +182,13 @@ Reported by the test-writing agents while reading the code and recording respons
 - Emitted payloads are now recorded (scanner suites and every `item_updated` route of LibraryItemController): full item JSON, with ids as labels. Masked: ino, bitRate, timeBase, tagEncoder, lastScanVersion, time fields (replaced by `<masked>`, so a dropped field still fails), nonzero `size`; durations rounded to seconds; item lists in `items_added`/`items_updated` sorted by relPath (filesystem order differs per machine).
 - Scanner: a renamed folder with the same inode is a move (`items_updated`, `isMissing: false`), not missing. A watcher move emits two `item_updated` events for one row (first `isMissing: true`, then `false`). `scanLibraryItem` with the folder gone emits `item_updated` with `isMissing: true` and `size: 0`. `authors_num_books_updated` and `author_added` come out with item events during a scan. No controller route emits `item_added`.
 
+### Found while closing sweep findings F7, F8, F10 and F15 (recorded, not fixed)
+
+- `GET /api/me/items-in-progress` passes `limit` through `Number(limit) || 25` and then `slice`: a negative limit drops items from the end (`-1` returns 27 of 28), `2.5` truncates, `1e1`, `0x10`, `+3` parse as numbers, `0`, `abc`, `10abc`, `NaN` fall back to 25, and a repeated `limit` (an array) falls back to 25.
+- Finishing an existing progress with `{isFinished: true}` sets `progress` to 1 but leaves `currentTime` as it was, and does not unhide a hidden item; an explicit `finishedAt` is kept.
+- OIDC mobile login: the body has no legacy `token`; `POST /auth/refresh` with `x-refresh-token` also sets a `refresh_token` cookie (HttpOnly, SameSite=Lax) and rotates the refresh token; the callback sets an `openid_id_token` cookie with the Secure flag; the app's `state` is passed through unchanged.
+- Deleting an audio file does not reset ebook state; `isMissing` is set only when no media files remain; deleting the primary ebook nulls `ebookFile` and `ebookFormat` while a supplementary pdf stays in `libraryFiles`.
+
 ## How the suite is kept honest
 `npm run audit:characterization` (see `test/characterization/README.md`) measures instead of trusting claims: 202 of 202 route handlers are hit and each has at least one 2xx/3xx response; every snapshot entry is compared by a test; no `.only`, no assertion-free test, no stub that replaces code under test; the only reshaping of responses before snapshotting is sorting where the server's own order is random, masking of times/versions/ids, and reducing the random "discover" shelf to its size. `npm run oracle:check` plus the Characterization Guard workflow stop the oracle from changing without a deliberate `[oracle-update]` commit.
 
