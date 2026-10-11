@@ -152,7 +152,9 @@ describe('ScannerOrchestration (characterization)', function () {
       sl.addLog(LogLevel.DEBUG, 'a', 'b')
       sl.addLog(LogLevel.ERROR, 'c')
       sl.setComplete()
-      snap(this, { before, json: { ...sl.toJSON(), id: '<id>', startedAt: '<t>', finishedAt: '<t>' }, logs: sl.logs.map((l) => `${l.levelName}: ${l.message}`), hasElapsed: typeof sl.elapsed === 'number' })
+      // elapsed is finishedAt - startedAt in ms, so it is 0 or 1 depending on where the clock tick falls: assert the range, snapshot the rest
+      expect(sl.elapsed).to.be.a('number').and.at.least(0).and.below(1000)
+      snap(this, { before, json: { ...sl.toJSON(), id: '<id>', startedAt: '<t>', finishedAt: '<t>', elapsed: '<ms>' }, logs: sl.logs.map((l) => `${l.levelName}: ${l.message}`), hasElapsed: typeof sl.elapsed === 'number' })
     })
   })
 

@@ -19,7 +19,19 @@ describe('Server boot (characterization)', function () {
     const i = parts.lastIndexOf('dist-server')
     return i > -1 ? parts.slice(0, i).join(path.sep) || path.sep : path.resolve(__dirname, '..', '..')
   })()
-  const INDEX = path.join(ROOT, 'dist-server', 'index.js')
+  // The server serves <appRoot>/client/dist when it exists, and appRoot is the parent of dist-server. A developer machine often has a built client,
+  // which would change the "web client not built" responses. So the child runs from a temp app dir whose dist-server, node_modules and package.json
+  // are symlinks to the real ones (node --preserve-symlinks keeps the symlinked location as __dirname), and which has no client/.
+  let APP = null
+  let INDEX = path.join(ROOT, 'dist-server', 'index.js')
+  before(function () {
+    APP = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'abs-app-')))
+    for (const name of ['dist-server', 'node_modules', 'package.json']) fs.symlinkSync(path.join(ROOT, name), path.join(APP, name))
+    INDEX = path.join(APP, 'dist-server', 'index.js')
+  })
+  after(() => {
+    if (APP) fs.rmSync(APP, { recursive: true, force: true })
+  })
 
   const freePort = () =>
     new Promise((resolve) => {
@@ -58,7 +70,7 @@ describe('Server boot (characterization)', function () {
     const meta = path.join(tmp, 'metadata')
     const port = await freePort()
     const env = { ...process.env, TZ: 'UTC', NODE_ENV: 'production', HOST: '127.0.0.1', SKIP_BINARIES_CHECK: '1', FFMPEG_PATH: FFMPEG, FFPROBE_PATH: FFPROBE, SOURCE: 'local', ROUTER_BASE_PATH: o.basePath ?? '/audiobookshelf', ...o.env }
-    const proc = spawn(process.execPath, [INDEX, '--config', cfg, '--metadata', meta, '--port', String(port)], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'pipe'] })
+    const proc = spawn(process.execPath, ['--preserve-symlinks', '--preserve-symlinks-main', INDEX, '--config', cfg, '--metadata', meta, '--port', String(port)], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'pipe'] })
     const lines = []
     let buf = ''
     const onData = (d) => {

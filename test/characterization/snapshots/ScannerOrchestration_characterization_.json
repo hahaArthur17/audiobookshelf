@@ -190,7 +190,7 @@
       "name": "Some/Item",
       "startedAt": "<t>",
       "finishedAt": "<t>",
-      "elapsed": 0
+      "elapsed": "<ms>"
     },
     "logs": [
       "DEBUG: a b",
