@@ -1,5 +1,18 @@
-const xml = require('../../libs/xml')
-const escapeForXML = require('../../libs/xml/escapeForXML')
+import xml = require('../../libs/xml')
+import escapeForXML = require('../../libs/xml/escapeForXML')
+
+type Podcast = import('../../models/Podcast')
+
+/** Attributes of one outline element; the optional ones are added only when the podcast has a value */
+interface OpmlFeedAttributes {
+  type: string
+  text: string
+  title: string
+  xmlUrl: string
+  description?: string
+  htmlUrl?: string
+  language?: string
+}
 
 /**
  * Generate OPML file string for podcasts in a library
@@ -7,11 +20,11 @@ const escapeForXML = require('../../libs/xml/escapeForXML')
  * @param {boolean} [indent=true] 
  * @returns {string}
  */
-module.exports.generate = (podcasts, indent = true) => {
-  const bodyItems = []
+const generate = (podcasts: Podcast[], indent: boolean = true): string => {
+  const bodyItems: { outline: { _attr: OpmlFeedAttributes } }[] = []
   podcasts.forEach((podcast) => {
     if (!podcast.feedURL) return
-    const feedAttributes = {
+    const feedAttributes: OpmlFeedAttributes = {
       type: 'rss',
       text: escapeForXML(podcast.title),
       title: escapeForXML(podcast.title),
@@ -57,3 +70,5 @@ module.exports.generate = (podcasts, indent = true) => {
 
   return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml(data, indent)
 }
+
+export = { generate }

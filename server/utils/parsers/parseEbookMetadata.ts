@@ -1,5 +1,9 @@
-const parseEpubMetadata = require('./parseEpubMetadata')
-const parseComicMetadata = require('./parseComicMetadata')
+import parseEpubMetadata = require('./parseEpubMetadata')
+import parseComicMetadata = require('./parseComicMetadata')
+
+type EBookFileObject = import('../../models/Book').EBookFileObject
+type BookMetadataObject = import('../../scanner/BookScanner').BookMetadataObject
+type EBookFileScanData = parseEbookMetadata.EBookFileScanData
 
 /**
  * @typedef EBookFileScanData
@@ -15,7 +19,7 @@ const parseComicMetadata = require('./parseComicMetadata')
  * @param {import('../../models/Book').EBookFileObject} ebookFile 
  * @returns {Promise<EBookFileScanData>}
  */
-async function parse(ebookFile) {
+async function parse(ebookFile: EBookFileObject | null | undefined): Promise<EBookFileScanData | null> {
   if (!ebookFile) return null
 
   if (ebookFile.ebookFormat === 'epub') {
@@ -25,7 +29,6 @@ async function parse(ebookFile) {
   }
   return null
 }
-module.exports.parse = parse
 
 /**
  * Extract cover from ebook file
@@ -34,7 +37,7 @@ module.exports.parse = parse
  * @param {string} outputCoverPath 
  * @returns {Promise<boolean>}
  */
-async function extractCoverImage(ebookFileScanData, outputCoverPath) {
+async function extractCoverImage(ebookFileScanData: EBookFileScanData | null | undefined, outputCoverPath: string): Promise<boolean> {
   if (!ebookFileScanData?.ebookCoverPath) return false
 
   if (ebookFileScanData.ebookFormat === 'epub') {
@@ -44,4 +47,15 @@ async function extractCoverImage(ebookFileScanData, outputCoverPath) {
   }
   return false
 }
-module.exports.extractCoverImage = extractCoverImage
+
+const parseEbookMetadata = { parse, extractCoverImage }
+// Type-only: keeps import('./parseEbookMetadata').EBookFileScanData (used by CoverManager, BookScanner, parseComicMetadata and parseEpubMetadata) resolvable after export =
+declare namespace parseEbookMetadata {
+  interface EBookFileScanData {
+    path: string
+    ebookFormat: string
+    ebookCoverPath: string // internal image path
+    metadata: BookMetadataObject
+  }
+}
+export = parseEbookMetadata

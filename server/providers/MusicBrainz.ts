@@ -1,18 +1,30 @@
-const axios = require('axios')
-const packageJson = require('../../package.json')
-const Logger = require('../Logger')
-const { isNullOrNaN } = require('../utils/index')
+import axiosModule = require('axios')
+// axios.get takes (url, config). searchTrack() passes a third argument, which axios ignores (bug log); this annotation describes that call so it compiles unchanged.
+const axios: { get(url: string, config?: object, ignored?: object): Promise<{ data: { recordings?: unknown[] } }> } = axiosModule.default
+import packageJson = require('../../package.json')
+import Logger = require('../Logger')
+import utils = require('../utils/index')
+const { isNullOrNaN } = utils
+
+/** Search options of searchTrack() (only the fields read here) */
+interface MusicBrainzSearchOptions {
+  artist?: string
+  isrc?: string
+  title?: string
+  album?: string
+  limit?: number | string | null
+}
 
 class MusicBrainz {
   constructor() { }
 
-  get userAgentString() {
+  get userAgentString(): string {
     return `audiobookshelf/${packageJson.version} (https://audiobookshelf.org)`
   }
 
   // https://musicbrainz.org/doc/MusicBrainz_API/Search
-  searchTrack(options) {
-    let luceneParts = []
+  searchTrack(options: MusicBrainzSearchOptions): unknown[] | Promise<unknown[]> {
+    let luceneParts: string[] = []
     if (options.artist) {
       luceneParts.push(`artist:${options.artist}`)
     }
@@ -42,10 +54,10 @@ class MusicBrainz {
     }
     return axios.get('https://musicbrainz.org/ws/2/recording', { params: query }, config).then((response) => {
       return response.data.recordings || []
-    }).catch((error) => {
+    }).catch((error: Error) => {
       Logger.error(`[MusicBrainz] search request error`, error)
       return []
     })
   }
 }
-module.exports = MusicBrainz
+export = MusicBrainz

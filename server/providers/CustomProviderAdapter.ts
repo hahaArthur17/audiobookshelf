@@ -1,7 +1,56 @@
-const axios = require('axios').default
-const Database = require('../Database')
-const Logger = require('../Logger')
-const htmlSanitizer = require('../utils/htmlSanitizer')
+import axiosModule = require('axios')
+const axios = axiosModule.default
+import type { AxiosRequestConfig } from 'axios'
+import Database = require('../Database')
+import Logger = require('../Logger')
+import htmlSanitizer = require('../utils/htmlSanitizer')
+
+// lib.d.ts types isNaN(number), but the built-in coerces every value and duration is external data. Widens the type for this file only; emits no code.
+declare function isNaN(value: unknown): boolean
+
+/** One item of `matches` in a custom provider's search response. External data: search() validates every value */
+interface CustomProviderMatch {
+  title?: unknown
+  subtitle?: unknown
+  author?: unknown
+  narrator?: unknown
+  publisher?: unknown
+  publishedYear?: unknown
+  description?: unknown
+  cover?: unknown
+  isbn?: unknown
+  asin?: unknown
+  genres?: string | string[] | null
+  tags?: string | string[] | null
+  series?: unknown
+  language?: unknown
+  duration?: unknown
+}
+
+interface CustomProviderSeries {
+  series: string
+  sequence?: string
+}
+
+/** One validated match as search() returns it */
+interface CustomProviderResult {
+  title?: string
+  subtitle?: string
+  author?: string
+  narrator?: string
+  publisher?: string
+  publishedYear?: string
+  description?: string
+  cover?: string
+  isbn?: string
+  asin?: string
+  genres?: string[]
+  tags?: string[]
+  series?: CustomProviderSeries[]
+  language?: string
+  duration?: number
+  [key: string]: unknown // search() removes the undefined values by key in a for...in loop
+}
 
 class CustomProviderAdapter {
   #responseTimeout = 10000
@@ -18,7 +67,7 @@ class CustomProviderAdapter {
    * @param {number} [timeout] response timeout in ms
    * @returns {Promise<Object[]>}
    */
-  async search(title, author, isbn, providerSlug, mediaType, timeout = this.#responseTimeout) {
+  async search(title: string, author: string, isbn: string, providerSlug: string, mediaType: string, timeout: number = this.#responseTimeout): Promise<CustomProviderResult[]> {
     if (!timeout || isNaN(timeout)) timeout = this.#responseTimeout
 
     const providerId = providerSlug.split('custom-')[1]
@@ -29,7 +78,7 @@ class CustomProviderAdapter {
     }
 
     // Setup query params
-    const queryObj = {
+    const queryObj: Record<string, string> = {
       mediaType,
       query: title
     }
@@ -45,7 +94,7 @@ class CustomProviderAdapter {
     Logger.debug(`[CustomMetadataProvider] Search url: ${url}`)
 
     // Setup headers
-    const axiosOptions = {
+    const axiosOptions: AxiosRequestConfig = {
       timeout
     }
     if (provider.authHeaderValue) {
@@ -55,12 +104,12 @@ class CustomProviderAdapter {
     }
 
     const matches = await axios
-      .get(url, axiosOptions)
+      .get<{ matches?: CustomProviderMatch[] }>(url, axiosOptions)
       .then((res) => {
         if (!res?.data || !Array.isArray(res.data.matches)) return null
         return res.data.matches
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         Logger.error('[CustomMetadataProvider] Search error', error.message)
         return []
       })
@@ -69,17 +118,17 @@ class CustomProviderAdapter {
       throw new Error('Custom provider returned malformed response')
     }
 
-    const toStringOrUndefined = (value) => {
+    const toStringOrUndefined = (value: unknown): string | undefined => {
       if (typeof value === 'string' || typeof value === 'number') return String(value)
       if (Array.isArray(value) && value.every((v) => typeof v === 'string' || typeof v === 'number')) return value.join(',')
       return undefined
     }
-    const validateSeriesArray = (series) => {
+    const validateSeriesArray = (series: unknown): CustomProviderSeries[] | undefined => {
       if (!Array.isArray(series) || !series.length) return undefined
       return series
-        .map((s) => {
+        .map((s: { series?: unknown; sequence?: unknown } | null | undefined) => {
           if (!s?.series || typeof s.series !== 'string') return undefined
-          const _series = {
+          const _series: CustomProviderSeries = {
             series: s.series
           }
           if (s.sequence && (typeof s.sequence === 'string' || typeof s.sequence === 'number')) {
@@ -95,7 +144,7 @@ class CustomProviderAdapter {
      * @param {string|string[]} tagsGenres
      * @returns {string[]}
      */
-    const validateTagsGenresArray = (tagsGenres) => {
+    const validateTagsGenresArray = (tagsGenres: string | string[] | null | undefined): string[] | undefined => {
       if (!tagsGenres || (typeof tagsGenres !== 'string' && !Array.isArray(tagsGenres))) return undefined
 
       // If string, split by comma and trim each item
@@ -115,7 +164,7 @@ class CustomProviderAdapter {
     return matches.map((match) => {
       const { title, subtitle, author, narrator, publisher, publishedYear, description, cover, isbn, asin, genres, tags, series, language, duration } = match
 
-      const payload = {
+      const payload: CustomProviderResult = {
         title: toStringOrUndefined(title),
         subtitle: toStringOrUndefined(subtitle),
         author: toStringOrUndefined(author),
@@ -145,4 +194,4 @@ class CustomProviderAdapter {
   }
 }
 
-module.exports = CustomProviderAdapter
+export = CustomProviderAdapter
