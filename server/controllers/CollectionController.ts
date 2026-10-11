@@ -1,11 +1,23 @@
-const { Request, Response, NextFunction } = require('express')
-const Sequelize = require('sequelize')
-const Logger = require('../Logger')
-const SocketAuthority = require('../SocketAuthority')
-const Database = require('../Database')
-const htmlSanitizer = require('../utils/htmlSanitizer')
+import type { LibraryItemModelStatic } from '../types/libraryItemModel'
+import type { NextFunction, Request, Response } from 'express'
+import Sequelize = require('sequelize')
+import Logger = require('../Logger')
+import SocketAuthority = require('../SocketAuthority')
+import Database = require('../Database')
+import htmlSanitizer = require('../utils/htmlSanitizer')
 
-const RssFeedManager = require('../managers/RssFeedManager')
+import RssFeedManager = require('../managers/RssFeedManager')
+
+type User = import('../models/User')
+type Collection = import('../models/Collection')
+
+type CollectionQuery = { include?: string } // query values are assumed to be strings: findOne() calls .split on include
+type CollectionBody = { name?: string; libraryId?: string; description?: string | null; books?: string[]; id?: string }
+
+type RequestWithUser = Request<{ id?: string; bookId?: string }, unknown, CollectionBody, CollectionQuery> & { user: User }
+// Allowance 3, as one declaration instead of a cast at each of the 8 calls: the handlers call getOldJsonExpanded() with no argument, but Collection.ts declares user as required (a missing user is handled like null: no permission filter)
+type RequestEntityObject = { collection: Collection & { getOldJsonExpanded(user?: User | null, include?: string[]): ReturnType<Collection['getOldJsonExpanded']> } }
+type CollectionControllerRequest = RequestWithUser & RequestEntityObject
 
 /**
  * @typedef RequestUserObject
@@ -29,7 +41,7 @@ class CollectionController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async create(req, res) {
+  async create(req: RequestWithUser, res: Response) {
     const reqBody = req.body || {}
 
     const nameCleaned = htmlSanitizer.stripAllTags(reqBody.name)
@@ -51,7 +63,7 @@ class CollectionController {
     }
 
     // Load library items
-    const libraryItems = await Database.libraryItemModel.findAll({
+    const libraryItems = await (Database.libraryItemModel as LibraryItemModelStatic).findAll({ // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
       attributes: ['id', 'mediaId', 'mediaType', 'libraryId'],
       where: {
         id: libraryItemIds,
@@ -64,9 +76,9 @@ class CollectionController {
     }
 
     /** @type {import('../models/Collection')} */
-    let newCollection = null
+    let newCollection: Collection | null = null
 
-    const transaction = await Database.sequelize.transaction()
+    const transaction = await Database.sequelize!.transaction() // sequelize starts as null and is set in Database.init() before the first request
     try {
       // Create collection
       newCollection = await Database.collectionModel.create(
@@ -82,8 +94,8 @@ class CollectionController {
       const collectionBookPayloads = libraryItemIds.map((llid, index) => {
         const libraryItem = libraryItems.find((li) => li.id === llid)
         return {
-          collectionId: newCollection.id,
-          bookId: libraryItem.mediaId,
+          collectionId: newCollection!.id, // newCollection starts as null and is set by create() just above (the narrowing is lost inside this callback)
+          bookId: libraryItem!.mediaId, // the length check above guarantees that every id in libraryItemIds has its library item
           order: index + 1
         }
       })
@@ -111,9 +123,9 @@ class CollectionController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async findAll(req, res) {
+  async findAll(req: RequestWithUser, res: Response) {
     const collectionsExpanded = await Database.collectionModel.getOldCollectionsJsonExpanded(req.user)
-    const accessibleCollections = collectionsExpanded.filter((c) => req.user.checkCanAccessLibrary(c.libraryId))
+    const accessibleCollections = collectionsExpanded.filter((c) => req.user.checkCanAccessLibrary(c!.libraryId)) // getOldCollectionsJsonExpanded() ends with .filter((c) => c), so no null is left; its return type in Collection.ts still lists null
     res.json({
       collections: accessibleCollections
     })
@@ -125,7 +137,7 @@ class CollectionController {
    * @param {CollectionControllerRequest} req
    * @param {Response} res
    */
-  async findOne(req, res) {
+  async findOne(req: CollectionControllerRequest, res: Response) {
     const includeEntities = (req.query.include || '').split(',')
 
     const collectionExpanded = await req.collection.getOldJsonExpanded(req.user, includeEntities)
@@ -144,11 +156,11 @@ class CollectionController {
    * @param {CollectionControllerRequest} req
    * @param {Response} res
    */
-  async update(req, res) {
+  async update(req: CollectionControllerRequest, res: Response) {
     let wasUpdated = false
 
     // Update description and name if defined
-    const collectionUpdatePayload = {}
+    const collectionUpdatePayload: { description?: string | null; name?: string } = {}
     if (req.body.description !== undefined && req.body.description !== req.collection.description) {
       collectionUpdatePayload.description = req.body.description
       wasUpdated = true
@@ -176,8 +188,8 @@ class CollectionController {
         order: [['order', 'ASC']]
       })
       collectionBooks.sort((a, b) => {
-        const aIndex = req.body.books.findIndex((lid) => lid === a.book.libraryItem.id)
-        const bIndex = req.body.books.findIndex((lid) => lid === b.book.libraryItem.id)
+        const aIndex = req.body.books!.findIndex((lid) => lid === a.book!.libraryItem.id) // books: tested by the if above (the narrowing is lost inside this callback); book: the query above includes book with its libraryItem
+        const bIndex = req.body.books!.findIndex((lid) => lid === b.book!.libraryItem.id) // the same two reasons as on the line above
         return aIndex - bIndex
       })
       for (let i = 0; i < collectionBooks.length; i++) {
@@ -211,7 +223,7 @@ class CollectionController {
    * @param {CollectionControllerRequest} req
    * @param {Response} res
    */
-  async delete(req, res) {
+  async delete(req: CollectionControllerRequest, res: Response) {
     const jsonExpanded = await req.collection.getOldJsonExpanded()
 
     // Close rss feed - remove from db and emit socket event
@@ -231,8 +243,8 @@ class CollectionController {
    * @param {CollectionControllerRequest} req
    * @param {Response} res
    */
-  async addBook(req, res) {
-    const libraryItem = await Database.libraryItemModel.findByPk(req.body.id, {
+  async addBook(req: CollectionControllerRequest, res: Response) {
+    const libraryItem = await (Database.libraryItemModel as LibraryItemModelStatic).findByPk(req.body.id, { // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
       attributes: ['libraryId', 'mediaId']
     })
     if (!libraryItem) {
@@ -268,8 +280,8 @@ class CollectionController {
    * @param {CollectionControllerRequest} req
    * @param {Response} res
    */
-  async removeBook(req, res) {
-    const libraryItem = await Database.libraryItemModel.findByPk(req.params.bookId, {
+  async removeBook(req: CollectionControllerRequest, res: Response) {
+    const libraryItem = await (Database.libraryItemModel as LibraryItemModelStatic).findByPk(req.params.bookId, { // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
       attributes: ['mediaId']
     })
     if (!libraryItem) {
@@ -315,7 +327,7 @@ class CollectionController {
    * @param {CollectionControllerRequest} req
    * @param {Response} res
    */
-  async addBatch(req, res) {
+  async addBatch(req: CollectionControllerRequest, res: Response) {
     // filter out invalid libraryItemIds
     const bookIdsToAdd = (req.body.books || []).filter((b) => !!b && typeof b == 'string')
     if (!bookIdsToAdd.length) {
@@ -323,7 +335,7 @@ class CollectionController {
     }
 
     // Get library items associated with ids
-    const libraryItems = await Database.libraryItemModel.findAll({
+    const libraryItems = await (Database.libraryItemModel as LibraryItemModelStatic).findAll({ // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
       attributes: ['id', 'mediaId', 'mediaType', 'libraryId'],
       where: {
         id: bookIdsToAdd,
@@ -377,7 +389,7 @@ class CollectionController {
    * @param {CollectionControllerRequest} req
    * @param {Response} res
    */
-  async removeBatch(req, res) {
+  async removeBatch(req: CollectionControllerRequest, res: Response) {
     // filter out invalid libraryItemIds
     const bookIdsToRemove = (req.body.books || []).filter((b) => !!b && typeof b == 'string')
     if (!bookIdsToRemove.length) {
@@ -385,7 +397,7 @@ class CollectionController {
     }
 
     // Get library items associated with ids
-    const libraryItems = await Database.libraryItemModel.findAll({
+    const libraryItems = await (Database.libraryItemModel as LibraryItemModelStatic).findAll({ // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
       where: {
         id: bookIdsToRemove
       },
@@ -430,7 +442,7 @@ class CollectionController {
    * @param {Response} res
    * @param {NextFunction} next
    */
-  async middleware(req, res, next) {
+  async middleware(req: RequestWithUser & Partial<RequestEntityObject>, res: Response, next: NextFunction) {
     if (req.params.id) {
       const collection = await Database.collectionModel.findByPk(req.params.id)
       if (!collection) {
@@ -455,4 +467,4 @@ class CollectionController {
     next()
   }
 }
-module.exports = new CollectionController()
+export = new CollectionController()
