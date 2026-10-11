@@ -1,12 +1,297 @@
-const { DataTypes, QueryInterface } = require('sequelize')
-const Path = require('path')
-const uuidv4 = require('uuid').v4
-const Logger = require('../../Logger')
-const fs = require('../../libs/fsExtra')
-const oldDbFiles = require('./oldDbFiles')
-const parseNameString = require('../parsers/parseNameString')
+{
+interface MigrationRow {
+  [key: string]: unknown
+}
 
-const oldDbIdMap = {
+interface LegacyAuthor {
+  id: string
+  name?: string | null
+  asin?: string | null
+  description?: unknown
+  imagePath?: unknown
+  addedAt?: unknown
+  updatedAt?: unknown
+}
+
+interface LegacySeries extends LegacyAuthor {
+  sequence?: unknown
+}
+
+interface LegacyAudioFile {
+  index?: number
+  ino?: string
+  duration?: number | string | null
+  exclude?: boolean
+  invalid?: boolean
+  metadata?: { size?: number | string | null; [key: string]: unknown }
+  [key: string]: unknown
+}
+
+interface LegacyMetadata {
+  title?: string | null
+  authors: LegacyAuthor[]
+  series: LegacySeries[]
+  [key: string]: unknown
+}
+
+interface LegacyMedia {
+  metadata: LegacyMetadata
+  audioFiles?: LegacyAudioFile[]
+  episodes?: LegacyPodcastEpisode[]
+  [key: string]: unknown
+}
+
+interface LegacyPodcastEpisode {
+  id: string
+  index?: number
+  audioFile: LegacyAudioFile
+  addedAt?: unknown
+  updatedAt?: unknown
+  enclosure?: { url?: unknown; length?: unknown; type?: unknown }
+  chapters?: unknown[]
+  [key: string]: unknown
+}
+
+interface LegacyLibraryFile {
+  metadata?: { size?: number | string | null; [key: string]: unknown }
+  isSupplementary?: boolean | null
+  [key: string]: unknown
+}
+
+interface LegacyLibraryItem {
+  id: string
+  folderId: string
+  libraryId: string
+  mediaType: string
+  libraryFiles: LegacyLibraryFile[]
+  media: LegacyMedia
+  ino?: string
+  [key: string]: unknown
+}
+
+interface LegacyLibrary {
+  id: string
+  name?: string
+  mediaType: string
+  folders: Array<{ id: string; fullPath: string; [key: string]: unknown }>
+  [key: string]: unknown
+}
+
+interface LegacyUser {
+  id: string
+  username?: string
+  librariesAccessible?: string[]
+  bookmarks?: Array<{ libraryItemId: string; [key: string]: unknown }>
+  seriesHideFromContinueListening?: string[]
+  mediaProgress: LegacyMediaProgress[]
+  permissions?: Record<string, unknown>
+  [key: string]: unknown
+}
+
+interface LegacyMediaProgress {
+  id: string
+  libraryItemId: string
+  episodeId?: string
+  duration?: unknown
+  currentTime?: unknown
+  progress?: unknown
+  startedAt?: unknown
+  lastUpdate?: unknown
+  [key: string]: unknown
+}
+
+interface LegacyDeviceInfo {
+  deviceId?: string
+  browserName?: string
+  browserVersion?: string
+  osName?: string
+  osVersion?: string
+  clientVersion?: string
+  manufacturer?: string
+  model?: string
+  sdkVersion?: string
+  ipAddress?: string
+  serverVersion?: string
+}
+
+interface LegacySession {
+  id: string
+  userId: string
+  libraryId: string
+  libraryItemId: string
+  episodeId?: string
+  mediaType?: string
+  deviceInfo?: LegacyDeviceInfo | null
+  [key: string]: unknown
+}
+
+interface LegacyCollection {
+  id: string
+  libraryId: string
+  name?: string
+  books: string[]
+  [key: string]: unknown
+}
+
+interface LegacyPlaylist {
+  id: string
+  libraryId: string
+  userId: string
+  name?: string
+  items: Array<{ episodeId?: string; libraryItemId?: string }>
+  [key: string]: unknown
+}
+
+interface LegacyFeed {
+  id: string
+  entityType: string
+  entityId: string
+  userId: string
+  episodes?: LegacyFeedEpisode[]
+  meta: Record<string, unknown>
+  [key: string]: unknown
+}
+
+interface LegacyFeedEpisode {
+  title?: string
+  enclosure?: { url?: unknown; type?: unknown; size?: unknown }
+  [key: string]: unknown
+}
+
+type IdMap = Record<string, string>
+type NestedIdMap = Record<string, IdMap>
+type MigrationRows = Record<string, MigrationRow[]>
+
+interface OldDbIdMap {
+  users: IdMap
+  libraries: IdMap
+  libraryFolders: IdMap
+  libraryItems: IdMap
+  authors: NestedIdMap
+  series: NestedIdMap
+  collections: IdMap
+  podcastEpisodes: IdMap
+  books: IdMap
+  podcasts: IdMap
+  devices: IdMap
+}
+
+interface BulkCreateModel {
+  bulkCreate(records: MigrationRow[], options?: unknown): Promise<unknown>
+}
+
+interface MigratedLibraryItem extends MigrationRow {
+  id: string
+  libraryId: string
+  mediaId: string | null
+  createdAt: unknown
+  updatedAt: unknown
+}
+
+interface ExpandedPodcastEpisode extends MigrationRow {
+  id: string
+  audioFile?: LegacyAudioFile
+}
+
+interface ExpandedLibraryItem extends MigrationRow {
+  id: string
+  ino?: string
+  media: { podcastEpisodes?: ExpandedPodcastEpisode[] }
+}
+
+interface MigratedLibrary extends MigrationRow {
+  id: string
+  oldLibraryId: string
+  name: string
+  extraData?: Record<string, unknown> | null
+  libraryFolders: Array<{ path: string }>
+  changed(field: string, value: boolean): void
+  save(): Promise<unknown>
+}
+
+interface MigratedUser extends MigrationRow {
+  bookmarks?: Array<{ libraryItemId: string; [key: string]: unknown }>
+  permissions: { librariesAccessible?: string[]; [key: string]: unknown }
+  extraData: { seriesHideFromContinueListening?: string[]; [key: string]: unknown }
+  changed(field: string, value: boolean): void
+  save(): Promise<unknown>
+}
+
+interface PatchLibraryItemModel extends BulkCreateModel {
+  findAllExpandedWhere(): Promise<ExpandedLibraryItem[]>
+  findAll(options: { limit: number; offset: number }): Promise<Array<MigrationRow & { id: string; libraryFiles?: LegacyLibraryFile[] }>>
+}
+
+interface PatchModelSet {
+  libraryItem: PatchLibraryItemModel
+  podcastEpisode: BulkCreateModel
+  library: BulkCreateModel & { getAllWithFolders(): Promise<MigratedLibrary[]> }
+  book: BulkCreateModel & { findAll(options: { limit: number; offset: number }): Promise<Array<MigrationRow & { id: string; title: string; audioFiles?: LegacyAudioFile[] }>> }
+  podcast: BulkCreateModel & { findAll(options: { limit: number; offset: number }): Promise<Array<MigrationRow & { id: string; title: string }>> }
+  series: BulkCreateModel & { findAll(options: { limit: number; offset: number }): Promise<Array<MigrationRow & { id: string; name: string }>> }
+  author: BulkCreateModel & { findAll(options: { limit: number; offset: number }): Promise<Array<MigrationRow & { id: string; name?: string | null }>> }
+  bookAuthor: BulkCreateModel & { findAll(options: { limit: number; offset: number; include: { model: unknown } }): Promise<Array<MigrationRow & { id: string; author?: { createdAt?: Date | null } | null }>> }
+  bookSeries: BulkCreateModel & { findAll(options: { limit: number; offset: number; include: { model: unknown } }): Promise<Array<MigrationRow & { id: string; series?: { createdAt?: Date | null } | null }>> }
+  mediaProgress: BulkCreateModel
+}
+
+interface QueryInterfaceLike {
+  sequelize: { transaction<T>(callback: (transaction: unknown) => Promise<T>): Promise<T> }
+  describeTable(table: string): Promise<Record<string, unknown>>
+  addColumn(table: string, column: string, definition: { type: unknown }, options: { transaction: unknown }): Promise<unknown>
+}
+
+interface MigrationContext {
+  models: PatchModelSet
+  sequelize: {
+    getQueryInterface(): QueryInterfaceLike
+    query(sql: string): Promise<unknown>
+  }
+  userModel: { findAll(options: { include: unknown }): Promise<MigratedUser[]> }
+}
+
+interface DatabaseModels extends Record<string, BulkCreateModel> {
+  setting: BulkCreateModel
+  author: BulkCreateModel
+  series: BulkCreateModel
+}
+
+interface OldDbFiles {
+  loadOldData(name: string): Promise<unknown[]>
+  checkHasOldDb(): Promise<boolean>
+  checkHasOldDbZip(): Promise<boolean>
+  zipWrapOldDb(): Promise<boolean>
+  checkExtractItemsUsersAndLibraries(): Promise<boolean>
+  removeOldItemsUsersAndLibrariesFolders(): Promise<void>
+}
+
+interface MigrationLogger {
+  debug(message: string, ...details: unknown[]): void
+  info(message: string, ...details: unknown[]): void
+  warn(message: string, ...details: unknown[]): void
+  error(message: string, ...details: unknown[]): void
+}
+
+interface MigrationFileSystem {
+  emptyDir(target: string): Promise<void>
+  pathExists(target: string): Promise<boolean>
+}
+
+type MigrationGlobals = typeof globalThis & {
+  ConfigPath: string
+  MetadataPath: string
+  ServerSettings: { sortingPrefixes?: string[] }
+}
+
+const { DataTypes, QueryInterface } = require('sequelize') as { DataTypes: Record<string, unknown>; QueryInterface: unknown }
+const Path: { join(...paths: string[]): string } = require('path')
+const uuidv4: () => string = require('uuid').v4
+const Logger: MigrationLogger = require('../../Logger')
+const fs: MigrationFileSystem = require('../../libs/fsExtra')
+const oldDbFiles: OldDbFiles = require('./oldDbFiles')
+const parseNameString: { nameToLastFirst(name: string): string } = require('../parsers/parseNameString')
+
+const oldDbIdMap: OldDbIdMap = {
   users: {},
   libraries: {},
   libraryFolders: {},
@@ -20,8 +305,8 @@ const oldDbIdMap = {
   devices: {} // key is a json stringify of the old DeviceInfo data OR deviceId if it exists
 }
 
-let prefixesToIgnore = ['the']
-function getTitleIgnorePrefix(title) {
+let prefixesToIgnore: string[] = ['the']
+function getTitleIgnorePrefix(title: string | null | undefined): string | null | undefined {
   if (!title?.trim()) return title
   for (const prefix of prefixesToIgnore) {
     // e.g. for prefix "the". If title is "The Book" return "Book"
@@ -32,7 +317,9 @@ function getTitleIgnorePrefix(title) {
   return title
 }
 
-function getDeviceInfoString(deviceInfo, UserId) {
+function getDeviceInfoString(deviceInfo: LegacyDeviceInfo, UserId: string): string
+function getDeviceInfoString(deviceInfo: LegacyDeviceInfo | null | undefined, UserId: string): string | null
+function getDeviceInfoString(deviceInfo: LegacyDeviceInfo | null | undefined, UserId: string): string | null {
   if (!deviceInfo) return null
   if (deviceInfo.deviceId) return deviceInfo.deviceId
 
@@ -47,10 +334,10 @@ function getDeviceInfoString(deviceInfo, UserId) {
  * @param {object} LibraryItem models.LibraryItem object
  * @returns {object} { book: object, bookSeries: [], bookAuthor: [] }
  */
-function migrateBook(oldLibraryItem, LibraryItem) {
+function migrateBook(oldLibraryItem: LegacyLibraryItem, LibraryItem: MigratedLibraryItem): { book: MigrationRow | null; bookSeries: MigrationRow[]; bookAuthor: MigrationRow[] } {
   const oldBook = oldLibraryItem.media
 
-  const _newRecords = {
+  const _newRecords: { book: MigrationRow | null; bookSeries: MigrationRow[]; bookAuthor: MigrationRow[] } = {
     book: null,
     bookSeries: [],
     bookAuthor: []
@@ -59,8 +346,8 @@ function migrateBook(oldLibraryItem, LibraryItem) {
   const tracks = (oldBook.audioFiles || []).filter((af) => !af.exclude && !af.invalid)
   let duration = 0
   for (const track of tracks) {
-    if (track.duration !== null && !isNaN(track.duration)) {
-      duration += track.duration
+    if (track.duration !== null && !isNaN(track.duration as number)) {
+      duration += track.duration as number
     }
   }
 
@@ -100,7 +387,7 @@ function migrateBook(oldLibraryItem, LibraryItem) {
   //
   // Migrate BookAuthors
   //
-  const bookAuthorsInserted = []
+  const bookAuthorsInserted: string[] = []
   for (const oldBookAuthor of oldBook.metadata.authors) {
     if (oldDbIdMap.authors[LibraryItem.libraryId][oldBookAuthor.id]) {
       const authorId = oldDbIdMap.authors[LibraryItem.libraryId][oldBookAuthor.id]
@@ -121,7 +408,7 @@ function migrateBook(oldLibraryItem, LibraryItem) {
   //
   // Migrate BookSeries
   //
-  const bookSeriesInserted = []
+  const bookSeriesInserted: string[] = []
   for (const oldBookSeries of oldBook.metadata.series) {
     if (oldDbIdMap.series[LibraryItem.libraryId][oldBookSeries.id]) {
       const seriesId = oldDbIdMap.series[LibraryItem.libraryId][oldBookSeries.id]
@@ -149,8 +436,8 @@ function migrateBook(oldLibraryItem, LibraryItem) {
  * @param {object} LibraryItem models.LibraryItem object
  * @returns {object} { podcast: object, podcastEpisode: [] }
  */
-function migratePodcast(oldLibraryItem, LibraryItem) {
-  const _newRecords = {
+function migratePodcast(oldLibraryItem: LegacyLibraryItem, LibraryItem: MigratedLibraryItem): { podcast: MigrationRow | null; podcastEpisode: MigrationRow[] } {
+  const _newRecords: { podcast: MigrationRow | null; podcastEpisode: MigrationRow[] } = {
     podcast: null,
     podcastEpisode: []
   }
@@ -231,14 +518,14 @@ function migratePodcast(oldLibraryItem, LibraryItem) {
  * @param {Array<objects.LibraryItem>} oldLibraryItems
  * @returns {object} { libraryItem: [], book: [], podcast: [], podcastEpisode: [], bookSeries: [], bookAuthor: [] }
  */
-function migrateLibraryItems(oldLibraryItems) {
-  const _newRecords = {
-    book: [],
-    podcast: [],
-    podcastEpisode: [],
-    bookSeries: [],
-    bookAuthor: [],
-    libraryItem: []
+function migrateLibraryItems(oldLibraryItems: LegacyLibraryItem[]): MigrationRows {
+  const _newRecords: MigrationRows = {
+    book: [] as MigrationRow[],
+    podcast: [] as MigrationRow[],
+    podcastEpisode: [] as MigrationRow[],
+    bookSeries: [] as MigrationRow[],
+    bookAuthor: [] as MigrationRow[],
+    libraryItem: [] as MigrationRow[]
   }
   for (const oldLibraryItem of oldLibraryItems) {
     const libraryFolderId = oldDbIdMap.libraryFolders[oldLibraryItem.folderId]
@@ -258,8 +545,8 @@ function migrateLibraryItems(oldLibraryItems) {
 
     let size = 0
     for (const libraryFile of oldLibraryItem.libraryFiles) {
-      if (libraryFile.metadata?.size && !isNaN(libraryFile.metadata?.size)) {
-        size += libraryFile.metadata.size
+      if (libraryFile.metadata?.size && !isNaN(libraryFile.metadata.size as number)) {
+        size += libraryFile.metadata!.size as number
       }
     }
 
@@ -272,7 +559,7 @@ function migrateLibraryItems(oldLibraryItems) {
       ino: oldLibraryItem.ino,
       path: oldLibraryItem.path,
       relPath: oldLibraryItem.relPath,
-      mediaId: null, // set below
+      mediaId: null as string | null, // set below
       mediaType: oldLibraryItem.mediaType,
       isFile: !!oldLibraryItem.isFile,
       isMissing: !!oldLibraryItem.isMissing,
@@ -300,17 +587,17 @@ function migrateLibraryItems(oldLibraryItems) {
     //
     if (oldLibraryItem.mediaType === 'book') {
       const bookRecords = migrateBook(oldLibraryItem, LibraryItem)
-      _newRecords.book.push(bookRecords.book)
+      _newRecords.book.push(bookRecords.book!)
       _newRecords.bookAuthor.push(...bookRecords.bookAuthor)
       _newRecords.bookSeries.push(...bookRecords.bookSeries)
 
-      LibraryItem.mediaId = oldDbIdMap.books[oldLibraryItem.id]
+      LibraryItem.mediaId = oldDbIdMap.books[oldLibraryItem.id]!
     } else if (oldLibraryItem.mediaType === 'podcast') {
       const podcastRecords = migratePodcast(oldLibraryItem, LibraryItem)
-      _newRecords.podcast.push(podcastRecords.podcast)
+      _newRecords.podcast.push(podcastRecords.podcast!)
       _newRecords.podcastEpisode.push(...podcastRecords.podcastEpisode)
 
-      LibraryItem.mediaId = oldDbIdMap.podcasts[oldLibraryItem.id]
+      LibraryItem.mediaId = oldDbIdMap.podcasts[oldLibraryItem.id]!
     }
   }
   return _newRecords
@@ -321,8 +608,8 @@ function migrateLibraryItems(oldLibraryItems) {
  * @param {Array<objects.Library>} oldLibraries
  * @returns {object} { library: [], libraryFolder: [] }
  */
-function migrateLibraries(oldLibraries) {
-  const _newRecords = {
+function migrateLibraries(oldLibraries: LegacyLibrary[]): MigrationRows {
+  const _newRecords: MigrationRows = {
     library: [],
     libraryFolder: []
   }
@@ -375,8 +662,8 @@ function migrateLibraries(oldLibraries) {
  * @param {Array<objects.LibraryItem>} oldLibraryItems
  * @returns {Array<object>} Array of Author model objs
  */
-function migrateAuthors(oldAuthors, oldLibraryItems) {
-  const _newRecords = []
+function migrateAuthors(oldAuthors: LegacyAuthor[], oldLibraryItems: LegacyLibraryItem[]): MigrationRow[] {
+  const _newRecords: MigrationRow[] = []
   for (const oldAuthor of oldAuthors) {
     // Get an array of NEW library ids that have this author
     const librariesWithThisAuthor = [
@@ -391,7 +678,7 @@ function migrateAuthors(oldAuthors, oldLibraryItems) {
           })
           .filter((lid) => lid)
       )
-    ]
+    ] as string[]
 
     if (!librariesWithThisAuthor.length) {
       Logger.error(`[dbMigration] Author ${oldAuthor.name} was not found in any libraries`)
@@ -425,8 +712,8 @@ function migrateAuthors(oldAuthors, oldLibraryItems) {
  * @param {Array<objects.LibraryItem>} oldLibraryItems
  * @returns {Array<object>} Array of Series model objs
  */
-function migrateSeries(oldSerieses, oldLibraryItems) {
-  const _newRecords = []
+function migrateSeries(oldSerieses: LegacySeries[], oldLibraryItems: LegacyLibraryItem[]): MigrationRow[] {
+  const _newRecords: MigrationRow[] = []
   // Originaly series were shared between libraries if they had the same name
   // Series will be separate between libraries
   for (const oldSeries of oldSerieses) {
@@ -440,7 +727,7 @@ function migrateSeries(oldSerieses, oldLibraryItems) {
           })
           .filter((lid) => lid)
       )
-    ]
+    ] as string[]
 
     if (!librariesWithThisSeries.length) {
       Logger.error(`[dbMigration] Series ${oldSeries.name} was not found in any libraries`)
@@ -469,10 +756,10 @@ function migrateSeries(oldSerieses, oldLibraryItems) {
  * @param {Array<objects.User>} oldUsers
  * @returns {object} { user: [], mediaProgress: [] }
  */
-function migrateUsers(oldUsers) {
+function migrateUsers(oldUsers: LegacyUser[]): MigrationRows {
   const _newRecords = {
-    user: [],
-    mediaProgress: []
+    user: [] as MigrationRow[],
+    mediaProgress: [] as MigrationRow[]
   }
   for (const oldUser of oldUsers) {
     //
@@ -574,10 +861,10 @@ function migrateUsers(oldUsers) {
  * @param {Array<objects.PlaybackSession>} oldSessions
  * @returns {object} { playbackSession: [], device: [] }
  */
-function migrateSessions(oldSessions) {
+function migrateSessions(oldSessions: LegacySession[]): MigrationRows {
   const _newRecords = {
-    device: [],
-    playbackSession: []
+    device: [] as MigrationRow[],
+    playbackSession: [] as MigrationRow[]
   }
 
   for (const oldSession of oldSessions) {
@@ -600,7 +887,7 @@ function migrateSessions(oldSessions) {
         let clientVersion = null
         let deviceName = null
         let deviceVersion = oldDeviceInfo.browserVersion || null
-        let extraData = {}
+        const extraData: Record<string, unknown> = {}
         if (oldDeviceInfo.sdkVersion) {
           clientName = 'Abs Android'
           clientVersion = oldDeviceInfo.clientVersion || null
@@ -656,7 +943,7 @@ function migrateSessions(oldSessions) {
     let mediaItemId = null
     let mediaItemType = 'book'
     if (oldSession.mediaType === 'podcast') {
-      mediaItemId = oldDbIdMap.podcastEpisodes[oldSession.episodeId] || null
+      mediaItemId = oldDbIdMap.podcastEpisodes[oldSession.episodeId!] || null
       mediaItemType = 'podcastEpisode'
     } else {
       mediaItemId = oldDbIdMap.books[oldSession.libraryItemId] || null
@@ -698,10 +985,10 @@ function migrateSessions(oldSessions) {
  * @param {Array<objects.Collection>} oldCollections
  * @returns {object} { collection: [], collectionBook: [] }
  */
-function migrateCollections(oldCollections) {
+function migrateCollections(oldCollections: LegacyCollection[]): MigrationRows {
   const _newRecords = {
-    collection: [],
-    collectionBook: []
+    collection: [] as MigrationRow[],
+    collectionBook: [] as MigrationRow[]
   }
   for (const oldCollection of oldCollections) {
     const libraryId = oldDbIdMap.libraries[oldCollection.libraryId]
@@ -747,10 +1034,10 @@ function migrateCollections(oldCollections) {
  * @param {Array<objects.Playlist>} oldPlaylists
  * @returns {object} { playlist: [], playlistMediaItem: [] }
  */
-function migratePlaylists(oldPlaylists) {
+function migratePlaylists(oldPlaylists: LegacyPlaylist[]): MigrationRows {
   const _newRecords = {
-    playlist: [],
-    playlistMediaItem: []
+    playlist: [] as MigrationRow[],
+    playlistMediaItem: [] as MigrationRow[]
   }
   for (const oldPlaylist of oldPlaylists) {
     const libraryId = oldDbIdMap.libraries[oldPlaylist.libraryId]
@@ -766,15 +1053,15 @@ function migratePlaylists(oldPlaylists) {
     }
 
     let mediaItemType = 'book'
-    let MediaItemIds = []
+    const MediaItemIds: string[] = []
     oldPlaylist.items.forEach((itemObj) => {
       if (itemObj.episodeId) {
         mediaItemType = 'podcastEpisode'
         if (oldDbIdMap.podcastEpisodes[itemObj.episodeId]) {
           MediaItemIds.push(oldDbIdMap.podcastEpisodes[itemObj.episodeId])
         }
-      } else if (oldDbIdMap.books[itemObj.libraryItemId]) {
-        MediaItemIds.push(oldDbIdMap.books[itemObj.libraryItemId])
+      } else if (oldDbIdMap.books[itemObj.libraryItemId!]) {
+        MediaItemIds.push(oldDbIdMap.books[itemObj.libraryItemId!]!)
       }
     })
     if (!MediaItemIds.length) {
@@ -814,10 +1101,10 @@ function migratePlaylists(oldPlaylists) {
  * @param {Array<objects.Feed>} oldFeeds
  * @returns {object} { feed: [], feedEpisode: [] }
  */
-function migrateFeeds(oldFeeds) {
+function migrateFeeds(oldFeeds: LegacyFeed[]): MigrationRows {
   const _newRecords = {
-    feed: [],
-    feedEpisode: []
+    feed: [] as MigrationRow[],
+    feedEpisode: [] as MigrationRow[]
   }
   for (const oldFeed of oldFeeds) {
     if (!oldFeed.episodes?.length) {
@@ -915,8 +1202,8 @@ function migrateFeeds(oldFeeds) {
  * @param {Array<objects.settings.*>} oldSettings
  * @returns {Array<object>} Array of Setting model objs
  */
-function migrateSettings(oldSettings) {
-  const _newRecords = []
+function migrateSettings(oldSettings: Array<{ id: string; sortingPrefixes?: string[]; [key: string]: unknown }>): MigrationRow[] {
+  const _newRecords: MigrationRow[] = []
   const serverSettings = oldSettings.find((s) => s.id === 'server-settings')
   const notificationSettings = oldSettings.find((s) => s.id === 'notification-settings')
   const emailSettings = oldSettings.find((s) => s.id === 'email-settings')
@@ -953,8 +1240,8 @@ function migrateSettings(oldSettings) {
  * Load old libraries and bulkCreate new Library and LibraryFolder rows
  * @param {Map<string,Model>} DatabaseModels
  */
-async function handleMigrateLibraries(DatabaseModels) {
-  const oldLibraries = await oldDbFiles.loadOldData('libraries')
+async function handleMigrateLibraries(DatabaseModels: DatabaseModels): Promise<void> {
+  const oldLibraries = await oldDbFiles.loadOldData('libraries') as LegacyLibrary[]
   const newLibraryRecords = migrateLibraries(oldLibraries)
   for (const model in newLibraryRecords) {
     Logger.info(`[dbMigration] Inserting ${newLibraryRecords[model].length} ${model} rows`)
@@ -966,8 +1253,8 @@ async function handleMigrateLibraries(DatabaseModels) {
  * Load old EmailSettings, NotificationSettings and ServerSettings and bulkCreate new Setting rows
  * @param {Map<string,Model>} DatabaseModels
  */
-async function handleMigrateSettings(DatabaseModels) {
-  const oldSettings = await oldDbFiles.loadOldData('settings')
+async function handleMigrateSettings(DatabaseModels: DatabaseModels): Promise<void> {
+  const oldSettings = await oldDbFiles.loadOldData('settings') as Array<{ id: string; sortingPrefixes?: string[]; [key: string]: unknown }>
   const newSettings = migrateSettings(oldSettings)
   Logger.info(`[dbMigration] Inserting ${newSettings.length} setting rows`)
   await DatabaseModels.setting.bulkCreate(newSettings)
@@ -978,8 +1265,8 @@ async function handleMigrateSettings(DatabaseModels) {
  * @param {Map<string,Model>} DatabaseModels
  * @param {Array<objects.LibraryItem>} oldLibraryItems
  */
-async function handleMigrateAuthors(DatabaseModels, oldLibraryItems) {
-  const oldAuthors = await oldDbFiles.loadOldData('authors')
+async function handleMigrateAuthors(DatabaseModels: DatabaseModels, oldLibraryItems: LegacyLibraryItem[]): Promise<void> {
+  const oldAuthors = await oldDbFiles.loadOldData('authors') as LegacyAuthor[]
   const newAuthors = migrateAuthors(oldAuthors, oldLibraryItems)
   Logger.info(`[dbMigration] Inserting ${newAuthors.length} author rows`)
   await DatabaseModels.author.bulkCreate(newAuthors)
@@ -990,8 +1277,8 @@ async function handleMigrateAuthors(DatabaseModels, oldLibraryItems) {
  * @param {Map<string,Model>} DatabaseModels
  * @param {Array<objects.LibraryItem>} oldLibraryItems
  */
-async function handleMigrateSeries(DatabaseModels, oldLibraryItems) {
-  const oldSeries = await oldDbFiles.loadOldData('series')
+async function handleMigrateSeries(DatabaseModels: DatabaseModels, oldLibraryItems: LegacyLibraryItem[]): Promise<void> {
+  const oldSeries = await oldDbFiles.loadOldData('series') as LegacySeries[]
   const newSeries = migrateSeries(oldSeries, oldLibraryItems)
   Logger.info(`[dbMigration] Inserting ${newSeries.length} series rows`)
   await DatabaseModels.series.bulkCreate(newSeries)
@@ -1002,7 +1289,7 @@ async function handleMigrateSeries(DatabaseModels, oldLibraryItems) {
  * @param {Map<string,Model>} DatabaseModels
  * @param {Array<objects.LibraryItem>} oldLibraryItems
  */
-async function handleMigrateLibraryItems(DatabaseModels, oldLibraryItems) {
+async function handleMigrateLibraryItems(DatabaseModels: DatabaseModels, oldLibraryItems: LegacyLibraryItem[]): Promise<void> {
   const newItemsBooksPodcasts = migrateLibraryItems(oldLibraryItems)
   for (const model in newItemsBooksPodcasts) {
     Logger.info(`[dbMigration] Inserting ${newItemsBooksPodcasts[model].length} ${model} rows`)
@@ -1015,8 +1302,8 @@ async function handleMigrateLibraryItems(DatabaseModels, oldLibraryItems) {
  * Authors and series require old library items loaded first
  * @param {Map<string,Model>} DatabaseModels
  */
-async function handleMigrateAuthorsSeriesAndLibraryItems(DatabaseModels) {
-  const oldLibraryItems = await oldDbFiles.loadOldData('libraryItems')
+async function handleMigrateAuthorsSeriesAndLibraryItems(DatabaseModels: DatabaseModels): Promise<void> {
+  const oldLibraryItems = await oldDbFiles.loadOldData('libraryItems') as LegacyLibraryItem[]
   await handleMigrateAuthors(DatabaseModels, oldLibraryItems)
 
   await handleMigrateSeries(DatabaseModels, oldLibraryItems)
@@ -1033,8 +1320,8 @@ async function handleMigrateAuthorsSeriesAndLibraryItems(DatabaseModels) {
  * Load old users and bulkCreate new User rows
  * @param {Map<string,Model>} DatabaseModels
  */
-async function handleMigrateUsers(DatabaseModels) {
-  const oldUsers = await oldDbFiles.loadOldData('users')
+async function handleMigrateUsers(DatabaseModels: DatabaseModels): Promise<void> {
+  const oldUsers = await oldDbFiles.loadOldData('users') as LegacyUser[]
   const newUserRecords = migrateUsers(oldUsers)
   for (const model in newUserRecords) {
     Logger.info(`[dbMigration] Inserting ${newUserRecords[model].length} ${model} rows`)
@@ -1046,8 +1333,8 @@ async function handleMigrateUsers(DatabaseModels) {
  * Load old sessions and bulkCreate new PlaybackSession & Device rows
  * @param {Map<string,Model>} DatabaseModels
  */
-async function handleMigrateSessions(DatabaseModels) {
-  const oldSessions = await oldDbFiles.loadOldData('sessions')
+async function handleMigrateSessions(DatabaseModels: DatabaseModels): Promise<void> {
+  const oldSessions = await oldDbFiles.loadOldData('sessions') as LegacySession[]
 
   let chunkSize = 1000
   let numChunks = Math.ceil(oldSessions.length / chunkSize)
@@ -1066,8 +1353,8 @@ async function handleMigrateSessions(DatabaseModels) {
  * Load old collections and bulkCreate new Collection, CollectionBook models
  * @param {Map<string,Model>} DatabaseModels
  */
-async function handleMigrateCollections(DatabaseModels) {
-  const oldCollections = await oldDbFiles.loadOldData('collections')
+async function handleMigrateCollections(DatabaseModels: DatabaseModels): Promise<void> {
+  const oldCollections = await oldDbFiles.loadOldData('collections') as LegacyCollection[]
   const newCollectionRecords = migrateCollections(oldCollections)
   for (const model in newCollectionRecords) {
     Logger.info(`[dbMigration] Inserting ${newCollectionRecords[model].length} ${model} rows`)
@@ -1079,8 +1366,8 @@ async function handleMigrateCollections(DatabaseModels) {
  * Load old playlists and bulkCreate new Playlist, PlaylistMediaItem models
  * @param {Map<string,Model>} DatabaseModels
  */
-async function handleMigratePlaylists(DatabaseModels) {
-  const oldPlaylists = await oldDbFiles.loadOldData('playlists')
+async function handleMigratePlaylists(DatabaseModels: DatabaseModels): Promise<void> {
+  const oldPlaylists = await oldDbFiles.loadOldData('playlists') as LegacyPlaylist[]
   const newPlaylistRecords = migratePlaylists(oldPlaylists)
   for (const model in newPlaylistRecords) {
     Logger.info(`[dbMigration] Inserting ${newPlaylistRecords[model].length} ${model} rows`)
@@ -1092,8 +1379,8 @@ async function handleMigratePlaylists(DatabaseModels) {
  * Load old feeds and bulkCreate new Feed, FeedEpisode models
  * @param {Map<string,Model>} DatabaseModels
  */
-async function handleMigrateFeeds(DatabaseModels) {
-  const oldFeeds = await oldDbFiles.loadOldData('feeds')
+async function handleMigrateFeeds(DatabaseModels: DatabaseModels): Promise<void> {
+  const oldFeeds = await oldDbFiles.loadOldData('feeds') as LegacyFeed[]
   const newFeedRecords = migrateFeeds(oldFeeds)
   for (const model in newFeedRecords) {
     Logger.info(`[dbMigration] Inserting ${newFeedRecords[model].length} ${model} rows`)
@@ -1101,7 +1388,7 @@ async function handleMigrateFeeds(DatabaseModels) {
   }
 }
 
-module.exports.migrate = async (DatabaseModels) => {
+module.exports.migrate = async (DatabaseModels: DatabaseModels): Promise<void> => {
   Logger.info(`[dbMigration] Starting migration`)
 
   const start = Date.now()
@@ -1132,7 +1419,7 @@ module.exports.migrate = async (DatabaseModels) => {
 
   // Purge author images and cover images from cache
   try {
-    const CachePath = Path.join(global.MetadataPath, 'cache')
+    const CachePath = Path.join((global as MigrationGlobals).MetadataPath, 'cache')
     await fs.emptyDir(Path.join(CachePath, 'covers'))
     await fs.emptyDir(Path.join(CachePath, 'images'))
   } catch (error) {
@@ -1149,7 +1436,7 @@ module.exports.migrate = async (DatabaseModels) => {
 /**
  * @returns {boolean} true if old database exists
  */
-module.exports.checkShouldMigrate = async () => {
+module.exports.checkShouldMigrate = async (): Promise<boolean> => {
   if (await oldDbFiles.checkHasOldDb()) return true
   return oldDbFiles.checkHasOldDbZip()
 }
@@ -1158,7 +1445,7 @@ module.exports.checkShouldMigrate = async () => {
  * Migration from 2.3.0 to 2.3.1 - create extraData columns in LibraryItem and PodcastEpisode
  * @param {QueryInterface} queryInterface
  */
-async function migrationPatchNewColumns(queryInterface) {
+async function migrationPatchNewColumns(queryInterface: QueryInterfaceLike): Promise<unknown[] | false> {
   try {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
@@ -1198,8 +1485,8 @@ async function migrationPatchNewColumns(queryInterface) {
  * Migration from 2.3.0 to 2.3.1 - old library item ids
  * @param {/src/Database} ctx
  */
-async function handleOldLibraryItems(ctx) {
-  const oldLibraryItems = await oldDbFiles.loadOldData('libraryItems')
+async function handleOldLibraryItems(ctx: MigrationContext): Promise<void> {
+  const oldLibraryItems = await oldDbFiles.loadOldData('libraryItems') as LegacyLibraryItem[]
   const libraryItems = await ctx.models.libraryItem.findAllExpandedWhere()
 
   const bulkUpdateItems = []
@@ -1256,8 +1543,8 @@ async function handleOldLibraryItems(ctx) {
  * Migration from 2.3.0 to 2.3.1 - updating oldLibraryId
  * @param {/src/Database} ctx
  */
-async function handleOldLibraries(ctx) {
-  const oldLibraries = await oldDbFiles.loadOldData('libraries')
+async function handleOldLibraries(ctx: MigrationContext): Promise<void> {
+  const oldLibraries = await oldDbFiles.loadOldData('libraries') as LegacyLibrary[]
   const libraries = await ctx.models.library.getAllWithFolders()
 
   let librariesUpdated = 0
@@ -1289,7 +1576,7 @@ async function handleOldLibraries(ctx) {
  * Migration from 2.3.0 to 2.3.1 - fixing librariesAccessible and bookmarks
  * @param {import('../../Database')} ctx
  */
-async function handleOldUsers(ctx) {
+async function handleOldUsers(ctx: MigrationContext): Promise<void> {
   const usersNew = await ctx.userModel.findAll({
     include: ctx.models.mediaProgress
   })
@@ -1340,7 +1627,7 @@ async function handleOldUsers(ctx) {
           }
           return seriesId
         })
-        .filter((se) => se)
+        .filter((se) => se) as string[]
       if (hasUpdates) {
         user.changed('extraData', true)
       }
@@ -1358,7 +1645,7 @@ async function handleOldUsers(ctx) {
  * Migration from 2.3.0 to 2.3.1
  * @param {/src/Database} ctx
  */
-module.exports.migrationPatch = async (ctx) => {
+module.exports.migrationPatch = async (ctx: MigrationContext): Promise<void> => {
   const queryInterface = ctx.sequelize.getQueryInterface()
   const librariesTableDescription = await queryInterface.describeTable('libraries')
 
@@ -1371,7 +1658,7 @@ module.exports.migrationPatch = async (ctx) => {
     }
   }
 
-  const oldDbPath = Path.join(global.ConfigPath, 'oldDb.zip')
+  const oldDbPath = Path.join((global as MigrationGlobals).ConfigPath, 'oldDb.zip')
   if (!(await fs.pathExists(oldDbPath))) {
     Logger.info(`[dbMigration] Migration patch 2.3.0+ unnecessary - no oldDb.zip found`)
     return
@@ -1401,20 +1688,20 @@ module.exports.migrationPatch = async (ctx) => {
  * @param {/src/Database} ctx
  * @param {number} offset
  */
-async function migrationPatch2LibraryItems(ctx, offset = 0) {
+async function migrationPatch2LibraryItems(ctx: MigrationContext, offset = 0): Promise<void> {
   const libraryItems = await ctx.models.libraryItem.findAll({
     limit: 500,
     offset
   })
   if (!libraryItems.length) return
 
-  const bulkUpdateItems = []
+  const bulkUpdateItems: MigrationRow[] = []
   for (const libraryItem of libraryItems) {
     if (libraryItem.libraryFiles?.length) {
       let size = 0
       libraryItem.libraryFiles.forEach((lf) => {
-        if (!isNaN(lf.metadata?.size)) {
-          size += Number(lf.metadata.size)
+        if (!isNaN(lf.metadata?.size as number)) {
+          size += Number(lf.metadata!.size)
         }
       })
       bulkUpdateItems.push({
@@ -1443,22 +1730,22 @@ async function migrationPatch2LibraryItems(ctx, offset = 0) {
  * @param {/src/Database} ctx
  * @param {number} offset
  */
-async function migrationPatch2Books(ctx, offset = 0) {
+async function migrationPatch2Books(ctx: MigrationContext, offset = 0): Promise<void> {
   const books = await ctx.models.book.findAll({
     limit: 500,
     offset
   })
   if (!books.length) return
 
-  const bulkUpdateItems = []
+  const bulkUpdateItems: MigrationRow[] = []
   for (const book of books) {
     let duration = 0
 
     if (book.audioFiles?.length) {
       const tracks = book.audioFiles.filter((af) => !af.exclude && !af.invalid)
       for (const track of tracks) {
-        if (track.duration !== null && !isNaN(track.duration)) {
-          duration += track.duration
+        if (track.duration !== null && !isNaN(track.duration as number)) {
+          duration += track.duration as number
         }
       }
     }
@@ -1489,7 +1776,7 @@ async function migrationPatch2Books(ctx, offset = 0) {
  * @param {/src/Database} ctx
  * @param {number} offset
  */
-async function migrationPatch2Podcasts(ctx, offset = 0) {
+async function migrationPatch2Podcasts(ctx: MigrationContext, offset = 0): Promise<void> {
   const podcasts = await ctx.models.podcast.findAll({
     limit: 500,
     offset
@@ -1523,7 +1810,7 @@ async function migrationPatch2Podcasts(ctx, offset = 0) {
  * @param {/src/Database} ctx
  * @param {number} offset
  */
-async function migrationPatch2Series(ctx, offset = 0) {
+async function migrationPatch2Series(ctx: MigrationContext, offset = 0): Promise<void> {
   const allSeries = await ctx.models.series.findAll({
     limit: 500,
     offset
@@ -1557,7 +1844,7 @@ async function migrationPatch2Series(ctx, offset = 0) {
  * @param {/src/Database} ctx
  * @param {number} offset
  */
-async function migrationPatch2Authors(ctx, offset = 0) {
+async function migrationPatch2Authors(ctx: MigrationContext, offset = 0): Promise<void> {
   const authors = await ctx.models.author.findAll({
     limit: 500,
     offset
@@ -1593,7 +1880,7 @@ async function migrationPatch2Authors(ctx, offset = 0) {
  * @param {/src/Database} ctx
  * @param {number} offset
  */
-async function migrationPatch2BookAuthors(ctx, offset = 0) {
+async function migrationPatch2BookAuthors(ctx: MigrationContext, offset = 0): Promise<void> {
   const bookAuthors = await ctx.models.bookAuthor.findAll({
     include: {
       model: ctx.models.author
@@ -1628,7 +1915,7 @@ async function migrationPatch2BookAuthors(ctx, offset = 0) {
  * @param {/src/Database} ctx
  * @param {number} offset
  */
-async function migrationPatch2BookSeries(ctx, offset = 0) {
+async function migrationPatch2BookSeries(ctx: MigrationContext, offset = 0): Promise<void> {
   const allBookSeries = await ctx.models.bookSeries.findAll({
     include: {
       model: ctx.models.series
@@ -1662,7 +1949,7 @@ async function migrationPatch2BookSeries(ctx, offset = 0) {
  * Adding coverPath column to Feed model
  * @param {/src/Database} ctx
  */
-module.exports.migrationPatch2 = async (ctx) => {
+module.exports.migrationPatch2 = async (ctx: MigrationContext): Promise<boolean> => {
   const queryInterface = ctx.sequelize.getQueryInterface()
   const feedTableDescription = await queryInterface.describeTable('feeds')
   const authorsTableDescription = await queryInterface.describeTable('authors')
@@ -1769,8 +2056,8 @@ module.exports.migrationPatch2 = async (ctx) => {
     })
 
     if (!authorsTableDescription?.lastFirst) {
-      if (global.ServerSettings.sortingPrefixes?.length) {
-        prefixesToIgnore = global.ServerSettings.sortingPrefixes
+      if ((global as MigrationGlobals).ServerSettings.sortingPrefixes?.length) {
+        prefixesToIgnore = (global as MigrationGlobals).ServerSettings.sortingPrefixes!
       }
 
       // Patch library items size column
@@ -1803,4 +2090,5 @@ module.exports.migrationPatch2 = async (ctx) => {
     Logger.error(`[dbMigration] Migration from 2.3.3+ column creation failed`, error)
     throw new Error('Migration 2.3.3+ failed ' + error)
   }
+}
 }
