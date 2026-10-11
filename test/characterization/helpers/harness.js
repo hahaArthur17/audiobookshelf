@@ -194,8 +194,8 @@ async function startApi(opts = {}) {
     /**
      * @param {string} method
      * @param {string} url path incl. query, e.g. '/api/libraries?limit=5'
-     * @param {{ as?: string, json?: any, form?: { fields?: Record<string,string>, files?: { name:string, filename:string, content:string|Buffer, type?:string }[] }, headers?: Record<string,string> }} [o]
-     *   `as` = username to authenticate as (omit for 401); `form` sends multipart/form-data (uploads)
+     * @param {{ as?: string, json?: any, form?: { fields?: Record<string,string>, files?: { name:string, filename:string, content:string|Buffer, type?:string }[] }, headers?: Record<string,string>, responseHeaders?: string[] }} [o]
+     *   `as` = username to authenticate as (omit for 401); `form` sends multipart/form-data (uploads); `responseHeaders` = extra response headers to return (lowercase keys, null when absent)
      * @returns {Promise<{ status:number, headers:Record<string,string>, body:any }>}
      */
     async request(method, url, o = {}) {
@@ -218,6 +218,22 @@ async function startApi(opts = {}) {
         parsed = text ? JSON.parse(text) : null
       } catch {}
       const result = { status: res.status, headers: { 'content-type': res.headers.get('content-type') }, body: parsed }
+      // opt-in: `headers: [names]` adds a `responseHeaders` map of just those response headers (null when absent). The default result is unchanged.
+      // Volatile values are masked: date/last-modified -> '<date>', etag -> '<etag>', Expires= in set-cookie -> '<date>'. Redirects are never followed.
+      if (o.responseHeaders) {
+        const picked = {}
+        for (const name of o.responseHeaders) {
+          const key = name.toLowerCase()
+          if (key === 'set-cookie') {
+            const cookies = res.headers.getSetCookie?.() || []
+            picked[key] = cookies.length ? cookies.map((c) => c.replace(/Expires=[^;]+/i, 'Expires=<date>')) : null
+            continue
+          }
+          const v = res.headers.get(key)
+          picked[key] = v === null ? null : key === 'date' || key === 'last-modified' ? '<date>' : key === 'etag' ? '<etag>' : v
+        }
+        result.headers = { ...result.headers, ...picked }
+      }
       // non-enumerable so whole-response snapshots are unchanged; tests read result.cookies explicitly
       Object.defineProperty(result, 'cookies', { value: res.headers.getSetCookie?.() || [], enumerable: false })
       return result

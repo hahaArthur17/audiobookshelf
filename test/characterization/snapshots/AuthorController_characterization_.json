@@ -2149,5 +2149,53 @@
       "body": "Unauthorized"
     },
     "emitted": []
+  },
+  "AuthorController (characterization) > image routes > GET image: response headers for raw files and cache hits > cache hit headers": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/jpeg",
+        "content-disposition": null,
+        "cache-control": null,
+        "accept-ranges": null,
+        "etag": null,
+        "last-modified": null,
+        "x-accel-redirect": null
+      },
+      "body": "cached-bytes"
+    },
+    "emitted": []
+  },
+  "AuthorController (characterization) > image routes > GET image: response headers for raw files and cache hits > cache hit ignores x-accel": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/jpeg",
+        "content-disposition": null,
+        "cache-control": null,
+        "accept-ranges": null,
+        "etag": null,
+        "last-modified": null,
+        "x-accel-redirect": null
+      },
+      "body": "cached-bytes"
+    },
+    "emitted": []
+  },
+  "AuthorController (characterization) > image routes > GET image: response headers for raw files and cache hits > raw headers": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/png",
+        "content-disposition": null,
+        "cache-control": "public, max-age=0",
+        "accept-ranges": "bytes",
+        "etag": "<etag>",
+        "last-modified": "<date>",
+        "x-accel-redirect": null
+      },
+      "body": "not-really-a-png"
+    },
+    "emitted": []
   }
 }

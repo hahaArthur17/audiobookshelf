@@ -132,7 +132,9 @@
     "res": {
       "status": 204,
       "headers": {
-        "content-type": null
+        "content-type": null,
+        "x-accel-redirect": "/protected<tmp>/backups/a.audiobookshelf",
+        "content-disposition": null
       },
       "body": null
     },
@@ -146,7 +148,13 @@
     "res": {
       "status": 200,
       "headers": {
-        "content-type": "application/octet-stream"
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename=a.audiobookshelf",
+        "x-accel-redirect": null,
+        "cache-control": "public, max-age=0",
+        "accept-ranges": "bytes",
+        "etag": "<etag>",
+        "last-modified": "<date>"
       },
       "body": "backup-a-content"
     },

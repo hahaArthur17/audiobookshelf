@@ -214,6 +214,19 @@ describe('AuthorController (characterization)', () => {
       const cached = await api.request('GET', `/api/authors/${ann.id}/image?format=jpeg`, { as: 'admin' })
       snap(this, { status: cached.status, type: cached.headers['content-type'], body: cached.body }, 'cache hit')
     })
+    it('GET image: response headers for raw files and cache hits', async function () {
+      this.ids = names()
+      const headers = ['content-type', 'content-disposition', 'cache-control', 'accept-ranges', 'etag', 'last-modified', 'x-accel-redirect']
+      snap(this, await api.request('GET', `/api/authors/${ann.id}/image?raw=1`, { as: 'admin', responseHeaders: headers }), 'raw headers')
+      fs.writeFileSync(path.join(CacheManager.ImageCachePath, `${ann.id}_400.jpeg`), 'cached-bytes')
+      snap(this, await api.request('GET', `/api/authors/${ann.id}/image?format=jpeg`, { as: 'admin', responseHeaders: headers }), 'cache hit headers')
+      global.XAccel = '/protected'
+      try {
+        snap(this, await api.request('GET', `/api/authors/${ann.id}/image?format=jpeg`, { as: 'admin', responseHeaders: headers }), 'cache hit ignores x-accel')
+      } finally {
+        delete global.XAccel
+      }
+    })
     it.skip('GET /api/authors/:id/image (resize): needs ffmpeg to resize the image into the cache', () => {})
 
     it('DELETE image: removes file and clears imagePath', async function () {

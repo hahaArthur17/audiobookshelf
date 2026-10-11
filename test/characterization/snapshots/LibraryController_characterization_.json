@@ -6903,7 +6903,9 @@
     "res": {
       "status": 200,
       "headers": {
-        "content-type": "application/xml; charset=utf-8"
+        "content-type": "application/xml; charset=utf-8",
+        "content-disposition": null,
+        "cache-control": null
       },
       "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<opml version=\"1.0\">\n    <head>\n        <title>Audiobookshelf Podcast Subscriptions</title>\n    </head>\n    <body>\n        <outline type=\"rss\" text=\"Pod One\" title=\"Pod One\" xmlUrl=\"https://example.test/feed.xml\" description=\"about\"/>\n        <outline type=\"rss\" text=\"Pod Two\" title=\"Pod Two\" xmlUrl=\"https://example.test/two.xml\" description=\"about\"/>\n    </body>\n</opml>"
     },

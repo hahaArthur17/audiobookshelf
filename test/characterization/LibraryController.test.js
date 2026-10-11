@@ -621,7 +621,7 @@ describe('LibraryController (characterization)', () => {
     it('returns an OPML file for podcasts', async function () {
       this.ids = names()
       snap(this, await api.request('GET', `${P()}/opml`), 'anonymous')
-      const res = await get(`${P()}/opml`)
+      const res = await api.request('GET', `${P()}/opml`, { as: 'admin', responseHeaders: ['content-type', 'content-disposition', 'cache-control'] })
       snap(this, res, 'podcast library')
       snap(this, await get(`${P()}/opml`, 'user'), 'user')
       snap(this, await get(`${L()}/opml`), 'book library (empty file)')

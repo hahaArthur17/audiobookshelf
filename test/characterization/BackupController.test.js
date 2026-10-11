@@ -103,7 +103,7 @@ describe('BackupController (characterization)', () => {
 
   describe('GET /api/backups/:id/download', () => {
     it('sends the backup file', async function () {
-      const res = await req('GET', '/api/backups/2020-01-01T0000/download', 'admin')
+      const res = await req('GET', '/api/backups/2020-01-01T0000/download', 'admin', { responseHeaders: ['content-disposition', 'x-accel-redirect', 'cache-control', 'accept-ranges', 'etag', 'last-modified'] })
       snap(this, { status: res.status, headers: res.headers, body: res.body }, 'file')
     })
     it('404s for unknown ids', async function () {
@@ -111,7 +111,7 @@ describe('BackupController (characterization)', () => {
     })
     it('answers 204 for X-Accel when configured', async function () {
       global.XAccel = '/protected'
-      const res = await req('GET', '/api/backups/2020-01-01T0000/download', 'admin')
+      const res = await req('GET', '/api/backups/2020-01-01T0000/download', 'admin', { responseHeaders: ['x-accel-redirect', 'content-disposition'] })
       snap(this, res, 'x-accel')
     })
     it('fails when the file is missing on disk', async function () {
