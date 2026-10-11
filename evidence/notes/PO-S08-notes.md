@@ -126,3 +126,6 @@ Several of these blockers sit in the models and helpers and not in the controlle
 - Deny `sed -i` in the permission rules and fix the scope line in CLAUDE.md so that it agrees with the prompt.
 - Decide the rule 5 question (`!` on guarded lookups and on loaded associations) before any retry of the 8 controllers, and add the gaps the agent listed (nullable lookups, undeclared association mixins, TS2554 on required arguments, Sequelize typing limits) to CLAUDE.md.
 - A few `declare` lines in server/models/ would probably unblock ApiKey, Collection and Library (the agent's estimate; only the ApiKey file was recompiled, with its two casts).
+
+## Correction (2026-10-11, written after PO-S09)
+- In Results, the panel figures "47% of the usage came from sub-agent-heavy sessions (32% general-purpose)" and "83% at more than 150k context" are for the last 24 hours on the machine. That window also holds PO-S04 to PO-S07, so the figures are not a measure of PO-S08 alone.

@@ -1,0 +1,704 @@
+PO-S09: messages between the main agent and the four sub-agents, copied from the saved logs (session 9d365d79). Times are NZDT. The Windows user name is masked as <user>.
+
+====================================================================================================
+14:02:01  main agent -> Agent  [Convert ApiKey and Session controllers]
+You are sub-agent 1 in a JavaScript-to-TypeScript migration of an Express/Sequelize server (Audiobookshelf). Repository: D:\SEM-2\574\Project\audiobookshelf-po (Windows; the Bash tool is Git Bash). Three other sub-agents are working in the SAME working tree at the same time on other controllers, and a main agent (me) integrates, builds, tests and commits.
+
+## Your job
+Convert exactly these two controllers from JavaScript to TypeScript, type-only (no change in runtime behaviour, no bug fixes):
+1. server/controllers/ApiKeyController.js (207 lines) - do this one first
+2. server/controllers/SessionController.js (376 lines)
+
+## Read first
+1. CLAUDE.md in the repository root, all of it. The sections "Rules", "Pitfalls found so far" and "Controllers and Express" are binding. Where this brief and CLAUDE.md differ, CLAUDE.md wins.
+2. Worked examples of converted controllers: server/controllers/AuthorController.ts, server/controllers/MeController.ts, server/controllers/ShareController.ts, server/controllers/NotificationController.ts. Look at: the request types with the Request generics, the erased `this: ApiRouter` parameter, the boundary casts with their one-line comments, `(error as Error).message`.
+
+## Hard limits (set by the task owner, not negotiable)
+- You change only your two controller files, and only with the Edit tool. No `sed -i`, no `perl -i`, no script that rewrites a repository file. Use targeted edits, not whole-file rewrites. Leave existing JSDoc comments unchanged.
+- The only git commands that change anything: `git mv` (rename .js to .ts, or back) and, only when you restore a controller, `git restore` on that one file. If `git mv` fails with an index.lock error, wait a few seconds and retry. Read-only git (status, diff, log, show, grep) is fine. Never run a git command on a path that is not one of your two files.
+- Do NOT run `npm run build:server` or `npm test`. Do NOT commit, add, stash, reset, checkout or clean. Do NOT edit server/models/, server/types/, server/routers/ApiRouter.js or any other file, converted or not. Do NOT install packages.
+- Type check with the no-emit check and filter it to your files (about 20 seconds per run):
+  `npx tsc -p tsconfig.check.json 2>&1 | grep -E "^server/controllers/(ApiKey|Session)Controller"`
+  Errors in other files come from the other agents' half-finished work: ignore them. A multi-line error has indented continuation lines that this grep hides; when you need them, save the full output to a file in your scratch folder and read it there.
+- Scratch files go only in: C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\9d365d79-d2df-436f-9cce-424144a1527e\scratchpad\agent1  (Git Bash: /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/agent1). Never in the repository.
+- Stop time: 15:03 local time today. Run `date` now and check it regularly. Send your report by 14:55. A controller that is not finished by then: restore it completely and say so.
+- Do not ask questions; decide within the rules and report what you decided.
+
+## Definition of done for a controller
+- `git mv X.js X.ts` done, and zero tsc errors in that file. Do the rename and the import/type header edit together, then check.
+- CommonJS shape kept: `import x = require('...')`, `import type { NextFunction, Request, Response } from 'express'`, and the file ends with `export = new XController()`.
+- Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, `as any`, `as unknown as`.
+- Behaviour check: read the whole output of `git diff -M HEAD -- server/controllers/XController.js server/controllers/XController.ts`. Apart from import lines, type declarations, type annotations, erased `this: ApiRouter` parameters, `!`, allowed `as` casts and the required one-line comments, every line must be unchanged. No new variable, no changed expression, no reordered or reformatted statement, no changed or removed JSDoc. Undo anything else.
+- If a controller cannot reach that within the rules: restore it completely (`git mv server/controllers/X.ts server/controllers/X.js`, then `git restore --staged --worktree server/controllers/X.js`, then confirm `git status --short -- server/controllers/` shows nothing for it) and report the reason together with the compiler errors that blocked you.
+- Exception: if the ONLY errors left are caused by a declaration that is missing in server/models/*.ts or server/types/ (an association mixin, or a field that a query adds), do not restore. Leave the controller converted and give me the exact `declare` line you need, the file, where the mixin or field comes from, and the errors it removes. I add it during integration.
+
+## What I prepared (Phase A) and verified, which you can rely on
+- New declarations in the models: `ApiKey.getUser` (mixin of ApiKey.belongsTo(user)); `PlaybackSession.user?` (optional; only set by a query that includes user); also Collection.getCollectionBooks, CollectionBook.book?, Library.getLibraryFolders, Podcast.libraryItem?.
+- server/models/LibraryItem.js is still JavaScript. If you ever call an inherited Sequelize static on it (findAll, findByPk, count, create), it fails with TS2684 and cannot be cast to ModelStatic. Use the declaration I added: first line of the controller `/// <reference path="../types/libraryItemModel.d.ts" />`, then `(Database.libraryItemModel as LibraryItemModelStatic).findAll({ ... })` with a one-line comment such as `// boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts`. Count these as "other casts (rule 5 boundary)". (Probably not needed in your two files.)
+- `libraryItem.media` is typed `BookExpanded | PodcastExpanded` because LibraryItem.js is JavaScript. Precedents for the boundary cast: MeController.ts line 521, AuthorController.ts lines 32-35 and 77.
+- A JavaScript function with a `= null` default (for example `Database.getPlaybackSessions(where = null)` in server/Database.js) has its parameter typed as `null`. A cast of the argument fails (TS2352). A single-step cast of the callee compiles and is erased when compiled, keeping `this`: `(Database.getPlaybackSessions as (where?: WhereOptions) => ReturnType<typeof Database.getPlaybackSessions>)({ userId })`, with a boundary comment (rule 5: untyped module with a wrong type). I verified that this form compiles.
+- `Database.sequelize` is typed `Sequelize | null` (it starts as null and is set in init before any request): `Database.sequelize!` with a one-line comment is the "field set before it is read" case of rule 5.
+- `(x as T).method(...)` compiles to `x.method(...)`: TypeScript drops the cast and the parentheses, so this form does not change the compiled code. Do not add parentheses anywhere else.
+- Sequelize's typings are sometimes narrower than what the code passes to a static of an already converted model (a `where` that may be null, a nested `include` that is an object instead of an array). Do not change the code. This is the situation of Allowance 3 (a call into a converted file whose parameter type is too narrow): one single-step cast at the call site with a comment, named in your report. If no single-step cast compiles, restore the controller and report it.
+
+## Probe results for your two controllers
+I type-checked the original JavaScript files with checkJs, so their JSDoc types applied. Your TypeScript files will show much the same errors once the imports and request types are in place. Line numbers are those of the original .js files.
+- /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/probe/checkjs-after-ApiKey.txt (3 errors)
+- /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/probe/checkjs-after-Session.txt (23 errors)
+A helper prints the source line under each error: `node "<scratchpad>/show.js" "D:/SEM-2/574/Project/audiobookshelf-po" "<errors file>" "<regex on the error line>"` (scratchpad = the folder above `agent1`).
+What I saw:
+- ApiKey: methods that read `this.auth` need `this: ApiRouter`; `apiKeyInstance.getUser(...)` is now declared.
+- Session: `req.playbackSession` is set by a middleware (required in the handler type, optional in the middleware type); `this.playbackSessionManager` needs `this: ApiRouter`; query values go through the Request generics; `session.user` is the optional field from the include at line 75; line 108 adds `userId` to an object after it is built (annotation, not a cast); line 68 `findAndCountAll` gets a `where` that may be null; line 280 passes null where a number is expected; line 316 `user` is possibly null.
+
+## Report (your final message; I only see this message, so make it complete and exact)
+For each controller:
+- Status: CONVERTED / CONVERTED BUT NEEDS A DECLARATION / RESTORED
+- tsc errors left in the file (number; list them if not zero)
+- `!` assertions added, split into: (a) field starts as null and is set before it is read, (b) the query always loads the association, (c) earlier code guarantees that a lookup finds its item. Give the count and the line numbers for each.
+- Index signatures added: count, lines, what for.
+- Casts added, split into: Allowance 1 (TS2367 comparison), Allowance 2 (catch variable `as Error`), Allowance 3 (too-narrow parameter of a converted file), other (rule 5 boundary and anything else). Count, line numbers, and one phrase each for Allowance 3 and "other".
+- Number of `this: ApiRouter` parameters added.
+- `import type` lines that replace a require of names that are undefined at runtime (the names).
+- Declarations you need from me: exact line, file, reason.
+- If restored: the reason and the compiler errors.
+Then:
+- Bug log: real bugs you noticed (file, line, one sentence each). Bugs are not fixed.
+- What CLAUDE.md did not cover or got wrong.
+- Confirm that you ran the behaviour check (git diff -M) on each converted file and what it showed.
+
+====================================================================================================
+14:02:35  main agent -> Agent  [Convert User and Collection controllers]
+You are sub-agent 2 in a JavaScript-to-TypeScript migration of an Express/Sequelize server (Audiobookshelf). Repository: D:\SEM-2\574\Project\audiobookshelf-po (Windows; the Bash tool is Git Bash). Three other sub-agents are working in the SAME working tree at the same time on other controllers, and a main agent (me) integrates, builds, tests and commits.
+
+## Your job
+Convert exactly these two controllers from JavaScript to TypeScript, type-only (no change in runtime behaviour, no bug fixes):
+1. server/controllers/CollectionController.js (458 lines) - do this one first
+2. server/controllers/UserController.js (518 lines)
+
+## Read first
+1. CLAUDE.md in the repository root, all of it. The sections "Rules", "Pitfalls found so far" and "Controllers and Express" are binding. Where this brief and CLAUDE.md differ, CLAUDE.md wins.
+2. Worked examples of converted controllers: server/controllers/AuthorController.ts, server/controllers/MeController.ts, server/controllers/SeriesController.ts, server/controllers/ShareController.ts. Look at: the request types with the Request generics, the erased `this: ApiRouter` parameter, the boundary casts with their one-line comments, `(error as Error).message`, the intersection annotations on objects that get properties added after toOldJSON().
+
+## Hard limits (set by the task owner, not negotiable)
+- You change only your two controller files, and only with the Edit tool. No `sed -i`, no `perl -i`, no script that rewrites a repository file. Use targeted edits, not whole-file rewrites. Leave existing JSDoc comments unchanged.
+- The only git commands that change anything: `git mv` (rename .js to .ts, or back) and, only when you restore a controller, `git restore` on that one file. If `git mv` fails with an index.lock error, wait a few seconds and retry. Read-only git (status, diff, log, show, grep) is fine. Never run a git command on a path that is not one of your two files.
+- Do NOT run `npm run build:server` or `npm test`. Do NOT commit, add, stash, reset, checkout or clean. Do NOT edit server/models/, server/types/, server/routers/ApiRouter.js or any other file, converted or not. Do NOT install packages.
+- Type check with the no-emit check and filter it to your files (about 20 seconds per run):
+  `npx tsc -p tsconfig.check.json 2>&1 | grep -E "^server/controllers/(User|Collection)Controller"`
+  Errors in other files come from the other agents' half-finished work: ignore them. A multi-line error has indented continuation lines that this grep hides; when you need them, save the full output to a file in your scratch folder and read it there.
+- Scratch files go only in: C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\9d365d79-d2df-436f-9cce-424144a1527e\scratchpad\agent2  (Git Bash: /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/agent2). Never in the repository.
+- Stop time: 15:03 local time today. Run `date` now and check it regularly. Send your report by 14:55. A controller that is not finished by then: restore it completely and say so.
+- Do not ask questions; decide within the rules and report what you decided.
+
+## Definition of done for a controller
+- `git mv X.js X.ts` done, and zero tsc errors in that file. Do the rename and the import/type header edit together, then check.
+- CommonJS shape kept: `import x = require('...')`, `import type { NextFunction, Request, Response } from 'express'`, and the file ends with `export = new XController()`.
+- Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, `as any`, `as unknown as`.
+- Behaviour check: read the whole output of `git diff -M HEAD -- server/controllers/XController.js server/controllers/XController.ts`. Apart from import lines, type declarations, type annotations, erased `this: ApiRouter` parameters, `!`, allowed `as` casts and the required one-line comments, every line must be unchanged. No new variable, no changed expression, no reordered or reformatted statement, no changed or removed JSDoc. Undo anything else.
+- If a controller cannot reach that within the rules: restore it completely (`git mv server/controllers/X.ts server/controllers/X.js`, then `git restore --staged --worktree server/controllers/X.js`, then confirm `git status --short -- server/controllers/` shows nothing for it) and report the reason together with the compiler errors that blocked you.
+- Exception: if the ONLY errors left are caused by a declaration that is missing in server/models/*.ts or server/types/ (an association mixin, or a field that a query adds), do not restore. Leave the controller converted and give me the exact `declare` line you need, the file, where the mixin or field comes from, and the errors it removes. I add it during integration.
+
+## What I prepared (Phase A) and verified, which you can rely on
+- New declarations in the models: `Collection.getCollectionBooks` (mixin of collection.hasMany(CollectionBook); returns CollectionBook[]; its options accept the single nested include that CollectionController passes at lines 172-175); `CollectionBook.book?` (optional, typed Book & { libraryItem: LibraryItem }; only set by a query that includes book, so where the call includes it, `a.book!` is the "query always loads the association" case of rule 5); also ApiKey.getUser, Library.getLibraryFolders, PlaybackSession.user?, Podcast.libraryItem?.
+- server/models/LibraryItem.js is still JavaScript. Its inherited Sequelize statics (findAll, findByPk, count, create) fail in a TypeScript caller with TS2684 and cannot be cast to ModelStatic (TS2352). Use the declaration I added: first line of the controller `/// <reference path="../types/libraryItemModel.d.ts" />`, then `(Database.libraryItemModel as LibraryItemModelStatic).findAll({ ... })` with a one-line comment such as `// boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts`. Count these as "other casts (rule 5 boundary)". CollectionController needs this at lines 54, 235, 272, 326 and 388. The model's own statics (getExpandedById and so on) are called without a cast. If you need another inherited static on libraryItemModel (findOne, update, destroy ...), report the signature; I add it.
+- `libraryItem.media` is typed `BookExpanded | PodcastExpanded` because LibraryItem.js is JavaScript. Precedents for the boundary cast: MeController.ts line 521 (`(libraryItem.media as PodcastExpanded).podcastEpisodes`), AuthorController.ts lines 32-35 and 77 (`type BookLibraryItem = LibraryItem & { media: BookExpanded }` and one cast on the query result).
+- A JavaScript function with a `= null` default (for example `Database.getPlaybackSessions(where = null)` in server/Database.js, used at UserController line 41) has its parameter typed as `null`. A cast of the argument fails (TS2352). A single-step cast of the callee compiles and is erased when compiled, keeping `this`: `(Database.getPlaybackSessions as (where?: WhereOptions) => ReturnType<typeof Database.getPlaybackSessions>)({ userId })`, with a boundary comment (rule 5: untyped module with a wrong type). I verified that this form compiles.
+- `Database.sequelize` is typed `Sequelize | null` (it starts as null and is set in init before any request): `Database.sequelize!` with a one-line comment is the "field set before it is read" case of rule 5.
+- `(x as T).method(...)` compiles to `x.method(...)`: TypeScript drops the cast and the parentheses, so this form does not change the compiled code. Do not add parentheses anywhere else.
+- Sequelize's typings are sometimes narrower than what the code passes to a static of an already converted model (a `where` that may be null, a nested `include` that is an object instead of an array, as at UserController lines 78-81). Do not change the code. This is the situation of Allowance 3 (a call into a converted file whose parameter type is too narrow): one single-step cast at the call site with a comment, named in your report. I have not verified which cast compiles there. If no single-step cast compiles, that controller does not fit: restore it and report.
+
+## Probe results for your two controllers
+I type-checked the original JavaScript files with checkJs, so their JSDoc types applied. Your TypeScript files will show much the same errors once the imports and request types are in place. Line numbers are those of the original .js files.
+- /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/probe/checkjs-after-Collection.txt (32 errors)
+- /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/probe/checkjs-after-User.txt (32 errors)
+A helper prints the source line under each error: `node "<scratchpad>/show.js" "D:/SEM-2/574/Project/audiobookshelf-po" "<errors file>" "<regex on the error line>"` (scratchpad = the folder above `agent2`).
+What I saw:
+- Collection: `req.collection` is set by a middleware (required in the handler type, optional in the middleware type). `req.collection.getOldJsonExpanded()` is called with no argument 8 times (lines 199, 215, 257, 302, 305, 364, 367, 420), but server/models/Collection.ts line 257 declares `getOldJsonExpanded(user: User | null, include?: string[])`. Collection.ts is converted: do not edit it, and do not add an argument (that changes the expression). This is Allowance 3 territory. There is no argument to cast, so the type-only forms are a single-step cast of the callee, or one declaration in the handler request type. Choose the form with the fewest casts that stays honest, comment it, name it in your report, and put the missing argument in the bug log. Lines 86 onwards: `libraryItem` from a `.find()` is possibly undefined (the "earlier code guarantees that a lookup finds its item" case of `!`, only where earlier code really guarantees it).
+- User: `req.reqUser` is set by a middleware. Line 42 adds `latestSession` to the object from toOldJSONForBrowser() (annotation). Lines 294/298 `user.permissions...` possibly undefined. Line 421 `req.reqUser.extraData` possibly null. Known wall, lines 88-95: `mp.mediaItem?.podcast`, `mp.mediaItem.coverPath`. MediaProgress.mediaItem is `Book | PodcastEpisode` in an already converted file (not an untyped boundary), Book has no `podcast`, and PodcastEpisode.ts does not declare `podcast` either. I can add `declare podcast?: Podcast` to PodcastEpisode.ts if you ask for it in your report, but the read on the union would still fail on Book. If you find no form that is inside the rules, restore UserController and report exactly these lines and errors. Do not spend more than about 10 minutes on this wall, and finish Collection first.
+
+## Report (your final message; I only see this message, so make it complete and exact)
+For each controller:
+- Status: CONVERTED / CONVERTED BUT NEEDS A DECLARATION / RESTORED
+- tsc errors left in the file (number; list them if not zero)
+- `!` assertions added, split into: (a) field starts as null and is set before it is read, (b) the query always loads the association, (c) earlier code guarantees that a lookup finds its item. Give the count and the line numbers for each.
+- Index signatures added: count, lines, what for.
+- Casts added, split into: Allowance 1 (TS2367 comparison), Allowance 2 (catch variable `as Error`), Allowance 3 (too-narrow parameter of a converted file), other (rule 5 boundary and anything else). Count, line numbers, and one phrase each for Allowance 3 and "other".
+- Number of `this: ApiRouter` parameters added.
+- `import type` lines that replace a require of names that are undefined at runtime (the names).
+- Declarations you need from me: exact line, file, reason.
+- If restored: the reason and the compiler errors.
+Then:
+- Bug log: real bugs you noticed (file, line, one sentence each). Bugs are not fixed.
+- What CLAUDE.md did not cover or got wrong.
+- Confirm that you ran the behaviour check (git diff -M) on each converted file and what it showed.
+
+====================================================================================================
+14:03:11  main agent -> Agent  [Convert Playlist and Library controllers]
+You are sub-agent 3 in a JavaScript-to-TypeScript migration of an Express/Sequelize server (Audiobookshelf). Repository: D:\SEM-2\574\Project\audiobookshelf-po (Windows; the Bash tool is Git Bash). Three other sub-agents are working in the SAME working tree at the same time on other controllers, and a main agent (me) integrates, builds, tests and commits.
+
+## Your job
+Convert exactly these two controllers from JavaScript to TypeScript, type-only (no change in runtime behaviour, no bug fixes):
+1. server/controllers/PlaylistController.js (595 lines) - do this one first and finish it completely
+2. server/controllers/LibraryController.js (1500 lines) - large; start it only when Playlist is done
+
+## Read first
+1. CLAUDE.md in the repository root, all of it. The sections "Rules", "Pitfalls found so far" and "Controllers and Express" are binding. Where this brief and CLAUDE.md differ, CLAUDE.md wins.
+2. Worked examples of converted controllers: server/controllers/AuthorController.ts, server/controllers/MeController.ts, server/controllers/SeriesController.ts, server/controllers/MiscController.ts. Look at: the request types with the Request generics, the erased `this: ApiRouter` parameter, the boundary casts with their one-line comments, `(error as Error).message`, the intersection annotations on objects that get properties added after toOldJSON(), the uploaded-file type.
+
+## Hard limits (set by the task owner, not negotiable)
+- You change only your two controller files, and only with the Edit tool. No `sed -i`, no `perl -i`, no script that rewrites a repository file. Use targeted edits, not whole-file rewrites. Leave existing JSDoc comments unchanged.
+- The only git commands that change anything: `git mv` (rename .js to .ts, or back) and, only when you restore a controller, `git restore` on that one file. If `git mv` fails with an index.lock error, wait a few seconds and retry. Read-only git (status, diff, log, show, grep) is fine. Never run a git command on a path that is not one of your two files.
+- Do NOT run `npm run build:server` or `npm test`. Do NOT commit, add, stash, reset, checkout or clean. Do NOT edit server/models/, server/types/, server/routers/ApiRouter.js or any other file, converted or not. Do NOT install packages.
+- Type check with the no-emit check and filter it to your files (about 20 seconds per run):
+  `npx tsc -p tsconfig.check.json 2>&1 | grep -E "^server/controllers/(Playlist|Library)Controller"`
+  (note: `LibraryController` must not match `LibraryItemController`, which belongs to another agent; the pattern above ends at `Controller`, so it does not). Errors in other files come from the other agents' half-finished work: ignore them. A multi-line error has indented continuation lines that this grep hides; when you need them, save the full output to a file in your scratch folder and read it there.
+- Scratch files go only in: C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\9d365d79-d2df-436f-9cce-424144a1527e\scratchpad\agent3  (Git Bash: /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/agent3). Never in the repository.
+- Stop time: 15:03 local time today. Run `date` now and check it regularly. Send your report by 14:55. A controller that is not finished by then: restore it completely and say so. LibraryController is big: if it is not at zero errors by about 14:50, restore it and use the remaining minutes for an exact report of what blocked you.
+- Do not ask questions; decide within the rules and report what you decided.
+
+## Definition of done for a controller
+- `git mv X.js X.ts` done, and zero tsc errors in that file. Do the rename and the import/type header edit together, then check.
+- CommonJS shape kept: `import x = require('...')`, `import type { NextFunction, Request, Response } from 'express'`, and the file ends with `export = new XController()`.
+- Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, `as any`, `as unknown as`.
+- Behaviour check: read the whole output of `git diff -M HEAD -- server/controllers/XController.js server/controllers/XController.ts`. Apart from import lines, type declarations, type annotations, erased `this: ApiRouter` parameters, `!`, allowed `as` casts and the required one-line comments, every line must be unchanged. No new variable, no changed expression, no reordered or reformatted statement, no changed or removed JSDoc. Undo anything else.
+- If a controller cannot reach that within the rules: restore it completely (`git mv server/controllers/X.ts server/controllers/X.js`, then `git restore --staged --worktree server/controllers/X.js`, then confirm `git status --short -- server/controllers/` shows nothing for it) and report the reason together with the compiler errors that blocked you.
+- Exception: if the ONLY errors left are caused by a declaration that is missing in server/models/*.ts or server/types/ (an association mixin, or a field that a query adds), do not restore. Leave the controller converted and give me the exact `declare` line you need, the file, where the mixin or field comes from, and the errors it removes. I add it during integration.
+
+## What I prepared (Phase A) and verified, which you can rely on
+- New declarations in the models: `Library.getLibraryFolders` (mixin of library.hasMany(LibraryFolder)); `Podcast.libraryItem?` (optional; only set by a query that includes libraryItem, so at LibraryController lines 1408-1409 `p.libraryItem!` is the "query always loads the association" case of rule 5); also ApiKey.getUser, Collection.getCollectionBooks, CollectionBook.book?, PlaybackSession.user?.
+- server/models/LibraryItem.js is still JavaScript. Its inherited Sequelize statics (findAll, findByPk, count, create) fail in a TypeScript caller with TS2684 and cannot be cast to ModelStatic (TS2352). Use the declaration I added: first line of the controller `/// <reference path="../types/libraryItemModel.d.ts" />`, then `(Database.libraryItemModel as LibraryItemModelStatic).findAll({ ... })` with a one-line comment such as `// boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts`. Count these as "other casts (rule 5 boundary)". Needed at PlaylistController lines 60 and 206 and LibraryController lines 418, 541, 656 and 1341. Its options type accepts the single nested includes at LibraryController lines 427, 550 and 673. The model's own statics (getExpandedById, getByFilterAndSort, getPersonalizedShelves and so on) are called without a cast. If you need another inherited static on libraryItemModel (findOne, update, destroy ...), report the signature; I add it.
+- `libraryItem.media` is typed `BookExpanded | PodcastExpanded` because LibraryItem.js is JavaScript, and Podcast has an index signature, so a book-only name read from the union is `unknown` (LibraryController lines 1177-1221, `media.narrators`). Precedents for the boundary cast: MeController.ts line 521 (`(libraryItem.media as PodcastExpanded).podcastEpisodes`), AuthorController.ts lines 32-35 and 77 (`type BookLibraryItem = LibraryItem & { media: BookExpanded }` and one cast on the query result). Prefer one typed place (a cast on the query result, or a local type) over a cast at every use.
+- A JavaScript function with a `= null` default has its parameter typed as `null`. A cast of the argument fails (TS2352). A single-step cast of the callee compiles and is erased when compiled, keeping `this`: `(Database.getPlaybackSessions as (where?: WhereOptions) => ReturnType<typeof Database.getPlaybackSessions>)({ userId })`, with a boundary comment (rule 5: untyped module with a wrong type). I verified that this form compiles.
+- `Database.sequelize` is typed `Sequelize | null` (it starts as null and is set in init before any request): `Database.sequelize!` with a one-line comment is the "field set before it is read" case of rule 5.
+- `(x as T).method(...)` compiles to `x.method(...)`: TypeScript drops the cast and the parentheses, so this form does not change the compiled code. Do not add parentheses anywhere else.
+- Sequelize's typings are sometimes narrower than what the code passes to a static of an already converted model (a `where` that may be null, an `order` built from strings, a nested `include` that is an object instead of an array). Do not change the code. This is the situation of Allowance 3 (a call into a converted file whose parameter type is too narrow): one single-step cast at the call site with a comment, named in your report. If no single-step cast compiles, that controller does not fit: restore it and report.
+- server/utils/queries/*.js and server/libs/* are JavaScript. Where one returns `object`, `any` or a wrong type, CLAUDE.md "Pitfalls" applies (annotate the destructured import once, or one boundary cast with a comment; fsExtra needs one boundary cast per call site).
+
+## Probe results for your two controllers
+I type-checked the original JavaScript files with checkJs, so their JSDoc types applied. Your TypeScript files will show much the same errors once the imports and request types are in place. Line numbers are those of the original .js files.
+- /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/probe/checkjs-after-Playlist.txt (43 errors)
+- /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/probe/checkjs-after-Library.txt (162 errors)
+A helper prints the source line under each error: `node "<scratchpad>/show.js" "D:/SEM-2/574/Project/audiobookshelf-po" "<errors file>" "<regex on the error line>"` (scratchpad = the folder above `agent3`).
+What I saw:
+- Playlist: `req.playlist` is set by a middleware (required in the handler type, optional in the middleware type). Line 139 calls `Database.playlistModel.getOldPlaylistsForUserAndLibrary(req.user.id)` with one argument, but server/models/Playlist.ts line 84 declares two required parameters: Playlist.ts is converted, so do not edit it and do not add an argument; Allowance 3 territory (a single-step cast of the callee is the type-only form), plus a bug-log entry. `jsonExpanded.items` is possibly undefined (lines 323 onwards). Line 548: `libraryItem.media` on a union with string.
+- Library: lines 196-204 reassign `libraries` from Library[] to the old JSON and then add `stats` to each; line 227 `filterdata.numIssues` on `object` from utils/queries/libraryFilters.js; `this.podcastManager` (243, 1321) and `this.handleDeleteLibraryItem` (566) need `this: ApiRouter`; line 1250 passes `this` to a function that wants ApiRouter; lines 591 onwards build an object by key; lines 92, 114, 270, 295 read settings by a dynamic key; `req.query` is used in many places (one Request generic per controller; Allowance 1 for a comparison that TS2367 calls impossible); lines 792/801/1079 add properties after toOldJSON(); line 1055 `findAndCountAll` gets an `order` of string arrays and `replacements: object`.
+
+## Report (your final message; I only see this message, so make it complete and exact)
+For each controller:
+- Status: CONVERTED / CONVERTED BUT NEEDS A DECLARATION / RESTORED
+- tsc errors left in the file (number; list them if not zero)
+- `!` assertions added, split into: (a) field starts as null and is set before it is read, (b) the query always loads the association, (c) earlier code guarantees that a lookup finds its item. Give the count and the line numbers for each.
+- Index signatures added: count, lines, what for.
+- Casts added, split into: Allowance 1 (TS2367 comparison), Allowance 2 (catch variable `as Error`), Allowance 3 (too-narrow parameter of a converted file), other (rule 5 boundary and anything else). Count, line numbers, and one phrase each for Allowance 3 and "other".
+- Number of `this: ApiRouter` parameters added.
+- `import type` lines that replace a require of names that are undefined at runtime (the names).
+- Declarations you need from me: exact line, file, reason.
+- If restored: the reason and the compiler errors.
+Then:
+- Bug log: real bugs you noticed (file, line, one sentence each). Bugs are not fixed.
+- What CLAUDE.md did not cover or got wrong.
+- Confirm that you ran the behaviour check (git diff -M) on each converted file and what it showed.
+
+====================================================================================================
+14:03:49  main agent -> Agent  [Convert LibraryItem and Podcast controllers]
+You are sub-agent 4 in a JavaScript-to-TypeScript migration of an Express/Sequelize server (Audiobookshelf). Repository: D:\SEM-2\574\Project\audiobookshelf-po (Windows; the Bash tool is Git Bash). Three other sub-agents are working in the SAME working tree at the same time on other controllers, and a main agent (me) integrates, builds, tests and commits.
+
+## Your job
+Convert exactly these two controllers from JavaScript to TypeScript, type-only (no change in runtime behaviour, no bug fixes):
+1. server/controllers/PodcastController.js (585 lines) - do this one first and finish it completely
+2. server/controllers/LibraryItemController.js (1251 lines) - large; start it only when Podcast is done
+Note: the file you convert is the CONTROLLER server/controllers/LibraryItemController.js. The MODEL server/models/LibraryItem.js stays JavaScript and is not yours to touch.
+
+## Read first
+1. CLAUDE.md in the repository root, all of it. The sections "Rules", "Pitfalls found so far" and "Controllers and Express" are binding. Where this brief and CLAUDE.md differ, CLAUDE.md wins.
+2. Worked examples of converted controllers: server/controllers/AuthorController.ts, server/controllers/MeController.ts, server/controllers/MiscController.ts, server/controllers/ShareController.ts. Look at: the request types with the Request generics, the erased `this: ApiRouter` parameter, the boundary casts with their one-line comments, `(error as Error).message`, the intersection annotations on objects that get properties added after toOldJSON(), the small local type for an uploaded file (req.files), the fsExtra boundary cast.
+
+## Hard limits (set by the task owner, not negotiable)
+- You change only your two controller files, and only with the Edit tool. No `sed -i`, no `perl -i`, no script that rewrites a repository file. Use targeted edits, not whole-file rewrites. Leave existing JSDoc comments unchanged.
+- The only git commands that change anything: `git mv` (rename .js to .ts, or back) and, only when you restore a controller, `git restore` on that one file. If `git mv` fails with an index.lock error, wait a few seconds and retry. Read-only git (status, diff, log, show, grep) is fine. Never run a git command on a path that is not one of your two files.
+- Do NOT run `npm run build:server` or `npm test`. Do NOT commit, add, stash, reset, checkout or clean. Do NOT edit server/models/, server/types/, server/routers/ApiRouter.js or any other file, converted or not. Do NOT install packages.
+- Type check with the no-emit check and filter it to your files (about 20 seconds per run):
+  `npx tsc -p tsconfig.check.json 2>&1 | grep -E "^server/controllers/(LibraryItem|Podcast)Controller"`
+  Errors in other files come from the other agents' half-finished work: ignore them. A multi-line error has indented continuation lines that this grep hides; when you need them, save the full output to a file in your scratch folder and read it there.
+- Scratch files go only in: C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\9d365d79-d2df-436f-9cce-424144a1527e\scratchpad\agent4  (Git Bash: /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/agent4). Never in the repository.
+- Stop time: 15:03 local time today. Run `date` now and check it regularly. Send your report by 14:55. A controller that is not finished by then: restore it completely and say so. LibraryItemController is big: if it is not at zero errors by about 14:50, restore it and use the remaining minutes for an exact report of what blocked you.
+- Do not ask questions; decide within the rules and report what you decided.
+
+## Definition of done for a controller
+- `git mv X.js X.ts` done, and zero tsc errors in that file. Do the rename and the import/type header edit together, then check.
+- CommonJS shape kept: `import x = require('...')`, `import type { NextFunction, Request, Response } from 'express'`, and the file ends with `export = new XController()`.
+- Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, `as any`, `as unknown as`.
+- Behaviour check: read the whole output of `git diff -M HEAD -- server/controllers/XController.js server/controllers/XController.ts`. Apart from import lines, type declarations, type annotations, erased `this: ApiRouter` parameters, `!`, allowed `as` casts and the required one-line comments, every line must be unchanged. No new variable, no changed expression, no reordered or reformatted statement, no changed or removed JSDoc. Undo anything else.
+- If a controller cannot reach that within the rules: restore it completely (`git mv server/controllers/X.ts server/controllers/X.js`, then `git restore --staged --worktree server/controllers/X.js`, then confirm `git status --short -- server/controllers/` shows nothing for it) and report the reason together with the compiler errors that blocked you.
+- Exception: if the ONLY errors left are caused by a declaration that is missing in server/models/*.ts or server/types/ (an association mixin, or a field that a query adds), do not restore. Leave the controller converted and give me the exact `declare` line you need, the file, where the mixin or field comes from, and the errors it removes. I add it during integration.
+
+## What I prepared (Phase A) and verified, which you can rely on
+- New declarations in the models: ApiKey.getUser, Collection.getCollectionBooks, CollectionBook.book?, Library.getLibraryFolders, PlaybackSession.user?, Podcast.libraryItem? (optional; only set by a query that includes libraryItem).
+- server/models/LibraryItem.js is still JavaScript. Its inherited Sequelize statics (findAll, findByPk, count, create) fail in a TypeScript caller with TS2684 and cannot be cast to ModelStatic (TS2352). Use the declaration I added: first line of the controller `/// <reference path="../types/libraryItemModel.d.ts" />`, then `(Database.libraryItemModel as LibraryItemModelStatic).findAll({ ... })` with a one-line comment such as `// boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts`. Count these as "other casts (rule 5 boundary)". Needed at PodcastController lines 81 (count) and 110 (create) and LibraryItemController line 830 (findAll). I verified these call shapes compile, including `(await (Database.libraryItemModel as LibraryItemModelStatic).count({ where: { path } })) > 0` with the existing parentheses left as they are. The model's own statics (getExpandedById, findOneExpanded, findAllExpandedWhere, checkExistsById, getCoverPath, removeById and so on) are called without a cast. If you need another inherited static on libraryItemModel (findOne, update, destroy ...), report the signature; I add it.
+- `libraryItem.media` is typed `BookExpanded | PodcastExpanded` because LibraryItem.js is JavaScript, and Podcast has an index signature, so a book-only name read from the union is `unknown`, and an overloaded method such as `media.changed('coverPath', true)` does not resolve on the union (TS2554). Precedents for the boundary cast: MeController.ts line 521 (`(libraryItem.media as PodcastExpanded).podcastEpisodes`), AuthorController.ts lines 32-35 and 77 (`type BookLibraryItem = LibraryItem & { media: BookExpanded }` and one cast on the query result), EmailController.ts line 130. Prefer one typed place over a cast at every use: in PodcastController the middleware rejects anything that is not a podcast, so the handler request type can say `libraryItem: LibraryItem & { media: PodcastExpanded }` (an annotation in the request type, no cast). Where a handler branches on isBook / isPodcast / mediaType, one boundary cast per use with a one-line comment.
+- A JavaScript function with a `= null` default has its parameter typed as `null`, and a JavaScript function called from TypeScript requires all the parameters it declares (for example `this.podcastManager.downloadPodcastEpisodes(req.libraryItem, episodes)` at PodcastController line 378: PodcastManager.js declares three). A cast of the argument fails (TS2352) or does not exist. A single-step cast of the callee compiles and is erased when compiled, keeping `this`: `(Database.getPlaybackSessions as (where?: WhereOptions) => ReturnType<typeof Database.getPlaybackSessions>)({ userId })`, with a boundary comment (rule 5: untyped module with a wrong type). I verified that this form compiles.
+- `Database.sequelize` is typed `Sequelize | null` (it starts as null and is set in init before any request): `Database.sequelize!` with a one-line comment is the "field set before it is read" case of rule 5.
+- `(x as T).method(...)` compiles to `x.method(...)`: TypeScript drops the cast and the parentheses, so this form does not change the compiled code. Do not add parentheses anywhere else.
+- Sequelize's typings are sometimes narrower than what the code passes to a static of an already converted model (a `where` that may be null, a nested `include` that is an object instead of an array). Do not change the code. This is the situation of Allowance 3 (a call into a converted file whose parameter type is too narrow): one single-step cast at the call site with a comment, named in your report. If no single-step cast compiles, that controller does not fit: restore it and report.
+- server/managers/CoverManager.js, PodcastManager.js, CacheManager.js, RssFeedManager.js, server/scanner/*, server/utils/fileUtils.js, podcastUtils.js, index.js, zipHelpers.js and server/libs/* are JavaScript. Where one returns `any`, `false | {...}`, or a JSDoc union that the code reads without narrowing (CoverManager returns `{ error: string } | { cover: string }` and the code reads `result.error` then `result.cover`), CLAUDE.md "Pitfalls" and rule 5 apply: annotate the destructured import once, or one single-step boundary cast with a comment; fsExtra needs one boundary cast per call site. Remember that `!` removes null and undefined, not false.
+
+## Probe results for your two controllers
+I type-checked the original JavaScript files with checkJs, so their JSDoc types applied. Your TypeScript files will show much the same errors once the imports and request types are in place. Line numbers are those of the original .js files.
+- /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/probe/checkjs-after-Podcast.txt (46 errors)
+- /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/9d365d79-d2df-436f-9cce-424144a1527e/scratchpad/probe/checkjs-after-LibraryItem.txt (169 errors)
+A helper prints the source line under each error: `node "<scratchpad>/show.js" "D:/SEM-2/574/Project/audiobookshelf-po" "<errors file>" "<regex on the error line>"` (scratchpad = the folder above `agent4`).
+What I saw:
+- Podcast: `req.libraryItem` is set by a middleware (line 581) that only lets podcasts through; `this.podcastManager` and the like need `this: ApiRouter`; line 61 `library.libraryFolders` possibly undefined; line 171 passes a library file object to a function with a narrower parameter; line 316 passes a string where the JavaScript callee's parameter is typed null; lines 439-454 fill an object by key; `getFileTimestampsWithIno` returns `false | {...}` and the code reads `.ino`, `.mtimeMs` without a test.
+- LibraryItem: `req.libraryItem` and `req.libraryFile` are set by a middleware (lines 1221-1232); `req.files` (lines 305-307) needs the small uploaded-file type; lines 72-94 compare a query value with a number (Allowance 1, TS2367) and add properties to the old JSON object (annotation); `req.libraryItem.media.changed(...)` 8 times and `media.audioFiles`, `media.chapters`, `media.includedAudioFiles`, `media.updateSeriesFromRequest`, `media.updateAuthorsFromRequest` on the union; CoverManager results read as `.error` / `.cover` (about 20 errors); `libraryFile.metadata` possibly null 14 times from line 993; line 187 `new Promise` whose resolve is called without an argument; line 1104 `res.download` callback; line 1188 `delete primaryEbookFile.fileType`; line 716 passes `LibraryItemExpanded | undefined`; line 874 indexes ScanResult by a string.
+
+## Report (your final message; I only see this message, so make it complete and exact)
+For each controller:
+- Status: CONVERTED / CONVERTED BUT NEEDS A DECLARATION / RESTORED
+- tsc errors left in the file (number; list them if not zero)
+- `!` assertions added, split into: (a) field starts as null and is set before it is read, (b) the query always loads the association, (c) earlier code guarantees that a lookup finds its item. Give the count and the line numbers for each.
+- Index signatures added: count, lines, what for.
+- Casts added, split into: Allowance 1 (TS2367 comparison), Allowance 2 (catch variable `as Error`), Allowance 3 (too-narrow parameter of a converted file), other (rule 5 boundary and anything else). Count, line numbers, and one phrase each for Allowance 3 and "other".
+- Number of `this: ApiRouter` parameters added.
+- `import type` lines that replace a require of names that are undefined at runtime (the names).
+- Declarations you need from me: exact line, file, reason.
+- If restored: the reason and the compiler errors.
+Then:
+- Bug log: real bugs you noticed (file, line, one sentence each). Bugs are not fixed.
+- What CLAUDE.md did not cover or got wrong.
+- Confirm that you ran the behaviour check (git diff -M) on each converted file and what it showed.
+
+====================================================================================================
+14:05:25  main agent -> SendMessage  [ace4c72a1dd0dc070]
+Extra constraint for SessionController from the main agent: getTrack is bound by server/routers/PublicRouter.ts, which is already TypeScript and must not be edited.
+PublicRouter.ts line 25 is `this.router.get('/session/:id/track/:index', SessionController.getTrack.bind(this))`, and there `this` is a PublicRouter, not an ApiRouter. ApiRouter.js does not bind getTrack at all. Once SessionController is TypeScript, the compiler checks that line, and your grep filter hides it. So:
+1. Widen your filter so you see it: `npx tsc -p tsconfig.check.json 2>&1 | grep -E "^server/controllers/(ApiKey|Session)Controller|^server/routers/PublicRouter"`. An error in PublicRouter.ts that your conversion causes counts as yours. PublicRouter.ts must end with zero errors.
+2. If getTrack reads `this`, type it `this: PublicRouter` with `type PublicRouter = import('../routers/PublicRouter')`, not ApiRouter. If it does not read `this`, add no `this` parameter. Precedent: ShareController.ts line 20 and line 60 (`getMediaItemShareBySlug(this: PublicRouter, req: ShareRequest, res: Response)`).
+3. getTrack is a public route: its `req` type must be one that Express accepts in `router.get(path, handler)`, so it cannot have a required `user` property. Precedent: `ShareRequest` in ShareController.ts lines 36-38 (a Request with generics, without user). Keep the existing JSDoc unchanged.
+4. openSessionMiddleware (reads this.playbackSessionManager) and the other handlers are bound by ApiRouter.js as before: `this: ApiRouter` there.
+Please list in your report how you typed getTrack and confirm the PublicRouter.ts line is error-free.
+
+====================================================================================================
+14:10:12  main agent -> SendMessage  [acee0a4d06910010c]
+Update from the main agent for UserController lines 66-98: the "known wall" has a form inside the rules; I compiled both parts in a scratch file. Do not restore UserController for this reason.
+1. Lines 66-84 (nested include that is an object, not an array; TS2353). An Allowance 3 cast of the argument compiles: close the call with `} as Parameters<typeof Database.mediaProgressModel.findAll>[0])` and a one-line comment (Sequelize types a nested include as an array but accepts a single one). Name it in your report as Allowance 3.
+2. Lines 85-98 (`mp.mediaItem?.podcast`, `mp.mediaItem.coverPath`). No cast is needed: annotate the query result (CLAUDE.md: an intersection annotation on a local variable is an annotation, not a cast). This compiled:
+   type MediaProgressWithMediaItem = MediaProgress & { mediaItem?: (Book & { podcast?: undefined }) | (PodcastEpisode & { podcast?: Podcast; coverPath?: undefined }) }
+   const mediaProgresses: MediaProgressWithMediaItem[] = await Database.mediaProgressModel.findAll({ ... })
+   Put a short comment above the type saying what it is: what this query loads (a book, or an episode with its podcast); a book has no podcast and an episode has no coverPath, so reading them gives undefined. With it, `if (mp.mediaItem?.podcast)` narrows to the episode, and the else branch reads coverPath and updatedAt from both members. MediaProgress[] is assignable to it without a cast. The types are `import('../models/MediaProgress')`, `import('../models/Book')`, `import('../models/Podcast')`, `import('../models/PodcastEpisode')`.
+3. The object from `mp.getOldMediaProgress()` gets displayTitle, displaySubtitle, coverPath and mediaUpdatedAt added: an intersection annotation, for example `ReturnType<MediaProgress['getOldMediaProgress']> & { displayTitle?: string | null; displaySubtitle?: string | null; coverPath?: string | null; mediaUpdatedAt?: Date }`, compiled together with point 2.
+Both 1 and 2 apply to the same statement (annotation on the left, cast on the argument). No model declaration is needed for this, so do not request `PodcastEpisode.podcast`.
+
+====================================================================================================
+14:13:53  main agent -> SendMessage  [af5497ba401972c4c]
+Hints from the main agent for LibraryController: three spots that look like walls have forms inside the rules. I compiled all three in a scratch file with zero errors. Finish Playlist first as planned.
+1. Line 624 `payload.offset = payload.page * payload.limit` (TS2362/TS2363) and the other arithmetic on limit and page. The middleware at lines 1487-1495 rewrites `req.query.limit` and `req.query.page` to numbers before any handler runs, and ApiRouter.js puts that middleware in front of the /libraries/:id routes. So in the query type used by those handlers, limit and page are numbers set by the middleware: `limit?: number; page?: number` (say so in the one-line comment; the other query values stay strings). With that, and an annotation on `payload` that lists its fields including `offset?: number`, `total: number | undefined` and a non-never `results`, the block compiles unchanged. Check for each handler that it really runs behind that middleware before you give it this type.
+2. The middleware itself (lines 1488-1495) reads and writes `req.query[queryKey]` by a dynamic key: its own query type needs an index signature, for example `{ [key: string]: string | number | undefined }` with the rule-5 comment. `isNaN(req.query[queryKey])` needs the same file-local declaration that MeController.ts lines 19-20 and ShareController.ts lines 29-30 use: `declare function isNaN(value: unknown): boolean` with its comment. After the assignment TypeScript narrows `req.query[queryKey]` to number, so `Number.isInteger(...)` and `< 0` compile unchanged. The same isNaN declaration covers line 1022.
+3. Lines 188-207, where `libraries` holds the models first and their old JSON later, and then gets `stats` added. A union annotation is narrowed by each assignment, so no cast is needed:
+   type LibraryStats = Awaited<ReturnType<typeof libraryItemsBookFilters.getBookLibraryStats>> | Awaited<ReturnType<typeof libraryItemsPodcastFilters.getPodcastLibraryStats>>
+   type OldLibraryWithStats = ReturnType<Library['toOldJSON']> & { stats?: LibraryStats }
+   let libraries: Library[] | OldLibraryWithStats[] = await Database.libraryModel.getAllWithFolders()
+   The filter, the map with `lib.toOldJSON()` and `library.stats = ...` then compile as they are.
+The same assignment-narrowing idea works wherever one variable is reused for two shapes. These are annotations, not casts.
+
+====================================================================================================
+14:36:22  HAND-BACK of sub-agent "Convert LibraryItem and Podcast controllers"
+Sub-agent 4 report. Both controllers are CONVERTED, zero tsc errors, nothing restored, no declaration needed from you. Finished 14:35.
+
+Files:
+- D:\SEM-2\574\Project\audiobookshelf-po\server\controllers\PodcastController.ts (renamed with git mv)
+- D:\SEM-2\574\Project\audiobookshelf-po\server\controllers\LibraryItemController.ts (renamed with git mv)
+
+git status for both is `RM X.js -> X.ts`. I touched no other repository file. I did not run the build or the tests, and did not commit.
+
+Last check, 14:32:50: `npx tsc -p tsconfig.check.json` printed nothing at all, so the whole program had zero errors at that moment, the other agents' files included.
+
+All line numbers below are in the .ts files unless marked "js".
+
+## 1. PodcastController — CONVERTED
+
+- **tsc errors left:** 0
+- **`!` assertions:** 2
+  - (a) field starts as null: 1 — line 137 `Database.sequelize!`
+  - (b) query always loads the association: 1 — line 92 `library.libraryFolders!` (findByIdWithFolders includes libraryFolders)
+  - (c) lookup guaranteed: 0
+- **Index signatures:** 2
+  - line 45: `UpdateEpisodeBody`, because updateEpisode() reads and writes req.body by a dynamic key
+  - line 451: `updatePayload: { [key: string]: unknown }`, filled by a dynamic key
+- **Casts:** 8, all "other (rule 5 boundary)". Allowance 1, 2 and 3: 0 each.
+  - 112 and 141: `Database.libraryItemModel as LibraryItemModelStatic` (count, create).
+  - 131: `await getFileTimestampsWithIno(podcastPath) as Exclude<Awaited<ReturnType<typeof getFileTimestampsWithIno>>, false>`. It removes `false`, which the code never tests for (bug log 1).
+  - 202: `newLibraryFile as LibraryFileObject & { fileType: string }`. The LibraryFileObject typedef in LibraryItem.js requires isSupplementary and has no fileType. This cast claims isSupplementary is present, which is not true; a cast on the receiver would have started the line with `(` (see section 4, point 1).
+  - 217: `(newLibraryItem.media as PodcastExpanded).autoDownloadEpisodes`. The item was created with mediaType 'podcast'.
+  - 347: callee cast of `this.podcastManager.clearDownloadQueue` (its `= null` default types the parameter as null).
+  - 409: callee cast of `this.podcastManager.downloadPodcastEpisodes` (its JSDoc makes the third parameter required).
+  - 546: `(fs as { remove(path: string): Promise<void> })`. fsExtra infers remove() as a promise or undefined.
+- **`this: ApiRouter` parameters:** 7 (create, getFeedsFromOPMLText, bulkCreatePodcastsFromOpmlFeedUrls, checkNewEpisodes, clearEpisodeDownloadQueue, getEpisodeDownloads, downloadEpisodes). quickMatchEpisodes has an @this tag but never uses `this`, so it got none.
+- **`import type` replacing a runtime-undefined require:** `NextFunction, Request, Response` from 'express'.
+- **Other type-only things you should know:**
+  - `declare function isNaN(value: unknown): boolean`, as in MeController.ts lines 19-20, for `isNaN(req.query.limit)`.
+  - Line 125: `.catch((error: unknown) => ...)`, because `fs.ensureDir()` is `any` and gives the callback no type.
+  - Handler request type is `libraryItem: LibraryItem & { media: PodcastExpanded }`, as you suggested; the middleware uses `{ libraryItem?: LibraryItem }`.
+  - The CoverManager result is annotated as `CoverResult = { error?: string; cover?: string }`, not cast.
+
+## 2. LibraryItemController — CONVERTED
+
+- **tsc errors left:** 0
+- **`!` assertions:** 5
+  - (a) field starts as null: 2, both on line 1199 `ebookFile.metadata!.path!` (LibraryFile.js metadata and FileMetadata.path start as null)
+  - (b): 0
+  - (c) lookup guaranteed: 3
+    - 561: `find(...)!`, guaranteed by the some() test on line 554
+    - 732: `find(...)!`, guaranteed by the unique ids plus the length check before it
+    - 1098: `find(...)!`, guaranteed by the some() test on the line above
+- **Index signatures:** 3
+  - line 15: `ScanResult: { [key: string]: number }`, an annotation on the destructured import of utils/constants, because scan() reads it through Object.keys
+  - line 62: `MatchBody`, because match() reads req.body by a dynamic key
+  - line 590: `options: QuickMatchOptions & { [key: string]: unknown }`, filled by a dynamic key
+- **Casts:** 16
+  - Allowance 1 (TS2367): 3 — lines 132, 176, 625 (`(req.query.expanded as unknown) == 1`, `(req.query.hard as unknown) == 1` twice).
+  - Allowance 2 (catch variable): 1 — line 215 `(error as NodeJS.ErrnoException).code` in the static handleDownloadError. It is ErrnoException and not Error because `.code` is read.
+  - Allowance 3: 0
+  - Other (rule 5 boundary): 12
+    - 197, 667, 1079: `(fs as { remove(path: string): Promise<void> })`.
+    - 365: callee cast of `CoverManager.downloadCoverFromUrlNew` (its JSDoc types libraryItemPath as string; the call passes null).
+    - 510: callee cast of `this.playbackSessionManager.startSessionRequest` (its JSDoc types episodeId as string; the call passes null).
+    - 554 and 561: `(req.libraryItem.media as BookExpanded)` inside callbacks, where the isBook narrowing does not reach.
+    - 1192: `(req.libraryItem.media as BookExpanded).ebookFile` in getEBookFile, which never tests isBook.
+    - 634 and 714: the findAllExpandedWhere result `as (BookLibraryItem | PodcastLibraryItem)[]`.
+    - 892: `Database.libraryItemModel as LibraryItemModelStatic` (findAll).
+    - 1248: `ebookLibraryFile.toJSON() as PrimaryEbookFile`. The next three lines turn the object into an ebook file.
+- **`this: ApiRouter` parameters:** 10 (findOne, delete, updateMedia, startPlaybackSession, startEpisodePlaybackSession, match, batchDelete, batchUpdate, batchQuickMatch, getMetadataObject). findOne, match, batchQuickMatch and getMetadataObject have no @this tag but use `this`.
+- **`import type`:** `NextFunction, Request, Response` from 'express'.
+- **Other type-only things:**
+  - `new Promise<void>(...)` 3 times (download, downloadLibraryFile, getEBookFile).
+  - `declare const global: typeof globalThis & { XAccel?: string }`.
+  - Uploaded file: `UploadedFile = { name; mv }`, with `files?: { cover?: UploadedFile }` on uploadCover.
+  - Two new own-line comments, above the `hardDelete` lines 176 and 625, because those lines already end with an original comment.
+
+### Decisions in LibraryItemController for you to accept or overrule
+
+All of these are annotations in the request types, not casts.
+
+1. **Request type that ties isBook/isPodcast to media.**
+   - `BookLibraryItem = Omit<LibraryItem, 'media' | 'isBook' | 'isPodcast'> & { media: BookExpanded & ChangedSetter; isBook: true; isPodcast: false }`, the same for podcasts, and `libraryItem: BookLibraryItem | PodcastLibraryItem`.
+   - A handler that tests isBook or isPodcast then reads media as that type with no cast. This replaces about 30 per-use casts.
+   - It was also the only way I found to avoid the line-start hazard in section 4, point 1.
+   - A scratch probe confirmed the types are real: `item.id` is string, an unknown property is an error, narrowing gives `AudioFileObject[]` and `PodcastEpisode[]`, and the union is assignable to `LibraryItem`.
+2. **`ChangedSetter = { changed(key: string, dirty: boolean): void }` on both media types.** It makes the 8 `media.changed('x', true)` calls resolve on the union without a cast.
+3. **`RequestLibraryFileObject = { libraryFile: LibraryFile & { metadata: FileMetadata & { path: string; filename: string } } }`.** This is one typed place where rule 5 would otherwise need about 17 `!` (metadata, path and filename are typed as possibly null). If you prefer the `!` form, it is a mechanical change in getLibraryFile, deleteLibraryFile, downloadLibraryFile and updateEbookFileStatus.
+4. **getCover is typed `RequestWithUser`,** not `LibraryItemControllerRequest` as its JSDoc says. ApiRouter.js line 112 binds it without the middleware, so req.libraryItem is never set there.
+5. **Body fields that a handler validates with Array.isArray are typed `unknown`** (orderedFileData, chapters, metadata.series, metadata.authors). After the check they are `any[]` through lib.d.ts, with no written `any`.
+
+## 3. Side effect on another file
+
+- PlaybackSessionManager.js lines 48 and 76 type `req` as `import('../controllers/LibraryItemController').LibraryItemControllerRequest`.
+- A TypeScript file ending in `export = new X()` cannot export a type, so that import no longer resolves and the `req` parameter of getDeviceInfo and startSessionRequest is now `any` for TypeScript callers.
+- There is no compiler error. The scratch probe confirmed it: `Parameters<PlaybackSessionManager['getDeviceInfo']>[0]` accepts the number 5.
+- This affects ShareController.ts line 133, whose cast now targets `any`, and anything SessionController passes.
+- I could not fix it inside my two files.
+
+## Bug log (nothing fixed)
+
+1. PodcastController.ts 131 (js 100, read at js 112-122): create() reads `.ino`, `.mtimeMs` and the rest from getFileTimestampsWithIno() without testing for false; if the stat fails, the item is created with ino undefined and zero timestamps.
+2. PodcastController.ts 326 (js 295): `!isNaN(req.query.limit) ? Number(req.query.limit) : 3` passes a string to isNaN; an empty `limit=` gives 0 and a negative number is accepted.
+3. PodcastController.ts 423 (js 392): quickMatchEpisodes logs "attempted to download episodes", a copied message.
+4. LibraryItemController.ts 132, 176, 625 (js 72, 115, 563): a query string is compared with the number 1 by `==`. It is true only through coercion, so it is not a runtime bug; it is listed because Allowance 1 requires it.
+5. LibraryItemController.ts 292 and 344 (js 231, 283): in updateMedia, `hasUpdates` becomes the cover URL string when only `url` changed, so the response field `updated` is a string instead of a boolean.
+6. LibraryItemController.ts 731 onward (js 669-679): batchUpdate never checks that a payload has `mediaPayload`; without it, `mediaPayload.autoDownloadSchedule` or `mediaPayload.metadata` throws a TypeError in an async handler.
+7. LibraryItemController.ts 805 (js 743): batchGet answers 403 "Invalid payload" for a missing or empty libraryItemIds; an invalid body should be 400.
+8. Wrong JSDoc in JavaScript files, reported and not touched:
+   - LibraryItem.getExpandedById says it never resolves null, but the middleware tests for it.
+   - Scanner.quickMatchLibraryItem's return type omits `warning`.
+   - CoverManager.downloadCoverFromUrlNew types libraryItemPath as string and documents null.
+   - PodcastManager.downloadPodcastEpisodes makes isAutoDownload required.
+   - The LibraryFileObject typedef in LibraryItem.js requires isSupplementary and has no fileType.
+   - PlaybackSessionManager.startSessionRequest types episodeId as string and receives null.
+
+## 4. What CLAUDE.md and the brief did not cover or got wrong
+
+1. **A cast at the start of a line is not always safe.** The brief says `(x as T).method(...)` does not change the compiled code. This code has no semicolons, so a line starting with `(` continues the previous statement as a call.
+   - It would have happened at Podcast js 171 (the previous line closes an object literal), at 7 of the 8 `media.changed(...)` statements, and at LibraryItem js 1053.
+   - I used no line-start cast in those places.
+   - Three line-start callee casts remain (Podcast 347 and 409, LibraryItem 510). Each follows the `}` of an if block, and the compiled-code comparison shows them unchanged.
+2. **Typedefs imported by other JavaScript files stop resolving** when the controller becomes TypeScript (section 3).
+3. **The fsExtra pattern `typeof fs & { method(...) }` does not work when the method exists with a wrong return type.** The intersection keeps the inferred signature first. I cast to the plain object type `{ remove(path: string): Promise<void> }` instead.
+4. **Sequelize's `changed(key, dirty)` does not resolve on a union,** and narrowing by isBook/isPodcast is lost inside callbacks.
+5. **Allowance 2 names only `(error as Error).message`.** Here the code reads `.code`.
+6. **Allowance 1's example implies the comparison is a bug.** With `==` it works through coercion.
+7. **The working tree is CRLF** (core.autocrlf is true), so comparing bytes with `git show` output needs line endings normalised first.
+8. test/server/controllers/LibraryItemController.test.js requires this controller. I did not run it.
+
+## Behaviour check
+
+- **git diff -M:** I read the full output for both files. Every changed line is an import, a type declaration, an annotation, a `this: ApiRouter` parameter, a `!`, an allowed cast, a `<void>` type argument, or a one-line comment. There is no new variable, no changed expression and no reordered statement.
+- **JSDoc:** all 18 original JSDoc blocks in PodcastController and all 29 in LibraryItemController are unchanged in the source and present in the transpiled output.
+- **Compiled code:** I transpiled the HEAD .js and the new .ts with the same options into my scratch folder and compared them with comments removed. The only differences are the require lines; outside the require block there are 0 differing lines in both files.
+- **Banned patterns:** none of `any` as a type, `@ts-ignore`, `@ts-nocheck`, `@ts-expect-error`, `as any`, `as unknown as`. The only match for the word "any" is the original comment `// any value` on LibraryItemController.ts line 479.
+- Scratch files are only in `...\scratchpad\agent4`.
+
+====================================================================================================
+14:28:51  HAND-BACK of sub-agent "Convert ApiKey and Session controllers"
+SUB-AGENT 1 REPORT (ApiKeyController, SessionController) - finished 14:29, both converted, nothing restored.
+
+Files (only these two were touched, Edit tool + `git mv` only):
+- D:\SEM-2\574\Project\audiobookshelf-po\server\controllers\ApiKeyController.ts
+- D:\SEM-2\574\Project\audiobookshelf-po\server\controllers\SessionController.ts
+Final `npx tsc -p tsconfig.check.json` (14:25): 0 errors in ApiKeyController.ts, 0 in SessionController.ts, 0 in server/routers/PublicRouter.ts. (Other errors in that run were all in LibraryItemController.ts, another agent's file.)
+
+=== 1. ApiKeyController ===
+- Status: CONVERTED
+- tsc errors left: 0
+- `!` assertions: 0 (a: 0, b: 0, c: 0)
+- Index signatures: 0
+- Casts: Allowance 1: 0. Allowance 2: 0. Allowance 3: 0. Other: 0.
+- `this: ApiRouter` parameters: 1 (create, line 59; it reads this.auth.tokenManager.TokenSecret). getAll, update, delete and middleware never read `this`.
+- `import type` replacing a require of runtime-undefined names: line 2 `import type { NextFunction, Request, Response } from 'express'` replaces `const { Request, Response, NextFunction } = require('express')` (names: Request, Response, NextFunction).
+- Other header lines: line 1 `/// <reference path="../types/untypedModules.d.ts" />` (uuid, same as User.ts/Task.ts); `const uuidv4 = require('uuid').v4` became `import uuid = require('uuid')` + `const uuidv4 = uuid.v4` (the form used in User.ts, Task.ts, DeviceInfo.ts, Notification.ts, FeedEpisode.ts, ScanLogger.ts).
+- Types added (lines 7-13): `ApiKeyBody = { name?: string; expiresIn?: number; userId?: string; isActive?: boolean }` (the types the handlers assume after their own typeof checks, one comment), `RequestWithUser = Request<{ id?: string }, unknown, ApiKeyBody> & RequestUserObject`.
+- Declarations needed from you: none. `ApiKey.getUser` from Phase A was enough.
+- HEADS-UP for your compare.js: it will print `CODE DIFF server/controllers/ApiKeyController.js`. Reason: compare.js only treats `const { a } = x` as the second half of a split require, so `const uuidv4 = uuid.v4;` is counted as a code statement, while the baseline's `const uuidv4 = require('uuid').v4;` is counted as a require line. Nothing else differs. If you want the tool to pass without an exception, the equivalent line is `const { v4: uuidv4 } = uuid`; I did not use it because it has no precedent.
+
+=== 2. SessionController ===
+- Status: CONVERTED
+- tsc errors left: 0
+- `!` assertions: 1 total. (a) 0. (b) 0. (c) 1, line 335: `user!.username`. NEEDS YOUR JUDGEMENT: the guarantee is weak. The open session was started by that user, but nothing closes a deleted user's open sessions, so `getUserById()` can return null and the original code dereferences it unchecked (bug 1 below). There is no type-only alternative except `!` (or restoring the whole controller). I kept it by analogy with Allowance 1 (keep the code, comment, bug log). Error it removes: `SessionController.ts(335,131): error TS18047: 'user' is possibly 'null'.`
+- Index signatures: 0
+- Casts: 2 total.
+  - Allowance 1: 0.
+  - Allowance 2: 0 (the one catch block only passes `error` to Logger.error).
+  - Allowance 3: 1, line 101: `} as FindAndCountOptions)` on the options object of `Database.playbackSessionModel.findAndCountAll` - Sequelize's typings reject `where: null`. Removes: `SessionController.ts(88,7): error TS2769: No overload matches this call ... Type '{ userId: string; } | null' is not assignable to type 'WhereOptions<any> | undefined'.` (The narrow type is Sequelize's own, not the model file's; labelled Allowance 3 per your brief.)
+  - Other (rule 5 boundary): 1, line 299: `(toNumber as (val: unknown, fallback?: number | null) => number | null)(req.params.index, null)` - utils/index.js (JS) infers `fallback?: number` from its default 0. Removes: `SessionController.ts(299,56): error TS2345: Argument of type 'null' is not assignable to parameter of type 'number | undefined'.`
+  - I removed all three temporarily and re-ran tsc to confirm each is needed; the errors above are from that run.
+- Annotations (not casts): line 54 `let userId: string | null | undefined = req.query.user` (it is set to null later); line 119 `const payload: { total: number; numPages: number; page: number; itemsPerPage: number; sessions: typeof sessions; userId?: string } = {`; line 19 `declare const global: typeof globalThis & { XAccel?: string }`.
+- `this: ApiRouter` parameters: 8 - getOpenSessions 141, sync 185, close 197, delete 211, batchDelete 232, syncLocal 273, syncLocalSessions 285, openSessionMiddleware 357. Plus 1 `this: PublicRouter` (getTrack 298). None on getAllWithUserData and getOpenSession (both have a @this JSDoc tag but never read `this`) and none on middleware.
+- `import type` replacing a require of runtime-undefined names: line 2 `import type { NextFunction, Request, Response } from 'express'` (names: Request, Response, NextFunction). Line 3 `import type { FindAndCountOptions } from 'sequelize'` is new, for the Allowance 3 cast; it replaces nothing.
+- Types added (lines 14-28): User, ApiRouter, PublicRouter, PlaybackSession (= import('../objects/PlaybackSession')), `SessionQuery = { user?; sort?; desc?; itemsPerPage?; page? }` all string (one comment), `RequestWithUser = Request<Request['params'], unknown, unknown, SessionQuery> & RequestUserObject`, `batchDeleteReqBody = { sessions: string[] }` (same name as the JSDoc typedef), `RequestWithPlaybackSession` (required, handlers) and `RequestWithOptionalPlaybackSession` (optional, the two middlewares). batchDelete's req is typed exactly as its JSDoc: `Request<{}, {}, batchDeleteReqBody, {}> & RequestUserObject`.
+- Declarations needed from you: none. `PlaybackSession.user?` from Phase A was enough.
+
+getTrack (your mid-task message):
+- Typed `async getTrack(this: PublicRouter, req: Request, res: Response)` with `type PublicRouter = import('../routers/PublicRouter')`. `req` is the plain Express `Request`, which is what its JSDoc says; no `user` property. It reads only req.params.id and req.params.index, so no generics were needed. JSDoc unchanged.
+- I widened the filter as you asked. PublicRouter.ts line 25 (`SessionController.getTrack.bind(this)`) is error-free; PublicRouter.ts has 0 errors.
+
+=== Behaviour check ===
+- Ran `git diff -M HEAD -- X.js X.ts` on both and read the whole output. ApiKey: 10 lines removed / 18 added. Session: 26 removed / 43 added. Every changed line is an import line, a type declaration, a parameter or variable annotation, a `this` parameter, the one `!`, the two casts with their comments, or `export =`. No JSDoc or existing comment line was changed or removed, no new variable, no changed expression, no reordering. LF line endings kept.
+- Extra check (scratch only, no build): I transpiled both files with the TypeScript API into my scratch folder and compared them statement by statement, comments stripped, with your baseline copy. Only require lines differ. The three special lines compile to the original text (`});`, `toNumber(req.params.index, null);`, `user.username`), so the callee-cast parentheses are dropped. All existing comments survive (ApiKey 10/10, Session 24/24, plus my 3 new ones).
+- Banned patterns: none. Not run by me: `npm run build:server`, `npm test`.
+
+=== Bug log (not fixed) ===
+Line numbers: new .ts line, original .js line in brackets.
+1. SessionController getTrack, 334-335 [315-316]: `user` from `getUserById(playbackSession.userId)` is dereferenced without a null check. Nothing removes a deleted user's open sessions (they stay until the 36-hour stale cleanup), so on this public, unauthenticated route `user.username` can throw inside the async handler; Server.js line 232 turns an unhandled rejection into `process.exit(1)`. This is the line that carries the `!`.
+2. SessionController middleware, 376-393 [357-374]: it checks only canDelete/canUpdate, not that the session belongs to req.user or that the user is admin, so via DELETE /api/sessions/:id a non-admin user with delete permission can delete another user's session by id. openSessionMiddleware does check ownership.
+3. SessionController getAllWithUserData, 106-116 [87-97]: sessions with a user are returned as a spread of the PlaybackSession instance (so they also carry lastSave, audioTracks, stream, shareSessionId, mediaItemShareId, coverAspectRatio), sessions without a user go through toJSON(): two shapes in one list.
+4. SessionController getAllWithUserData, 68-77 and 99-100 [49-58, 80-81]: itemsPerPage and page are not rounded, so a fractional query value reaches LIMIT/OFFSET. Suspected only, not run: SQLite rejects a fractional LIMIT, and the rejection would take the same process.exit(1) path (admin-only route).
+5. ApiKeyController delete, 188-198 [179-189]: no root check. A non-root admin can delete an API key that belongs to the root user, although create() and update() answer 403 in that case.
+Wrong JSDoc types in JavaScript files (not edited, no compile error): PlaybackSessionManager.getSession says it returns PlaybackSession but returns undefined when nothing is found; LibraryItem.getExpandedById says Promise<LibraryItemExpanded> but returns null in two branches.
+
+=== What CLAUDE.md did not cover or got wrong ===
+1. `this` and the filter: CLAUDE.md says ApiRouter binds the controller methods. getTrack is bound by PublicRouter.ts, which is TypeScript and type-checked, and the suggested grep filter hides errors a conversion causes in an already converted caller.
+2. "Annotate the destructured import once" does not work for a too-narrow parameter. Probed in scratch: `const { toNumber }: { toNumber: (val: unknown, fallback?: number | null) => number | null } = utils` fails with TS2322, and so does an overloaded property type. Only a method-syntax annotation compiles, and only through parameter bivariance, so I used one visible callee cast instead. Also: the cast target must keep the parameter optional. `(val: unknown, fallback: null) => ...` fails with TS2352; `fallback?: number | null` compiles. A cast of the argument fails with TS2352.
+3. Rule 5 has no `!` case for "the original code dereferences a lookup result without a check" (line 335, above).
+4. A JavaScript file whose JSDoc imports a typedef from a controller silently loses it when the controller is converted (an `export =` of an instance cannot export a type, and JS is not checked). Verified in scratch: `PlaybackSessionManager.syncLocalSessionRequest` is now `[req: any, res: any]` (JSDoc at PlaybackSessionManager.js line 278 names SessionController's RequestWithUser). Same for `getDeviceInfo`, now `[req: any, clientDeviceInfo?: Object]`, because LibraryItemController is .ts in the working tree. Consequence outside my files: the existing cast in ShareController.ts line 133, `req as Parameters<PlaybackSessionManager['getDeviceInfo']>[0]`, is now in effect a cast to any.
+5. Allowance 3 is worded for "a call into an already converted file"; the `where: null` case is Sequelize's own typing. PO-S07 solved the same typing in models/PlaybackSession.ts by changing the code (`...(where && { where })`); a controller may not, so the cast was the only option.
+6. Null-initialised fields of JavaScript classes (objects/PlaybackSession.js) are typed any, so `req.playbackSession.*` and `audioTrack` get almost no checking in the handlers. Nothing to do in my files.
+
+Scratch files (nothing in the repository): C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\9d365d79-d2df-436f-9cce-424144a1527e\scratchpad\agent1 - tsc4-final.txt (final check), tsc2-without-casts.txt (the three errors), diff-ApiKey-final.txt, diff-Session-final.txt, cmp.js with cmp-*.txt and out/ (transpile comparison), exp/ (probes).
+
+====================================================================================================
+14:35:12  HAND-BACK of sub-agent "Convert User and Collection controllers"
+Both controllers are converted with 0 tsc errors, and neither needs a declaration from you. The last `npx tsc -p tsconfig.check.json` (14:32) showed 0 errors in the whole program. I did not run the build or the tests.
+
+Paths: `D:\SEM-2\574\Project\audiobookshelf-po\server\controllers\CollectionController.ts` and `...\UserController.ts`. Both show as `RM` in git status (renamed with `git mv`, edits unstaged). Line numbers below are .ts lines; the original .js line is 12 less for Collection and 40 less for User.
+
+## Decisions for you to rule on
+
+1. **`!` outside the three listed cases (4 uses).** Each has a reason comment; I found no assertion-free form that keeps the code unchanged.
+   - Collection L128 `c!.libraryId`: `Collection.getOldCollectionsJsonExpanded()` ends with `.filter((c) => c)`, but its return type in Collection.ts still lists null.
+   - Collection L191 and L192 `req.body.books!`: tested by `if (req.body.books?.length)` at L182; TypeScript drops property narrowing inside the sort callback. The alternative is a body type with `books` required, which is less honest because three handlers fall back to `[]`.
+   - User L461 `req.reqUser.extraData!`: the test at L457 reads `authOpenIDSub` from `extraData`, so a truthy result means `extraData` is set.
+2. **Two casts on an assignment target (User L365, L461).** CLAUDE.md's Allowance 3 only covers calls. The lines are:
+   - `(user.lastSeen as Date | number | null) = updatePayload.lastSeen`
+   - `(req.reqUser.extraData!.authOpenIDSub as string | null | undefined) = null`
+   - A value-side cast does not compile (TS2352 for number to Date and for null to `string | undefined`; checked in a scratch file).
+   - TypeScript drops the cast and the parentheses, so the emitted lines are `user.lastSeen = updatePayload.lastSeen;` and `req.reqUser.extraData.authOpenIDSub = null;`.
+   - Both lines start with `(`. The previous token is `{` or `}`, so there is no ASI problem. Prettier (`semi: false`) would add a leading `;`, which emits an empty statement and would show as a code difference.
+   - If you reject this form, the only other fix is widening `User.lastSeen` and `UserExtraData.authOpenIDSub` in User.ts.
+3. **uuid import (User L3-4).** I wrote `const { v4: uuidv4 } = uuid`, not the precedent `const uuidv4 = uuid.v4` (User.ts L3). Your `compare.js` only treats the destructured form as a require line: with the precedent form it printed `CODE DIFF UserController.js` and exited 1 on scratch copies. Switching back is a one-line edit if you prefer the precedent.
+4. **Unused `Sequelize` require is elided (Collection L3).** The original never uses it, so TypeScript drops `import Sequelize = require('sequelize')` from the compiled file. This is a require-line difference only; Database.js loads sequelize anyway.
+
+## CollectionController: CONVERTED
+
+- **tsc errors left:** 0.
+- **`!` assertions:** 8.
+  - (a) starts as null, set before read: 2. L81 `Database.sequelize!`; L97 `newCollection!` (a local `let`, not a field: set by `create()` earlier in the same try block, narrowing lost inside the `.map` callback).
+  - (b) query loads the association: 2. L191 `a.book!`, L192 `b.book!` (the `getCollectionBooks` call at L183 includes book with libraryItem).
+  - (c) lookup guaranteed: 1. L98 `libraryItem!` (the length check at L74 means every id was found).
+  - Outside the three cases: 3. L128, L191, L192, as in decision 1.
+- **Index signatures:** 0.
+- **Casts:** 5.
+  - Allowance 1: 0. Allowance 2: 0 (the one catch block never reads `.message`).
+  - Allowance 3: 0 casts, one declaration instead, L18-19. It covers the 8 no-argument `getOldJsonExpanded()` calls: `type RequestEntityObject = { collection: Collection & { getOldJsonExpanded(user?: User | null, include?: string[]): ReturnType<Collection['getOldJsonExpanded']> } }`. The middleware assignment `req.collection = collection` compiles without a cast.
+  - Other (rule 5 boundary): 5. `(Database.libraryItemModel as LibraryItemModelStatic)` at L66, L338, L400 (`findAll`) and L247, L284 (`findByPk`), each with the boundary comment.
+- **`this: ApiRouter`:** 0. `delete()` has a `@this` tag but never reads `this`.
+- **`import type`:** `import type { NextFunction, Request, Response } from 'express'` replaces the require of those three names.
+- **Plain annotations:** L79 `let newCollection: Collection | null = null`; L163 `collectionUpdatePayload: { description?: string | null; name?: string }`; middleware typed `RequestWithUser & Partial<RequestEntityObject>`.
+- **Declarations needed:** none. No extra `libraryItemModel` static was needed.
+
+## UserController: CONVERTED
+
+- **tsc errors left:** 0.
+- **`!` assertions:** 4.
+  - (a) set before read: 3, all loose fits.
+    - L334 `user.permissions.itemTagsSelected!` and L338 `user.permissions.librariesAccessible!`: optional in `UserPermissions`, but every path that creates a user stores both (`create()` here, `createRootUser()`, `createUserFromOpenIdUserInfo()`, dbMigration.js L521-522).
+    - L347 `updatePayload.permissions!`: assigned at L342, and `hasPermissionsUpdates` is only set inside that block.
+  - (b): 0. (c): 0.
+  - Outside the three cases: 1. L461, as in decision 1.
+- **Index signatures:** 1. L32 in `UserBody` (`[key: string]: unknown`), because `update()` reads `updatePayload[key]`. The annotations at L192 and L319 reuse the signature already in `User['permissions']`.
+- **Casts:** 4.
+  - Allowance 1: 0. Allowance 2: 0 (no catch block).
+  - Allowance 3: 3.
+    - L124 `} as Parameters<typeof Database.mediaProgressModel.findAll>[0])`, the form you prescribed.
+    - L365 and L461, the assignment-target casts in decision 2.
+  - Other (rule 5 boundary): 1. L81 `(Database.getPlaybackSessions as typeof Database.playbackSessionModel.getOldPlaybackSessions)({ userId: user.id })`. Your verified form keeps the result untyped, and the `.sort((a, b) => ...)` on the next line then fails with TS7006.
+- **`this: ApiRouter`:** 5. `create` L156, `update` L245, `getListeningSessions` L474 (no `@this` tag, but it calls `this.getUserListeningSessionsHelper`), `getListeningStats` L511, `getOnlineUsers` L524.
+- **`import type`:** the same express line.
+- **Your mid-task instructions for `findOne`:** applied as given. Types at L43 and L45, annotation on `mediaProgresses` at L106, argument cast at L124, annotation on `oldMediaProgress` at L127. `PodcastEpisode.podcast` is not needed.
+- **Other annotations:**
+  - L77 `users: UserJsonWithLatestSession[]`.
+  - L176, L181, L301, L306 `StringListFromBody` on the four `let`s that are later set to null.
+  - L192 and L319 `User['permissions']`.
+  - L475 `listeningSessions: OldPlaybackSession[]` (the ApiRouter.js helper result is untyped).
+  - L38 `UserMiddlewareRequest = RequestWithUser & { reqUser?: User | null }`: the middleware stores the `getUserById()` result before testing it, so `Partial<RequestEntityObject>` fails with TS2322.
+- **Declarations needed:** none.
+
+## Types in converted files that are wrong (not edited)
+
+- Collection.ts L257: `getOldJsonExpanded(user: User | null, ...)` requires `user`; 8 callers pass nothing.
+- Collection.ts L67: `getOldCollectionsJsonExpanded()` returns `(OldCollectionJson | null)[]` although it filters the nulls out.
+- User.ts L223: `lastSeen: Date | null`, but UserController assigns a number (the Sequelize DATE sanitizer turns it into a Date).
+- User.ts L77: `UserExtraData.authOpenIDSub?: string`, but UserController stores null.
+- User.ts L70-71: `librariesAccessible` and `itemTagsSelected` are optional, but `update()` reads them unguarded.
+
+## Bug log (original .js line numbers; nothing fixed)
+
+CollectionController.js:
+- L199, 215, 257, 302, 305, 364, 367, 420: `getOldJsonExpanded()` is called without the user, so the tag and explicit-content filter is skipped in the response and the socket event.
+- L48, 320, 382: `(books || []).filter(...)` throws a TypeError when `books` is truthy but not an array; Express 4 does not catch it in an async handler.
+- L170-180 (`update`): only `req.body.books?.length` is tested, so a string makes `.findIndex` throw in the sort callback.
+- L152-153 (`update`): `description` is stored without a type check; `create()` checks it at L41.
+- L388-407 (`removeBatch`): the query has no mediaType or library filter and includes only book, so a podcast item id leaves `li.media` undefined and `li.media.id` throws.
+- L384 (`removeBatch`): an invalid body gets status 500; `addBatch` returns 400 for the same case (L322).
+- L2: `Sequelize` is required but never used.
+
+UserController.js:
+- L271-287 (`update`): `permissions: { itemTagsSelected: false }` (or `librariesAccessible: false`) skips the delete guard, passes the boolean check and is stored in place of the list; a later update then throws at L294 or L298.
+- L254-255 (`update`): `password` is not checked to be a string; when bcrypt rejects it, `hashPassword()` resolves null and `user.pash` is saved as null.
+- L320-321 (`update`): `isActive` is stored as sent, without the `!!` that `create()` uses at L177.
+- L185-193 (`create`): `Model.create()` throws on failure, so the `else` branch that sends 500 is dead code.
+
+## What CLAUDE.md did not cover
+
+- An assignment into a converted model's field whose type is too narrow (decision 2).
+- A converted file's return type that is too wide (Collection L128).
+- `!` for a value tested by an `if` whose narrowing is lost in a callback. This always happens for property paths like `req.body.books`, and for a `let` assigned inside the same try statement.
+- `let x = a || b` later set to null needs an annotation on the `let`.
+- A middleware that stores a nullable result in the request property before testing it needs `| null` in its own type.
+- An unused `import x = require()` is elided from the compiled file.
+- The checkJs probe under-reports, because `req.body` is untyped under the JSDoc types. A typed body surfaced four errors that were not in the probe list for UserController: the number assigned to `lastSeen`, `updatePayload.permissions` possibly undefined, and the two `= null` assignments.
+
+## Behaviour check
+
+- I read the whole `git diff -M HEAD` output for both files. Every changed line is an import, a type declaration, an annotation, a `this: ApiRouter` parameter, a `!`, a commented cast, or `export =`. No JSDoc changed and no statement was added, removed or reordered. The only added parentheses are the cast parentheses at User L81, L365, L461 and the five `libraryItemModel` casts.
+- I also transpiled both files in memory with the repo's TypeScript and `tsconfig.server.json` options, and ran your `compare.js` on scratch copies against `po-s09-baseline`. Both came out as "require-only diff", exit 0. This is single-file transpilation, not the real build.
+- No banned construct is in either file. The helper script is `scratchpad/agent2/emitcheck.js`.
+
+====================================================================================================
+14:31:46  HAND-BACK of sub-agent "Convert Playlist and Library controllers"
+Sub-agent 3 report (finished 14:31, final type check 14:27, no edits after it)
+
+Both controllers are CONVERTED with zero tsc errors. One item needs your ruling before you commit Playlist: a single `!` that fits none of the three rule-5 cases (PlaylistController.ts line 455, details below).
+
+All line numbers are those of the new .ts files unless marked "orig".
+
+## 1. D:\SEM-2\574\Project\audiobookshelf-po\server\controllers\PlaylistController.ts
+- Status: CONVERTED
+- tsc errors left: 0
+- `!` assertions: 12
+  - (a) starts unset, set before it is read: 7. `Database.sequelize!` at 106 and 553. `jsonExpanded.items!` at 344, 351, 397, 453, 460 (items is optional in OldPlaylistJson, which toOldJSON() and toOldJSONExpanded() share; toOldJSONExpanded() always sets it).
+  - (b) query always loads the association: 0
+  - (c) earlier code guarantees the lookup: 4. `libraryItems.find(...)!` at 122, 247, 436 (the length check before each returns 400 unless every id has a library item). `podcastEpisodes.find(...)!` at 343 (the check at 321 returns 400 unless the episode is in the item).
+  - OUTSIDE the three cases: 1. `episode!.toOldJSONExpanded(...)` at 455 in addBatch(). Nothing guarantees this lookup: it is a real bug in the original (bug log 1). I kept the code and wrote `!` with a comment that starts "NOT guaranteed". This follows the practice of AuthorController.ts line 143 (erased construct, comment, bug log), but rule 5 does not allow it as written. If you rule against it, no other type-only form exists and Playlist has to be restored: `git mv server/controllers/PlaylistController.ts server/controllers/PlaylistController.js`, then `git restore --staged --worktree server/controllers/PlaylistController.js`.
+- Index signatures: 0
+- Casts: 7
+  - Allowance 1: 0. Allowance 2: 0.
+  - Allowance 3: 1, at 160. Cast of the callee: Playlist.getOldPlaylistsForUserAndLibrary declares two required parameters, findAllForUser() passes one (TS2554).
+  - Other: 6.
+    - 80, 227: `Database.libraryItemModel as LibraryItemModelStatic` (rule 5 boundary, your declaration).
+    - 321, 343, 452: `libraryItem.media as PodcastExpanded` (boundary: LibraryItem.js types media as a union; MeController line 521 precedent). One typed place was not possible: the same variable is also read as a book item.
+    - 566: `collectionExpanded.books as LibraryItemJsonExpanded[]`. Not covered by any allowance: Collection.ts (converted) types books as `string[] | expanded[]` for both toOldJSON() and toOldJSONExpanded(). It is a too-vague return type, not a too-narrow parameter.
+- `this: ApiRouter` parameters: 0
+- `import type` replacing a require of names undefined at runtime: `import type { NextFunction, Request, Response } from 'express'`
+- Other annotations (no cast): `Set<string>` (63), `{ name?: string; description?: string }` on playlistUpdatePayload (204), `string[]` on newMediaItemIdOrder (245), `ChangedKeys` on `changed` (216, see section 5 point 1).
+- Declarations needed from you: none.
+
+## 2. D:\SEM-2\574\Project\audiobookshelf-po\server\controllers\LibraryController.ts
+- Status: CONVERTED
+- tsc errors left: 0
+- `!` assertions: 10
+  - (a) 4: `numBooks!` four times on line 1163 (optional in the return type of Author.toOldJSONExpanded(), which always sets it). One comment for the line.
+  - (b) 4: `req.library.libraryFolders!` at 492 (findByIdWithFolders in middleware), `author.books!` at 1156, `p.libraryItem!` at 1488 and 1489.
+  - (c) 2: `payload.filterBy!` at 705 and 707. Guaranteed by earlier code, but not a lookup: filterByGroup, tested first, is derived from filterBy.
+- Index signatures: 6, each with a comment. 52 LibraryMiddlewareQuery (middleware reads and replaces limit and page by a dynamic key), 56 SettingsByKey (settings by key), 57 LibraryBody (req.body by key), 73 LibraryFilterDataMap (Database.libraryFilterData by library id), 339 updatePayload, 1204 narrators map.
+- Casts: 21, all "other (rule 5 boundary to JavaScript)". Allowance 1, 2 and 3: 0.
+  - 495, 618, 733, 1421: `Database.libraryItemModel as LibraryItemModelStatic`. findAll was enough; no other static needed.
+  - 524, 633, 770: query result `as LibraryItemToRemove[]` (local type: media with podcastEpisodes, bookAuthors, bookSeries). One typed place per query.
+  - 668, 669, 805, 806: `Database.libraryFilterData as LibraryFilterDataMap` (Database.js starts it as `{}`). Four casts because no variable may be added.
+  - 320: cast of the callee for `this.podcastManager.getDownloadQueueDetails` (JS `libraryId = null` default, your verified form).
+  - 708: `seriesId as Parameters<typeof libraryHelpers.handleCollapseSubseries>[1]` (decode() returns `string | null`).
+  - 839: two casts, `payload.filterBy` and `payload.sortBy` as `Parameters<typeof seriesFilters.getFilteredSeries>[2]` and `[3]` (JSDoc says string, the query may omit them; the function handles that).
+  - 1132: result of getUserPermissionBookWhereQuery `as { bookWhere: WhereOptions; replacements: BindOrReplacements }` (JSDoc types replacements as object).
+  - 1253, 1298: two casts each. `[narratorName] as Parameters<typeof libraryItemFilters.getAllLibraryItemsWithNarrators>[0]` (decode() can return null) and the result `as BookLibraryItem[]`.
+  - 1391: `userPermissionPodcastWhere.replacements as BindOrReplacements`.
+- `this: ApiRouter` parameters: 6 (318 getEpisodeDownloadQueue, 332 update, 602 delete, 727 removeLibraryItemsWithIssues, 1325 matchAll, 1386 getOPMLFile).
+- `import type` replacing a require of names undefined at runtime: `import type { NextFunction, Request, Response } from 'express'`. Also new, replacing nothing: `import type { BindOrReplacements, Order, WhereOptions } from 'sequelize'`.
+- Your three hints are applied as given: limit and page are numbers in LibraryQuery, the middleware has its own index-signature query type, `declare function isNaN(value: unknown): boolean` at line 48, and the union annotation on `libraries` at 265. All routes that use the number type run behind the middleware (ApiRouter.js lines 71-97); create, findAll and reorder do not and read neither limit nor page.
+- Other annotations (no cast): typed payloads at 157, 687, 825, 898, 934, 1057, 1102, 1368; `LibraryFilterData` at 299; SettingsByKey at 366 and 367; `string[]` at 457; `(error: unknown)` at 473; `(user: User)` on both userFilter callbacks; `Order | undefined` at 1117; intersection annotations at 867 and 1156; the fastSort destructure typed as in AuthorController.ts.
+- One typing choice to know about: `LibraryFolderBody.path` is `string` (line 55). create() validates that fullPath or path is a string; update() does not (bug log 3). This keeps `Path.resolve(...)` compiling in both without an assertion.
+- Declarations needed from you: none.
+
+## 3. Too-vague types in converted files (reported, not fixed)
+Tightening any of these would remove assertions or casts, but each is a signature or return-type change, which Phase A forbids.
+- server/models/Playlist.ts line 84: `libraryId` is required, but the method handles a missing one and findAllForUser() relies on that. Costs the Allowance 3 cast.
+- server/models/Playlist.ts: toOldJSONExpanded() returns OldPlaylistJson with `items?` optional. Costs 5 `!`.
+- server/models/Author.ts line 215: toOldJSONExpanded() returns `numBooks?` optional. Costs 4 `!`.
+- server/models/Collection.ts line 17: `books: string[] | expanded[]` for both JSON methods. Costs 1 cast.
+
+## 4. Bug log (nothing fixed)
+1. PlaylistController.ts 452-455 (orig 431-434), addBatch(): nothing checks that `item.episodeId` belongs to the library item; an unknown episode id, or an episodeId sent with a book item, throws a TypeError.
+2. PlaylistController.ts 133/141 and 576/584 (orig 113/121, 555/563): the catch block calls `transaction.rollback()` even when the error happens after `transaction.commit()`, so rollback throws and no response is sent.
+3. LibraryController.ts 459-462 (orig 382-386), update(): new folders (no id) are not validated; a folder without path or fullPath throws in `Path.resolve(undefined)`.
+4. LibraryController.ts 1241 and 1290 (orig 1163, 1211): `libraryFilters.decode()` returns null when decoding fails, and null is used as the narrator name with no check.
+5. LibraryController.ts 707-708 (orig 630-631): same decode() null, passed on as seriesId.
+6. LibraryController.ts 993 (orig 915), reorder(): the log message interpolates `${req.user}` and prints "[object Object]".
+7. LibraryController.ts 350 (orig 273), update(), minor: `isNaN(req.body.displayOrder)` accepts null, '', true and numeric strings, which are then stored as displayOrder.
+8. Not a runtime bug: PlaylistController.ts 160 (orig 139) calls getOldPlaylistsForUserAndLibrary with one argument. It works because the method tests libraryId; the declaration is wrong (section 3).
+
+## 5. What CLAUDE.md did not cover or got wrong
+1. `Model.changed()` returns `false | string[]` and the code reads `changed?.length` (Playlist orig 196, TS2339). Rule 5 says `!` does not remove false but gives no form. I used an annotation, not a cast: `type ChangedKeys = string[] | (false & { length?: undefined })`. It compiles, narrows correctly, and is true at runtime. Please confirm or replace.
+2. Rule 5 has no case for a `!` on a value the original code assumes without a guarantee (Playlist 455).
+3. The three `!` cases are worded narrowly. I counted "optional in a converted method's return type but always set" under (a), and "guaranteed by a test on a derived variable" under (c).
+4. Allowance 3 names only too-narrow parameters, not a too-vague return type of a converted file (Playlist 566).
+5. The `= null` default pitfall and its callee-cast form are only in your brief. The checkJs probe hid this error behind the `this.podcastManager` error.
+6. "Annotate the destructured import once" does not fit a module required whole whose JSDoc parameter is too narrow. I followed the AuthorController and MiscController precedent (`arg as Parameters<typeof f>[n]`): five casts in Library.
+7. A `{}` property on an untyped singleton (Database.libraryFilterData) needs a cast at every use.
+8. "Query values are assumed to be strings" is wrong for limit and page in LibraryController. The isNaN declaration precedent is not in CLAUDE.md.
+9. The checkJs probe differs from the real check: `new Set()` is `Set<unknown>` in TypeScript, and `const x = {}` followed by property assignments is legal in JavaScript but not in TypeScript (Playlist orig 183-189). Neither was in the probe.
+10. Rule 5 says "a one-line comment each time". Where one line carries several assertions or casts (1163, 839, 1253, 1298) I wrote one comment that says so.
+11. "Do not add parentheses anywhere else": I also used `(x as T)[key]` and `delete (x as T)[key]`. Every added parenthesis encloses an `as` cast and is absent from the compiled output.
+
+## 6. Behaviour check
+- I read the whole output of `git diff -M HEAD` for each file (Playlist in full; Library 713 lines in full, then the four lines I changed afterwards). Every changed line is an import, a type declaration, a type annotation, an erased `this: ApiRouter`, a `!`, an `as` cast or a comment. No new variable, no changed expression, no reordered or reformatted statement, no changed or removed JSDoc. Both files end with `export = new XController()`.
+- Extra check, nothing written to the repository: I transpiled each file in memory and compared it, comments stripped, with your baseline copy. Playlist differs only in require lines. Library differs only in require lines plus `const { createNewSortInstance } = fastSort`, the prescribed split. All casts and assertions are erased, both callee casts keep their receiver, and `module.exports = new XController()` is the last line of each.
+- Banned constructs: none.
+- Not run, as instructed: `npm run build:server` and `npm test`. test/server/controllers/LibraryController.test.js exercises downloadMultiple() and stubs zipHelpers.zipDirectoriesPipe; that code path is unchanged in the compiled comparison.
+- Git state: both files show `RM` (renamed in the index, modified in the worktree). The only git commands that changed anything were the two `git mv`. No other file touched.
+- Scratch folder C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\9d365d79-d2df-436f-9cce-424144a1527e\scratchpad\agent3 holds transpile.js and norm.js (the compiled comparison, reusable for the other controllers), check1-4.txt and Library.diff.
