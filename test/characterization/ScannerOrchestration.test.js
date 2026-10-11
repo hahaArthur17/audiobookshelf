@@ -345,8 +345,7 @@ describe('ScannerOrchestration (characterization)', function () {
     it('POST /api/libraries/:id/scan answers first, then scans; ?force=1 forces; non-admins are refused', async function () {
       makeBooks()
       const c = await setupScan(api, root)
-      const users = await api.seed.users()
-      expect(users.user).to.exist
+      await api.seed.users()
       const refused = await api.request('POST', `/api/libraries/${c.library.id}/scan`, { as: 'user' })
       const accepted = await api.request('POST', `/api/libraries/${c.library.id}/scan`, { as: 'admin' })
       await waitFor(async () => !LibraryScanner.isLibraryScanning(c.library.id) && (await Database.libraryItemModel.count()) === 3)

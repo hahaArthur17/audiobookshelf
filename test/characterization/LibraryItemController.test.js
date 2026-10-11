@@ -674,12 +674,16 @@ describe('LibraryItemController (characterization)', () => {
     it('deletes an audio file and flags the item missing when nothing playable is left', async function () {
       snap(this, await del(items.book.id, '101', 'root'), 'one of two tracks')
       snap(this, await get(items.book.id, 'root'), 'book after')
+      snap(this, await get(items.book.id, 'root', '?expanded=1'), 'book after, expanded')
       snap(this, await del(items.second.id, '401', 'root'), 'last track')
       snap(this, await get(items.second.id, 'root'), 'second after (missing)')
+      snap(this, await get(items.second.id, 'root', '?expanded=1'), 'second after, expanded')
     })
     it('deletes the primary ebook and a supplementary ebook', async function () {
       snap(this, await del(items.book.id, '201', 'root'), 'primary ebook')
+      snap(this, await get(items.book.id, 'root', '?expanded=1'), 'after primary ebook')
       snap(this, await del(items.book.id, '202', 'root'), 'supplementary ebook')
+      snap(this, await get(items.book.id, 'root', '?expanded=1'), 'after supplementary ebook')
       snap(this, await get(items.book.id, 'root'), 'after')
     })
     it('deletes a podcast episode with its progress', async function () {
@@ -690,6 +694,7 @@ describe('LibraryItemController (characterization)', () => {
     it('still updates the item when the file is already gone from disk', async function () {
       fs.rmSync(path.join(items.paths.book, 'cover.png'))
       snap(this, await del(items.book.id, '301', 'root'))
+      snap(this, await get(items.book.id, 'root', '?expanded=1'), 'after')
     })
   })
 

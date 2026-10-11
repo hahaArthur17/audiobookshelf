@@ -1579,6 +1579,257 @@
     },
     "emitted": []
   },
+  "LibraryItemController (characterization) > DELETE /api/items/:id/file/:fileid > deletes an audio file and flags the item missing when nothing playable is left > book after, expanded": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<book>",
+        "ino": null,
+        "oldLibraryItemId": null,
+        "libraryId": "<lib-books>",
+        "folderId": "<uuid-17>",
+        "path": "<tmp>/books/The Book",
+        "relPath": "The Book",
+        "isFile": false,
+        "mtimeMs": 1000,
+        "ctimeMs": 1000,
+        "birthtimeMs": 1000,
+        "addedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "isMissing": false,
+        "isInvalid": false,
+        "mediaType": "book",
+        "media": {
+          "id": "<uuid-18>",
+          "metadata": {
+            "title": "The Book",
+            "subtitle": null,
+            "authors": [
+              {
+                "id": "<uuid-19>",
+                "name": "Ann Author"
+              }
+            ],
+            "narrators": [],
+            "series": [
+              {
+                "id": "<uuid-20>",
+                "name": "Saga",
+                "sequence": "1"
+              }
+            ],
+            "genres": [],
+            "publishedYear": null,
+            "publishedDate": null,
+            "publisher": null,
+            "description": null,
+            "isbn": null,
+            "asin": null,
+            "language": null,
+            "explicit": false,
+            "abridged": null,
+            "titleIgnorePrefix": "Book, The",
+            "authorName": "Ann Author",
+            "authorNameLF": "Author, Ann",
+            "narratorName": "",
+            "seriesName": "Saga #1",
+            "descriptionPlain": null
+          },
+          "coverPath": "<tmp>/books/The Book/cover.png",
+          "tags": [
+            "fiction"
+          ],
+          "numTracks": 1,
+          "numAudioFiles": 1,
+          "numChapters": 2,
+          "duration": 120,
+          "size": 31,
+          "ebookFormat": "epub",
+          "libraryItemId": "<book>",
+          "audioFiles": [
+            {
+              "index": 2,
+              "ino": "102",
+              "metadata": {
+                "filename": "02 two.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/02 two.mp3",
+                "relPath": "02 two.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 2,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg"
+            }
+          ],
+          "chapters": [
+            {
+              "id": 0,
+              "start": 0,
+              "end": 60,
+              "title": "Chapter 1"
+            },
+            {
+              "id": 1,
+              "start": 60,
+              "end": 120,
+              "title": "Chapter 2"
+            }
+          ],
+          "ebookFile": {
+            "ino": "201",
+            "metadata": {
+              "filename": "book.epub",
+              "ext": ".epub",
+              "path": "<tmp>/books/The Book/book.epub",
+              "relPath": "book.epub",
+              "size": 15,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "ebookFormat": "epub",
+            "addedAt": 2000,
+            "updatedAt": 2000
+          },
+          "tracks": [
+            {
+              "index": 2,
+              "ino": "102",
+              "metadata": {
+                "filename": "02 two.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/02 two.mp3",
+                "relPath": "02 two.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 2,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg",
+              "title": "02 two.mp3",
+              "startOffset": 0,
+              "contentUrl": "/api/items/<book>/file/102"
+            }
+          ]
+        },
+        "numFiles": 4,
+        "size": 32,
+        "scanVersion": null,
+        "libraryFiles": [
+          {
+            "ino": "102",
+            "metadata": {
+              "filename": "02 two.mp3",
+              "ext": ".mp3",
+              "path": "<tmp>/books/The Book/02 two.mp3",
+              "relPath": "02 two.mp3",
+              "size": 16,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "audio"
+          },
+          {
+            "ino": "201",
+            "metadata": {
+              "filename": "book.epub",
+              "ext": ".epub",
+              "path": "<tmp>/books/The Book/book.epub",
+              "relPath": "book.epub",
+              "size": 15,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": false,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "ebook"
+          },
+          {
+            "ino": "202",
+            "metadata": {
+              "filename": "extra.pdf",
+              "ext": ".pdf",
+              "path": "<tmp>/books/The Book/extra.pdf",
+              "relPath": "extra.pdf",
+              "size": 15,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": true,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "ebook"
+          },
+          {
+            "ino": "301",
+            "metadata": {
+              "filename": "cover.png",
+              "ext": ".png",
+              "path": "<tmp>/books/The Book/cover.png",
+              "relPath": "cover.png",
+              "size": 70,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "image"
+          }
+        ]
+      }
+    },
+    "emitted": []
+  },
   "LibraryItemController (characterization) > DELETE /api/items/:id/file/:fileid > deletes an audio file and flags the item missing when nothing playable is left > last track": {
     "res": {
       "status": 200,
@@ -1806,6 +2057,98 @@
           "chapters": [],
           "ebookFile": null
         },
+        "libraryFiles": [
+          {
+            "ino": "402",
+            "metadata": {
+              "filename": "folder.png",
+              "ext": ".png",
+              "path": "<tmp>/books/Second Book/folder.png",
+              "relPath": "folder.png",
+              "size": 70,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "image"
+          }
+        ]
+      }
+    },
+    "emitted": []
+  },
+  "LibraryItemController (characterization) > DELETE /api/items/:id/file/:fileid > deletes an audio file and flags the item missing when nothing playable is left > second after, expanded": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<second>",
+        "ino": null,
+        "oldLibraryItemId": null,
+        "libraryId": "<lib-books>",
+        "folderId": "<uuid-17>",
+        "path": "<tmp>/books/Second Book",
+        "relPath": "Second Book",
+        "isFile": false,
+        "mtimeMs": 1000,
+        "ctimeMs": 1000,
+        "birthtimeMs": 1000,
+        "addedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "isMissing": true,
+        "isInvalid": false,
+        "mediaType": "book",
+        "media": {
+          "id": "<uuid-21>",
+          "metadata": {
+            "title": "Second Book",
+            "subtitle": null,
+            "authors": [
+              {
+                "id": "<uuid-22>",
+                "name": "Bob Writer"
+              }
+            ],
+            "narrators": [],
+            "series": [],
+            "genres": [],
+            "publishedYear": null,
+            "publishedDate": null,
+            "publisher": null,
+            "description": null,
+            "isbn": null,
+            "asin": null,
+            "language": null,
+            "explicit": false,
+            "abridged": null,
+            "titleIgnorePrefix": "Second Book",
+            "authorName": "Bob Writer",
+            "authorNameLF": "Writer, Bob",
+            "narratorName": "",
+            "seriesName": "",
+            "descriptionPlain": null
+          },
+          "coverPath": null,
+          "tags": [],
+          "numTracks": 0,
+          "numAudioFiles": 0,
+          "numChapters": 0,
+          "duration": 60,
+          "size": 0,
+          "libraryItemId": "<second>",
+          "audioFiles": [],
+          "chapters": [],
+          "ebookFile": null,
+          "tracks": []
+        },
+        "numFiles": 1,
+        "size": 14,
+        "scanVersion": null,
         "libraryFiles": [
           {
             "ino": "402",
@@ -2462,6 +2805,597 @@
     },
     "emitted": []
   },
+  "LibraryItemController (characterization) > DELETE /api/items/:id/file/:fileid > deletes the primary ebook and a supplementary ebook > after primary ebook": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<book>",
+        "ino": null,
+        "oldLibraryItemId": null,
+        "libraryId": "<lib-books>",
+        "folderId": "<uuid-17>",
+        "path": "<tmp>/books/The Book",
+        "relPath": "The Book",
+        "isFile": false,
+        "mtimeMs": 1000,
+        "ctimeMs": 1000,
+        "birthtimeMs": 1000,
+        "addedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "isMissing": false,
+        "isInvalid": false,
+        "mediaType": "book",
+        "media": {
+          "id": "<uuid-18>",
+          "metadata": {
+            "title": "The Book",
+            "subtitle": null,
+            "authors": [
+              {
+                "id": "<uuid-19>",
+                "name": "Ann Author"
+              }
+            ],
+            "narrators": [],
+            "series": [
+              {
+                "id": "<uuid-20>",
+                "name": "Saga",
+                "sequence": "1"
+              }
+            ],
+            "genres": [],
+            "publishedYear": null,
+            "publishedDate": null,
+            "publisher": null,
+            "description": null,
+            "isbn": null,
+            "asin": null,
+            "language": null,
+            "explicit": false,
+            "abridged": null,
+            "titleIgnorePrefix": "Book, The",
+            "authorName": "Ann Author",
+            "authorNameLF": "Author, Ann",
+            "narratorName": "",
+            "seriesName": "Saga #1",
+            "descriptionPlain": null
+          },
+          "coverPath": "<tmp>/books/The Book/cover.png",
+          "tags": [
+            "fiction"
+          ],
+          "numTracks": 2,
+          "numAudioFiles": 2,
+          "numChapters": 2,
+          "duration": 120,
+          "size": 32,
+          "libraryItemId": "<book>",
+          "audioFiles": [
+            {
+              "index": 1,
+              "ino": "101",
+              "metadata": {
+                "filename": "01 one.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/01 one.mp3",
+                "relPath": "01 one.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 1,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg"
+            },
+            {
+              "index": 2,
+              "ino": "102",
+              "metadata": {
+                "filename": "02 two.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/02 two.mp3",
+                "relPath": "02 two.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 2,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg"
+            }
+          ],
+          "chapters": [
+            {
+              "id": 0,
+              "start": 0,
+              "end": 60,
+              "title": "Chapter 1"
+            },
+            {
+              "id": 1,
+              "start": 60,
+              "end": 120,
+              "title": "Chapter 2"
+            }
+          ],
+          "ebookFile": null,
+          "tracks": [
+            {
+              "index": 1,
+              "ino": "101",
+              "metadata": {
+                "filename": "01 one.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/01 one.mp3",
+                "relPath": "01 one.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 1,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg",
+              "title": "01 one.mp3",
+              "startOffset": 0,
+              "contentUrl": "/api/items/<book>/file/101"
+            },
+            {
+              "index": 2,
+              "ino": "102",
+              "metadata": {
+                "filename": "02 two.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/02 two.mp3",
+                "relPath": "02 two.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 2,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg",
+              "title": "02 two.mp3",
+              "startOffset": 60,
+              "contentUrl": "/api/items/<book>/file/102"
+            }
+          ]
+        },
+        "numFiles": 4,
+        "size": 32,
+        "scanVersion": null,
+        "libraryFiles": [
+          {
+            "ino": "101",
+            "metadata": {
+              "filename": "01 one.mp3",
+              "ext": ".mp3",
+              "path": "<tmp>/books/The Book/01 one.mp3",
+              "relPath": "01 one.mp3",
+              "size": 16,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "audio"
+          },
+          {
+            "ino": "102",
+            "metadata": {
+              "filename": "02 two.mp3",
+              "ext": ".mp3",
+              "path": "<tmp>/books/The Book/02 two.mp3",
+              "relPath": "02 two.mp3",
+              "size": 16,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "audio"
+          },
+          {
+            "ino": "202",
+            "metadata": {
+              "filename": "extra.pdf",
+              "ext": ".pdf",
+              "path": "<tmp>/books/The Book/extra.pdf",
+              "relPath": "extra.pdf",
+              "size": 15,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": true,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "ebook"
+          },
+          {
+            "ino": "301",
+            "metadata": {
+              "filename": "cover.png",
+              "ext": ".png",
+              "path": "<tmp>/books/The Book/cover.png",
+              "relPath": "cover.png",
+              "size": 70,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "image"
+          }
+        ]
+      }
+    },
+    "emitted": []
+  },
+  "LibraryItemController (characterization) > DELETE /api/items/:id/file/:fileid > deletes the primary ebook and a supplementary ebook > after supplementary ebook": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<book>",
+        "ino": null,
+        "oldLibraryItemId": null,
+        "libraryId": "<lib-books>",
+        "folderId": "<uuid-17>",
+        "path": "<tmp>/books/The Book",
+        "relPath": "The Book",
+        "isFile": false,
+        "mtimeMs": 1000,
+        "ctimeMs": 1000,
+        "birthtimeMs": 1000,
+        "addedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "isMissing": false,
+        "isInvalid": false,
+        "mediaType": "book",
+        "media": {
+          "id": "<uuid-18>",
+          "metadata": {
+            "title": "The Book",
+            "subtitle": null,
+            "authors": [
+              {
+                "id": "<uuid-19>",
+                "name": "Ann Author"
+              }
+            ],
+            "narrators": [],
+            "series": [
+              {
+                "id": "<uuid-20>",
+                "name": "Saga",
+                "sequence": "1"
+              }
+            ],
+            "genres": [],
+            "publishedYear": null,
+            "publishedDate": null,
+            "publisher": null,
+            "description": null,
+            "isbn": null,
+            "asin": null,
+            "language": null,
+            "explicit": false,
+            "abridged": null,
+            "titleIgnorePrefix": "Book, The",
+            "authorName": "Ann Author",
+            "authorNameLF": "Author, Ann",
+            "narratorName": "",
+            "seriesName": "Saga #1",
+            "descriptionPlain": null
+          },
+          "coverPath": "<tmp>/books/The Book/cover.png",
+          "tags": [
+            "fiction"
+          ],
+          "numTracks": 2,
+          "numAudioFiles": 2,
+          "numChapters": 2,
+          "duration": 120,
+          "size": 32,
+          "libraryItemId": "<book>",
+          "audioFiles": [
+            {
+              "index": 1,
+              "ino": "101",
+              "metadata": {
+                "filename": "01 one.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/01 one.mp3",
+                "relPath": "01 one.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 1,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg"
+            },
+            {
+              "index": 2,
+              "ino": "102",
+              "metadata": {
+                "filename": "02 two.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/02 two.mp3",
+                "relPath": "02 two.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 2,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg"
+            }
+          ],
+          "chapters": [
+            {
+              "id": 0,
+              "start": 0,
+              "end": 60,
+              "title": "Chapter 1"
+            },
+            {
+              "id": 1,
+              "start": 60,
+              "end": 120,
+              "title": "Chapter 2"
+            }
+          ],
+          "ebookFile": null,
+          "tracks": [
+            {
+              "index": 1,
+              "ino": "101",
+              "metadata": {
+                "filename": "01 one.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/01 one.mp3",
+                "relPath": "01 one.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 1,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg",
+              "title": "01 one.mp3",
+              "startOffset": 0,
+              "contentUrl": "/api/items/<book>/file/101"
+            },
+            {
+              "index": 2,
+              "ino": "102",
+              "metadata": {
+                "filename": "02 two.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/02 two.mp3",
+                "relPath": "02 two.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 2,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg",
+              "title": "02 two.mp3",
+              "startOffset": 60,
+              "contentUrl": "/api/items/<book>/file/102"
+            }
+          ]
+        },
+        "numFiles": 3,
+        "size": 32,
+        "scanVersion": null,
+        "libraryFiles": [
+          {
+            "ino": "101",
+            "metadata": {
+              "filename": "01 one.mp3",
+              "ext": ".mp3",
+              "path": "<tmp>/books/The Book/01 one.mp3",
+              "relPath": "01 one.mp3",
+              "size": 16,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "audio"
+          },
+          {
+            "ino": "102",
+            "metadata": {
+              "filename": "02 two.mp3",
+              "ext": ".mp3",
+              "path": "<tmp>/books/The Book/02 two.mp3",
+              "relPath": "02 two.mp3",
+              "size": 16,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "audio"
+          },
+          {
+            "ino": "301",
+            "metadata": {
+              "filename": "cover.png",
+              "ext": ".png",
+              "path": "<tmp>/books/The Book/cover.png",
+              "relPath": "cover.png",
+              "size": 70,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "image"
+          }
+        ]
+      }
+    },
+    "emitted": []
+  },
   "LibraryItemController (characterization) > DELETE /api/items/:id/file/:fileid > deletes the primary ebook and a supplementary ebook > primary ebook": {
     "res": {
       "status": 200,
@@ -2591,7 +3525,7 @@
             "ino": null,
             "path": "<tmp>/books/The Book",
             "relPath": "The Book",
-            "mediaId": "<emitted-uuid-1>",
+            "mediaId": "<uuid-18>",
             "mediaType": "book",
             "isFile": false,
             "isMissing": false,
@@ -2660,7 +3594,7 @@
             "createdAt": "<iso-date>",
             "updatedAt": "<iso-date>",
             "libraryId": "<lib-books>",
-            "libraryFolderId": "<emitted-uuid-2>"
+            "libraryFolderId": "<uuid-17>"
           }
         ]
       }
@@ -2825,6 +3759,326 @@
         ]
       }
     ]
+  },
+  "LibraryItemController (characterization) > DELETE /api/items/:id/file/:fileid > still updates the item when the file is already gone from disk > after": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<book>",
+        "ino": null,
+        "oldLibraryItemId": null,
+        "libraryId": "<lib-books>",
+        "folderId": "<uuid-17>",
+        "path": "<tmp>/books/The Book",
+        "relPath": "The Book",
+        "isFile": false,
+        "mtimeMs": 1000,
+        "ctimeMs": 1000,
+        "birthtimeMs": 1000,
+        "addedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "isMissing": false,
+        "isInvalid": false,
+        "mediaType": "book",
+        "media": {
+          "id": "<uuid-18>",
+          "metadata": {
+            "title": "The Book",
+            "subtitle": null,
+            "authors": [
+              {
+                "id": "<uuid-19>",
+                "name": "Ann Author"
+              }
+            ],
+            "narrators": [],
+            "series": [
+              {
+                "id": "<uuid-20>",
+                "name": "Saga",
+                "sequence": "1"
+              }
+            ],
+            "genres": [],
+            "publishedYear": null,
+            "publishedDate": null,
+            "publisher": null,
+            "description": null,
+            "isbn": null,
+            "asin": null,
+            "language": null,
+            "explicit": false,
+            "abridged": null,
+            "titleIgnorePrefix": "Book, The",
+            "authorName": "Ann Author",
+            "authorNameLF": "Author, Ann",
+            "narratorName": "",
+            "seriesName": "Saga #1",
+            "descriptionPlain": null
+          },
+          "coverPath": "<tmp>/books/The Book/cover.png",
+          "tags": [
+            "fiction"
+          ],
+          "numTracks": 2,
+          "numAudioFiles": 2,
+          "numChapters": 2,
+          "duration": 120,
+          "size": 47,
+          "ebookFormat": "epub",
+          "libraryItemId": "<book>",
+          "audioFiles": [
+            {
+              "index": 1,
+              "ino": "101",
+              "metadata": {
+                "filename": "01 one.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/01 one.mp3",
+                "relPath": "01 one.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 1,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg"
+            },
+            {
+              "index": 2,
+              "ino": "102",
+              "metadata": {
+                "filename": "02 two.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/02 two.mp3",
+                "relPath": "02 two.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 2,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg"
+            }
+          ],
+          "chapters": [
+            {
+              "id": 0,
+              "start": 0,
+              "end": 60,
+              "title": "Chapter 1"
+            },
+            {
+              "id": 1,
+              "start": 60,
+              "end": 120,
+              "title": "Chapter 2"
+            }
+          ],
+          "ebookFile": {
+            "ino": "201",
+            "metadata": {
+              "filename": "book.epub",
+              "ext": ".epub",
+              "path": "<tmp>/books/The Book/book.epub",
+              "relPath": "book.epub",
+              "size": 15,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "ebookFormat": "epub",
+            "addedAt": 2000,
+            "updatedAt": 2000
+          },
+          "tracks": [
+            {
+              "index": 1,
+              "ino": "101",
+              "metadata": {
+                "filename": "01 one.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/01 one.mp3",
+                "relPath": "01 one.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 1,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg",
+              "title": "01 one.mp3",
+              "startOffset": 0,
+              "contentUrl": "/api/items/<book>/file/101"
+            },
+            {
+              "index": 2,
+              "ino": "102",
+              "metadata": {
+                "filename": "02 two.mp3",
+                "ext": ".mp3",
+                "path": "<tmp>/books/The Book/02 two.mp3",
+                "relPath": "02 two.mp3",
+                "size": 16,
+                "mtimeMs": 1000,
+                "ctimeMs": 1000,
+                "birthtimeMs": 1000
+              },
+              "addedAt": 2000,
+              "updatedAt": 2000,
+              "trackNumFromMeta": 2,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "exclude": false,
+              "format": "MP2/3 (MPEG audio layer 2/3)",
+              "duration": 60,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "metaTags": {},
+              "mimeType": "audio/mpeg",
+              "title": "02 two.mp3",
+              "startOffset": 60,
+              "contentUrl": "/api/items/<book>/file/102"
+            }
+          ]
+        },
+        "numFiles": 4,
+        "size": 32,
+        "scanVersion": null,
+        "libraryFiles": [
+          {
+            "ino": "101",
+            "metadata": {
+              "filename": "01 one.mp3",
+              "ext": ".mp3",
+              "path": "<tmp>/books/The Book/01 one.mp3",
+              "relPath": "01 one.mp3",
+              "size": 16,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "audio"
+          },
+          {
+            "ino": "102",
+            "metadata": {
+              "filename": "02 two.mp3",
+              "ext": ".mp3",
+              "path": "<tmp>/books/The Book/02 two.mp3",
+              "relPath": "02 two.mp3",
+              "size": 16,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": null,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "audio"
+          },
+          {
+            "ino": "201",
+            "metadata": {
+              "filename": "book.epub",
+              "ext": ".epub",
+              "path": "<tmp>/books/The Book/book.epub",
+              "relPath": "book.epub",
+              "size": 15,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": false,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "ebook"
+          },
+          {
+            "ino": "202",
+            "metadata": {
+              "filename": "extra.pdf",
+              "ext": ".pdf",
+              "path": "<tmp>/books/The Book/extra.pdf",
+              "relPath": "extra.pdf",
+              "size": 15,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "isSupplementary": true,
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "fileType": "ebook"
+          }
+        ]
+      }
+    },
+    "emitted": []
   },
   "LibraryItemController (characterization) > GET /api/items/:id > checks library access, tags and explicit content > explicit as admin": {
     "res": {

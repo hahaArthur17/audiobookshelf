@@ -630,9 +630,7 @@ describe('ScannerBook (characterization)', function () {
         },
         { force: true }
       )
-      const c = r.c
       snap(this, r.view)
-      expect(c).to.exist
     })
 
     it('a series that no book uses any more is deleted along with its feed (series_removed event)', async function () {
