@@ -1,0 +1,1 @@
+- [Evidence folder is off limits during a run](evidence-folder-off-limits.md) — sparse checkout excludes evidence/ on purpose; do not read it from git history in a PO-S.. run
