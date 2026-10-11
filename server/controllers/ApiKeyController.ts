@@ -1,7 +1,16 @@
-const { Request, Response, NextFunction } = require('express')
-const uuidv4 = require('uuid').v4
-const Logger = require('../Logger')
-const Database = require('../Database')
+/// <reference path="../types/untypedModules.d.ts" />
+import type { NextFunction, Request, Response } from 'express'
+import uuid = require('uuid')
+const uuidv4 = uuid.v4
+import Logger = require('../Logger')
+import Database = require('../Database')
+type User = import('../models/User')
+type ApiRouter = import('../routers/ApiRouter')
+
+// Body fields have the types the handlers assume after their own checks
+type ApiKeyBody = { name?: string; expiresIn?: number; userId?: string; isActive?: boolean }
+type RequestUserObject = { user: User }
+type RequestWithUser = Request<{ id?: string }, unknown, ApiKeyBody> & RequestUserObject
 
 /**
  * @typedef RequestUserObject
@@ -19,7 +28,7 @@ class ApiKeyController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async getAll(req, res) {
+  async getAll(req: RequestWithUser, res: Response) {
     const apiKeys = await Database.apiKeyModel.findAll({
       include: [
         {
@@ -47,7 +56,7 @@ class ApiKeyController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async create(req, res) {
+  async create(this: ApiRouter, req: RequestWithUser, res: Response) {
     if (!req.body.name || typeof req.body.name !== 'string') {
       Logger.warn(`[ApiKeyController] create: Invalid name: ${req.body.name}`)
       return res.sendStatus(400)
@@ -109,7 +118,7 @@ class ApiKeyController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async update(req, res) {
+  async update(req: RequestWithUser, res: Response) {
     const apiKey = await Database.apiKeyModel.findByPk(req.params.id, {
       include: {
         model: Database.userModel
@@ -176,7 +185,7 @@ class ApiKeyController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async delete(req, res) {
+  async delete(req: RequestWithUser, res: Response) {
     const apiKey = await Database.apiKeyModel.findByPk(req.params.id)
     if (!apiKey) {
       return res.sendStatus(404)
@@ -194,7 +203,7 @@ class ApiKeyController {
    * @param {Response} res
    * @param {NextFunction} next
    */
-  middleware(req, res, next) {
+  middleware(req: RequestWithUser, res: Response, next: NextFunction) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[ApiKeyController] Non-admin user "${req.user.username}" attempting to access api keys`)
       return res.sendStatus(403)
@@ -204,4 +213,4 @@ class ApiKeyController {
   }
 }
 
-module.exports = new ApiKeyController()
+export = new ApiKeyController()
