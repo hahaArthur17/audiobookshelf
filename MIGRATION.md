@@ -1,6 +1,6 @@
 # Arthur Phase 3 migration index
 
-Status: Stage 1 (`server/utils/`) resumed again on 2026-10-11 Auckland time; Batches 01–27 accepted, **45/46 migrated, 1 remaining**. Stage 1 is not yet complete or accepted as a whole. Stage 2–8 are outside this run.
+Status: **Stage 1 (`server/utils/`) complete and accepted on 2026-10-11 Auckland time: 46/46 migrated, 0 remaining.** Batches 01–28 and the whole-stage checks passed. Stage 2–8 have not started and require a separate explicit request.
 
 ## Starting point
 
@@ -58,11 +58,8 @@ Update this index after each accepted batch with its commit, migrated/remaining 
 | 25 | `ffmpegHelpers` | Fresh strict build 0 errors; unchanged tests 356/356; independent mock FFmpeg/HTTP/metadata sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-session3.md` and `logs/batch-25-*` |
 | 26 | `libraryFilters` | Fresh strict build 0 errors; unchanged tests 356/356; independent decode/dispatch/shelf sample and all prior accepted batch samples equal to baseline | Accepted; see `stage1-session3.md` and `logs/batch-26-*` |
 | 27 | `fileUtils` | Fresh strict build 0 errors; unchanged tests 356/356; fixed filesystem/path and independent stream/SSRF/error samples plus all prior accepted batch samples equal to baseline | Accepted; see `stage1-session4.md` and `logs/batch-27-*` |
+| 28 | `migrations/dbMigration` | Fresh strict build 0 errors; unchanged tests 356/356; ordered migration/patch fixture and in-memory SQLite schema sample equal to Phase 2 baseline; all earlier batch fixtures equal | Accepted after main-agent emitted-JS repair; see `stage1-session4.md` and `logs/stage1-final-*` |
 
-Next: finish Batch 28 `migrations/dbMigration` under its frozen contract and offline/disposable SQLite baselines, then independently run the whole Stage 1 acceptance. Do not start Stage 2 automatically.
+Whole-stage result: `logs/stage1-final-manifest-audit.log` reports 46/46 targets converted, 0 missing/overlap and no protected test/config/package changes. Independent nonincremental strict typecheck, fresh build and original 356 tests passed. All 28 batch fixtures, the supplementary downloader stream sample, the in-memory SQLite schema sample, and the Phase 2 metadata sample matched their saved baselines. For `dbMigration`, the compiled JavaScript matches Phase 2 byte-for-byte after removing only the added outer TypeScript scope block and indentation. See `stage1-session4.md` for limitations and exact evidence. **Stop here; do not start Stage 2 automatically.**
 
-Remaining Stage 1 targets:
-
-```text
-server/utils/migrations/dbMigration.js
-```
+Remaining Stage 1 targets: **none**.

@@ -1,0 +1,251 @@
+{
+  "exports": [
+    [
+      "checkFilepathIsAudioFile",
+      1,
+      true
+    ],
+    [
+      "groupFileItemsIntoLibraryItemDirs",
+      3,
+      true
+    ],
+    [
+      "buildLibraryFile",
+      2,
+      true
+    ],
+    [
+      "getBookDataFromDir",
+      1,
+      true
+    ],
+    [
+      "getDataFromMediaDir",
+      3,
+      true
+    ]
+  ],
+  "group": [
+    {
+      "root.m4b": "root.m4b",
+      "Author/Series/Book 2 - A Tale [B012345678] {Narrator One}": [
+        "CD1/01.mp3",
+        "CD2/02.mp3",
+        "cover.jpg"
+      ],
+      "Podcast/Season 1": [
+        "episode.mp3",
+        "readme.txt"
+      ]
+    },
+    {
+      "root.m4b": "root.m4b",
+      "Author/Series/Book 2 - A Tale [B012345678] {Narrator One}": [
+        "CD1/01.mp3",
+        "CD2/02.mp3",
+        "cover.jpg"
+      ],
+      "Podcast/Season 1": [
+        "episode.mp3",
+        "readme.txt"
+      ],
+      "random": [
+        "file.txt"
+      ]
+    },
+    {
+      "Author/Series/Book 2 - A Tale [B012345678] {Narrator One}": [
+        "CD1/01.mp3",
+        "CD2/02.mp3",
+        "cover.jpg"
+      ],
+      "Podcast/Season 1": [
+        "episode.mp3",
+        "readme.txt"
+      ],
+      "random": [
+        "file.txt"
+      ]
+    },
+    {}
+  ],
+  "audio": [
+    true,
+    true,
+    false,
+    false,
+    true
+  ],
+  "book": [
+    {
+      "value": {
+        "title": "A Tale",
+        "subtitle": "",
+        "asin": "B012345678",
+        "authors": [
+          "Writer"
+        ],
+        "narrators": [
+          "Narrator One"
+        ],
+        "seriesName": "Series",
+        "seriesSequence": "2",
+        "publishedYear": null
+      }
+    },
+    {
+      "value": {
+        "title": "Mystery",
+        "subtitle": "Subtitle",
+        "asin": null,
+        "authors": [
+          "Writer"
+        ],
+        "narrators": [],
+        "seriesName": null,
+        "seriesSequence": null,
+        "publishedYear": "2021"
+      }
+    },
+    {
+      "value": {
+        "title": "Title",
+        "subtitle": "",
+        "asin": null,
+        "authors": [],
+        "narrators": [],
+        "seriesName": null,
+        "seriesSequence": null,
+        "publishedYear": null
+      }
+    },
+    {
+      "value": {
+        "title": "The Title",
+        "subtitle": "",
+        "asin": null,
+        "authors": [
+          "A"
+        ],
+        "narrators": [],
+        "seriesName": "B",
+        "seriesSequence": "3",
+        "publishedYear": null
+      }
+    }
+  ],
+  "bookErrors": [
+    {
+      "error": {
+        "name": "TypeError",
+        "message": "Cannot read properties of null (reading 'split')"
+      }
+    },
+    {
+      "error": {
+        "name": "TypeError",
+        "message": "relPath.split is not a function"
+      }
+    },
+    {
+      "value": {
+        "title": "",
+        "subtitle": "",
+        "asin": null,
+        "authors": [],
+        "narrators": [],
+        "seriesName": null,
+        "seriesSequence": null,
+        "publishedYear": null
+      }
+    }
+  ],
+  "media": [
+    {
+      "mediaMetadata": {
+        "title": "A Tale",
+        "subtitle": "",
+        "asin": "B012345678",
+        "authors": [
+          "Writer"
+        ],
+        "narrators": [
+          "Narrator One"
+        ],
+        "seriesName": "Series",
+        "seriesSequence": "2",
+        "publishedYear": null
+      },
+      "relPath": "Writer/Series/Book 2 - A Tale [B012345678] {Narrator One}",
+      "path": "/lib/Writer/Series/Book 2 - A Tale [B012345678] {Narrator One}"
+    },
+    {
+      "mediaMetadata": {
+        "title": "Show"
+      },
+      "relPath": "A/Show",
+      "path": "/lib/A/Show"
+    },
+    {
+      "mediaMetadata": {
+        "title": "Title",
+        "subtitle": "",
+        "asin": null,
+        "authors": [],
+        "narrators": [],
+        "seriesName": null,
+        "seriesSequence": null,
+        "publishedYear": null
+      },
+      "relPath": "Title",
+      "path": "/lib/Title"
+    }
+  ],
+  "noSubtitle": {
+    "mediaMetadata": {
+      "title": "Title - Subtitle",
+      "subtitle": null,
+      "asin": null,
+      "authors": [
+        "Writer"
+      ],
+      "narrators": [],
+      "seriesName": null,
+      "seriesSequence": null,
+      "publishedYear": null
+    },
+    "relPath": "Writer/Title - Subtitle",
+    "path": "/lib/Writer/Title - Subtitle"
+  },
+  "files": [
+    {
+      "created": 0,
+      "fullpath": "/lib/Book/a.mp3",
+      "relative": "a.mp3"
+    },
+    {
+      "created": 2,
+      "fullpath": "/lib/Book/CD1/b.m4b",
+      "relative": "CD1/b.m4b"
+    }
+  ],
+  "calls": [
+    [
+      "construct"
+    ],
+    [
+      "setData",
+      "/lib/Book/a.mp3",
+      "a.mp3"
+    ],
+    [
+      "construct"
+    ],
+    [
+      "setData",
+      "/lib/Book/CD1/b.m4b",
+      "CD1/b.m4b"
+    ]
+  ]
+}

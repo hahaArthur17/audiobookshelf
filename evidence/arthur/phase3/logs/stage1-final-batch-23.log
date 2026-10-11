@@ -1,0 +1,1277 @@
+{
+  "exports": [
+    [
+      "parsePodcastRssFeedXml",
+      1,
+      false
+    ],
+    [
+      "getPodcastFeed",
+      1,
+      false
+    ],
+    [
+      "findMatchingEpisodes",
+      2,
+      false
+    ],
+    [
+      "findMatchingEpisodesInFeed",
+      2,
+      false
+    ]
+  ],
+  "parsed": [
+    {
+      "podcast": {
+        "metadata": {
+          "image": null,
+          "categories": [
+            "Arts:Books"
+          ],
+          "feedUrl": "https://original-feed",
+          "description": "Show",
+          "descriptionPlain": "Show",
+          "type": null,
+          "title": "Podcast",
+          "language": "en",
+          "explicit": null,
+          "author": null,
+          "pubDate": null,
+          "link": null
+        },
+        "episodes": [
+          {
+            "title": "First",
+            "subtitle": "",
+            "description": "Full",
+            "descriptionPlain": "Episode",
+            "pubDate": "Tue, 10 Oct 2023 12:00:00 GMT",
+            "episodeType": "",
+            "season": "",
+            "episode": "",
+            "author": "",
+            "duration": "01:02",
+            "durationSeconds": 62,
+            "explicit": "",
+            "publishedAt": 1696939200000,
+            "enclosure": {
+              "url": "https://audio/first.mp3",
+              "type": "audio/mpeg"
+            },
+            "guid": "first-guid",
+            "chaptersUrl": null,
+            "chaptersType": null,
+            "chapters": [
+              {
+                "id": 0,
+                "title": "Intro",
+                "start": 1,
+                "end": 31
+              },
+              {
+                "id": 1,
+                "title": "More",
+                "start": 31,
+                "end": 62
+              }
+            ]
+          },
+          {
+            "title": "Second",
+            "subtitle": "",
+            "description": "",
+            "descriptionPlain": "",
+            "pubDate": "",
+            "episodeType": "",
+            "season": "",
+            "episode": "",
+            "author": "",
+            "duration": "bad",
+            "durationSeconds": null,
+            "explicit": "",
+            "publishedAt": null,
+            "enclosure": {
+              "url": "https://audio/second.mp3",
+              "type": "audio/mpeg"
+            },
+            "guid": null,
+            "chaptersUrl": null,
+            "chaptersType": null,
+            "chapters": []
+          }
+        ]
+      }
+    },
+    {
+      "podcast": {
+        "metadata": {
+          "image": null,
+          "categories": [
+            "Arts:Books"
+          ],
+          "feedUrl": "https://original-feed",
+          "description": "Show",
+          "descriptionPlain": "Show",
+          "type": null,
+          "title": "Podcast",
+          "language": "en",
+          "explicit": null,
+          "author": null,
+          "pubDate": null,
+          "link": null
+        },
+        "numEpisodes": 3
+      }
+    },
+    {
+      "podcast": {
+        "metadata": {
+          "image": null,
+          "categories": [
+            "Arts:Books"
+          ],
+          "feedUrl": "https://original-feed",
+          "description": "Show",
+          "descriptionPlain": "Show",
+          "type": null,
+          "title": "Podcast",
+          "language": "en",
+          "explicit": null,
+          "author": null,
+          "pubDate": null,
+          "link": null
+        },
+        "episodes": [
+          {
+            "title": "First",
+            "subtitle": "",
+            "description": "Full",
+            "descriptionPlain": "Episode",
+            "pubDate": "Tue, 10 Oct 2023 12:00:00 GMT",
+            "episodeType": "",
+            "season": "",
+            "episode": "",
+            "author": "",
+            "duration": "01:02",
+            "durationSeconds": 62,
+            "explicit": "",
+            "publishedAt": 1696939200000,
+            "enclosure": {
+              "url": "https://audio/first.mp3",
+              "type": "audio/mpeg"
+            },
+            "guid": "first-guid",
+            "chaptersUrl": null,
+            "chaptersType": null,
+            "chapters": [
+              {
+                "id": 0,
+                "title": "Intro",
+                "start": 1,
+                "end": 31
+              },
+              {
+                "id": 1,
+                "title": "More",
+                "start": 31,
+                "end": 62
+              }
+            ]
+          },
+          {
+            "title": "Second",
+            "subtitle": "",
+            "description": "",
+            "descriptionPlain": "",
+            "pubDate": "",
+            "episodeType": "",
+            "season": "",
+            "episode": "",
+            "author": "",
+            "duration": "bad",
+            "durationSeconds": null,
+            "explicit": "",
+            "publishedAt": null,
+            "enclosure": {
+              "url": "https://audio/second.mp3",
+              "type": "audio/mpeg"
+            },
+            "guid": null,
+            "chaptersUrl": null,
+            "chaptersType": null,
+            "chapters": []
+          }
+        ]
+      },
+      "rawJson": {
+        "rss": {
+          "channel": [
+            {
+              "title": [
+                "Podcast"
+              ],
+              "language": [
+                "en"
+              ],
+              "description": [
+                "<p>Show</p>"
+              ],
+              "image": [
+                {
+                  "url": [
+                    "https://image"
+                  ]
+                }
+              ],
+              "itunes:category": [
+                {
+                  "$": {
+                    "text": "Arts"
+                  },
+                  "itunes:category": [
+                    {
+                      "$": {
+                        "text": "Books"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "itunes:new-feed-url": [
+                "https://original-feed"
+              ],
+              "item": [
+                {
+                  "title": [
+                    "First"
+                  ],
+                  "description": [
+                    "<p>Episode</p>"
+                  ],
+                  "content:encoded": [
+                    "<b>Full</b>"
+                  ],
+                  "enclosure": [
+                    {
+                      "$": {
+                        "url": "https://audio/first.mp3",
+                        "type": "audio/mpeg"
+                      }
+                    }
+                  ],
+                  "pubDate": [
+                    "Tue, 10 Oct 2023 12:00:00 GMT"
+                  ],
+                  "guid": [
+                    "first-guid"
+                  ],
+                  "itunes:duration": [
+                    "01:02"
+                  ],
+                  "psc:chapters": [
+                    {
+                      "psc:chapter": [
+                        {
+                          "$": {
+                            "title": "Intro",
+                            "start": "00:01"
+                          }
+                        },
+                        {
+                          "$": {
+                            "title": "More",
+                            "start": "00:31"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": [
+                    "Second"
+                  ],
+                  "media:content": [
+                    {
+                      "$": {
+                        "url": "https://audio/second.mp3",
+                        "type": "audio/mpeg"
+                      }
+                    }
+                  ],
+                  "itunes:duration": [
+                    "bad"
+                  ]
+                },
+                {
+                  "title": [
+                    "Invalid"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    null,
+    null,
+    null,
+    null
+  ],
+  "feed": [
+    {
+      "metadata": {
+        "image": null,
+        "categories": [
+          "Arts:Books"
+        ],
+        "feedUrl": "https://www.cbc.ca/show",
+        "description": "Show",
+        "descriptionPlain": "Show",
+        "type": null,
+        "title": "Podcast",
+        "language": "en",
+        "explicit": null,
+        "author": null,
+        "pubDate": null,
+        "link": null
+      },
+      "episodes": [
+        {
+          "title": "First",
+          "subtitle": "",
+          "description": "Full",
+          "descriptionPlain": "Episode",
+          "pubDate": "Tue, 10 Oct 2023 12:00:00 GMT",
+          "episodeType": "",
+          "season": "",
+          "episode": "",
+          "author": "",
+          "duration": "01:02",
+          "durationSeconds": 62,
+          "explicit": "",
+          "publishedAt": 1696939200000,
+          "enclosure": {
+            "url": "https://audio/first.mp3",
+            "type": "audio/mpeg"
+          },
+          "guid": "first-guid",
+          "chaptersUrl": null,
+          "chaptersType": null,
+          "chapters": [
+            {
+              "id": 0,
+              "title": "Intro",
+              "start": 1,
+              "end": 31
+            },
+            {
+              "id": 1,
+              "title": "More",
+              "start": 31,
+              "end": 62
+            }
+          ]
+        },
+        {
+          "title": "Second",
+          "subtitle": "",
+          "description": "",
+          "descriptionPlain": "",
+          "pubDate": "",
+          "episodeType": "",
+          "season": "",
+          "episode": "",
+          "author": "",
+          "duration": "bad",
+          "durationSeconds": null,
+          "explicit": "",
+          "publishedAt": null,
+          "enclosure": {
+            "url": "https://audio/second.mp3",
+            "type": "audio/mpeg"
+          },
+          "guid": null,
+          "chaptersUrl": null,
+          "chaptersType": null,
+          "chapters": []
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "image": null,
+        "categories": [
+          "Arts:Books"
+        ],
+        "feedUrl": "https://latin",
+        "description": "Show",
+        "descriptionPlain": "Show",
+        "type": null,
+        "title": "Podcast",
+        "language": "en",
+        "explicit": null,
+        "author": null,
+        "pubDate": null,
+        "link": null
+      },
+      "numEpisodes": 3
+    },
+    {
+      "metadata": {
+        "image": null,
+        "categories": [
+          "Arts:Books"
+        ],
+        "feedUrl": "https://redirect",
+        "description": "Show",
+        "descriptionPlain": "Show",
+        "type": null,
+        "title": "Podcast",
+        "language": "en",
+        "explicit": null,
+        "author": null,
+        "pubDate": null,
+        "link": null
+      },
+      "episodes": [
+        {
+          "title": "First",
+          "subtitle": "",
+          "description": "Full",
+          "descriptionPlain": "Episode",
+          "pubDate": "Tue, 10 Oct 2023 12:00:00 GMT",
+          "episodeType": "",
+          "season": "",
+          "episode": "",
+          "author": "",
+          "duration": "01:02",
+          "durationSeconds": 62,
+          "explicit": "",
+          "publishedAt": 1696939200000,
+          "enclosure": {
+            "url": "https://audio/first.mp3",
+            "type": "audio/mpeg"
+          },
+          "guid": "first-guid",
+          "chaptersUrl": null,
+          "chaptersType": null,
+          "chapters": [
+            {
+              "id": 0,
+              "title": "Intro",
+              "start": 1,
+              "end": 31
+            },
+            {
+              "id": 1,
+              "title": "More",
+              "start": 31,
+              "end": 62
+            }
+          ]
+        },
+        {
+          "title": "Second",
+          "subtitle": "",
+          "description": "",
+          "descriptionPlain": "",
+          "pubDate": "",
+          "episodeType": "",
+          "season": "",
+          "episode": "",
+          "author": "",
+          "duration": "bad",
+          "durationSeconds": null,
+          "explicit": "",
+          "publishedAt": null,
+          "enclosure": {
+            "url": "https://audio/second.mp3",
+            "type": "audio/mpeg"
+          },
+          "guid": null,
+          "chaptersUrl": null,
+          "chaptersType": null,
+          "chapters": []
+        }
+      ]
+    },
+    null,
+    null
+  ],
+  "borrowedFeed": {
+    "metadata": {
+      "image": null,
+      "categories": [
+        "Arts:Books"
+      ],
+      "feedUrl": "https://ok",
+      "description": "Show",
+      "descriptionPlain": "Show",
+      "type": null,
+      "title": "Podcast",
+      "language": "en",
+      "explicit": null,
+      "author": null,
+      "pubDate": null,
+      "link": null
+    },
+    "numEpisodes": 3
+  },
+  "matches": [
+    [
+      {
+        "episode": {
+          "title": "Second",
+          "subtitle": "",
+          "description": "",
+          "descriptionPlain": "",
+          "pubDate": "",
+          "episodeType": "",
+          "season": "",
+          "episode": "",
+          "author": "",
+          "duration": "bad",
+          "durationSeconds": null,
+          "explicit": "",
+          "publishedAt": null,
+          "enclosure": {
+            "url": "https://audio/second.mp3",
+            "type": "audio/mpeg"
+          },
+          "guid": null,
+          "chaptersUrl": null,
+          "chaptersType": null,
+          "chapters": []
+        }
+      },
+      {
+        "episode": {
+          "title": "First",
+          "subtitle": "",
+          "description": "Full",
+          "descriptionPlain": "Episode",
+          "pubDate": "Tue, 10 Oct 2023 12:00:00 GMT",
+          "episodeType": "",
+          "season": "",
+          "episode": "",
+          "author": "",
+          "duration": "01:02",
+          "durationSeconds": 62,
+          "explicit": "",
+          "publishedAt": 1696939200000,
+          "enclosure": {
+            "url": "https://audio/first.mp3",
+            "type": "audio/mpeg"
+          },
+          "guid": "first-guid",
+          "chaptersUrl": null,
+          "chaptersType": null,
+          "chapters": [
+            {
+              "id": 0,
+              "title": "Intro",
+              "start": 1,
+              "end": 31
+            },
+            {
+              "id": 1,
+              "title": "More",
+              "start": 31,
+              "end": 62
+            }
+          ]
+        }
+      }
+    ],
+    null,
+    [
+      {
+        "episode": {
+          "title": "Second",
+          "subtitle": "",
+          "description": "",
+          "descriptionPlain": "",
+          "pubDate": "",
+          "episodeType": "",
+          "season": "",
+          "episode": "",
+          "author": "",
+          "duration": "bad",
+          "durationSeconds": null,
+          "explicit": "",
+          "publishedAt": null,
+          "enclosure": {
+            "url": "https://audio/second.mp3",
+            "type": "audio/mpeg"
+          },
+          "guid": null,
+          "chaptersUrl": null,
+          "chaptersType": null,
+          "chapters": []
+        }
+      },
+      {
+        "episode": {
+          "title": "First",
+          "subtitle": "",
+          "description": "Full",
+          "descriptionPlain": "Episode",
+          "pubDate": "Tue, 10 Oct 2023 12:00:00 GMT",
+          "episodeType": "",
+          "season": "",
+          "episode": "",
+          "author": "",
+          "duration": "01:02",
+          "durationSeconds": 62,
+          "explicit": "",
+          "publishedAt": 1696939200000,
+          "enclosure": {
+            "url": "https://audio/first.mp3",
+            "type": "audio/mpeg"
+          },
+          "guid": "first-guid",
+          "chaptersUrl": null,
+          "chaptersType": null,
+          "chapters": [
+            {
+              "id": 0,
+              "title": "Intro",
+              "start": 1,
+              "end": 31
+            },
+            {
+              "id": 1,
+              "title": "More",
+              "start": 31,
+              "end": 62
+            }
+          ]
+        }
+      }
+    ]
+  ],
+  "calls": [
+    [
+      "xmlToJSON",
+      "valid"
+    ],
+    [
+      "sanitize",
+      "<p>Show</p>"
+    ],
+    [
+      "strip",
+      "<p>Show</p>"
+    ],
+    [
+      "sanitize",
+      "<b>Full</b>"
+    ],
+    [
+      "strip",
+      "<p>Episode</p>"
+    ],
+    [
+      "timestamp",
+      "01:02"
+    ],
+    [
+      "timestamp",
+      "00:01"
+    ],
+    [
+      "timestamp",
+      "00:31"
+    ],
+    [
+      "timestamp",
+      "bad"
+    ],
+    [
+      "error",
+      "[podcastUtils] Invalid podcast episode data"
+    ],
+    [
+      "xmlToJSON",
+      "valid"
+    ],
+    [
+      "sanitize",
+      "<p>Show</p>"
+    ],
+    [
+      "strip",
+      "<p>Show</p>"
+    ],
+    [
+      "xmlToJSON",
+      "valid"
+    ],
+    [
+      "sanitize",
+      "<p>Show</p>"
+    ],
+    [
+      "strip",
+      "<p>Show</p>"
+    ],
+    [
+      "sanitize",
+      "<b>Full</b>"
+    ],
+    [
+      "strip",
+      "<p>Episode</p>"
+    ],
+    [
+      "timestamp",
+      "01:02"
+    ],
+    [
+      "timestamp",
+      "00:01"
+    ],
+    [
+      "timestamp",
+      "00:31"
+    ],
+    [
+      "timestamp",
+      "bad"
+    ],
+    [
+      "error",
+      "[podcastUtils] Invalid podcast episode data"
+    ],
+    [
+      "xmlToJSON",
+      "invalid"
+    ],
+    [
+      "error",
+      "[podcastUtils] Invalid XML or RSS feed"
+    ],
+    [
+      "xmlToJSON",
+      "no-channel"
+    ],
+    [
+      "error",
+      "[podcastUtil] Invalid podcast no channel object"
+    ],
+    [
+      "xmlToJSON",
+      "no-items"
+    ],
+    [
+      "error",
+      "[podcastUtil] Invalid podcast no episodes"
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://www.cbc.ca/show\""
+    ],
+    [
+      "disableSsrf",
+      "https://www.cbc.ca/show"
+    ],
+    [
+      "ssrf",
+      "https://www.cbc.ca/show"
+    ],
+    [
+      "disableSsrf",
+      "https://www.cbc.ca/show"
+    ],
+    [
+      "ssrf",
+      "https://www.cbc.ca/show"
+    ],
+    [
+      "axios",
+      {
+        "url": "https://www.cbc.ca/show",
+        "method": "GET",
+        "timeout": 777,
+        "responseType": "arraybuffer",
+        "headers": {
+          "Accept": "application/rss+xml, application/xhtml+xml, application/xml, */*;q=0.8",
+          "Accept-Encoding": "gzip, compress, deflate",
+          "User-Agent": "audiobookshelf (+https://audiobookshelf.org; like iTMS) - CBC"
+        },
+        "httpAgent": "agent:https://www.cbc.ca/show",
+        "httpsAgent": "agent:https://www.cbc.ca/show"
+      }
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://www.cbc.ca/show\" success - parsing xml"
+    ],
+    [
+      "xmlToJSON",
+      "valid"
+    ],
+    [
+      "sanitize",
+      "<p>Show</p>"
+    ],
+    [
+      "strip",
+      "<p>Show</p>"
+    ],
+    [
+      "sanitize",
+      "<b>Full</b>"
+    ],
+    [
+      "strip",
+      "<p>Episode</p>"
+    ],
+    [
+      "timestamp",
+      "01:02"
+    ],
+    [
+      "timestamp",
+      "00:01"
+    ],
+    [
+      "timestamp",
+      "00:31"
+    ],
+    [
+      "timestamp",
+      "bad"
+    ],
+    [
+      "error",
+      "[podcastUtils] Invalid podcast episode data"
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://latin\""
+    ],
+    [
+      "disableSsrf",
+      "https://latin"
+    ],
+    [
+      "disableSsrf",
+      "https://latin"
+    ],
+    [
+      "axios",
+      {
+        "url": "https://latin",
+        "method": "GET",
+        "timeout": 777,
+        "responseType": "arraybuffer",
+        "headers": {
+          "Accept": "application/rss+xml, application/xhtml+xml, application/xml, */*;q=0.8",
+          "Accept-Encoding": "gzip, compress, deflate",
+          "User-Agent": "audiobookshelf (+https://audiobookshelf.org; like iTMS)"
+        },
+        "httpAgent": null,
+        "httpsAgent": null
+      }
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://latin\" success - parsing xml"
+    ],
+    [
+      "xmlToJSON",
+      "valid"
+    ],
+    [
+      "sanitize",
+      "<p>Show</p>"
+    ],
+    [
+      "strip",
+      "<p>Show</p>"
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"http://redirect\""
+    ],
+    [
+      "disableSsrf",
+      "http://redirect"
+    ],
+    [
+      "ssrf",
+      "http://redirect"
+    ],
+    [
+      "disableSsrf",
+      "http://redirect"
+    ],
+    [
+      "ssrf",
+      "http://redirect"
+    ],
+    [
+      "axios",
+      {
+        "url": "http://redirect",
+        "method": "GET",
+        "timeout": 777,
+        "responseType": "arraybuffer",
+        "headers": {
+          "Accept": "application/rss+xml, application/xhtml+xml, application/xml, */*;q=0.8",
+          "Accept-Encoding": "gzip, compress, deflate",
+          "User-Agent": "audiobookshelf (+https://audiobookshelf.org; like iTMS)"
+        },
+        "httpAgent": "agent:http://redirect",
+        "httpsAgent": "agent:http://redirect"
+      }
+    ],
+    [
+      "info",
+      "Redirection from http to https detected. Upgrading Request",
+      "https://redirect"
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://redirect\""
+    ],
+    [
+      "disableSsrf",
+      "https://redirect"
+    ],
+    [
+      "ssrf",
+      "https://redirect"
+    ],
+    [
+      "disableSsrf",
+      "https://redirect"
+    ],
+    [
+      "ssrf",
+      "https://redirect"
+    ],
+    [
+      "axios",
+      {
+        "url": "https://redirect",
+        "method": "GET",
+        "timeout": 777,
+        "responseType": "arraybuffer",
+        "headers": {
+          "Accept": "application/rss+xml, application/xhtml+xml, application/xml, */*;q=0.8",
+          "Accept-Encoding": "gzip, compress, deflate",
+          "User-Agent": "audiobookshelf (+https://audiobookshelf.org; like iTMS)"
+        },
+        "httpAgent": "agent:https://redirect",
+        "httpsAgent": "agent:https://redirect"
+      }
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://redirect\" success - parsing xml"
+    ],
+    [
+      "xmlToJSON",
+      "valid"
+    ],
+    [
+      "sanitize",
+      "<p>Show</p>"
+    ],
+    [
+      "strip",
+      "<p>Show</p>"
+    ],
+    [
+      "sanitize",
+      "<b>Full</b>"
+    ],
+    [
+      "strip",
+      "<p>Episode</p>"
+    ],
+    [
+      "timestamp",
+      "01:02"
+    ],
+    [
+      "timestamp",
+      "00:01"
+    ],
+    [
+      "timestamp",
+      "00:31"
+    ],
+    [
+      "timestamp",
+      "bad"
+    ],
+    [
+      "error",
+      "[podcastUtils] Invalid podcast episode data"
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://empty\""
+    ],
+    [
+      "disableSsrf",
+      "https://empty"
+    ],
+    [
+      "ssrf",
+      "https://empty"
+    ],
+    [
+      "disableSsrf",
+      "https://empty"
+    ],
+    [
+      "ssrf",
+      "https://empty"
+    ],
+    [
+      "axios",
+      {
+        "url": "https://empty",
+        "method": "GET",
+        "timeout": 777,
+        "responseType": "arraybuffer",
+        "headers": {
+          "Accept": "application/rss+xml, application/xhtml+xml, application/xml, */*;q=0.8",
+          "Accept-Encoding": "gzip, compress, deflate",
+          "User-Agent": "audiobookshelf (+https://audiobookshelf.org; like iTMS)"
+        },
+        "httpAgent": "agent:https://empty",
+        "httpsAgent": "agent:https://empty"
+      }
+    ],
+    [
+      "error",
+      "[podcastUtils] getPodcastFeed: Invalid podcast feed request response (https://empty)"
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://failure\""
+    ],
+    [
+      "disableSsrf",
+      "https://failure"
+    ],
+    [
+      "ssrf",
+      "https://failure"
+    ],
+    [
+      "disableSsrf",
+      "https://failure"
+    ],
+    [
+      "ssrf",
+      "https://failure"
+    ],
+    [
+      "axios",
+      {
+        "url": "https://failure",
+        "method": "GET",
+        "timeout": 777,
+        "responseType": "arraybuffer",
+        "headers": {
+          "Accept": "application/rss+xml, application/xhtml+xml, application/xml, */*;q=0.8",
+          "Accept-Encoding": "gzip, compress, deflate",
+          "User-Agent": "audiobookshelf (+https://audiobookshelf.org; like iTMS)"
+        },
+        "httpAgent": "agent:https://failure",
+        "httpsAgent": "agent:https://failure"
+      }
+    ],
+    [
+      "error",
+      "[podcastUtils] getPodcastFeed Error",
+      {
+        "name": "Error",
+        "message": "network failed"
+      }
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://ok\""
+    ],
+    [
+      "disableSsrf",
+      "https://ok"
+    ],
+    [
+      "ssrf",
+      "https://ok"
+    ],
+    [
+      "disableSsrf",
+      "https://ok"
+    ],
+    [
+      "ssrf",
+      "https://ok"
+    ],
+    [
+      "axios",
+      {
+        "url": "https://ok",
+        "method": "GET",
+        "timeout": 777,
+        "responseType": "arraybuffer",
+        "headers": {
+          "Accept": "application/rss+xml, application/xhtml+xml, application/xml, */*;q=0.8",
+          "Accept-Encoding": "gzip, compress, deflate",
+          "User-Agent": "audiobookshelf (+https://audiobookshelf.org; like iTMS)"
+        },
+        "httpAgent": "agent:https://ok",
+        "httpsAgent": "agent:https://ok"
+      }
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://ok\" success - parsing xml"
+    ],
+    [
+      "xmlToJSON",
+      "valid"
+    ],
+    [
+      "sanitize",
+      "<p>Show</p>"
+    ],
+    [
+      "strip",
+      "<p>Show</p>"
+    ],
+    [
+      "fuseNew",
+      {
+        "ignoreDiacritics": true,
+        "threshold": 0.4,
+        "keys": [
+          {
+            "name": "title",
+            "weight": 0.7
+          },
+          {
+            "name": "subtitle",
+            "weight": 0.3
+          }
+        ]
+      }
+    ],
+    [
+      "fuseSearch",
+      "Second"
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://ok\""
+    ],
+    [
+      "disableSsrf",
+      "https://ok"
+    ],
+    [
+      "ssrf",
+      "https://ok"
+    ],
+    [
+      "disableSsrf",
+      "https://ok"
+    ],
+    [
+      "ssrf",
+      "https://ok"
+    ],
+    [
+      "axios",
+      {
+        "url": "https://ok",
+        "method": "GET",
+        "timeout": 777,
+        "responseType": "arraybuffer",
+        "headers": {
+          "Accept": "application/rss+xml, application/xhtml+xml, application/xml, */*;q=0.8",
+          "Accept-Encoding": "gzip, compress, deflate",
+          "User-Agent": "audiobookshelf (+https://audiobookshelf.org; like iTMS)"
+        },
+        "httpAgent": "agent:https://ok",
+        "httpsAgent": "agent:https://ok"
+      }
+    ],
+    [
+      "debug",
+      "[podcastUtils] getPodcastFeed for \"https://ok\" success - parsing xml"
+    ],
+    [
+      "xmlToJSON",
+      "valid"
+    ],
+    [
+      "sanitize",
+      "<p>Show</p>"
+    ],
+    [
+      "strip",
+      "<p>Show</p>"
+    ],
+    [
+      "sanitize",
+      "<b>Full</b>"
+    ],
+    [
+      "strip",
+      "<p>Episode</p>"
+    ],
+    [
+      "timestamp",
+      "01:02"
+    ],
+    [
+      "timestamp",
+      "00:01"
+    ],
+    [
+      "timestamp",
+      "00:31"
+    ],
+    [
+      "timestamp",
+      "bad"
+    ],
+    [
+      "error",
+      "[podcastUtils] Invalid podcast episode data"
+    ],
+    [
+      "fuseNew",
+      {
+        "ignoreDiacritics": true,
+        "threshold": 0.4,
+        "keys": [
+          {
+            "name": "title",
+            "weight": 0.7
+          },
+          {
+            "name": "subtitle",
+            "weight": 0.3
+          }
+        ]
+      }
+    ],
+    [
+      "fuseSearch",
+      "First"
+    ]
+  ]
+}
