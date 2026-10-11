@@ -1,8 +1,28 @@
-const Path = require('path')
-const fsExtra = require('../libs/fsExtra')
-const { readTextFile } = require('../utils/fileUtils')
-const { LogLevel } = require('../utils/constants')
-const abmetadataGenerator = require('../utils/generators/abmetadataGenerator')
+import Path = require('path')
+import fsExtra = require('../libs/fsExtra')
+import fileUtils = require('../utils/fileUtils')
+const { readTextFile } = fileUtils
+import constants = require('../utils/constants')
+const { LogLevel } = constants
+import abmetadataGenerator = require('../utils/generators/abmetadataGenerator')
+
+declare const global: typeof globalThis & { MetadataPath: string }
+
+type LibraryScan = import('./LibraryScan')
+type ScanLogger = import('./ScanLogger')
+type LibraryItemScanData = import('./LibraryItemScanData')
+
+interface MediaMetadataPayload {
+  [key: string]: unknown // both methods assign the fields of metadata.json onto the scanner's metadata object by a dynamic key
+}
+
+interface AbMetadataPayload {
+  [key: string]: unknown // both methods read the fields that abmetadataGenerator.parseJson() returns by a dynamic key
+  authors?: string[]
+  genres?: string[]
+  tags?: string[]
+  chapters?: object[]
+}
 
 class AbsMetadataFileScanner {
   constructor() {}
@@ -15,7 +35,7 @@ class AbsMetadataFileScanner {
    * @param {Object} bookMetadata
    * @param {string} [existingLibraryItemId]
    */
-  async scanBookMetadataFile(libraryScan, libraryItemData, bookMetadata, existingLibraryItemId = null) {
+  async scanBookMetadataFile(libraryScan: LibraryScan | ScanLogger, libraryItemData: LibraryItemScanData, bookMetadata: MediaMetadataPayload, existingLibraryItemId: string | null = null): Promise<void> {
     const metadataLibraryFile = libraryItemData.metadataJsonLibraryFile
     let metadataText = metadataLibraryFile ? await readTextFile(metadataLibraryFile.metadata.path) : null
     let metadataFilePath = metadataLibraryFile?.metadata.path
@@ -32,7 +52,7 @@ class AbsMetadataFileScanner {
 
     if (metadataText) {
       libraryScan.addLog(LogLevel.INFO, `Found metadata file "${metadataFilePath}"`)
-      const abMetadata = abmetadataGenerator.parseJson(metadataText, 'book') || {}
+      const abMetadata = (abmetadataGenerator.parseJson(metadataText, 'book') as AbMetadataPayload | null) || {} // boundary: abmetadataGenerator (JavaScript) documents its result only as Object
 
       for (const key in abMetadata) {
         // TODO: When to override with null or empty arrays?
@@ -55,7 +75,7 @@ class AbsMetadataFileScanner {
    * @param {Object} podcastMetadata
    * @param {string} [existingLibraryItemId]
    */
-  async scanPodcastMetadataFile(libraryScan, libraryItemData, podcastMetadata, existingLibraryItemId = null) {
+  async scanPodcastMetadataFile(libraryScan: LibraryScan | ScanLogger, libraryItemData: LibraryItemScanData, podcastMetadata: MediaMetadataPayload, existingLibraryItemId: string | null = null): Promise<void> {
     const metadataLibraryFile = libraryItemData.metadataJsonLibraryFile
     let metadataText = metadataLibraryFile ? await readTextFile(metadataLibraryFile.metadata.path) : null
     let metadataFilePath = metadataLibraryFile?.metadata.path
@@ -72,7 +92,7 @@ class AbsMetadataFileScanner {
 
     if (metadataText) {
       libraryScan.addLog(LogLevel.INFO, `Found metadata file "${metadataFilePath}"`)
-      const abMetadata = abmetadataGenerator.parseJson(metadataText, 'podcast') || {}
+      const abMetadata = (abmetadataGenerator.parseJson(metadataText, 'podcast') as AbMetadataPayload | null) || {} // boundary: abmetadataGenerator (JavaScript) documents its result only as Object
       for (const key in abMetadata) {
         if (abMetadata[key] === undefined || abMetadata[key] === null) continue
         if (key === 'tags' && !abMetadata.tags?.length) continue
@@ -82,4 +102,4 @@ class AbsMetadataFileScanner {
     }
   }
 }
-module.exports = new AbsMetadataFileScanner()
+export = new AbsMetadataFileScanner()

@@ -1,5 +1,22 @@
-const { parseOpfMetadataXML } = require('../utils/parsers/parseOpfMetadata')
-const { readTextFile } = require('../utils/fileUtils')
+import parseOpfMetadata = require('../utils/parsers/parseOpfMetadata')
+const { parseOpfMetadataXML } = parseOpfMetadata
+import fileUtils = require('../utils/fileUtils')
+const { readTextFile } = fileUtils
+
+type LibraryFileObject = import('../models/LibraryItem').LibraryFileObject
+
+interface BookMetadataPayload {
+  [key: string]: unknown // scanBookOpfFile() assigns the parsed fields onto BookScanner's metadata object by a dynamic key
+}
+
+interface OpfMetadataPayload {
+  [key: string]: unknown // scanBookOpfFile() reads the fields that parseOpfMetadataXML() returns by a dynamic key
+  tags: string[]
+  genres: string[]
+  authors?: string[]
+  narrators?: string[]
+  series?: { name: string; sequence: string | null }[]
+}
 
 class OpfFileScanner {
   constructor() {}
@@ -10,9 +27,9 @@ class OpfFileScanner {
    * @param {import('../models/LibraryItem').LibraryFileObject} opfLibraryFileObj
    * @param {Object} bookMetadata
    */
-  async scanBookOpfFile(opfLibraryFileObj, bookMetadata) {
+  async scanBookOpfFile(opfLibraryFileObj: LibraryFileObject, bookMetadata: BookMetadataPayload): Promise<void> {
     const xmlText = await readTextFile(opfLibraryFileObj.metadata.path)
-    const opfMetadata = xmlText ? await parseOpfMetadataXML(xmlText) : null
+    const opfMetadata: OpfMetadataPayload | null = xmlText ? await parseOpfMetadataXML(xmlText) : null
     if (opfMetadata) {
       for (const key in opfMetadata) {
         if (key === 'tags') {
@@ -44,4 +61,4 @@ class OpfFileScanner {
     }
   }
 }
-module.exports = new OpfFileScanner()
+export = new OpfFileScanner()
