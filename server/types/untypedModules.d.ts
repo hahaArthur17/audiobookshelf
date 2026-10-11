@@ -25,3 +25,10 @@ declare module 'nodemailer' {
   }
   export function createTransport(options: object): Transporter
 }
+
+// Used by server/managers/MigrationManager.ts. Only gt, lte and compare are called. A value that is not a version string makes them throw a TypeError, so the parameters are strings.
+declare module 'semver' {
+  export function gt(v1: string, v2: string): boolean
+  export function lte(v1: string, v2: string): boolean
+  export function compare(v1: string, v2: string): 1 | 0 | -1
+}
