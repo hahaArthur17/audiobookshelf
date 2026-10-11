@@ -1,5 +1,6 @@
 {
   "ApiKeyController.test.js": "7121c976ca44aa1bc952654766c80f9ea76ba26481c60e33a651fed2ddfedc0f",
+  "AuthRateLimit.test.js": "f107a6d5cc0951ed09e0c1293a808f644190ae18907edf05152ac8c5225ecea4",
   "AuthRoutes.test.js": "99a3a5e916bf63627212d0bff2329c7dae9ab2f1fe840e962eef0db3adc49f79",
   "AuthorController.test.js": "b694150e44b0451fc67c1de277c2b4406990446efef98ba055edfc9ba6bcd12d",
   "BackupController.test.js": "8e12cf7679aec701c1b7ab1b52e54c81b64b70e49075a42f896a5e6bdfdb5190",
@@ -33,6 +34,7 @@
   "ToolsController.test.js": "c5f006ded994882cf9a24c7e8f736e6c40b2fce7b62d442a0a67d732d6864c8e",
   "UserController.test.js": "a74c95093dcaff4dcb70253cc332f1f6d02d9629762260a0f9246d0d22545691",
   "helpers/auth-harness.js": "aa626a5203e603433c14dfd25d558bc4126b94a4818ffab6bce4beabb9911b3c",
+  "helpers/child-server.js": "54b88ad22df68dabf2a1d5bde3c0036407a242a41df56c025ecb85b126caf2b1",
   "helpers/harness.js": "6fd1c27b0143e4dd8e3969504711e2dc382ff6b70c5a73edb8aecfe79be5db81",
   "helpers/seed-delivery-extra.js": "46d178e026f0e01d8d411028f753ee902f14a090baf0e6bfa1e73d5078463d8d",
   "helpers/seed-items-extra.js": "0fcae8b4d71171583618926ebc8514716a4aebf48a67d21ec25b349f936e48e8",
@@ -47,6 +49,7 @@
   "helpers/snapshot.js": "479df0813f7096feb11c928bea6d5697fc6f79a98435bde12fca14a5290fcf26",
   "smoke.test.js": "160bcc44be775d5ff425b8bd025615e6bd194d23fff998ebf83684ba89ca34fb",
   "snapshots/ApiKeyController_characterization_.json": "4c4717017f358e360138083379027ac3ff61030bb228e4bfeeb4e23c70123ade",
+  "snapshots/Auth_rate_limit_characterization_.json": "1c688217bf2933fa6e03d7e11b5b70b01eb2c497b0f4d99b633b565abe4c8993",
   "snapshots/Auth_routes_characterization_.json": "d239956504a01878783c6dbb4c5e6819262b20840d1afd743c0084cb5c146a50",
   "snapshots/AuthorController_characterization_.json": "e77ef9c8e8813f1c0c894529195faa085335e89647079c811b394be68812a87a",
   "snapshots/BackupController_characterization_.json": "65375d7f7a56b4849e7522e25aaf01f27078ceee1a56582a80524cdf7f3bacbb",

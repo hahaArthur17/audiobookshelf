@@ -32,10 +32,12 @@ Scanner (written on macOS/Node 24 by a local agent, verified on Linux/Node 22; f
 
 `ServerBoot.test.js` (17 tests) boots the real `dist-server/index.js` as a child process (temp config/metadata dirs, free port, `TZ=UTC`, needs ffmpeg/ffprobe paths but skips the binary check) and talks to it over HTTP and websockets: startup log sequence, files created, `/ping` `/healthcheck` `/status`, base-path rewriting, security and CORS headers, auth wiring of `/api` vs `/hls` `/public` `/feed`, the missing web client, socket.io on both paths, SIGINT shutdown, `POST /init` then real login and API access, an empty base path with `ALLOW_CORS`, and a restart on the existing database. A child process because `Server.start()` installs process-wide `SIGINT`/`unhandledRejection` handlers.
 
+`AuthRateLimit.test.js` (10 tests) characterizes the auth rate limiter through the real server in a child process (`helpers/child-server.js`, shared boot helper; the limiter is a process-wide singleton configured from env vars on first use): the 429 and its headers, `RATE_LIMIT_AUTH_MAX` / `_WINDOW` / `_MESSAGE`, `=0` disabling, the default of 40, which routes share the budget, and the client key.
+
 Skipped (6): real zip download (`GET /libraries/:id/download`), author image resize (needs ffmpeg), item cover upload and cover cache-miss resize (LibraryItem), `POST /notifications` without `urls` (hangs), `GET /logger-data` with no log manager (hangs).
 
 ## Not covered yet
-The OIDC flow (`/auth/openid`, `/callback`, `/mobile-redirect`; needs a fake identity provider), auth rate limiting (429 after 40 attempts), `Database.js` init, the scanner (`scanner/*`), `Server.js` boot, `HlsRouter`, and anything needing ffmpeg/real media. The upgrade smoke test (`scripts/upgrade-smoke`) covers migrations end to end.
+The OIDC flow (`/auth/openid`, `/callback`, `/mobile-redirect`; needs a fake identity provider), `Database.js` init, the scanner (`scanner/*`), `Server.js` boot, `HlsRouter`, and anything needing ffmpeg/real media. The upgrade smoke test (`scripts/upgrade-smoke`) covers migrations end to end.
 
 ## Findings (recorded as-is, nothing fixed)
 Reported by the test-writing agents while reading the code and recording responses; not independently verified beyond the snapshots. Candidates for upstream issues, roughly by importance.
@@ -134,9 +136,16 @@ Reported by the test-writing agents while reading the code and recording respons
 - `/status` includes `ConfigPath` and `MetadataPath` until the server has a root user.
 - A first start logs `JWT secret key not found, generating one` and creates `absdatabase.sqlite`, `migrations/` under the config dir and `backups`, `cache`, `logs`, `streams` under metadata (no `items`, `tmp`, `covers`).
 
+**Auth rate limit (from `AuthRateLimit.test.js`)**
+- One budget is shared by `POST /login`, `POST /auth/refresh`, the `/auth/openid*` routes and `PATCH /api/me/password`; it counts successful requests too, so N correct logins also exhaust it. `/logout`, `/ping`, `/status` and bearer-authenticated `/api` calls are not counted.
+- The limiter runs before authentication is checked, so a 429 also answers a correct password and a token-less refresh.
+- The client key is `requestIp.getClientIp`, which trusts `X-Forwarded-For`: each forwarded address has its own budget, so an attacker who can set the header gets a fresh budget per value (the limit is bypassable unless a proxy overwrites the header).
+- The window is `RATE_LIMIT_AUTH_WINDOW` in ms (the policy header rounds it up to whole seconds); a non-numeric or non-positive `RATE_LIMIT_AUTH_MAX` silently keeps the default of 40, and only `0` disables the limiter. The env vars are read once, the first time the limiter is created.
+- The 429 body is `{ error: <message> }` (default `Too many authentication requests`) with standard `RateLimit-*` and `Retry-After` headers; every rejection logs a WARN with IP, endpoint and user agent. The 401 for a wrong password is a bare `Unauthorized` text, so clients see a different body type before and after the limit.
+
 **Harness/seed quirks to remember when writing more tests**
 - `User.js` keeps a module-private LRU of users that outlives the database; the harness now evicts them in `stop()`, otherwise a later test's username lookup returns a previous test's user.
-- The auth rate limiter is a process-wide singleton; `startAuthApi` bypasses it on its own `Auth` instance.
+- The auth rate limiter is a process-wide singleton; `startAuthApi` bypasses it on its own `Auth` instance. Its real behaviour is characterized in `AuthRateLimit.test.js` via a child process.
 - Scanner tests: the scanner recognizes moved folders by inode, and ext4/overlayfs reuse a freed inode for the next new file (APFS does not). Create replacement files before deleting the old ones in a test, or a "delete folder, create other folder" case turns into a rename on Linux.
 - Login responses carry `serverSettings.timeZone`, which defaults to the machine's `TZ`; `AuthRoutes.test.js` masks it (`<env>`), as it does `logLevel`.
 - `createBook` leaves `explicit` NULL, which hides books from `user`/`guest`; `createLibrary` leaves `library.settings` NULL (public share GET then 500s).
