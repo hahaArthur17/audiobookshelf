@@ -1,6 +1,0 @@
-/usage before the run (pasted by the user, 2026-10-11 about 04:33 NZDT, fresh session in audiobookshelf-po, Opus 5.5 max, auto mode)
-Total cost: $0.0000. Duration (API) 0s. Duration (wall) 56s. Code changes: 0 added, 0 removed. Usage: 0 input, 0 output, 0 cache read, 0 cache write.
-Current session: 9% used, resets 8:49am (Pacific/Auckland)
-Current week (all models): 64% used, resets Oct 13, 5:59am
-Current week (Fable): 51% used, resets Oct 13, 5:59am
-Limits lines (last 24h): 87% of usage at >150k context; 26% from subagent-heavy sessions; 16% from subagents under general-purpose; MCP Claude Browser 4%.

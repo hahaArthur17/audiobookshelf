@@ -1,4 +1,0 @@
-
-> audiobookshelf@2.37.0 lint
-> eslint .
-

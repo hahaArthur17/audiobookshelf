@@ -1,7 +1,0 @@
-/usage after the run (pasted by the user, 2026-10-11 about 11:44 NZDT, same session, idle since about 06:04)
-Total cost: $53.88. Duration (API) 2h 36m 27s. Duration (wall) 7h 11m 52s (includes the idle time until the user returned). Code changes: 1532 lines added, 589 removed.
-Usage by model: claude-haiku-5-5: 2.2k input, 22 output, 0 cache read, 0 cache write ($0.0002). claude-opus-5-5: 463.0k input, 943.8k output, 105.1m cache read, 2.2m cache write ($53.88).
-Prompt cache (main): 68 requests, 98% of input tokens from cache, no misses, cold (idle 4h 46m 36s).
-Current session: 0% used (the 5-hour window had reset). Current week (all models): 68% used, resets Oct 13, 5:59am (Pacific/Auckland). Current week (Fable): 51% used.
-Limits lines (last 24h): 83% of usage at >150k context; 47% from subagent-heavy sessions; 32% from subagents under general-purpose; MCP Claude Browser 3%.
-Recently denied list (user, after the run): empty.

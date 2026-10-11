@@ -1,5 +1,0 @@
-npm error Missing script: "generate"
-npm error
-npm error To see a list of scripts, run:
-npm error   npm run
-npm error A complete log of this run can be found in: C:\Users\<user>\AppData\Local\npm-cache\_logs\2026-10-09T12_33_49_532Z-debug-0.log

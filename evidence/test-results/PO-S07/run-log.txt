@@ -1,8 +1,0 @@
-PO-S07 run log. Code base 33931ea9, plan commit f2d8a805. Written by the checkpoint script (read-only: no build, no test).
-Columns: time | .ts in server/models | .js in server/models | commits since f2d8a805 | files in test/server/bugfix | last commit message
-Start values (taken before the paste):
-20:25 | 17 | 8 | 0 | 0 | [PO-S07] plan: notes with predictions, prompt, pre-flight and permission change
-20:44 | 18 | 7 | 2 | 1 | [PO-S07] Author: migrate to TypeScript
-20:58 | 21 | 4 | 5 | 2 | [PO-S07] Collection: migrate to TypeScript
-21:14 | 23 | 2 | 11 | 6 | [PO-S07] Feed: fix getFeedObjForSeries throwing when no book of the series has audio tracks (test added)
-21:29 | 25 | 0 | 13 | 6 | [PO-S07] User: migrate to TypeScript
