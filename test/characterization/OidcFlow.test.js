@@ -162,6 +162,7 @@ describe('OIDC flow (characterization)', function () {
     const appUrl = new URL(browser.headers.location)
     const callback = await abs('GET', `/auth/openid/callback?code=${appUrl.searchParams.get('code')}&state=${appUrl.searchParams.get('state')}&code_verifier=${verifier}`)
     hops.callback = { ...view(callback), logged: logged() }
+    hops.raw = { callback, idpBack, appUrl, challenge: sha256(verifier), verifier }
     return hops
   }
 
@@ -521,8 +522,59 @@ describe('OIDC flow (characterization)', function () {
       const start = await abs('GET', `/auth/openid?redirect_uri=${encodeURIComponent('audiobookshelf://oauth')}&code_challenge=${ch}&state=s-9`)
       const back = await visitIdp(start.headers.location)
       const u = new URL(back.location)
+      Logger.error.resetHistory()
+      Logger.warn.resetHistory()
       const res = await abs('GET', `/auth/openid/callback?code=${u.searchParams.get('code')}&state=s-9&code_verifier=${'b'.repeat(50)}`)
-      matchSnapshot(this, { res: view(res) })
+      matchSnapshot(this, { res: view(res), logged: logged() })
+      // the IdP is what rejected it: the token request carried the wrong verifier and the code was not consumed
+      expect(tokenRequests()[0].form.code_verifier).to.equal('<verifier>')
+      expect(idp.codes.has(u.searchParams.get('code'))).to.equal(true)
+    })
+
+    it('uses the tokens returned to the app: the access token is a working bearer for the IdP-linked user and the refresh token rotates the session', async function () {
+      configure()
+      await patchUser(users.user, { extraData: { authOpenIDSub: 'idp-user-1', seriesHideFromContinueListening: [] } })
+      const hops = await mobileFlow()
+      const { callback, challenge, verifier, appUrl, idpBack } = hops.raw
+      expect(callback.status).to.equal(200)
+
+      // PKCE: the app's own challenge reaches the IdP unchanged (S256, 43 char base64url), and the app's verifier (not a server generated one) is what the token endpoint gets
+      const authorizeParams = new URLSearchParams(idp.requests.find((r) => r.endpoint === '/authorize').query)
+      expect(authorizeParams.get('code_challenge')).to.match(/^[A-Za-z0-9_-]{43}$/)
+      expect(authorizeParams.get('code_challenge')).to.equal(challenge)
+      expect(authorizeParams.get('code_challenge_method')).to.equal('S256')
+      expect(idp.requests.find((r) => r.endpoint === '/token').form.code_verifier).to.equal(verifier)
+      // the app's own state goes to the IdP and comes back to the app with the code
+      expect(authorizeParams.get('state')).to.equal('app-state')
+      expect(appUrl.searchParams.get('state')).to.equal('app-state')
+      expect(appUrl.searchParams.get('code')).to.equal(new URL(idpBack.location).searchParams.get('code'))
+      expect(appUrl.href).to.equal('audiobookshelf://oauth?code=code-1&state=app-state')
+
+      const { user } = callback.body
+      expect(user.accessToken).to.match(/^[\w-]+\.[\w-]+\.[\w-]+$/)
+      expect(user.refreshToken).to.match(/^[\w-]+\.[\w-]+\.[\w-]+$/)
+      expect(user.refreshToken).to.not.equal(user.accessToken)
+      expect(callback.cookies.map((c) => c.split('=')[0])).to.not.include('refresh_token')
+
+      const me = await api.authRequest('GET', '/api/me', { bearer: user.accessToken })
+      const garbage = await api.authRequest('GET', '/api/me', { bearer: 'garbage' })
+      const refreshTokenAsBearer = await api.authRequest('GET', '/api/me', { bearer: user.refreshToken })
+      const refreshed = await api.authRequest('POST', '/auth/refresh', { headers: { 'x-refresh-token': user.refreshToken } })
+      const meAfterRefresh = await api.authRequest('GET', '/api/me', { bearer: refreshed.body?.user?.accessToken })
+      const noRefreshToken = await api.authRequest('POST', '/auth/refresh', {})
+      const badRefreshToken = await api.authRequest('POST', '/auth/refresh', { headers: { 'x-refresh-token': 'garbage' } })
+      const idView = (id) => (id === users.user.id ? '<linked user id>' : id === users.admin.id ? '<admin id>' : id)
+      matchSnapshot(this, {
+        loginUser: { id: idView(user.id), username: user.username, type: user.type, hasToken: !!user.token, tokenIsAccessToken: user.token === user.accessToken, hasPermissions: !!user.permissions, librariesAccessible: user.librariesAccessible, hasLibraries: Array.isArray(user.librariesAccessible) },
+        loginBodyKeys: Object.keys(callback.body).sort(),
+        me: { status: me.status, id: idView(me.body?.id), username: me.body?.username, type: me.body?.type },
+        garbageBearer: { status: garbage.status, body: garbage.body },
+        refreshTokenAsBearer: { status: refreshTokenAsBearer.status },
+        refreshed: { status: refreshed.status, id: idView(refreshed.body?.user?.id), username: refreshed.body?.user?.username, hasAccessToken: !!refreshed.body?.user?.accessToken, hasRefreshToken: !!refreshed.body?.user?.refreshToken, refreshTokenRotated: refreshed.body?.user?.refreshToken !== user.refreshToken, cookies: refreshed.cookies.map(maskCookie) },
+        meAfterRefresh: { status: meAfterRefresh.status, id: idView(meAfterRefresh.body?.id), username: meAfterRefresh.body?.username },
+        noRefreshToken: { status: noRefreshToken.status, body: noRefreshToken.body },
+        badRefreshToken: { status: badRefreshToken.status, body: badRefreshToken.body }
+      })
     })
 
     it('answers errors of the mobile callback with the web redirect to /login, because the session flag is the redirect uri string, not true', async function () {

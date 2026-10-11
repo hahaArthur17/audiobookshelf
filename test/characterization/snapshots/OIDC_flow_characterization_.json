@@ -630,6 +630,12 @@
       "status": 302,
       "location": "/login?error=Error%20in%20callback&autoLaunch=0",
       "cookies": []
+    },
+    "logged": {
+      "errors": [
+        "\"[Auth] Error in openid callback - OPError: invalid_grant (PKCE verification failed)\""
+      ],
+      "warnings": []
     }
   },
   "OIDC flow (characterization) > mobile login flow > refuses an unknown user on the mobile flow the same way": {
@@ -644,6 +650,65 @@
       "warnings": [
         "[User] openid: User not found and auto-register is disabled"
       ]
+    }
+  },
+  "OIDC flow (characterization) > mobile login flow > uses the tokens returned to the app: the access token is a working bearer for the IdP-linked user and the refresh token rotates the session": {
+    "loginUser": {
+      "id": "<linked user id>",
+      "username": "user",
+      "type": "user",
+      "hasToken": false,
+      "tokenIsAccessToken": false,
+      "hasPermissions": true,
+      "librariesAccessible": [],
+      "hasLibraries": true
+    },
+    "loginBodyKeys": [
+      "ereaderDevices",
+      "serverSettings",
+      "user",
+      "userDefaultLibraryId"
+    ],
+    "me": {
+      "status": 200,
+      "id": "<linked user id>",
+      "username": "user",
+      "type": "user"
+    },
+    "garbageBearer": {
+      "status": 401,
+      "body": "Unauthorized"
+    },
+    "refreshTokenAsBearer": {
+      "status": 401
+    },
+    "refreshed": {
+      "status": 200,
+      "id": "<linked user id>",
+      "username": "user",
+      "hasAccessToken": true,
+      "hasRefreshToken": true,
+      "refreshTokenRotated": true,
+      "cookies": [
+        "refresh_token=<v>; Max-Age=<n>; Path=/; Expires=<date>; HttpOnly; SameSite=Lax"
+      ]
+    },
+    "meAfterRefresh": {
+      "status": 200,
+      "id": "<linked user id>",
+      "username": "user"
+    },
+    "noRefreshToken": {
+      "status": 401,
+      "body": {
+        "error": "No refresh token provided"
+      }
+    },
+    "badRefreshToken": {
+      "status": 401,
+      "body": {
+        "error": "Invalid refresh token"
+      }
     }
   },
   "OIDC flow (characterization) > mobile redirect (GET /auth/openid/mobile-redirect) > forwards \"undefined\" as the code when none is sent": {
