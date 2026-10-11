@@ -8,6 +8,7 @@ class CollectionBook extends Model {
   declare bookId: string
   declare collectionId: string
   declare createdAt: Date
+  declare book?: import('./Book') & { libraryItem: import('./LibraryItem') } // only set by a query that includes book; CollectionController passes book with libraryItem to getCollectionBooks(). Not listed in the constructor
 
   constructor(values?: CreationAttributes<CollectionBook>, options?: BuildOptions) {
     super(values, options)

@@ -32,6 +32,7 @@ class PlaybackSession extends Model {
   declare updatedAt: Date
   declare createdAt: Date
   declare device?: Device // only set by a query that includes device (getOldPlaybackSessions, getById); not listed in the constructor
+  declare user?: import('./User') // only set by a query that includes user (SessionController.getAllWithUserData); not listed in the constructor
   declare mediaItem: Book | PodcastEpisode // set by the afterFind hook; not listed in the constructor
   declare book?: Book // set by a query that includes book; the afterFind hook moves it to mediaItem and deletes it
   declare podcastEpisode?: PodcastEpisode // set by a query that includes podcastEpisode; the afterFind hook moves it to mediaItem and deletes it

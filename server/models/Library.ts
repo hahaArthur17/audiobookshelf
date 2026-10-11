@@ -1,6 +1,6 @@
 import sequelizeModule = require('sequelize')
 const { DataTypes, Model } = sequelizeModule
-import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
+import type { BuildOptions, CreationAttributes, HasManyGetAssociationsMixin, Sequelize } from 'sequelize'
 import Logger = require('../Logger')
 
 type LibraryFolder = import('./LibraryFolder')
@@ -56,6 +56,7 @@ class Library extends Model {
   declare createdAt: Date
   declare updatedAt: Date
   declare libraryFolders?: LibraryFolder[]
+  declare getLibraryFolders: HasManyGetAssociationsMixin<LibraryFolder> // mixin added by library.hasMany(LibraryFolder) in LibraryFolder.init()
   declare static readonly sequelize: Sequelize // set by init() before any query runs (optional in Sequelize's typings)
 
   constructor(values?: CreationAttributes<Library>, options?: BuildOptions) {

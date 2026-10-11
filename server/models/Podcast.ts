@@ -63,6 +63,7 @@ class Podcast extends Model {
   declare createdAt: Date
   declare updatedAt: Date
   declare numEpisodes: number
+  declare libraryItem?: import('./LibraryItem') // only set by a query that includes libraryItem (the podcast list in LibraryController); not listed in the constructor
   declare podcastEpisodes: PodcastEpisode[];
   [key: string]: unknown // updateFromRequest() reads and assigns columns by a dynamic key (this[newKey], this[key])
 

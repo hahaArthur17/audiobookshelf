@@ -1,6 +1,6 @@
 import sequelizeModule = require('sequelize')
 const { DataTypes, Model, Op } = sequelizeModule
-import type { BuildOptions, CreationAttributes, InstanceDestroyOptions, InstanceUpdateOptions, SaveOptions, Sequelize } from 'sequelize'
+import type { BelongsToGetAssociationMixin, BuildOptions, CreationAttributes, InstanceDestroyOptions, InstanceUpdateOptions, SaveOptions, Sequelize } from 'sequelize'
 import jwt = require('jsonwebtoken')
 import type { SignOptions } from 'jsonwebtoken'
 import lruCache = require('lru-cache')
@@ -81,6 +81,7 @@ class ApiKey extends Model {
   declare userId: string
   declare createdByUserId: string | null // init() sets onDelete: 'SET NULL' on this foreign key
   declare user: User
+  declare getUser: BelongsToGetAssociationMixin<User> // mixin added by ApiKey.belongsTo(user) in init()
   declare fromCache?: boolean // set by ApiKeyCache.set(); not a column and not listed in the constructor
 
   constructor(values?: CreationAttributes<ApiKey>, options?: BuildOptions) {

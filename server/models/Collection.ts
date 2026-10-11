@@ -6,6 +6,7 @@ type User = import('./User')
 type LibraryItem = import('./LibraryItem')
 type Feed = import('./Feed')
 type BookExpandedWithLibraryItem = import('./Book').BookExpandedWithLibraryItem
+type CollectionBook = import('./CollectionBook')
 
 /** Return of toOldJSON(). toOldJSONExpanded() replaces the library item ids in books with expanded library items, and the callers that include 'rssfeed' add rssFeed */
 type OldCollectionJson = {
@@ -30,6 +31,7 @@ class Collection extends Model {
   declare feeds?: Feed[] // only set by a query that includes feed (getOldCollectionsJsonExpanded with 'rssfeed'); not listed in the constructor
   declare getBooks: BelongsToManyGetAssociationsMixin<BookExpandedWithLibraryItem> // mixin added by collection.belongsToMany(book) in CollectionBook.init(); the one call here includes libraryItem, authors and series
   declare getFeeds: HasManyGetAssociationsMixin<Feed> // mixin added by collection.hasMany(Feed) in Feed.init()
+  declare getCollectionBooks: HasManyGetAssociationsMixin<CollectionBook> // mixin added by collection.hasMany(CollectionBook) in CollectionBook.init()
   declare static readonly sequelize: sequelizeModule.Sequelize // set by init() before any query runs (optional in Sequelize's typings). Written with the module name because Sequelize is a runtime value in this file
 
   constructor(values?: CreationAttributes<Collection>, options?: BuildOptions) {
