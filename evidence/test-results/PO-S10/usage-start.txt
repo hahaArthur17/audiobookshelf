@@ -1,0 +1,5 @@
+PO-S10 /usage before the run (pasted by the user, 2026-10-11 about 16:44 NZDT, fresh session)
+Model: Opus 5.5, max effort. Plugin: Superpowers disabled (user report of /model and /plugin).
+Total cost: $0.0000; Total duration (wall): 1m 12s; Usage: 0 input, 0 output, 0 cache read, 0 cache write.
+Current session: 0% used, resets 9:39pm (Pacific/Auckland). Current week (all models): 75% used, resets Oct 13, 5:59am. Current week (Fable): 51% used.
+/permissions: allow 17 entries; deny 26 entries (the 25 of the file plus PowerShell).

@@ -1,0 +1,283 @@
+PO-S10 report
+
+20 of the 60 files are now TypeScript (3,979 of 16,966 lines); the other 40 are JavaScript, identical to HEAD. The build passes, 375 tests pass, and the run finished 67 minutes after the start (limit 100). Thirty of the 40 do not fit the rules as written; only ten were left for time.
+
+Final build and test
+
+┌─────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────┐
+│                      Check                      │                                 Result                                  │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ npm run build:server                            │ passes (the incremental build did not crash)                            │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ npm test                                        │ 375 passing                                                             │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ Whole-tree no-emit check                        │ 0 errors                                                                │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ Compiled output, 449 files not converted        │ byte-identical to the baseline                                          │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ Compiled output, 20 converted files             │ only require lines, comments and two export forms differ (listed below) │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ Banned constructs, counted from the syntax tree │ 0 any, 0 @ts- comments, 0 as unknown as                                 │
+└─────────────────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────┘
+
+Two checks I added: each of the seven commits type-checks on its own (0 errors each), and loading Server.js from the baseline and from the new build loads the same 363 modules in the same order.
+
+Commits, on top of 6752a047, nothing pushed:
+
+- c717a73c types: declare semver
+- 19e5ff12 set 1
+- f5646086 set 6 (before set 2, because CoverManager.ts imports a type from parseEbookMetadata.ts)
+- 6c52529a set 2
+- 8c3c7a36 set 3
+- b90bc8f4 set 4
+- 3dfc6779 set 5
+
+Timing: start 16:47, probe 16:49 to 17:02, sub-agents started 17:02, all six reported between 17:34 and 17:43, integration finished 17:54. No sub-agent had to be told to stop, and no file had to be restored at integration.
+
+Per set
+
+┌─────┬───────────┬───────┬────────────────────────┬─────────────┐
+│ Set │ Converted │ Lines │ Restored after a trial │ Not started │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 1   │ 3 of 5    │ 991   │ 1                      │ 1           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 2   │ 4 of 8    │ 1,118 │ 1                      │ 3           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 3   │ 1 of 3    │ 597   │ 1                      │ 1           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 4   │ 4 of 15   │ 409   │ 4                      │ 7           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 5   │ 2 of 12   │ 281   │ 2                      │ 8           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 6   │ 6 of 17   │ 583   │ 2                      │ 9           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ All │ 20 of 60  │ 3,979 │ 11                     │ 29          │
+└─────┴───────────┴───────┴────────────────────────┴─────────────┘
+
+Set 1. Converted: NotificationManager, CronManager, PlaybackSessionManager.
+- Restored: RssFeedManager — three values the original leaves unguarded (feed.entity after getEntity() twice, feed after updateFeedForEntity()).
+- Not started: PodcastManager (time).
+
+Set 2. Converted: CoverSearchManager, CacheManager, MigrationManager, CoverManager.
+- Restored: BinaryManager — a null platformSuffix is used as an index, unguarded (line 157).
+- Not started: BackupManager (time, and req.files.file is unguarded); AudioMetadataManager and AbMergeManager (every read of task.data would need a ! and a cast from unknown, because the converted Task.ts types it Record<string, unknown> | null).
+
+Set 3. Converted: AudioFileScanner.
+- Restored: LibraryScanner — reads the untested false result of getFileTimestampsWithIno(), assigns a number to Library.lastScan, reads libraryFolders unguarded.
+- Not started: BookScanner (time).
+
+Set 4. Converted: PodcastEpisodeDownload, LibraryScan, OpfFileScanner, AbsMetadataFileScanner.
+- Restored:
+  - MediaProbeData — audioStream is dereferenced while it can be null.
+  - Backup — BackupController.ts:159 breaks once fullPath is string | null.
+  - LibraryFile — the same untested false result.
+  - NfoFileScanner — reads the converted NfoMetadata interface by a dynamic key.
+- Not started, same kind of blocker: AudioFile (AudioTrack.ts:42,47 reads metadata unguarded), PlaybackSession, LibraryItemScanner.
+- Not started, time: Stream, LibraryItemScanData, PodcastScanner, Scanner.
+
+Set 5. Converted: profiler, comicBookExtractors.
+- Restored: areEquivalent (needs any for dynamic access on unknown); zipHelpers (the vendored archiver is not callable from TypeScript; only as unknown as compiles).
+- Not started:
+  - index, fileUtils, podcastUtils — module-level this, see below.
+  - rateLimiterFactory, scandir, prober, libraryHelpers, ffmpegHelpers — each needs a ! or cast on a value nothing guarantees.
+
+Set 6. Converted: MusicBrainz, GoogleBooks, CustomProviderAdapter, FantLab, opmlGenerator, parseEbookMetadata.
+- Restored: parseNameString (its real return type breaks AuthorController.ts:143,209); Audnexus (a variable assigned only in a callback narrows to never).
+- Not started, does not fit: Audible, iTunes, abmetadataGenerator, parseOverdriveMediaMarkers, parseOpfMetadata, parseComicMetadata.
+- Not started, time: parseEpubMetadata, TokenManager, OidcAuthStrategy.
+
+Counts
+
+┌───────────────────────────────┬───────┬───────┬───────┬───────┬───────┬───────┬─────┐
+│                               │ Set 1 │ Set 2 │ Set 3 │ Set 4 │ Set 5 │ Set 6 │ All │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ ! field set before it is read │ 2     │ 14    │ 2     │ 16    │ 3     │ 0     │ 37  │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ ! association always loaded   │ 1     │ 0     │ 0     │ 0     │ 0     │ 0     │ 1   │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ ! lookup guaranteed           │ 3     │ 6     │ 1     │ 0     │ 1     │ 2     │ 13  │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Index signatures              │ 1     │ 0     │ 0     │ 4     │ 0     │ 1     │ 6   │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Casts, allowance 1            │ 0     │ 0     │ 0     │ 0     │ 0     │ 0     │ 0   │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Casts, allowance 2            │ 1     │ 9     │ 0     │ 0     │ 0     │ 0     │ 10  │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Casts, allowance 3            │ 5     │ 0     │ 0     │ 0     │ 0     │ 0     │ 5   │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Casts, other                  │ 9     │ 19    │ 0     │ 6     │ 5     │ 0     │ 39  │
+└───────────────────────────────┴───────┴───────┴───────┴───────┴───────┴───────┴─────┘
+
+The totals (51 !, 6 index signatures, 54 casts) are my own count from the syntax tree and match the sub-agents' totals; the split into cases is theirs.
+
+The 39 "other" casts:
+- 19 libs/fsExtra missing methods
+- 3 libs/fsExtra return types (remove, copy)
+- 6 LibraryItem.media union
+- 2 libs/dateAndTime
+- 2 abmetadataGenerator.parseJson
+- 2 Node Module internals
+- 1 each: libs/umzug, Sequelize.QueryTypes, sanitizeFilename, a getTrackList argument, a libarchive argument
+
+No import type replaces a require; five new type-only imports were added. Set 1 also uses four Record<string, T> types, not counted as index signatures.
+
+Compiled-output differences in the 20 files (16 lines):
+- NotificationManager, MusicBrainz, GoogleBooks and FantLab now read require('axios').default. This is the form of OpenLibrary.ts, and it is the same object on axios 0.27.2 (checked).
+- require('uuid').v4, require('package.json').version and libs/dateAndTime are each split into a require plus a local const.
+- opmlGenerator and parseEbookMetadata end with one export = instead of module.exports.x = ….
+- AudioFileScanner no longer requires ../models/LibraryItem, which it used only in JSDoc types.
+
+Where the sets affected each other
+
+In the final state: nowhere. No file of one set is broken by another set's change.
+
+During the run:
+- One real case, set 6 to set 3. Set 6's trial of parseNameString (17:24) gave AudioFileScanner.ts two TS2322 errors at lines 352 and 354. They went away when set 6 restored its file.
+- Converted files outside the sets were broken briefly by a file in progress, and each time the owning sub-agent fixed or restored its file:
+  - AuthorController.ts — set 6 (parseNameString trial); also a "not a module" error from set 2's renames
+  - BackupController.ts — set 4 (Backup trial)
+  - RSSFeedController.ts — set 1 (RssFeedManager trial)
+  - LibraryController.ts and LibraryItemController.ts — set 3
+  - ShareController.ts, HlsRouter.ts, PublicRouter.ts — set 1
+  - AuthorFinder.ts, BookFinder.ts — set 6
+- The effect I expected did not happen. Set 5's index.js and fileUtils.js could not be converted, so they never changed types under the other sets.
+
+Latent, for the next run (the consumers are still JavaScript, so nothing shows yet):
+- PodcastEpisodeDownload fields are now nullable, which PodcastManager and ffmpegHelpers read directly.
+- LibraryScan.library is now nullable, which LibraryScanner reads directly.
+- executeMediaFileScans() returns (AudioFile | null)[], which BookScanner and PodcastScanner read without a test.
+- parseEbookMetadata.ts needs BookScanner's typedef BookMetadataObject to stay importable.
+- Four casts in converted controllers are no longer needed and their comments name JSDoc that is gone: LibraryItemController.ts:365 and :510, ShareController.ts:133, AuthorController.ts:448.
+
+Did CLAUDE.md work as written?
+
+Yes, for what it covers. No banned construct, no behaviour change, no file handed back with an error, and all 11 trial restores left an empty diff.
+
+Not covered, and it blocked files (each needs your rule or decision):
+1. Module-level this. index.js, fileUtils.js, podcastUtils.js and parseOpfMetadata.js call their own exports through this in top-level arrow functions (10 places in the first three). export = replaces module.exports with a new object, so those calls fail at runtime; set 5 reproduced it. They convert only if this. may become module.exports., which is a code change. This blocks the two most-imported files of the run.
+2. A null-initialised field that a converted file reads unguarded (Backup, AudioFile). No truthful type avoids breaking a file nobody may edit.
+3. A helper that returns false and is read untested (getFileTimestampsWithIno, three files). ! does not remove false.
+4. Reading a converted interface by a dynamic key (NfoFileScanner). It needs an index signature in a converted file that is not a model.
+5. The vendored archiver is not callable (zipHelpers, BackupManager:435). It needs a declaration in server/libs/ or a ruling.
+6. Casts no allowance names: a variable assigned only in a callback, a function that changes its argument's type in place, a too-vague return of a converted file (allowance 3 covers only arguments).
+
+Not covered, used by sub-agents, accepted by me (please rule; each is a single-file restore if you disagree):
+- Wrong argument count (TS2554), in three forms: an erased overload (CronManager.ts:219), a widening annotation of the local axios (MusicBrainz.ts:3), and a string type with a one-argument replace (AudioFileScanner.ts:30).
+- File-local redeclared built-ins: Number (PlaybackSessionManager) and Boolean as a type guard (AudioFileScanner), modelled on the existing isNaN precedent, which CLAUDE.md does not list either.
+- ! readings:
+  - the guarantee is a test in the callers (NotificationManager.ts:244, CronManager.ts:100, all 16 in set 4);
+  - a property added right after creation (profiler.ts:40);
+  - an include that is a left join (CronManager.ts:173).
+- Boundary casts at typed modules with a missing member (Sequelize.QueryTypes, Node's Module), and at fsExtra return types.
+- The allowance-3 form at a JavaScript or libs callee (comicBookExtractors.ts:165, PlaybackSessionManager.ts:408). The precedent is LibraryController.ts:708.
+- The .default read and the elided require listed above.
+
+Process gaps:
+- The harness refused every sub-agent's report.md, so the six reports exist only as hand-back messages in this session. Each set's bugs.md and declarations-needed.md are in the scratchpad under set1/ to set6/.
+- A sub-agent cannot test a declaration it may not add. I gave each a private no-emit config with a pending.d.ts; set 2 used it for semver. A model declaration cannot be tested this way; none was needed.
+- All six transpiled single files in their scratch folders to see compiled output, because the no-emit check cannot show it.
+- The probe counts did not predict which files fit. Files failed on one to three null or never errors, not on the many implicit-any ones, and checkJs cannot show a conflict with a converted importer. My set briefs were too optimistic because of this.
+- My set 5 brief named the wrong precedent for module.exports.x files (requestUtils.ts instead of parseSeriesString.ts). It did not change the outcome.
+
+Declarations: I added semver, the only one a converted file needed. I did not add two that nothing needs yet: embeddedCoverArt on Book.AudioFileObject (set 2, optional) and findOne/update on LibraryItemModelStatic (set 3, for a later LibraryScanner, not compiled).
+
+Bug log (82 entries, none fixed; line numbers of the JavaScript at HEAD)
+
+Set 1
+1. CronManager.js:212-215: executePodcastCron() returns early without clearing the expression from podcastCronExpressionsExecuting, so that cron never runs again.
+2. CronManager.js:166: extra argument to executePodcastCron().
+3. CronManager.js:248: media.metadata?.title reads the old model and is always undefined.
+4. CronManager.js:143: unguarded podcast.libraryItem.id.
+5. CronManager.js:175: log tag says [PodcastManager].
+6. NotificationManager.js:141-143: onTest() sends no event data, so the template code would throw (no caller).
+7. Notification.ts: only truthy values are substituted, so numFailed: 0 leaves the placeholder in the text.
+8. PlaybackSessionManager.js:104-106: req.body?.deviceInfo is guarded, req.body.sessions is not.
+9. PlaybackSessionManager.js:33-37: JSDoc of getSession() omits undefined.
+10. PlaybackSessionManager.js:240, 254, 399: a null setting in a payload typed without null.
+11. PlaybackSessionManager.js:213, 332: isNaN(Date) and Number.parseFloat(number) work only through coercion.
+12. RssFeedManager.js:183-186: buildXml() on a possibly null feed.
+13. RssFeedManager.js:90-94, 122-137: unguarded feed.entity after getEntity().
+14. RssFeedManager.js:57: JSDoc omits null.
+15. RssFeedManager.js:281-282: null for ownerName/ownerEmail against the typedef.
+
+Set 2
+1. CoverSearchManager.js:67: onError(error.message) passes one argument to a (provider, errorMessage) callback, so the message is emitted as the provider.
+2. CoverSearchManager.js:227-235: no else after the string test; .covers and .cover are read on a string (harmless).
+3. MigrationManager.js:17: the default global.configPath is never set (the server sets global.ConfigPath).
+4. CoverManager.js:25-32: the promise is returned without await inside try/catch, so the catch and its [] fallback are dead.
+5. CoverManager.js:34-44: removeFile has the same pattern.
+6. CoverManager.js:50: '.jiff' in the image extensions (probably '.jfif').
+7. CacheManager.js:65-70, 171-176: res.sendStatus(500) on a response that may already be sending.
+8. BinaryManager.js:157: a null platformSuffix is used as an index on an unsupported platform.
+9. BackupManager.js:486: output.destroy('Backup too large') passes a string where Node expects an Error.
+10. BackupManager.js:104: req.files.file is unguarded and nothing tests req.files.
+
+Set 3
+1. AudioFileScanner.js:112: author and series are destructured from metadata that has authors and seriesName, so they are never removed from the file name.
+2. AudioFileScanner.js:120: replace(publishedYear) has one argument, so the year becomes the text "undefined".
+3. AudioFileScanner.js:468: publishedAt gets a number where the model declares Date.
+4. AudioFileScanner.js:138: discFromFolder !== null can never be false (harmless).
+5. AudioFileScanner.js:539: the ?? 0 after .length can never apply (harmless).
+6. AudioFileScanner.js:585: the separator '//' can never be chosen, because '/' is tested first.
+7. AudioFileScanner.js:107, 153, 154, 217, 417: JSDoc only (return can be null, wrong parameter name and types).
+8. LibraryScanner.js:342-357: the false result of getFileTimestampsWithIno() is read without a test.
+9. LibraryScanner.js:95: a number is assigned to library.lastScan (Date or null).
+10. LibraryScanner.js:326, 654: a string is compared with a value documented as string[].
+11. LibraryScanner.js:57: library.libraryFolders.length is read without a test.
+12. LibraryScanner.js:284: a LibraryScan is passed where the JSDoc says ScanLogger.
+13. LibraryScanner.js:478: file.libraryId is missing from the PendingFileUpdate typedef.
+14. LibraryScanner.js:335, 339: buildLibraryFile is documented as one LibraryFile and used as an array.
+15. LibraryScanner.js:314: audiobooksOnly can be undefined where the JSDoc says boolean.
+
+Set 4
+1. MediaProbeData.js:54-60: setData() dereferences audioStream, which is null for a file with video but no audio; the error is swallowed in prober.probe().
+2. LibraryFile.js:64-71: the false result of getFileTimestampsWithIno() is never tested, so the file is created with ino undefined.
+3. LibraryItemScanner.js:146-154: the same untested result.
+4. Backup.js:37: this.key == 1 compares a string with a number.
+5. PlaybackSession.js:239, 247: isNaN() and parseFloat() on the same value, and += on a null timeListening.
+6. PodcastEpisodeDownload.js:25: startedAt is never assigned, so clients always get null.
+7. OpfFileScanner.js, NfoFileScanner.js:19-27: comments say "only if empty", but the code overwrites whenever the file has tags or genres.
+8. LibraryItemScanner.js, AbsMetadataFileScanner.js: JSDoc only.
+9. PodcastManager.js:78: the "already in queue" warning logs the title of the current download, not the queued one.
+
+Set 5
+1. areEquivalent.js:110: the array branch returns without stack.pop(), so an array that occurs twice throws a false "circular" error (reproduced).
+2. areEquivalent.js:64: type1 === 'function' can never be true.
+3. comicBookExtractors.js:36: return fs.readFile() in a try without await, so a failed read is not caught.
+4. comicBookExtractors.js:146-147: a possibly null buffer goes to Archive.open() (the class is never instantiated).
+5. rateLimiterFactory.js:60: keyGenerator can return undefined.
+6. scandir.js:77: a media file in the library root is stored as a string while other groups are arrays, and lines 87 and 115 call .push.
+7. scandir.js:128: JSDoc of buildLibraryFile.
+8. prober.js:76-77: stream.tags[tagKey] is read with an undefined key when no tag matches.
+9. libraryHelpers.js:31-32, 169-170, 224-229: .find() results are dereferenced without a test.
+10. ffmpegHelpers.js:178, 186-191: the tag loop treats year (a number) as a string, so the length limit never applies to it.
+11. ffmpegHelpers.js:108: new Promise(async …); an exception is an unhandled rejection and the promise never settles.
+12. profiler.js:17-20: a profiled function called without arguments throws when isFindQuery is true.
+
+Set 6
+1. MusicBrainz.js:43: axios.get() gets a third argument, so the User-Agent header is never sent.
+2. Audible.js:163, 171: a response without products makes items null and .filter throws.
+3. Audible.js:171: … || [] after .map(); an array is always truthy.
+4. iTunes.js:87, 149: cover and artistId can be null against the typedef; trackCount is not in it.
+5. iTunes.js:53: lang is not in iTunesSearchParams.
+6. Audnexus.js:72: authorRequest() returns null, not a Promise, for an invalid ASIN.
+7. Audnexus.js:122: findAuthorByName() writes levenshteinDistance onto the response objects.
+8. GoogleBooks.js:20, 35: reads publisherDate; the API field is publishedDate, so publishedYear is always null.
+9. CustomProviderAdapter.js:60-69: a malformed response throws, a failed request returns [].
+10. FantLab.js:101: authors.map without a guard.
+11. FantLab.js:165: list.pop() removes the edition from the response object.
+12. parseNameString.js:33: nameToLastFirst() can return undefined, which reaches Author.lastFirst.
+13. parseNameString.js:42: returns null for an empty string against its JSDoc.
+14. parseOpfMetadata.js:251: a top-level arrow function uses this as the exports object.
+15. parseOpfMetadata.js:18, 20, 98: null and false results against the JSDoc.
+16. parseOpfMetadata.js:80: isNaN of a string.
+17. parseOpfMetadata.js:177: .replace on a possibly null value, saved by the try/catch.
+18. parseComicMetadata.js:46-51: a rejected getFilePaths() gives undefined and filePaths.sort throws.
+19. parseEbookMetadata.js:8: the typedef EBookFileScanData says more than the parsers return.
+20. abmetadataGenerator.js:83-85: validated.series has two shapes.
+21. parseOverdriveMediaMarkers.js:29: err of xml2js.parseString is ignored and the code relies on a synchronous callback.
+
+★ Insight ─────────────────────────────────────
+- "Type-only" conversion fits a file only where the original code is already null-safe. Each unguarded read is either a bug, which may not be fixed, or needs an assertion that may not be written.
+- Each file converted in an earlier stage also fixes a type that later files must satisfy without editing it. Task.data, NfoMetadata, BackupController and AudioTrack each blocked a file in this run that way.
+  ─────────────────────────────────────────────────

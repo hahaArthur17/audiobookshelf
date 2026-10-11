@@ -1,0 +1,20 @@
+server/managers/CacheManager.ts                      named functions  11, called   4  CacheManager, ensureCachePaths, purgeCoverCache, purgeEntityCache
+server/managers/CoverManager.ts                      named functions  11, called   2  CoverManager, saveEmbeddedCoverArt
+server/managers/CoverSearchManager.ts                named functions   8, called   1  CoverSearchManager
+server/managers/CronManager.ts                       named functions  12, called   5  CronManager, init, initLibraryScanCrons, initOpenSessionCleanupCron, initPodcastCrons
+server/managers/MigrationManager.ts                  named functions  12, called   9  <static_initializer>, MigrationManager, checkOrCreateMigrationsMetaTable, copyMigrationsToConfigDir, extractVersionFromTag, fetchVersionsFromDatabase
+server/managers/NotificationManager.ts               named functions  13, called   2  NotificationManager, getData
+server/managers/PlaybackSessionManager.ts            named functions  18, called  13  PlaybackSessionManager, closeSession, closeSessionRequest, getDeviceInfo, getSession, getStream
+server/objects/PodcastEpisodeDownload.ts             named functions  14, called   0  
+server/providers/CustomProviderAdapter.ts            named functions   3, called   2  <instance_members_initializer>, CustomProviderAdapter
+server/providers/FantLab.ts                          named functions   9, called   2  <instance_members_initializer>, FantLab
+server/providers/GoogleBooks.ts                      named functions   5, called   2  <instance_members_initializer>, GoogleBooks
+server/providers/MusicBrainz.ts                      NOT LOADED
+server/scanner/AbsMetadataFileScanner.ts             named functions   3, called   2  AbsMetadataFileScanner, scanBookMetadataFile
+server/scanner/AudioFileScanner.ts                   named functions  13, called   8  AudioFileScanner, executeMediaFileScans, getBookChaptersFromAudioFiles, getTrackAndDiscNumberFromFilename, removeDupes, runSmartTrackOrder
+server/scanner/LibraryScan.ts                        named functions  16, called  16  LibraryScan, addLog, get elapsedTimestamp, get libraryFolders, get libraryId, get libraryMediaType
+server/scanner/OpfFileScanner.ts                     named functions   2, called   1  OpfFileScanner
+server/utils/comicBookExtractors.ts                  named functions  29, called   0  
+server/utils/generators/opmlGenerator.ts             named functions   1, called   0  
+server/utils/parsers/parseEbookMetadata.ts           named functions   2, called   0  
+server/utils/profiler.ts                             named functions   1, called   0  

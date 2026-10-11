@@ -1,0 +1,617 @@
+ Continue the JavaScript to TypeScript migration of server/, following CLAUDE.md. This run converts files in six sets. Every JavaScript file that is not in a set stays as it is. Session, Playlist and User controllers, server/models/LibraryItem.js, ApiRouter.js, Server.js, Database.js, server/migrations/, server/utils/queries/ and server/utils/migrations/ are not part of this run. You are the main agent.
+
+  Start: check the time with the date command. Run npm run build:server and npm test. Then copy dist-server into your scratchpad directory, in a folder named po-s10-baseline, so that you can compare compiled output later. Keep your probe results and any other scratch files in your scratchpad directory, not in the repository and not anywhere else.
+
+  The sets (paths under server/; every file is in the folder named at the start of its line):
+  - Set 1: managers/ PodcastManager, PlaybackSessionManager, RssFeedManager, NotificationManager, CronManager.
+  - Set 2: managers/ BackupManager, BinaryManager, CoverManager, MigrationManager, CoverSearchManager, CacheManager, AbMergeManager, AudioMetadataManager.
+  - Set 3: scanner/ BookScanner, LibraryScanner, AudioFileScanner.
+  - Set 4: scanner/ Scanner, PodcastScanner, LibraryItemScanData, LibraryItemScanner, LibraryScan, AbsMetadataFileScanner, MediaProbeData, NfoFileScanner, OpfFileScanner; objects/ Stream, PlaybackSession, PodcastEpisodeDownload, Backup; objects/files/ AudioFile, LibraryFile.
+  - Set 5: utils/ fileUtils, ffmpegHelpers, podcastUtils, index, prober, scandir, libraryHelpers, comicBookExtractors, areEquivalent, zipHelpers, rateLimiterFactory, profiler (not htmlEntities).
+  - Set 6: providers/ (all 7 files), utils/parsers/ (all 6 files), utils/generators/ (both files), auth/ TokenManager and OidcAuthStrategy.
+
+  Step 1, probe (15 minutes at most, no file edited, nothing renamed). Write a tsconfig into your scratchpad that extends tsconfig.check.json with checkJs set to true, and run it once over the files of the sets. Save the errors per file. Use the result in the briefs.
+
+  Step 2, sub-agents. Start six sub-agents in the same step, one per set, each with a written brief that you write (the files, the order, the probe errors for its files, the rules below, what to report). Their stop time is 70 minutes after your start.
+  Rules for the sub-agents:
+  - They only edit files and use git mv, in the files of their own set. If git mv fails with an index.lock error, they wait a few seconds and retry.
+  - They do not run npm run build:server or npm test, do not commit, add, stash, reset, checkout or clean, and do not edit server/models/, server/types/, server/routers/, any converted file or any file of another set. They report the declarations they need.
+  - They may run npx tsc -p tsconfig.check.json and filter its output to their own files. They keep scratch files in their own folder inside your scratchpad.
+  - They work in the order of their list, easiest first, and stop at the stop time. A file that does not fit the rules in CLAUDE.md, or that is not finished at the stop time, is restored completely (git mv back and git restore that file); they report the reason and the compiler errors.
+  - Each keeps a bug log of real bugs it notices (file, line, one sentence). Bugs are not fixed.
+  - Hand-back: per file converted or restored with the reason; the counts of !, index signatures and casts, with the three cases of ! and the allowances; the importers of any JSDoc typedef; files that routers bind; the declarations needed; the bug log.
+
+  Step 3, integrate, when all six have reported (at 80 minutes after your start at the latest; tell a sub-agent that is still running to restore its unfinished files and report). Add the declarations they asked for (rules in CLAUDE.md), run the build, the tests and the compiled-output comparison against your copy, and commit each set separately with the prefix [PO-S10] and explicit paths. If a set breaks the build, find the cause and restore the fewest files. Finish within 100 minutes of your start. Only you edit server/models/ and server/types/, run the build and the tests, and commit.
+
+  Do not convert or change anything else. Do not ask me questions unless you are blocked.
+
+  When you stop, report: per set, the files converted and the files restored with the reason; the lines converted; how many ! assertions (split into: field set before it is read, association always loaded, lookup guaranteed by earlier code), index signatures, casts (split by the three allowances and other); the bug log of all sub-agents; where the sets affected each other (a file that one set changed and that broke a file of another set); whether CLAUDE.md worked as written and what it did not cover; and the final build and test result.
+
+I'll start with the clock, since every deadline in this run is measured from it.
+
+  Ran 2 shell commands
+
+Start time locked at 16:47:11, giving sub-agents until 17:57, integration by 18:07, and overall completion by 18:27. I'll kick off the baseline build and tests now while reviewing the config files in parallel.
+
+  Read 2 files, ran 2 shell commands
+
+Build passes. Now the test baseline.
+
+  Ran 2 shell commands
+
+Baseline confirmed: build passes, 375 passing. Now I'll copy dist-server into the scratchpad and, in the same step, verify that every file named in the six sets actually exists as .js.
+
+  Ran 2 shell commands
+
+Baseline copy and all 60 set files check out. Next, I'll build a single source of truth for the sets to reuse across the probe, line counts, output comparison, and commits—starting with the probe, which I'll configure with absolute paths and pinned typeRoots to avoid false errors from an out-of-repo config.
+
+  Made 2 scratchpad edits +108, ran 2 shell commands
+
+The probe finished in 19 seconds with 12,815 lines covering the whole program, but I need to filter it down to just the 60 set files. I'll now split the results per file and combine that with dependency analysis (requires, importers, shared JSDoc typedefs) for the briefs.
+
+  Made 1 scratchpad edit +130, read 1 file, ran 1 shell command
+
+The probe is split across 60 files (17,026 lines, 1,947 errors). Before writing the briefs, I'm checking which untyped modules lack declarations, how earlier stages handled module.exports.x = … conversions, and what server/types/ already covers.
+
+  Ran 2 shell commands
+
+Key findings: semver, ssrf-req-filter, and xml2js need declarations added to server/types/untypedModules.d.ts; sets 5 and 6 use repeated module.exports.name = … assignments instead of a single export =; and heavily-imported files like fileUtils.js and utils/index.js mean set 5's changes will ripple widely. I'll now check how a precedent handled the module.exports conversion and verify whether utils/index.js is part of a require cycle before deciding if moving its exports to the end of the file is safe.
+
+  Ran 2 shell commands
+
+Confirmed utils/index.js has no circular dependency, so switching to a trailing export = { … } is safe there. I also spotted a gap: sub-agents needing new server/types/ declarations can't add them mid-run, so I'll give each one a scratch pending.d.ts to validate proposed types independently, then merge them in during Step 3.
+
+  Made 1 scratchpad edit +36, read 1 file, ran 1 shell command
+
+The clean tree passes the pending-declaration check. Next I'll verify whether already-converted TypeScript files actually reference JSDoc typedefs (like RssPodcastEpisode) from soon-to-be-converted files, since real type dependencies could break untouchable files.
+
+  Ran 1 shell command
+
+Found five already-converted files with real TypeScript references to typedefs in set files, meaning those names must be preserved during conversion. I'll verify in the scratchpad that the type-only declare namespace merge pattern (used in LogManager.ts/Book.ts) also works for modules exporting a plain object, then write the briefs.
+
+  Ran 1 shell command
+
+The merge works cleanly, with LogManager.ts as the exact precedent to cite. Now I'll write the briefs—one common part plus one per set.
+
+  Made 7 scratchpad edits +432
+
+One paragraph in the set 6 brief came out garbled; fixing it before launch, and checking the clock.
+
+  Made 1 scratchpad edit +3 -3, ran 1 shell command
+
+It's 17:02 — the probe step finished clean with no edits, so I'm now launching all six sub-agents at once, each given a self-contained prompt repeating the hard rules alongside the written briefs, probe findings, and CLAUDE.md.
+
+● 6 background agents launched (↓ to manage)
+PO-S10 set 1 managers
+PO-S10 set 2 managers
+PO-S10 set 3 scanners
+PO-S10 set 4 scanner objects
+PO-S10 set 5 utils
+PO-S10 set 6 providers parsers auth
+
+All six sub-agents are running. I'll set wake-up timers for right after their stop time and one minute before the 80-minute mark, and load the tool to message any sub-agent still active at cutoff.
+
+  Ran 2 shell commands
+
+While sub-agents run, I'll build integration tooling: a filesystem-only status script (avoiding git status to prevent lock contention), an exact !/as/any counter using the TypeScript compiler API instead of unreliable regex, and a compiled-output diff tool that classifies differences as allowed or needing review.
+
+  Made 3 scratchpad edits +273, ran 1 shell command
+
+No files had been renamed yet by 17:06 since the sub-agents were still reading their briefs. I'll test the two analysis scripts against known inputs now to catch any tooling bugs before integration.
+
+  Ran 1 shell command
+
+Both tools work as expected—the comparer caught the one real change while ignoring harmless code moves, and the counter's numbers check out on earlier files. Next, I'll check whether dist-server is tracked and review the house style for model declarations before starting Step 3.
+
+  Ran 1 shell command
+
+Since dist-server/ is git-ignored, I can safely clear its build-info if the incremental build crashes without affecting the repo. Next, I'll grab original line counts for all 60 files from the HEAD blobs (since working copies are mid-rename/edit) to tally the "lines converted" figure.
+
+  Ran 1 shell command
+
+The 60 files total 16,966 lines, and by 17:08 sets 1 and 2 had each renamed their first file. While waiting, I'll write a periodic read-only snapshot script to catch any already-converted file outside the sets getting broken, so I can alert the responsible sub-agent to fix it in time — setting two more timers for this check.
+
+  Made 1 scratchpad edit +50, ran 3 shell commands
+
+Step 2 is under way. Status at 17:10 (23 minutes in):
+
+- Baseline: build passes, 375 tests pass, dist-server copied to the scratchpad (471 files).
+- Probe: one checkJs run over the 60 files — 1,947 errors in 16,966 lines, split per file. It took 13 of the allowed 15 minutes; nothing was edited or renamed.
+- Sub-agents: all six started in one step at 17:02, each with a written brief. Eight files have been renamed so far, and the first whole-tree snapshot shows no errors outside the sets.
+
+Three things the probe turned up that CLAUDE.md doesn't cover, and that I built into the briefs:
+
+┌───────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────────────────────┐
+│                                  Finding                                  │                              What I did                              │
+├───────────────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────┤
+│ Five already-converted files use typedefs of set files as real types      │ Briefs require those names to stay importable via a type-only        │
+│ (podcastUtils.RssPodcastEpisode, Audnexus.AuthorSearchObj,                │ declare namespace (precedent LogManager.ts); I tested that this also │
+│ iTunes.iTunesPodcastSearchResult)                                         │  compiles for a module that exports a plain object                   │
+├───────────────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────┤
+│ semver, ssrf-req-filter and xml2js have no type declarations, and only I  │ Each sub-agent gets a private no-emit config plus a pending.d.ts in  │
+│ may edit server/types/                                                    │ its scratch folder, so it can validate a proposed declaration        │
+│                                                                           │ without touching the repo; I copy them in during Step 3              │
+├───────────────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────┤
+│ utils/index.js (40 importers) and fileUtils.js (37) change types under    │ Set 5 is told to convert them early and not after 17:30              │
+│ all five other sets when converted                                        │                                                                      │
+└───────────────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────────────────────┘
+
+I'm now waiting on the sub-agents. Timers will wake me at 17:27 and 17:43 for whole-tree snapshots (so I can warn a sub-agent that breaks a file outside the sets), at 17:58 after their stop time, and at 18:06 before the 80-minute cutoff.
+
+✻ Cogitated for 23m 31s · done 5:10 PM
+
+● Background command "Timer for the second whole-tree snapshot" completed (exit code 0)
+
+The 17:27 timer fired. Taking the second whole-tree snapshot.
+
+  Ran 1 shell command
+
+20 of 60 files are now TypeScript with only one error remaining (likely the missing semver declaration in MigrationManager.ts), and nothing outside the sets is broken. I'll check the sub-agents' scratch folders to see their progress and pre-draft declarations.
+
+  Ran 2 shell commands
+
+Set 4 hit a genuine rule conflict around an unguarded null field, and set 5 has only 2/12 files converted, likely due to a strict reading of the "no new variable" rule on module.exports.name = … files. I'll first check how earlier stages handled that pattern before deciding on any guidance.
+
+  Ran 1 shell command
+
+I realize I cited the wrong precedent for set 5 — the pattern that applies is the inline module.exports.parse = … conversion seen in parseSeriesString.js/notifications.js, not the module.exports = {…} style I referenced. Let me check what set 5 has actually been doing before deciding if a correction is needed.
+
+  Ran 2 shell commands
+
+No correction needed — set 5 is restoring files for sound reasons, not because of my brief:
+
+- zipHelpers: the vendored archiver lib is inferred as a type that a single-step cast can't reach (TS2352 demands as unknown as, which is banned).
+- areEquivalent: comparing unknown values needs narrowing that would change code.
+- utils/index.js: its scratch experiment shows it found the real trap.
+
+★ Insight ─────────────────────────────────────
+- utils/index.js has arrow functions at module scope that call this.isObject(…). In CommonJS, top-level this is module.exports, and arrow functions capture it. Today that works because module.exports.isObject = … populates that same object.
+- Convert the file to a trailing export = { … } and TypeScript emits module.exports = { … } — a new object. The arrows still hold the old one, which no longer has isObject on it. The code compiles, the require shape looks identical, and it throws at runtime.
+- So the 40-importer hub file genuinely cannot take the export = form without a code change. That is a property of the file, not a time problem, and CLAUDE.md doesn't anticipate it.
+  ─────────────────────────────────────────────────
+
+Status at 17:34: 20 of 60 files converted, whole tree clean apart from the one error waiting on the semver declaration. The sub-agents' own check logs show they are catching and fixing breakages in already-converted importers themselves (BackupController.ts, PublicRouter.ts, HlsRouter.ts and AuthorController.ts each showed an error briefly and were clean again by my 17:27 snapshot). Waiting for the 17:43 snapshot and the reports.
+
+› Message from @general-purpose (ctrl+o to expand)
+
+Set 6 has handed back: 6 of 17 converted clean, 11 stay JavaScript, each with a concrete reason. Its report raises two things I must rule on before integration — an annotation in MusicBrainz.ts that no allowance names, and a .default read that three files gain in the compiled output. Let me look at the actual code and at how earlier stages handled axios.
+
+  Ran 1 shell command
+
+● Agent "PO-S10 set 6 providers parsers auth" finished · 29m 39s
+
+I'll accept the .default pattern since it resolves to the same object as established in earlier conversions, but I'm leaning toward restoring the MusicBrainz.ts type annotation rather than loosening it to bypass TS2554, pending a consistent ruling once all reports are in. I'll also use ts.transpileModule to check compiled output per-file now, since a full build isn't possible mid-edit.
+
+  Made 2 scratchpad edits +25 -13
+
+› Message from @general-purpose (ctrl+o to expand)
+
+● Agent "PO-S10 set 4 scanner objects" finished · 31m 52s
+
+Set 4 is in: 4 of 15 files converted cleanly, with the rest staying JavaScript (4 restored after trial, 3 unfit, 4 untouched), and like set before it, the harness blocked report.md so the hand-back messages serve as the reports. With two sets now final, I'll use the new transpile mode to pre-review their output and verify the self-reported counts.
+
+  Ran 1 shell command
+
+The pre-check works but the classifier is too coarse — most flagged lines in set 4 are just the original line plus an appended // reason comment. I'll update the comparer to treat a +/- pair as equivalent when they only differ by a trailing comment, so the review list only shows real differences.
+
+  Made 1 scratchpad edit +22 -7, ran 1 shell command
+
+› Message from @general-purpose (ctrl+o to expand)
+
+● Agent "PO-S10 set 5 utils" finished · 32m 58s
+
+Set 5 confirmed only 2 of 12 converted cleanly, reaffirming the module-scope this issue across index.js, fileUtils.js, and podcastUtils.js, and rightly skipped renaming the hub files to avoid breaking 40 importers. With three sets now finalized, I'll inspect the actual flagged cast/! lines directly rather than rule on them from descriptions alone.
+
+  Ran 2 shell commands
+
+› Message from @general-purpose (ctrl+o to expand)
+
+● Agent "PO-S10 set 1 managers" finished · 35m 2s
+
+Set 1 finished with 3 of 5 files converted clean, RssFeedManager reverted due to unguarded nullable values, and PodcastManager untouched; comicBookExtractors.ts follows the established PO-S09 precedent (cast at call site, bug logged) and stays as-is. Now I'll mechanically verify the four completed sets by checking compiled output and exact counts.
+
+  Ran 1 shell command
+
+Mechanical verification of the 20 files converted so far: 0 any, 0 banned constructs, and my syntax-tree totals match the self-reported totals for every finished set (e.g. set 1: 6 !, 15 casts; set 4: 16 !, 4 index signatures, 6 casts). The compiled-output pre-check shows only require-line differences in sets 1, 4 and 5, plus the two export restructurings in set 6 that follow the earlier-stage precedent.
+
+My rulings on what the four finished sets referred to me — all accepted, each to be flagged in the final report because CLAUDE.md doesn't name the case:
+
+┌────────────────────────────────────────────────────┬───────────┬─────────────────────────────────────────────────────────────────────────────────┐
+│                   Referred item                    │  Ruling   │                                      Basis                                      │
+├────────────────────────────────────────────────────┼───────────┼─────────────────────────────────────────────────────────────────────────────────┤
+│ .default read gained by 4 files (MusicBrainz,      │ accept    │ established form in earlier-stage files; same object on axios 0.27.2 (verified) │
+│ GoogleBooks, FantLab, NotificationManager)         │           │                                                                                 │
+├────────────────────────────────────────────────────┼───────────┼─────────────────────────────────────────────────────────────────────────────────┤
+│ comicBookExtractors.ts:165 cast of a possibly-null │ accept    │ identical to LibraryController.ts:708, kept in PO-S09                           │
+│  argument                                          │           │                                                                                 │
+├────────────────────────────────────────────────────┼───────────┼─────────────────────────────────────────────────────────────────────────────────┤
+│ PodcastEpisodeDownload.ts:110 as string            │ accept    │ sanitizeFilename returns false only for a non-string; the argument is a         │
+│                                                    │           │ template literal                                                                │
+├────────────────────────────────────────────────────┼───────────┼─────────────────────────────────────────────────────────────────────────────────┤
+│ profiler.ts:40 ! on a property added at creation   │ accept as │ set three lines after creation, before the object is stored                     │
+│                                                    │  case F   │                                                                                 │
+├────────────────────────────────────────────────────┼───────────┼─────────────────────────────────────────────────────────────────────────────────┤
+│ Two ! whose guarantee is a test in the callers     │ accept    │ earlier code does guarantee the value; every caller checked                     │
+│ (set 1)                                            │           │                                                                                 │
+├────────────────────────────────────────────────────┼───────────┼─────────────────────────────────────────────────────────────────────────────────┤
+│ TS2554 (extra argument): erased overload in        │ accept    │ sound, erased, no cast; I reconsidered my earlier lean to restore MusicBrainz — │
+│ CronManager, widening annotation in MusicBrainz    │ both      │  a widening annotation needs no allowance (CLAUDE.md: "an annotation, not a     │
+│                                                    │           │ cast"), and the bug is logged                                                   │
+├────────────────────────────────────────────────────┼───────────┼─────────────────────────────────────────────────────────────────────────────────┤
+│ declare const Number in PlaybackSessionManager     │ accept    │ same technique as the declare function isNaN precedent used in six converted    │
+│                                                    │           │ files                                                                           │
+└────────────────────────────────────────────────────┴───────────┴─────────────────────────────────────────────────────────────────────────────────┘
+
+Waiting on sets 2 and 3, the 17:43 snapshot, and the 17:58 timer.
+
+✻ Baked for 6m 21s · done 5:40 PM
+
+› Message from @general-purpose (ctrl+o to expand)
+
+Set 2 has handed back: 4 of 8 converted (CoverSearchManager, CacheManager, CoverManager clean; MigrationManager clean once the semver declaration is added, verified by the sub-agent with its private config). BinaryManager restored, three not started. Five of six sets are final; only set 3 is still working.
+
+Set 2 asks me to rule on MigrationManager's 18 !. That is a lot for one file, so I'll read each one rather than accept the count.
+
+  Ran 1 shell command
+
+● Agent "PO-S10 set 2 managers" finished · 36m 57s
+
+› Message from @general-purpose (ctrl+o to expand)
+
+● Agent "PO-S10 set 3 scanners" finished · 37m 18s
+
+All six sub-agents have reported in: 20 of 60 files converted, with every reviewed ! usage and Set 3's exceptions checked and accepted against CLAUDE.md rules. Moving to Step 3 now — clearing unneeded timers and adding the one required declaration.
+
+● Stop Task
+until [ $(date +%s) -ge 1791694691 ]; do sleep 15; done; echo "TIMER_A: 17:58 - sub-agent stop time (17:57) has passed"; date · stopped
+
+● Stop Task
+until [ $(date +%s) -ge 1791695171 ]; do sleep 15; done; echo "TIMER_B: 18:06 - one minute before the 80-minute mark (18:07)"; date · stopped
+
+● Stop Task
+until [ $(date +%s) -ge 1791693791 ]; do sleep 15; done; echo "TIMER_S3: 17:43 - take whole-tree snapshot 3"; date · stopped
+
+● Update(server\types\untypedModules.d.ts)
+Added 7 lines
+  }
+  export function createTransport(options: object): Transporter
+}
+
+// Used by server/managers/MigrationManager.ts. Only gt, lte and compare are called. A value that is not a version string makes them thr
+ow a TypeError, so the parameters are strings.
+declare module 'semver' {
+  export function gt(v1: string, v2: string): boolean
+  export function lte(v1: string, v2: string): boolean
+  export function compare(v1: string, v2: string): 1 | 0 | -1
+}
+
+Declaration added. Now the whole-tree no-emit check and the real git state (safe to run git status now that no sub-agent holds the index).
+
+  Ran 1 shell command
+
+Build check shows 0 errors and the git state is clean — 20 renames, one modified declaration file, nothing stray. Now running the real build and tests, watching for the incremental-build crash mentioned in CLAUDE.md.
+
+  Ran 3 shell commands
+
+Build and all 375 tests pass, and the compiled output matches the baseline exactly for untouched files, with only 16 require-adjacent lines to review across the 20 converted files. I'll now compare the ordered list of required modules before and after to confirm none were dropped or reordered.
+
+  Ran 1 shell command
+
+Only AudioFileScanner lost a require (LibraryItem, used solely in JSDoc types), and require order is otherwise unchanged across all 20 files. Since dropped requires can shift module load order outside what unit tests cover, I'll now compare the load order of Server.js between the baseline and new build.
+
+  Made 1 scratchpad edit +21, ran 1 shell command
+
+Load-order check confirms both builds load the same 363 modules identically, so nothing needs restoring. I'll now commit the declaration first, then each set in order (set 6 before set 2 due to the CoverManager/parseEbookMetadata dependency), verifying each intermediate commit type-checks.
+
+  Made 7 scratchpad edits +120
+
+I'll run a final count on the integrated tree to verify the numbers for the commit messages, then do a dry run of the first per-path commit to confirm the pathspec works with staged renames.
+
+  Ran 1 shell command
+
+Totals confirmed: 20/60 files, 3,979/16,966 lines, 51 !, 6 index signatures, 54 casts, 0 any and 0 banned constructs. I'll commit the declaration and set 1 first, then verify before proceeding with the rest.
+
+  Ran 1 shell command
+
+Both commits are correct — set 1's contains exactly its three renames, and 17 renames remain. Now the other five sets.
+
+  Ran 1 shell command
+
+All seven commits are in with a clean working tree (Set 5 shows as delete+add rather than rename, but the content is correct). Since I already verified build/tests on the combined tree, I'll now check that each intermediate commit type-checks on its own using the non-incremental no-emit check, so the history stays bisectable.
+
+  Ran 1 shell command
+
+All intermediate commits type-check cleanly with 0 errors, and I'm back on the branch at the last commit with a clean tree. I'll now do a final confirmation on HEAD: build, tests, and another compiled-output comparison.
+
+  Ran 2 shell commands
+
+PO-S10 report
+
+20 of the 60 files are now TypeScript (3,979 of 16,966 lines); the other 40 are JavaScript, identical to HEAD. The build passes, 375 tests pass, and the run finished 67 minutes after the start (limit 100). Thirty of the 40 do not fit the rules as written; only ten were left for time.
+
+Final build and test
+
+┌─────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────┐
+│                      Check                      │                                 Result                                  │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ npm run build:server                            │ passes (the incremental build did not crash)                            │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ npm test                                        │ 375 passing                                                             │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ Whole-tree no-emit check                        │ 0 errors                                                                │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ Compiled output, 449 files not converted        │ byte-identical to the baseline                                          │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ Compiled output, 20 converted files             │ only require lines, comments and two export forms differ (listed below) │
+├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┤
+│ Banned constructs, counted from the syntax tree │ 0 any, 0 @ts- comments, 0 as unknown as                                 │
+└─────────────────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────┘
+
+Two checks I added: each of the seven commits type-checks on its own (0 errors each), and loading Server.js from the baseline and from the new build loads the same 363 modules in the same order.
+
+Commits, on top of 6752a047, nothing pushed:
+
+- c717a73c types: declare semver
+- 19e5ff12 set 1
+- f5646086 set 6 (before set 2, because CoverManager.ts imports a type from parseEbookMetadata.ts)
+- 6c52529a set 2
+- 8c3c7a36 set 3
+- b90bc8f4 set 4
+- 3dfc6779 set 5
+
+Timing: start 16:47, probe 16:49 to 17:02, sub-agents started 17:02, all six reported between 17:34 and 17:43, integration finished 17:54. No sub-agent had to be told to stop, and no file had to be restored at integration.
+
+Per set
+
+┌─────┬───────────┬───────┬────────────────────────┬─────────────┐
+│ Set │ Converted │ Lines │ Restored after a trial │ Not started │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 1   │ 3 of 5    │ 991   │ 1                      │ 1           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 2   │ 4 of 8    │ 1,118 │ 1                      │ 3           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 3   │ 1 of 3    │ 597   │ 1                      │ 1           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 4   │ 4 of 15   │ 409   │ 4                      │ 7           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 5   │ 2 of 12   │ 281   │ 2                      │ 8           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ 6   │ 6 of 17   │ 583   │ 2                      │ 9           │
+├─────┼───────────┼───────┼────────────────────────┼─────────────┤
+│ All │ 20 of 60  │ 3,979 │ 11                     │ 29          │
+└─────┴───────────┴───────┴────────────────────────┴─────────────┘
+
+Set 1. Converted: NotificationManager, CronManager, PlaybackSessionManager.
+- Restored: RssFeedManager — three values the original leaves unguarded (feed.entity after getEntity() twice, feed after updateFeedForEntity()).
+- Not started: PodcastManager (time).
+
+Set 2. Converted: CoverSearchManager, CacheManager, MigrationManager, CoverManager.
+- Restored: BinaryManager — a null platformSuffix is used as an index, unguarded (line 157).
+- Not started: BackupManager (time, and req.files.file is unguarded); AudioMetadataManager and AbMergeManager (every read of task.data would need a ! and a cast from unknown, because the converted Task.ts types it Record<string, unknown> | null).
+
+Set 3. Converted: AudioFileScanner.
+- Restored: LibraryScanner — reads the untested false result of getFileTimestampsWithIno(), assigns a number to Library.lastScan, reads libraryFolders unguarded.
+- Not started: BookScanner (time).
+
+Set 4. Converted: PodcastEpisodeDownload, LibraryScan, OpfFileScanner, AbsMetadataFileScanner.
+- Restored:
+  - MediaProbeData — audioStream is dereferenced while it can be null.
+  - Backup — BackupController.ts:159 breaks once fullPath is string | null.
+  - LibraryFile — the same untested false result.
+  - NfoFileScanner — reads the converted NfoMetadata interface by a dynamic key.
+- Not started, same kind of blocker: AudioFile (AudioTrack.ts:42,47 reads metadata unguarded), PlaybackSession, LibraryItemScanner.
+- Not started, time: Stream, LibraryItemScanData, PodcastScanner, Scanner.
+
+Set 5. Converted: profiler, comicBookExtractors.
+- Restored: areEquivalent (needs any for dynamic access on unknown); zipHelpers (the vendored archiver is not callable from TypeScript; only as unknown as compiles).
+- Not started:
+  - index, fileUtils, podcastUtils — module-level this, see below.
+  - rateLimiterFactory, scandir, prober, libraryHelpers, ffmpegHelpers — each needs a ! or cast on a value nothing guarantees.
+
+Set 6. Converted: MusicBrainz, GoogleBooks, CustomProviderAdapter, FantLab, opmlGenerator, parseEbookMetadata.
+- Restored: parseNameString (its real return type breaks AuthorController.ts:143,209); Audnexus (a variable assigned only in a callback narrows to never).
+- Not started, does not fit: Audible, iTunes, abmetadataGenerator, parseOverdriveMediaMarkers, parseOpfMetadata, parseComicMetadata.
+- Not started, time: parseEpubMetadata, TokenManager, OidcAuthStrategy.
+
+Counts
+
+┌───────────────────────────────┬───────┬───────┬───────┬───────┬───────┬───────┬─────┐
+│                               │ Set 1 │ Set 2 │ Set 3 │ Set 4 │ Set 5 │ Set 6 │ All │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ ! field set before it is read │ 2     │ 14    │ 2     │ 16    │ 3     │ 0     │ 37  │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ ! association always loaded   │ 1     │ 0     │ 0     │ 0     │ 0     │ 0     │ 1   │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ ! lookup guaranteed           │ 3     │ 6     │ 1     │ 0     │ 1     │ 2     │ 13  │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Index signatures              │ 1     │ 0     │ 0     │ 4     │ 0     │ 1     │ 6   │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Casts, allowance 1            │ 0     │ 0     │ 0     │ 0     │ 0     │ 0     │ 0   │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Casts, allowance 2            │ 1     │ 9     │ 0     │ 0     │ 0     │ 0     │ 10  │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Casts, allowance 3            │ 5     │ 0     │ 0     │ 0     │ 0     │ 0     │ 5   │
+├───────────────────────────────┼───────┼───────┼───────┼───────┼───────┼───────┼─────┤
+│ Casts, other                  │ 9     │ 19    │ 0     │ 6     │ 5     │ 0     │ 39  │
+└───────────────────────────────┴───────┴───────┴───────┴───────┴───────┴───────┴─────┘
+
+The totals (51 !, 6 index signatures, 54 casts) are my own count from the syntax tree and match the sub-agents' totals; the split into cases is theirs.
+
+The 39 "other" casts:
+- 19 libs/fsExtra missing methods
+- 3 libs/fsExtra return types (remove, copy)
+- 6 LibraryItem.media union
+- 2 libs/dateAndTime
+- 2 abmetadataGenerator.parseJson
+- 2 Node Module internals
+- 1 each: libs/umzug, Sequelize.QueryTypes, sanitizeFilename, a getTrackList argument, a libarchive argument
+
+No import type replaces a require; five new type-only imports were added. Set 1 also uses four Record<string, T> types, not counted as index signatures.
+
+Compiled-output differences in the 20 files (16 lines):
+- NotificationManager, MusicBrainz, GoogleBooks and FantLab now read require('axios').default. This is the form of OpenLibrary.ts, and it is the same object on axios 0.27.2 (checked).
+- require('uuid').v4, require('package.json').version and libs/dateAndTime are each split into a require plus a local const.
+- opmlGenerator and parseEbookMetadata end with one export = instead of module.exports.x = ….
+- AudioFileScanner no longer requires ../models/LibraryItem, which it used only in JSDoc types.
+
+Where the sets affected each other
+
+In the final state: nowhere. No file of one set is broken by another set's change.
+
+During the run:
+- One real case, set 6 to set 3. Set 6's trial of parseNameString (17:24) gave AudioFileScanner.ts two TS2322 errors at lines 352 and 354. They went away when set 6 restored its file.
+- Converted files outside the sets were broken briefly by a file in progress, and each time the owning sub-agent fixed or restored its file:
+  - AuthorController.ts — set 6 (parseNameString trial); also a "not a module" error from set 2's renames
+  - BackupController.ts — set 4 (Backup trial)
+  - RSSFeedController.ts — set 1 (RssFeedManager trial)
+  - LibraryController.ts and LibraryItemController.ts — set 3
+  - ShareController.ts, HlsRouter.ts, PublicRouter.ts — set 1
+  - AuthorFinder.ts, BookFinder.ts — set 6
+- The effect I expected did not happen. Set 5's index.js and fileUtils.js could not be converted, so they never changed types under the other sets.
+
+Latent, for the next run (the consumers are still JavaScript, so nothing shows yet):
+- PodcastEpisodeDownload fields are now nullable, which PodcastManager and ffmpegHelpers read directly.
+- LibraryScan.library is now nullable, which LibraryScanner reads directly.
+- executeMediaFileScans() returns (AudioFile | null)[], which BookScanner and PodcastScanner read without a test.
+- parseEbookMetadata.ts needs BookScanner's typedef BookMetadataObject to stay importable.
+- Four casts in converted controllers are no longer needed and their comments name JSDoc that is gone: LibraryItemController.ts:365 and :510, ShareController.ts:133, AuthorController.ts:448.
+
+Did CLAUDE.md work as written?
+
+Yes, for what it covers. No banned construct, no behaviour change, no file handed back with an error, and all 11 trial restores left an empty diff.
+
+Not covered, and it blocked files (each needs your rule or decision):
+1. Module-level this. index.js, fileUtils.js, podcastUtils.js and parseOpfMetadata.js call their own exports through this in top-level arrow functions (10 places in the first three). export = replaces module.exports with a new object, so those calls fail at runtime; set 5 reproduced it. They convert only if this. may become module.exports., which is a code change. This blocks the two most-imported files of the run.
+2. A null-initialised field that a converted file reads unguarded (Backup, AudioFile). No truthful type avoids breaking a file nobody may edit.
+3. A helper that returns false and is read untested (getFileTimestampsWithIno, three files). ! does not remove false.
+4. Reading a converted interface by a dynamic key (NfoFileScanner). It needs an index signature in a converted file that is not a model.
+5. The vendored archiver is not callable (zipHelpers, BackupManager:435). It needs a declaration in server/libs/ or a ruling.
+6. Casts no allowance names: a variable assigned only in a callback, a function that changes its argument's type in place, a too-vague return of a converted file (allowance 3 covers only arguments).
+
+Not covered, used by sub-agents, accepted by me (please rule; each is a single-file restore if you disagree):
+- Wrong argument count (TS2554), in three forms: an erased overload (CronManager.ts:219), a widening annotation of the local axios (MusicBrainz.ts:3), and a string type with a one-argument replace (AudioFileScanner.ts:30).
+- File-local redeclared built-ins: Number (PlaybackSessionManager) and Boolean as a type guard (AudioFileScanner), modelled on the existing isNaN precedent, which CLAUDE.md does not list either.
+- ! readings:
+  - the guarantee is a test in the callers (NotificationManager.ts:244, CronManager.ts:100, all 16 in set 4);
+  - a property added right after creation (profiler.ts:40);
+  - an include that is a left join (CronManager.ts:173).
+- Boundary casts at typed modules with a missing member (Sequelize.QueryTypes, Node's Module), and at fsExtra return types.
+- The allowance-3 form at a JavaScript or libs callee (comicBookExtractors.ts:165, PlaybackSessionManager.ts:408). The precedent is LibraryController.ts:708.
+- The .default read and the elided require listed above.
+
+Process gaps:
+- The harness refused every sub-agent's report.md, so the six reports exist only as hand-back messages in this session. Each set's bugs.md and declarations-needed.md are in the scratchpad under set1/ to set6/.
+- A sub-agent cannot test a declaration it may not add. I gave each a private no-emit config with a pending.d.ts; set 2 used it for semver. A model declaration cannot be tested this way; none was needed.
+- All six transpiled single files in their scratch folders to see compiled output, because the no-emit check cannot show it.
+- The probe counts did not predict which files fit. Files failed on one to three null or never errors, not on the many implicit-any ones, and checkJs cannot show a conflict with a converted importer. My set briefs were too optimistic because of this.
+- My set 5 brief named the wrong precedent for module.exports.x files (requestUtils.ts instead of parseSeriesString.ts). It did not change the outcome.
+
+Declarations: I added semver, the only one a converted file needed. I did not add two that nothing needs yet: embeddedCoverArt on Book.AudioFileObject (set 2, optional) and findOne/update on LibraryItemModelStatic (set 3, for a later LibraryScanner, not compiled).
+
+Bug log (82 entries, none fixed; line numbers of the JavaScript at HEAD)
+
+Set 1
+1. CronManager.js:212-215: executePodcastCron() returns early without clearing the expression from podcastCronExpressionsExecuting, so that cron never runs again.
+2. CronManager.js:166: extra argument to executePodcastCron().
+3. CronManager.js:248: media.metadata?.title reads the old model and is always undefined.
+4. CronManager.js:143: unguarded podcast.libraryItem.id.
+5. CronManager.js:175: log tag says [PodcastManager].
+6. NotificationManager.js:141-143: onTest() sends no event data, so the template code would throw (no caller).
+7. Notification.ts: only truthy values are substituted, so numFailed: 0 leaves the placeholder in the text.
+8. PlaybackSessionManager.js:104-106: req.body?.deviceInfo is guarded, req.body.sessions is not.
+9. PlaybackSessionManager.js:33-37: JSDoc of getSession() omits undefined.
+10. PlaybackSessionManager.js:240, 254, 399: a null setting in a payload typed without null.
+11. PlaybackSessionManager.js:213, 332: isNaN(Date) and Number.parseFloat(number) work only through coercion.
+12. RssFeedManager.js:183-186: buildXml() on a possibly null feed.
+13. RssFeedManager.js:90-94, 122-137: unguarded feed.entity after getEntity().
+14. RssFeedManager.js:57: JSDoc omits null.
+15. RssFeedManager.js:281-282: null for ownerName/ownerEmail against the typedef.
+
+Set 2
+1. CoverSearchManager.js:67: onError(error.message) passes one argument to a (provider, errorMessage) callback, so the message is emitted as the provider.
+2. CoverSearchManager.js:227-235: no else after the string test; .covers and .cover are read on a string (harmless).
+3. MigrationManager.js:17: the default global.configPath is never set (the server sets global.ConfigPath).
+4. CoverManager.js:25-32: the promise is returned without await inside try/catch, so the catch and its [] fallback are dead.
+5. CoverManager.js:34-44: removeFile has the same pattern.
+6. CoverManager.js:50: '.jiff' in the image extensions (probably '.jfif').
+7. CacheManager.js:65-70, 171-176: res.sendStatus(500) on a response that may already be sending.
+8. BinaryManager.js:157: a null platformSuffix is used as an index on an unsupported platform.
+9. BackupManager.js:486: output.destroy('Backup too large') passes a string where Node expects an Error.
+10. BackupManager.js:104: req.files.file is unguarded and nothing tests req.files.
+
+Set 3
+1. AudioFileScanner.js:112: author and series are destructured from metadata that has authors and seriesName, so they are never removed from the file name.
+2. AudioFileScanner.js:120: replace(publishedYear) has one argument, so the year becomes the text "undefined".
+3. AudioFileScanner.js:468: publishedAt gets a number where the model declares Date.
+4. AudioFileScanner.js:138: discFromFolder !== null can never be false (harmless).
+5. AudioFileScanner.js:539: the ?? 0 after .length can never apply (harmless).
+6. AudioFileScanner.js:585: the separator '//' can never be chosen, because '/' is tested first.
+7. AudioFileScanner.js:107, 153, 154, 217, 417: JSDoc only (return can be null, wrong parameter name and types).
+8. LibraryScanner.js:342-357: the false result of getFileTimestampsWithIno() is read without a test.
+9. LibraryScanner.js:95: a number is assigned to library.lastScan (Date or null).
+10. LibraryScanner.js:326, 654: a string is compared with a value documented as string[].
+11. LibraryScanner.js:57: library.libraryFolders.length is read without a test.
+12. LibraryScanner.js:284: a LibraryScan is passed where the JSDoc says ScanLogger.
+13. LibraryScanner.js:478: file.libraryId is missing from the PendingFileUpdate typedef.
+14. LibraryScanner.js:335, 339: buildLibraryFile is documented as one LibraryFile and used as an array.
+15. LibraryScanner.js:314: audiobooksOnly can be undefined where the JSDoc says boolean.
+
+Set 4
+1. MediaProbeData.js:54-60: setData() dereferences audioStream, which is null for a file with video but no audio; the error is swallowed in prober.probe().
+2. LibraryFile.js:64-71: the false result of getFileTimestampsWithIno() is never tested, so the file is created with ino undefined.
+3. LibraryItemScanner.js:146-154: the same untested result.
+4. Backup.js:37: this.key == 1 compares a string with a number.
+5. PlaybackSession.js:239, 247: isNaN() and parseFloat() on the same value, and += on a null timeListening.
+6. PodcastEpisodeDownload.js:25: startedAt is never assigned, so clients always get null.
+7. OpfFileScanner.js, NfoFileScanner.js:19-27: comments say "only if empty", but the code overwrites whenever the file has tags or genres.
+8. LibraryItemScanner.js, AbsMetadataFileScanner.js: JSDoc only.
+9. PodcastManager.js:78: the "already in queue" warning logs the title of the current download, not the queued one.
+
+Set 5
+1. areEquivalent.js:110: the array branch returns without stack.pop(), so an array that occurs twice throws a false "circular" error (reproduced).
+2. areEquivalent.js:64: type1 === 'function' can never be true.
+3. comicBookExtractors.js:36: return fs.readFile() in a try without await, so a failed read is not caught.
+4. comicBookExtractors.js:146-147: a possibly null buffer goes to Archive.open() (the class is never instantiated).
+5. rateLimiterFactory.js:60: keyGenerator can return undefined.
+6. scandir.js:77: a media file in the library root is stored as a string while other groups are arrays, and lines 87 and 115 call .push.
+7. scandir.js:128: JSDoc of buildLibraryFile.
+8. prober.js:76-77: stream.tags[tagKey] is read with an undefined key when no tag matches.
+9. libraryHelpers.js:31-32, 169-170, 224-229: .find() results are dereferenced without a test.
+10. ffmpegHelpers.js:178, 186-191: the tag loop treats year (a number) as a string, so the length limit never applies to it.
+11. ffmpegHelpers.js:108: new Promise(async …); an exception is an unhandled rejection and the promise never settles.
+12. profiler.js:17-20: a profiled function called without arguments throws when isFindQuery is true.
+
+Set 6
+1. MusicBrainz.js:43: axios.get() gets a third argument, so the User-Agent header is never sent.
+2. Audible.js:163, 171: a response without products makes items null and .filter throws.
+3. Audible.js:171: … || [] after .map(); an array is always truthy.
+4. iTunes.js:87, 149: cover and artistId can be null against the typedef; trackCount is not in it.
+5. iTunes.js:53: lang is not in iTunesSearchParams.
+6. Audnexus.js:72: authorRequest() returns null, not a Promise, for an invalid ASIN.
+7. Audnexus.js:122: findAuthorByName() writes levenshteinDistance onto the response objects.
+8. GoogleBooks.js:20, 35: reads publisherDate; the API field is publishedDate, so publishedYear is always null.
+9. CustomProviderAdapter.js:60-69: a malformed response throws, a failed request returns [].
+10. FantLab.js:101: authors.map without a guard.
+11. FantLab.js:165: list.pop() removes the edition from the response object.
+12. parseNameString.js:33: nameToLastFirst() can return undefined, which reaches Author.lastFirst.
+13. parseNameString.js:42: returns null for an empty string against its JSDoc.
+14. parseOpfMetadata.js:251: a top-level arrow function uses this as the exports object.
+15. parseOpfMetadata.js:18, 20, 98: null and false results against the JSDoc.
+16. parseOpfMetadata.js:80: isNaN of a string.
+17. parseOpfMetadata.js:177: .replace on a possibly null value, saved by the try/catch.
+18. parseComicMetadata.js:46-51: a rejected getFilePaths() gives undefined and filePaths.sort throws.
+19. parseEbookMetadata.js:8: the typedef EBookFileScanData says more than the parsers return.
+20. abmetadataGenerator.js:83-85: validated.series has two shapes.
+21. parseOverdriveMediaMarkers.js:29: err of xml2js.parseString is ignored and the code relies on a synchronous callback.
+
+★ Insight ─────────────────────────────────────
+- "Type-only" conversion fits a file only where the original code is already null-safe. Each unguarded read is either a bug, which may not be fixed, or needs an assertion that may not be written.
+- Each file converted in an earlier stage also fixes a type that later files must satisfy without editing it. Task.data, NfoMetadata, BackupController and AudioTrack each blocked a file in this run that way.
+  ─────────────────────────────────────────────────
+
+✻ Worked for 1h 8m 58s · done 5:55 PM
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ⏵⏵ auto mode on (shift+tab to cycle) · ← for agents · shift+click to nat

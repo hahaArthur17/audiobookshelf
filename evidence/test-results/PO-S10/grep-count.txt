@@ -1,0 +1,21 @@
+CacheManager.ts                    != 2 as= 9 idx=0 any=0
+CoverManager.ts                    != 0 as= 4 idx=0 any=0
+CoverSearchManager.ts              != 0 as= 7 idx=0 any=0
+CronManager.ts                     != 2 as= 5 idx=0 any=0
+MigrationManager.ts                !=18 as=12 idx=0 any=0
+NotificationManager.ts             != 2 as= 1 idx=0 any=0
+PlaybackSessionManager.ts          != 2 as= 9 idx=1 any=0
+PodcastEpisodeDownload.ts          != 8 as= 1 idx=0 any=0
+CustomProviderAdapter.ts           != 0 as= 0 idx=1 any=0
+FantLab.ts                         != 1 as= 0 idx=0 any=0
+GoogleBooks.ts                     != 0 as= 0 idx=0 any=0
+MusicBrainz.ts                     != 0 as= 0 idx=0 any=0
+AbsMetadataFileScanner.ts          != 0 as= 2 idx=2 any=0
+AudioFileScanner.ts                != 4 as= 0 idx=0 any=0
+LibraryScan.ts                     != 8 as= 3 idx=0 any=0
+OpfFileScanner.ts                  != 0 as= 0 idx=2 any=0
+comicBookExtractors.ts             != 2 as= 5 idx=0 any=0
+opmlGenerator.ts                   != 0 as= 0 idx=0 any=0
+parseEbookMetadata.ts              != 0 as= 0 idx=0 any=0
+profiler.ts                        != 2 as= 0 idx=0 any=0
+TOTAL non-null 51 casts 58 index signatures 6 any 0

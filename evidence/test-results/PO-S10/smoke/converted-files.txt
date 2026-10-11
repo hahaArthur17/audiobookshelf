@@ -1,0 +1,21 @@
+R057	server/managers/CacheManager.js	server/managers/CacheManager.ts
+R074	server/managers/CoverManager.js	server/managers/CoverManager.ts
+R073	server/managers/CoverSearchManager.js	server/managers/CoverSearchManager.ts
+R071	server/managers/CronManager.js	server/managers/CronManager.ts
+R063	server/managers/MigrationManager.js	server/managers/MigrationManager.ts
+R076	server/managers/NotificationManager.js	server/managers/NotificationManager.ts
+R071	server/managers/PlaybackSessionManager.js	server/managers/PlaybackSessionManager.ts
+R056	server/objects/PodcastEpisodeDownload.js	server/objects/PodcastEpisodeDownload.ts
+R064	server/providers/CustomProviderAdapter.js	server/providers/CustomProviderAdapter.ts
+R067	server/providers/FantLab.js	server/providers/FantLab.ts
+R057	server/providers/GoogleBooks.js	server/providers/GoogleBooks.ts
+R056	server/providers/MusicBrainz.js	server/providers/MusicBrainz.ts
+R062	server/scanner/AbsMetadataFileScanner.js	server/scanner/AbsMetadataFileScanner.ts
+R069	server/scanner/AudioFileScanner.js	server/scanner/AudioFileScanner.ts
+R050	server/scanner/LibraryScan.js	server/scanner/LibraryScan.ts
+R058	server/scanner/OpfFileScanner.js	server/scanner/OpfFileScanner.ts
+R066	server/utils/comicBookExtractors.js	server/utils/comicBookExtractors.ts
+R065	server/utils/generators/opmlGenerator.js	server/utils/generators/opmlGenerator.ts
+R054	server/utils/parsers/parseEbookMetadata.js	server/utils/parsers/parseEbookMetadata.ts
+D	server/utils/profiler.js
+A	server/utils/profiler.ts

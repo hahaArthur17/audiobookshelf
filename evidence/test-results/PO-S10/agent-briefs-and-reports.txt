@@ -1,0 +1,1490 @@
+PO-S10 briefs written by the main agent and hand-backs of the six sub-agents (copied from the saved Claude Code logs and from the scratchpad copy; the Windows user name is masked)
+
+Briefs: the files brief-common.md and brief-set1.md to brief-set6.md that the main agent wrote in its scratchpad before it started the sub-agents. Each sub-agent also got a self-contained prompt that repeated the hard rules (the prompt text is in the main log; its length is in session-log-analysis.txt).
+
+
+====================================================================================================
+brief-common.md
+====================================================================================================
+# PO-S10 brief, common part (all six sub-agents)
+
+You are one of six sub-agents that work at the same time in the same working tree
+(D:\SEM-2\574\Project\audiobookshelf-po), one per set. You convert the JavaScript files of YOUR set to
+TypeScript, type-only. The main agent builds, tests and commits after all six have reported.
+
+Read in this order before you touch anything:
+1. CLAUDE.md in the repository root, completely. It is the rule book. This brief adds to it and does not replace it.
+2. This file.
+3. Your set brief (brief-setN.md, next to this file).
+4. Your probe errors: probe/setN/<File>.txt (one file per source file) and your section of probe/summary.txt.
+
+Scratchpad of the main agent (read from it; write only inside your own folder setN/):
+  Windows: C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\bca2b50b-ca0f-4d85-ae6b-75f7bfb74f79\scratchpad
+  Git Bash: /c/Users/<user>/AppData/Local/Temp/claude/D--SEM-2-574-Project-audiobookshelf-po/bca2b50b-ca0f-4d85-ae6b-75f7bfb74f79/scratchpad
+sets.json there lists the files of all six sets, so you can tell whose a file is.
+
+## Time
+- The main agent started at 16:47 local time. YOUR STOP TIME IS 17:57 (check with the `date` command, often).
+- Do not start a new file after 17:42, unless it is under 100 lines.
+- At 17:50 stop editing. Decide for the file in progress: clean and reviewed -> keep; otherwise restore it completely.
+  Then run the final check and write the report. Your final message must be sent by 17:57.
+- A file that is not finished at the stop time is restored. A late report is worse than one file less.
+
+## What you may and may not do
+- You edit ONLY the files of your set, with the Edit tool (targeted edits, no whole-file rewrite, no Write on a
+  repository file, no sed -i / perl -i, no shell redirect into a repository file). You rename with `git mv x.js x.ts`.
+  If git mv fails with an index.lock error, wait a few seconds and retry.
+- You do NOT run `npm run build:server` or `npm test`. You do NOT commit, add, stash, reset, checkout or clean.
+  The only git commands you need are `git mv`, `git restore <one file of your set>` (only to restore) and
+  `git diff`. Avoid `git status` (it takes the index lock that the others need); if you must, use
+  `git --no-optional-locks status`.
+- You do NOT edit server/models/, server/types/, server/routers/, server/libs/, test/, any file that is already
+  TypeScript, any JavaScript file outside the sets, or any file of another set. Not even one line.
+- You do not install packages and you write no file outside the repository except in your scratch folder setN/.
+- Do not look in older commits for notes or results of earlier runs (CLAUDE.md: evidence/).
+
+## The probe (what the numbers in your set brief mean)
+The main agent ran the type checker once over the 60 JavaScript files with checkJs on. The errors per file are a
+map of where types are missing or wrong; they are NOT the errors you will get after the rename (a .ts file ignores
+JSDoc types, so expect more "implicitly any" errors and fewer JSDoc errors such as TS2497, TS18042, TS1064, TS2314).
+Use them to see the hard spots before you start a file: TS2339 (property does not exist) usually means a missing
+declaration, an object that gets properties added later, or a class field that is never declared; TS18047/TS18048/
+TS2531/TS2532 (possibly null/undefined) are the places where the `!` rule of CLAUDE.md decides if the file fits.
+
+## How to convert one file
+1. Read the whole file and its probe errors. Read one converted file of the same kind as a worked example
+   (managers: TaskManager.ts, ShareManager.ts, LogManager.ts; scanner: ScanLogger.ts; objects: Task.ts, DeviceInfo.ts,
+   files/EBookFile.ts, files/AudioTrack.ts; utils: requestUtils.ts, notifications.ts, parsers/parseNfoMetadata.ts,
+   generators/hlsPlaylistGenerator.ts; providers: OpenLibrary.ts, AudiobookCovers.ts; auth: LocalAuthStrategy.ts).
+2. `git mv x.js x.ts`, then add imports and types with the Edit tool.
+3. Check (no emit, safe while others work; it takes 20 to 60 seconds, so batch your edits):
+     npx tsc -p tsconfig.check.json --pretty false 2>&1 | grep -E "^server/<folder>/(<File1>|<File2>)\.ts"
+   The unfiltered output also contains the half-finished files of the other five sets. Ignore those.
+4. Review your own change with `git diff -M HEAD -- <old .js path> <new .ts path>`: apart from types, imports,
+   erased `this` parameters, `declare` fields and the allowed one-line comments, every line of code must be the same.
+   No new runtime variable, no changed expression, no reordered statement, no bug fix, no removed code.
+5. Only then start the next file. Work in the order of your set brief (easiest first).
+
+## Things that change the compiled JavaScript (the main agent compares dist-server with a baseline)
+Only require lines and comments may differ in the compiled file. So:
+- `import x = require('...')` and `export = ...` only. No `import x from`, no `export const`, no `export default`,
+  no enum, no namespace with values, no parameter properties, no decorators. `import type {...} from '...'` is fine
+  (erased).
+- Class fields: `declare field: T` (a plain field becomes a real field under ES2022 and changes behaviour).
+- `export =` moves `module.exports = ...` to the END of the compiled file. That is safe only when nothing but
+  function declarations follows it in the source AND the file is not part of a require cycle. Check both.
+- A file that sets `module.exports.name = value` several times: follow the converted precedents (requestUtils.ts,
+  parsers/parseNfoMetadata.ts): the functions keep their bodies and the file ends with one `export = { a, b }` that
+  has exactly the same keys. Say in your report how you did it for each such file; if a value can only be exported
+  by changing its code, restore the file and report.
+- The code has no semicolons: a line that starts with `(` or `[` or a cast continues the previous statement.
+
+## Typedefs that other files import (important in this run)
+Some already-converted TypeScript files use a JSDoc typedef of a file in the sets as a REAL type, for example
+`type RssPodcastEpisode = import('../utils/podcastUtils').RssPodcastEpisode`. Files of other sets do the same from
+JSDoc. Rule for every set: a typedef of your file that any other file references (your set brief lists them) must
+stay available under the SAME NAME as a type of the module after the conversion. The precedent is
+server/managers/LogManager.ts line 14: a type-only `declare namespace X { ... }` merged with the exported class,
+with a one-line comment. For a file that exports an object, the main agent tested that this compiles and emits
+only one extra local const:
+    const a = { parse }
+    declare namespace a { type Result = { value: string } }
+    export = a
+Use this form only where a typedef must stay importable; say so in your report (it adds one local const to the
+compiled file). In your own TypeScript files, refer to a typedef of another file with
+`type Name = import('../path/File').Name`; it resolves while that file is JavaScript and also after its owner
+converts it by this rule.
+
+## Declarations you need but may not add
+- A field or association mixin missing on a model (server/models/*.ts), or anything in server/types/: you do not
+  edit those files. Write the request into setN/declarations-needed.md: the target file, the exact TypeScript line
+  to add, the one-line comment that says where the field or mixin comes from (the query's include, the association
+  in the model), and the file and line of yours that needs it. The main agent adds them in step 3. Until then the
+  error stays in your file: list exactly those errors in your report.
+- An npm package without types (the probe found three: `semver` in MigrationManager; `ssrf-req-filter` in fileUtils,
+  ffmpegHelpers and podcastUtils; `xml2js` in utils/index and parseOverdriveMediaMarkers): write the
+  `declare module 'name' { ... }` block, describing only what the code uses, into setN/pending.d.ts, and put
+  `/// <reference path="<relative path>/types/untypedModules.d.ts" />` at the top of your .ts file (see
+  ShareController.ts for the form). To check your file against your proposed declaration before the main agent
+  adds it, run the private config in your folder instead of the normal check:
+     npx tsc -p "<scratchpad>/setN/tsconfig.pending.json" --pretty false 2>&1 | grep -E "^server/..."
+  It is the same no-emit check plus your pending.d.ts. The main agent copies pending.d.ts into
+  server/types/untypedModules.d.ts in step 3. The file must be clean under the private config.
+- A file may be handed back with errors ONLY if every remaining error is a missing declaration that you have
+  requested with exact text, or is caused by a file of another set that changed (say which). Anything else: restore.
+
+## The other five sets
+- Files you import may be converted by another sub-agent while you work. Do not wait and do not edit them. When the
+  type of an import changes, your next check shows it in YOUR file: adapt your own file if that is possible within
+  the rules, and report it (your file, the other file, the error text, what you did). This goes into the final
+  report of the run, so note it when it happens.
+- Annotating a destructured import of a JavaScript helper (CLAUDE.md, "Pitfalls") must stay true when the helper
+  becomes TypeScript: write the real signature, not a convenient one.
+- Converted files outside all sets (controllers, finders, models, routers and the rest) are clean now (the main
+  agent checked: 0 errors before you started). If one of them shows an error after you convert a file that it
+  imports, your file caused it: change the types in your file within the rules, or restore your file. Your set
+  brief lists those importers. Look at them in the check output after each file.
+
+## Restore (a file that does not fit the rules, or is not finished at the stop time)
+    git mv server/<folder>/<File>.ts server/<folder>/<File>.js
+    git restore server/<folder>/<File>.js
+Then check that `git diff HEAD -- server/<folder>/<File>.js` is empty. Report the reason and the compiler errors
+that were left. A `!` on a value that no earlier code guarantees, a banned cast, a needed code change: these are
+reasons to restore, not things to work around.
+
+## Counting (the main agent adds these up over all sets)
+For every file keep a tally while you work:
+- `!` assertions, each with a one-line comment, in three cases: F = a field that starts as null and is set before
+  it is read; A = an association that the query always loads (include); L = a lookup that earlier code guarantees.
+- index signatures ([key: string]: unknown), each with a comment.
+- casts: A1 = allowance 1 (`as unknown` in a comparison the compiler calls impossible, TS2367); A2 = allowance 2
+  (catch variable: `error as Error`, `error as NodeJS.ErrnoException`); A3 = allowance 3 (one single-step cast at a
+  call into an already converted file whose parameter type is too narrow); other = boundary casts (an untyped
+  module, a server/libs file, fsExtra, LibraryItemModelStatic, the callee cast for a `= null` default). Say what
+  each "other" cast is.
+- `import type` that replaces a require of names that are undefined at runtime (the main agent names them in the
+  commit message).
+
+## Bug log
+Real bugs you notice (file, line, one sentence) go into setN/bugs.md. Bugs are NOT fixed.
+
+## Hand-back
+Write setN/report.md and send the same text as your final message. Use exactly these sections:
+1. Files: a table with one row per file of your set: file | status (converted clean / converted, waits for
+   declaration / restored / not started) | lines | ! F/A/L | index signatures | casts A1/A2/A3/other | how the
+   exports were kept (for module.exports.x files).
+2. Restored and not-started files: the reason and the compiler errors that were left.
+3. Remaining errors in converted files (exact compiler lines) and what resolves each.
+4. Declarations needed (exact text, target file, reason comment, which of your lines need it).
+5. JSDoc typedefs: for each typedef of your files, its importers and how the name stays importable.
+6. Files whose methods a router binds (grep for `.bind(` on your classes in server/routers/).
+7. Effects between sets: what broke in your files because another set's file changed, and the other way round if
+   you saw it.
+8. The `import type` replacements (names undefined at runtime).
+9. Bug log.
+10. Anything in CLAUDE.md or this brief that was wrong, unclear or missing.
+Before you write the report, run the check one last time and paste the lines for your files (or "no errors").
+
+
+====================================================================================================
+brief-set1.md
+====================================================================================================
+# Set 1 brief: server/managers/ (5 files, 2146 lines, 180 probe errors)
+
+Your scratch folder: set1/. Your probe errors: probe/set1/<File>.txt. Facts per file: probe/summary.txt, section set1.
+
+## Files, in this order (easiest first)
+1. NotificationManager.js (237 lines, 10 probe errors)
+   - Required by NotificationController.ts (converted: must stay clean), BackupManager.js (set 2), PodcastManager.js (yours).
+   - JSDoc refers to objects/Backup (set 4).
+2. CronManager.js (257 lines, 24)
+   - Requires libs/nodeCron, scanner/LibraryScanner.js (set 3, may change), managers/ShareManager.ts.
+   - JSDoc import() of the PodcastManager and PlaybackSessionManager classes (yours).
+3. RssFeedManager.js (408 lines, 23)
+   - Required by five converted controllers: CollectionController.ts, LibraryController.ts, LibraryItemController.ts,
+     RSSFeedController.ts, SeriesController.ts. They see the JSDoc-inferred types now and your TypeScript types after.
+     They must stay clean: check all five after this file. Also required by BookScanner.js (set 3), ApiRouter.js, Server.js.
+   - Probe TS18042 x2: `const { Request, Response } = require('express')` -> `import type` (names undefined at runtime; report).
+   - Requires utils/fileUtils.js (set 5, may change).
+4. PlaybackSessionManager.js (500 lines, 33)
+   - The class type is used through JSDoc/import() by ShareController.ts, HlsRouter.ts, PublicRouter.ts (converted:
+     must stay clean) and by CronManager, ApiRouter.js. Check whether a router binds one of its methods (report).
+   - Requires objects/PlaybackSession.js and objects/Stream.js (set 4, may change), objects/DeviceInfo.ts, several libs.
+5. PodcastManager.js (744 lines, 90) - the hard one
+   - Requires files of sets 2 (CoverManager), 4 (LibraryFile, PodcastEpisodeDownload, AudioFile), 5 (podcastUtils,
+     fileUtils, index, prober, ffmpegHelpers) and 6 (opmlGenerator). All may change under you.
+   - Uses the typedef RssPodcastEpisode of utils/podcastUtils (set 5): `type RssPodcastEpisode = import('../utils/podcastUtils').RssPodcastEpisode`.
+   - Start it only if at least 20 minutes remain before 17:42. Otherwise leave it as JavaScript ("not started").
+
+## Notes
+- Check how each file exports (class or `new X()`), and keep it. Managers that Server.js constructs get `this.x` fields
+  set in the constructor: declare them with `declare`.
+- Database.js, Logger.js, SocketAuthority.js and Watcher.js stay JavaScript; `import x = require(...)` gives you their
+  inferred types. Where Database.xModel returns a model whose association or mixin is not declared, request the
+  declaration (common brief) instead of casting.
+- Converted importers outside the sets to watch in the check output:
+    grep -E "^server/controllers/(Notification|Collection|Library|LibraryItem|RSSFeed|Series|Share)Controller|^server/routers/"
+
+
+====================================================================================================
+brief-set2.md
+====================================================================================================
+# Set 2 brief: server/managers/ (8 files, 2658 lines, 368 probe errors)
+
+Your scratch folder: set2/. Your probe errors: probe/set2/<File>.txt. Facts per file: probe/summary.txt, section set2.
+
+## Files, in this order (easiest first)
+1. CoverSearchManager.js (255 lines, 30 probe errors; mostly untyped parameters and unknown catch values)
+   - Requires Logger.js, finders/BookFinder.ts, finders/PodcastFinder.ts. Required by SocketAuthority.js (JavaScript).
+2. CacheManager.js (193 lines, 31)
+   - Required by AuthorController.ts, CacheController.ts, LibraryItemController.ts (converted: must stay clean), by
+     BackupManager and CoverManager (yours), ApiRouter.js, Server.js.
+   - Requires utils/ffmpegHelpers.js, utils/fileUtils.js, utils/index.js (set 5, may change).
+3. MigrationManager.js (326 lines, 30) - has a test (test/server/managers/MigrationManager.test.js)
+   - `semver` has no types: write the `declare module 'semver'` block into set2/pending.d.ts (only what is used:
+     look at every semver.* call) and check with set2/tsconfig.pending.json (common brief).
+   - Probe TS2305: the inferred type of ../libs/umzug has no `Umzug` and no `SequelizeStorage`. That is a server/libs
+     boundary: one cast with a comment is allowed there. Report the exact form you used.
+   - CLAUDE.md: MigrationManager copies and loads migration files by name. Nothing at runtime may change.
+   - Required by Database.js (JavaScript) and by the test: the export form must stay identical.
+4. CoverManager.js (348 lines, 35)
+   - Required by AuthorController.ts, LibraryItemController.ts, PodcastController.ts (converted: must stay clean), and
+     by PodcastManager (set 1), BookScanner (set 3), PodcastScanner and Scanner (set 4).
+   - Uses the typedef EBookFileScanData of utils/parsers/parseEbookMetadata (set 6):
+     `type EBookFileScanData = import('../utils/parsers/parseEbookMetadata').EBookFileScanData`.
+5. BinaryManager.js (438 lines, 62; 45 of them are untyped parameters) - has a test (test/server/managers/BinaryManager.test.js)
+   - The test stubs and replaces members: keep the class shape and the export form exactly.
+6. BackupManager.js (506 lines, 38)
+   - Requires objects/Backup.js (set 4), managers/NotificationManager.js (set 1), CacheManager (yours), utils/fileUtils.js
+     (set 5) and the libs archiver, nodeStreamZip, nodeCron, fsExtra (boundary casts allowed, one per call site, with comment).
+   - BackupController.ts (converted) reaches it through ApiRouter.js: check that it stays clean.
+7. AudioMetadataManager.js (290 lines, 53; 23 "possibly null", 12 unknown)
+   - Typedef UpdateMetadataOptions (no importer found).
+8. AbMergeManager.js (302 lines, 89; 48 "possibly null")
+   - Typedef AbMergeEncodeOptions is imported by utils/ffmpegHelpers.js (set 5): keep it importable under the same
+     name (type-only namespace merged with the class, precedent LogManager.ts line 14).
+
+## Notes
+- Files 7 and 8 are mostly "possibly null" errors. CLAUDE.md rule 5 decides: a `!` only in the three allowed cases,
+  each with its reason in a comment. Where no earlier code guarantees the value, the file does not fit: restore it
+  and report the lines. Do not spend the last 15 minutes on a file that will be restored.
+- Converted importers outside the sets to watch in the check output:
+    grep -E "^server/controllers/(Author|Cache|LibraryItem|Podcast|Backup)Controller|^server/finders/"
+
+
+====================================================================================================
+brief-set3.md
+====================================================================================================
+# Set 3 brief: server/scanner/ (3 files, 2352 lines, 254 probe errors)
+
+Your scratch folder: set3/. Your probe errors: probe/set3/<File>.txt. Facts per file: probe/summary.txt, section set3.
+
+These are the three largest and hardest scanner files. Two finished and clean files are a good result; one clean file
+is better than three half-done ones. Do not rush a file to start the next.
+
+## Files, in this order
+1. AudioFileScanner.js (598 lines, 66 probe errors)
+   - Required by LibraryItemController.ts (converted: must stay clean), BookScanner.js (yours), PodcastScanner.js (set 4).
+   - Requires utils/prober.js (set 5), utils/parsers/parseOverdriveMediaMarkers.js and parseNameString.js (set 6),
+     objects/files/AudioFile.js (set 4): all may change under you. models/LibraryItem.js stays JavaScript.
+2. LibraryScanner.js (708 lines, 68)
+   - Required by LibraryController.ts (converted: must stay clean), CronManager.js (set 1), Scanner.js (set 4), Server.js.
+   - Requires utils/fileUtils.js and utils/scandir.js (set 5), scanner/LibraryItemScanner.js, LibraryScan.js and
+     LibraryItemScanData.js (set 4), utils/queries/libraryFilters.js (JavaScript, not in this run).
+   - Probe TS2367 (a comparison the compiler calls impossible): Allowance 1 and the bug log, do not change the comparison.
+3. BookScanner.js (1046 lines, 120)
+   - Typedef BookMetadataObject is imported by utils/parsers/parseEbookMetadata.js (set 6) and named in a JSDoc comment
+     of parseComicInfoMetadata.ts: keep it importable under the same name (type-only namespace merged with the class,
+     precedent LogManager.ts line 14).
+   - Uses the typedef EBookFileScanData of utils/parsers/parseEbookMetadata (set 6):
+     `type EBookFileScanData = import('../utils/parsers/parseEbookMetadata').EBookFileScanData`.
+   - Requires files of sets 1 (RssFeedManager), 2 (CoverManager), 4 (AudioFile, LibraryFile, LibraryScan, OpfFileScanner,
+     NfoFileScanner, AbsMetadataFileScanner), 5 (index, fileUtils) and 6 (parseNameString, parseEbookMetadata).
+   - Do not start it after 17:20. If you start it, leave time to restore it.
+
+## Notes
+- The LibraryItem model is JavaScript: its statics are declared in server/types/libraryItemModel.d.ts. At a call
+  through Database.libraryItemModel use the one cast that CLAUDE.md gives (precedent LibraryController.ts).
+- Media objects built as `{}` and filled by key, and objects that get properties added later (probe TS7053 and TS2339):
+  widen the local variable with an annotation, or use an index-signature type with a comment (CLAUDE.md,
+  "Controllers and Express"). An annotation is not a cast.
+- Associations that a query loads with include, and mixins: request the declaration on the model (common brief).
+- Converted importers outside the sets to watch in the check output:
+    grep -E "^server/controllers/(LibraryItem|Library)Controller|^server/utils/parsers/parseComicInfoMetadata"
+
+
+====================================================================================================
+brief-set4.md
+====================================================================================================
+# Set 4 brief: server/scanner/, server/objects/, server/objects/files/ (15 files, 3220 lines, 359 probe errors)
+
+Your scratch folder: set4/. Your probe errors: probe/set4/<File>.txt. Facts per file: probe/summary.txt, section set4.
+
+## Files, in this order (easiest first; the small data classes come first because many files import them)
+1. scanner/MediaProbeData.js (68 lines, 6 probe errors) - required by utils/prober.js (set 5).
+2. objects/Backup.js (81 lines, 6) - required by BackupManager.js (set 2); named in JSDoc of BackupController.ts and NotificationManager.js.
+3. objects/PodcastEpisodeDownload.js (134 lines, 5) - required by PodcastManager.js (set 1); type refs from
+   LibraryItemController.ts (converted) and ffmpegHelpers.js (set 5). Uses the typedef RssPodcastEpisode of
+   utils/podcastUtils (set 5): `type RssPodcastEpisode = import('../utils/podcastUtils').RssPodcastEpisode`.
+4. objects/files/LibraryFile.js (78 lines, 13; 7 "possibly null") - 7 importers, among them models/LibraryItem.js and
+   utils/migrations/absMetadataMigration.js (JavaScript, not in this run) and utils/scandir.js (set 5). Type refs from
+   LibraryItemController.ts and objects/files/EBookFile.ts (converted: must stay clean).
+5. objects/files/AudioFile.js (199 lines, 18) - type refs from models/PodcastEpisode.ts and objects/files/AudioTrack.ts
+   (converted: must stay clean). Required by PodcastManager (set 1), AudioFileScanner and BookScanner (set 3).
+6. objects/PlaybackSession.js (252 lines, 13) - REQUIRED by ShareController.ts and models/PlaybackSession.ts
+   (converted: must stay clean; they construct it and read its fields); type refs from ShareManager.ts and
+   models/User.ts. Also required by PlaybackSessionManager.js (set 1).
+7. scanner/LibraryScan.js (145 lines, 11) - class type used in JSDoc by six scanner files.
+8. scanner/OpfFileScanner.js (48 lines, 8) - requires utils/parsers/parseOpfMetadata.js (set 6).
+9. scanner/NfoFileScanner.js (53 lines, 11).
+10. scanner/AbsMetadataFileScanner.js (86 lines, 18) - requires utils/generators/abmetadataGenerator.js (set 6).
+11. scanner/LibraryItemScanner.js (226 lines, 20) - required by LibraryItemController.ts (converted: must stay clean)
+    and LibraryScanner.js (set 3). Requires BookScanner.js (set 3), PodcastScanner.js (yours), models/LibraryItem.js (JavaScript).
+12. objects/Stream.js (427 lines, 42) - required by PlaybackSessionManager.js (set 1).
+13. scanner/LibraryItemScanData.js (377 lines, 58; 20 "possibly null") - typedef LibraryFileModifiedObject. Uses the
+    typedef LibraryItemFilenameMetadata of utils/scandir (set 5):
+    `type LibraryItemFilenameMetadata = import('../utils/scandir').LibraryItemFilenameMetadata`.
+14. scanner/PodcastScanner.js (499 lines, 58) - typedef PodcastMetadataObject.
+15. scanner/Scanner.js (547 lines, 72) - required by LibraryController.ts, LibraryItemController.ts, PodcastController.ts
+    (converted: must stay clean). Typedef QuickMatchOptions.
+
+Fifteen files do not fit in the time. Files 1 to 11 are the target; 12 to 15 only if time is left. Do not start one of
+12 to 15 after 17:30.
+
+## Notes
+- The object classes set their fields in the constructor or in a construct(...) method: `declare` every field
+  (CLAUDE.md, "Class fields"). A field that starts as null and is read later: the `!` rule of CLAUDE.md, case F,
+  only where the code really sets it before the read.
+- Converted TypeScript files already use your classes as types (import('../objects/PlaybackSession') and the like).
+  After your conversion they see your declared field types instead of the inferred ones. If a field type you write is
+  narrower than what they assign or read, THEY break and nobody may edit them: widen your type to what the code really
+  stores, or restore your file.
+- Keep a typedef importable under the same name if another file references it (common brief, LogManager.ts line 14).
+- The LibraryItem model is JavaScript: its statics are declared in server/types/libraryItemModel.d.ts (CLAUDE.md gives
+  the one cast to use at a call through Database.libraryItemModel).
+- Converted importers outside the sets to watch in the check output:
+    grep -E "^server/controllers/(Share|LibraryItem|Library|Podcast|Backup)Controller|^server/models/(PlaybackSession|PodcastEpisode|User)|^server/objects/files/(EBookFile|AudioTrack)|^server/managers/ShareManager"
+
+
+====================================================================================================
+brief-set5.md
+====================================================================================================
+# Set 5 brief: server/utils/ (12 files, 3492 lines, 412 probe errors)
+
+Your scratch folder: set5/. Your probe errors: probe/set5/<File>.txt. Facts per file: probe/summary.txt, section set5.
+
+Your set is the one every other set imports (index.js has 40 importers, fileUtils.js has 37). When you convert one of
+these, the types change for five other sub-agents at once. So: the four small files first to warm up, then index.js and
+fileUtils.js EARLY, so that the others have time to adapt. A widely imported file converted in the last 15 minutes can
+break files that another sub-agent has already finished; do not convert index.js or fileUtils.js after 17:30.
+
+## Files, in this order
+1. areEquivalent.js (157 lines, 4 probe errors) - `module.exports = function areEquivalent(...)`; required by index.js.
+   Probe TS2367 (impossible comparison): Allowance 1 and the bug log, do not change the comparison.
+2. profiler.js (42 lines, 5) - required by three files in utils/queries/ (JavaScript, not in this run).
+3. zipHelpers.js (138 lines, 11) - required by LibraryController.ts, LibraryItemController.ts, ShareController.ts
+   (converted: must stay clean) and by test/server/controllers/LibraryController.test.js (look at how the test uses or
+   stubs it: the exports object must behave the same).
+4. rateLimiterFactory.js (83 lines, 12) - `module.exports = new RateLimiterFactory()`; required by Auth.js.
+5. index.js (344 lines, 30) - 25 `module.exports.name = ...` lines; 40 importers.
+   - `xml2js` has no types: write `declare module 'xml2js'` into set5/pending.d.ts (only what is used) and check with
+     set5/tsconfig.pending.json. Set 6 also proposes one for parseOverdriveMediaMarkers; the main agent merges them.
+   - Converted importers that must stay clean: the controllers Author, CustomMetadataProvider, FileSystem, LibraryItem,
+     Me, Misc, Podcast, Search; finders/BookFinder.ts; managers/ShareManager.ts; the models Book, FeedEpisode,
+     MediaProgress, Podcast, Series, User; objects/settings/EmailSettings.ts and NotificationSettings.ts. Many of them
+     annotate their destructured import of this file. Your real types must be assignable to those annotations. If one
+     of them breaks, change your types within the rules or restore index.js.
+   - Also required by server/libs/nodeCron (vendored JavaScript) and by test/server/finders/BookFinder.test.js.
+6. fileUtils.js (579 lines, 55) - 21 `module.exports.name = ...` lines; 37 importers; tests: fileUtils.test.js,
+   ffmpegHelpers.test.js, BinaryManager.test.js (look at how they stub it: calls that go through module.exports inside
+   the file must still go through the same object).
+   - `ssrf-req-filter` has no types: pending.d.ts as above (it is called with a url and returns an http(s) agent).
+   - Typedef FilePathItem is imported by scandir.js (yours): keep it importable under the same name.
+   - Converted importers that must stay clean: the controllers Backup, FileSystem, Library, LibraryItem, Misc, Podcast,
+     Share; finders/AuthorFinder.ts; objects/DailyLog.ts.
+7. comicBookExtractors.js (241 lines, 33) - required by parsers/parseComicMetadata.js (set 6). Probe TS2416 x5 (a
+   member not assignable to the base class member): look at these first, they decide whether the file fits.
+8. scandir.js (318 lines, 37) - has a test (scandir.test.js). Typedef LibraryItemFilenameMetadata is imported by
+   scanner/LibraryItemScanData.js (set 4): keep it importable. Requires objects/files/LibraryFile.js (set 4) and
+   parsers/parseNameString.js (set 6).
+9. ffmpegHelpers.js (523 lines, 44) - has a test (ffmpegHelpers.test.js); `ssrf-req-filter`; uses the typedef
+   AbMergeEncodeOptions of managers/AbMergeManager (set 2) and the class objects/PodcastEpisodeDownload (set 4).
+10. libraryHelpers.js (267 lines, 48) - required by LibraryController.ts (converted: must stay clean).
+11. prober.js (343 lines, 63) - requires scanner/MediaProbeData.js (set 4).
+12. podcastUtils.js (457 lines, 70) - `ssrf-req-filter`. Its typedef RssPodcastEpisode is used as a REAL type by
+    PodcastController.ts line 26, models/Podcast.ts line 17 and models/PodcastEpisode.ts line 8 (converted, nobody may
+    edit them) and from JSDoc by PodcastManager.js (set 1), PodcastEpisodeDownload.js and Scanner.js (set 4). After the
+    conversion `import('../utils/podcastUtils').RssPodcastEpisode` must still resolve, with a shape those three files
+    accept (named const plus type-only namespace, see the common brief). Check all three after this file.
+
+## Notes
+- For each `module.exports.name = ...` file say in your report how the exports were kept, and check two things before
+  you use `export =`: nothing but function declarations may follow the place where module.exports is assigned in the
+  compiled file (export = is emitted at the END), and the file must not be in a require cycle (index.js is not: it
+  requires only Logger.js and areEquivalent.js; check the others). A function that the file itself calls through
+  `module.exports.x(...)` or `this.x(...)` must keep that call unchanged.
+- htmlEntities.js is out of scope. utils/queries/ and utils/migrations/ are not part of this run.
+- Converted importers outside the sets to watch in the check output (run it unfiltered to a count first, then look):
+    grep -E "^server/(controllers|finders|models|objects/settings|objects/DailyLog|managers/ShareManager)"
+
+
+====================================================================================================
+brief-set6.md
+====================================================================================================
+# Set 6 brief: server/providers/, server/utils/parsers/, server/utils/generators/, server/auth/ (17 files, 3158 lines, 374 probe errors)
+
+Your scratch folder: set6/. Your probe errors: probe/set6/<File>.txt. Facts per file: probe/summary.txt, section set6.
+
+## Files, in this order (easiest first, a parser after the parsers it requires)
+1. providers/MusicBrainz.js (51 lines, 4 probe errors) - nothing requires it.
+2. utils/generators/opmlGenerator.js (59 lines, 5) - required by PodcastManager.js (set 1). Requires libs/xml.
+3. providers/GoogleBooks.js (78 lines, 9) - required by finders/BookFinder.ts (converted: must stay clean).
+4. utils/parsers/parseNameString.js (111 lines, 19) - has a test. Required by models/Author.ts and models/Book.ts
+   (converted: must stay clean), AudioFileScanner and BookScanner (set 3), scandir (set 5), utils/migrations/dbMigration.js (JavaScript).
+5. providers/CustomProviderAdapter.js (149 lines, 12) - required by BookFinder.ts.
+6. providers/Audible.js (176 lines, 13) - has a test (test/server/providers/Audible.test.js). Required by BookFinder.ts.
+7. providers/iTunes.js (171 lines, 23) - typedef iTunesPodcastSearchResult is used as a REAL type by
+   finders/PodcastFinder.ts line 4 (`import('../providers/iTunes').iTunesPodcastSearchResult`; converted, nobody may
+   edit it): it must still resolve after the conversion, with a shape PodcastFinder.ts accepts. Required by BookFinder.ts.
+8. providers/Audnexus.js (188 lines, 26) - typedef AuthorSearchObj is used as a REAL type by finders/AuthorFinder.ts
+   line 15: same rule. Required by BookFinder.ts.
+9. providers/FantLab.js (205 lines, 36) - probe TS1005 is a JSDoc syntax error; JSDoc stays unchanged.
+10. utils/generators/abmetadataGenerator.js (182 lines, 26) - required by scanner/AbsMetadataFileScanner.js (set 4).
+11. utils/parsers/parseOverdriveMediaMarkers.js (152 lines, 29) - `xml2js` has no types: write `declare module 'xml2js'`
+    into set6/pending.d.ts (only what is used) and check with set6/tsconfig.pending.json (common brief). Set 5 proposes
+    one too, for utils/index; the main agent merges them.
+12. utils/parsers/parseOpfMetadata.js (253 lines, 46) - has a test. Typedef MetadataCreatorObject. Required by
+    scanner/OpfFileScanner.js (set 4) and parseEpubMetadata.js (yours).
+13. utils/parsers/parseEpubMetadata.js (140 lines, 16) - requires parseOpfMetadata, libs/nodeStreamZip.
+14. utils/parsers/parseComicMetadata.js (94 lines, 6) - requires utils/comicBookExtractors.js (set 5, may change).
+15. utils/parsers/parseEbookMetadata.js (47 lines, 2) - typedef EBookFileScanData is imported by CoverManager.js (set 2),
+    BookScanner.js (set 3), parseComicMetadata and parseEpubMetadata (yours): keep it importable under the same name
+    (named const plus type-only namespace, common brief). It uses the typedef BookMetadataObject of scanner/BookScanner (set 3).
+16. auth/TokenManager.js (549 lines, 36) - has a test (test/server/auth/TokenManager.test.js). Required by Auth.js and
+    SocketAuthority.js (JavaScript) and models/User.ts (converted: must stay clean).
+17. auth/OidcAuthStrategy.js (553 lines, 66) - has a test. Typedef OpenIdIssuerConfig. 19 of the probe errors are globals
+    (TS7017): the `declare const global: typeof globalThis & {...}` pattern of CLAUDE.md.
+
+Seventeen files do not fit in the time. Files 1 to 15 are the target. After file 15, start TokenManager only if it is
+before 17:25. Start OidcAuthStrategy only if TokenManager is finished and it is before 17:25. A file you do not start
+stays JavaScript and is reported as "not started".
+
+## Notes
+- The providers are classes exported with `module.exports = X`; the parsers and generators set `module.exports.name = ...`.
+  For those follow parsers/parseNfoMetadata.ts and parseSeriesString.ts (one `export = { ... }` with the same keys) and
+  say in your report how the exports were kept. `export =` is emitted at the END of the compiled file: nothing but
+  function declarations may follow the original module.exports line, and the file must not be in a require cycle
+  (parseEbookMetadata -> parseEpubMetadata -> parseOpfMetadata: check the direction of every require).
+- Responses of axios and parsed XML/JSON are untyped data: describe the fields the code reads with a small local type
+  and annotate; an index signature with a comment where the code reads by a dynamic key.
+- utils/index.js (set 5) is imported by Audible, Audnexus, MusicBrainz and three parsers, and it will be converted
+  while you work: annotate its destructured import with the real signatures (CLAUDE.md, "Pitfalls").
+- Converted importers outside the sets to watch in the check output:
+    grep -E "^server/finders/|^server/models/(Author|Book|User)|^server/utils/parsers/parseComicInfoMetadata"
+
+
+
+####################################################################################################
+HAND-BACKS (SubagentHandback messages, in the order of arrival)
+####################################################################################################
+
+
+====================================================================================================
+PO-S10 set 6 providers parsers auth  (arrived 04:33:34 UTC, which is +13h NZDT)
+====================================================================================================
+# PO-S10 set 6 report (sub-agent 6)
+
+**Result: 6 of 17 files converted clean; 11 stay JavaScript.** Of those 11, 8 do not fit the rules, 1 was not started for time and a typedef decision, and 2 were not started under the 17:25 rule. No file is handed back with errors. Nothing outside set 6 was edited; no build, test or commit was run.
+
+**set6/report.md does not exist.** The Write tool refuses report files from a sub-agent, so this message is the only copy. In set6/ you will find bugs.md, declarations-needed.md, final-check.txt and check.sh; pending.d.ts is unchanged.
+
+**Last check** (17:31:51 to 17:32:32, `npx tsc -p tsconfig.check.json --pretty false`, with the task's filter): no errors in set 6 files. There were none in server/finders/, server/models/(Author|Book|User) or parseComicInfoMetadata, and no error line anywhere names a set 6 file. The whole tree had 1 error line at that moment, in server/managers/MigrationManager.ts (set 2).
+
+## 1. Files
+
+| # | file (server/) | status | lines js -> ts | ! F/A/L | index sig. | casts A1/A2/A3/other | how the exports were kept |
+|---|---|---|---|---|---|---|---|
+| 1 | providers/MusicBrainz | converted clean | 51 -> 62 | 0/0/0 | 0 | 0/0/0/0 | `export = MusicBrainz` (class) |
+| 2 | utils/generators/opmlGenerator | converted clean | 59 -> 73 | 0/0/0 | 0 | 0/0/0/0 | `module.exports.generate = (...) => {}` became `const generate = (...) => {}` (same body); the file ends with `export = { generate }` (same single key, precedent parseSeriesString.ts) |
+| 3 | providers/GoogleBooks | converted clean | 78 -> 115 | 0/0/1 | 0 | 0/0/0/0 | `export = GoogleBooks` |
+| 4 | utils/parsers/parseNameString | restored (after a trial, see 2) | 111 | - | - | - | - |
+| 5 | providers/CustomProviderAdapter | converted clean | 149 -> 197 | 0/0/0 | 1 | 0/0/0/0 | `export = CustomProviderAdapter` |
+| 6 | providers/Audible | not started: does not fit | 176 | - | - | - | - |
+| 7 | providers/iTunes | not started: does not fit | 171 | - | - | - | - |
+| 8 | providers/Audnexus | restored (renamed, not edited, renamed back) | 188 | - | - | - | - |
+| 9 | providers/FantLab | converted clean | 205 -> 255 | 0/0/1 | 0 | 0/0/0/0 | `export = FantLab` |
+| 10 | utils/generators/abmetadataGenerator | not started: does not fit | 182 | - | - | - | - |
+| 11 | utils/parsers/parseOverdriveMediaMarkers | not started: does not fit | 152 | - | - | - | - |
+| 12 | utils/parsers/parseOpfMetadata | not started: does not fit | 253 | - | - | - | - |
+| 13 | utils/parsers/parseEpubMetadata | not started: time, and needs a typedef decision | 140 | - | - | - | - |
+| 14 | utils/parsers/parseComicMetadata | not started: does not fit | 94 | - | - | - | - |
+| 15 | utils/parsers/parseEbookMetadata | converted clean | 47 -> 60 | 0/0/0 | 0 | 0/0/0/0 | both `module.exports.x = x` lines removed, the two function declarations unchanged; the file ends with `const parseEbookMetadata = { parse, extractCoverImage }`, a type-only `declare namespace parseEbookMetadata`, and `export = parseEbookMetadata` (same two keys, same order; adds one local const to the compiled file, as in the common brief) |
+| 16 | auth/TokenManager | not started (17:25 rule) | 549 | - | - | - | - |
+| 17 | auth/OidcAuthStrategy | not started (17:25 rule) | 553 | - | - | - | - |
+
+Totals for the six converted files: `!` F 0 / A 0 / L 2; index signatures 1; casts 0 in every category. A grep for `any`, `@ts-`, `as unknown` and `as any` finds nothing.
+
+The two `!` are both L, each with a one-line comment on the line above:
+- **GoogleBooks.ts:63** `imageLinks[Object.keys(imageLinks).pop()!]`: the `if` on the line before tests `Object.keys(imageLinks).length`.
+- **FantLab.ts:216** `bookEditions.list.pop()!`: the `if` before it returns when `!bookEditions.list.length`.
+
+The index signature is CustomProviderAdapter.ts:52, `[key: string]: unknown` on the result interface, because search() deletes undefined values with `payload[key]` in a for...in loop.
+
+Two things in the converted files need your decision:
+- **MusicBrainz.ts line 3, an annotation that no allowance names.** The local const is annotated `const axios: { get(url: string, config?: object, ignored?: object): Promise<{ data: { recordings?: unknown[] } }> } = axiosModule.default`, with a comment. Line 43 of the original calls `axios.get(url, { params }, config)` with three arguments, which is TS2554 against the axios types (bug 1). The annotation describes that call so the line compiles unchanged; it is not a cast and emits nothing. If you do not accept it: `git mv server/providers/MusicBrainz.ts server/providers/MusicBrainz.js && git restore server/providers/MusicBrainz.js`.
+- **MusicBrainz, GoogleBooks and FantLab gain a `.default` read in the compiled file.** Their originals have `const axios = require('axios')` without `.default`. I used the precedent form `import axiosModule = require('axios')` plus `const axios = axiosModule.default`, because the namespace type has no `get`. On the installed axios 0.27.2, `node -e "const a=require('axios');console.log(a===a.default)"` prints true, so it is the same object. Expect this difference in the dist comparison; the precedent OpenLibrary.js already had `.default`.
+
+Other devices, all following precedents:
+- `.catch((error: Error) => ...)` parameter annotations on promise chains (as in OpenLibrary.ts, AudiobookCovers.ts): MusicBrainz 1, GoogleBooks 1, CustomProviderAdapter 1, FantLab 3. These are not casts.
+- CustomProviderAdapter.ts has `declare function isNaN(value: unknown): boolean` with the comment of the precedent (BookFinder.ts line 20), because `duration` is external data.
+- CustomProviderAdapter.ts annotates `const queryObj: Record<string, string>` and `const axiosOptions: AxiosRequestConfig`, both objects that get keys added later.
+- MusicBrainz.ts imports `isNullOrNaN` from utils/index.js (set 5) without an annotation. The type inferred from the JavaScript accepts anything, and line 47 passes `number | string | null | undefined`; if set 5 narrows the parameter, the error will show there.
+
+## 2. Restored and not-started files: reasons and compiler errors
+
+"Probe" lines come from probe/set6/<File>.txt (checkJs on the JavaScript file). "Trial" lines are real check output after a conversion that I then restored.
+
+- **parseNameString (restored after a trial at 17:24; `git diff HEAD` on the .js is empty).** The file itself was clean with truthful types, but a converted controller broke:
+  - `server/controllers/AuthorController.ts(143,7): error TS2322: Type 'string | null | undefined' is not assignable to type 'string | null'.`
+  - `server/controllers/AuthorController.ts(209,7): error TS2322: Type 'string | null | undefined' is not assignable to type 'string | null'.`
+  - Cause: nameToLastFirst() can return undefined (line 33 returns first_name, which comes from ParsedName.first, `string | undefined`). While the file is JavaScript its result is an implicit `any`, which hides this in Author.getLastFirst() and AuthorController. No truthful type in my file avoids it.
+  - Second reason: the two calls `parseFullName(name)` return `ParsedName | string | string[] | undefined` (converted parseFullName.ts has no overloads). The trial needed two casts to ParsedName, which no allowance covers (allowance 3 is for arguments).
+- **Audible (not started).** Probe: `server/providers/Audible.js(158,7): TS2322: Type 'any[] | never[] | null' is not assignable to type 'any[]'. Type 'null' is not assignable to type 'any[]'.` The `.then` at line 163 returns null when the response has no `products`, so `items` is possibly null at line 171 (`items.filter(Boolean)`), which the original does not guard. A `!` there is forbidden (bug 2).
+- **iTunes (not started).** Probe: `server/providers/iTunes.js(45,7): TS2739: Type 'never[]' is missing the following properties from type 'Promise<Object[]>': then, catch, finally, [Symbol.toStringTag]`. search() returns `[]` synchronously without a term and a Promise otherwise, and lines 129 and 165 call `.then` on that result without a guard.
+  - Second reason, read but not compiled: a truthful iTunesPodcastSearchResult has `cover: string | null` (getCoverArtwork() returns null at line 87). PodcastFinder.ts:39 returns `results.map((r) => r.cover).filter((r) => r)` as `string[]`, which only compiles with `cover: string`.
+  - The probe also shows the typedef mismatch: `(150,7): TS2353: Object literal may only specify known properties, and 'trackCount' does not exist in type 'iTunesPodcastSearchResult'.`
+- **Audnexus (renamed 17:15, not edited, renamed back 17:16; diff empty).** Probe: `server/providers/Audnexus.js(128,39): TS2339: Property 'levenshteinDistance' does not exist on type 'never'.` and `(132,58): TS2339: Property 'asin' does not exist on type 'never'.` `closestMatch` (line 120, `= null`) is assigned only inside the forEach callback, so after the loop the compiler has narrowed it to null. The only type-only form is `let closestMatch = null as X | null`, a cast that no allowance covers. It would also need catch-variable casts to an axios error type for `error.response` (lines 173-174).
+- **abmetadataGenerator (not started).** Probe: `server/utils/generators/abmetadataGenerator.js(84,17): TS2339: Property 'series' does not exist on type '{}'.` (also 83,19 and 84,36). Lines 83-85 read `validated.series` as the validated string array and write the parsed `{ name, sequence }` objects back to the same property. With `series?: string[]` the assignment fails; with a union the call `parseSeriesString.parse(series)` fails. Only a cast compiles.
+- **parseOverdriveMediaMarkers (not started).** objectValuesArrayToString() (lines 63-72) turns the array values of each marker into strings in place and returns the same array; the callers then use `chapter.Name` and `chapter.Time` as strings (lines 81, 116). That cannot be typed without a cast on its return. This is from reading; the probe only shows implicit-any errors there. The file also needs the `xml2js` declaration, which I did not propose because I could not test one against a converted file.
+- **parseOpfMetadata (not started).** Line 251 is `module.exports.parseOpfMetadataXML = async (xml) => { ... return this.parseOpfMetadataJson(json) }`. `this` in a top-level arrow function is the original exports object. The `export = { ... }` form replaces module.exports with a new object, so `this.parseOpfMetadataJson` would be undefined at runtime. The file cannot be converted without changing that line. This is from reading; I did not compile it.
+  - Also probe `(177,38): TS2531: Object is possibly 'null'.`: `fetchTagString(...).replace` relies on the surrounding try/catch, which would need a forbidden `!`.
+- **parseComicMetadata (not started).** Probe: `server/utils/parsers/parseComicMetadata.js(51,5): TS18047: 'filePaths' is possibly 'null'.`, also `(59,27)` and `(77,28)`. The `.catch` at line 46 only logs, and `filePaths.sort` is not guarded (bug 18).
+- **parseEpubMetadata (not started: time).** Probe: `(137,3): TS2741: Property 'ebookCoverPath' is missing in type '{ path: string; ebookFormat: string; metadata: {...}; }' but required in type 'EBookFileScanData'.` Its payload does not satisfy the typedef as documented: ebookCoverPath is set only when a cover is found, and metadata is the OPF metadata, not a BookMetadataObject. Converting it means making EBookFileScanData truthful, which changes what CoverManager.ts (set 2) and BookScanner (set 3) see. It also reads untyped XML JSON from xmlToJSON (utils/index, set 5).
+- **TokenManager and OidcAuthStrategy (not started).** File 15 was done at 17:22; a 549-line file could not be started and finished under the 17:25 rule.
+
+What would unblock each, for a later stage:
+- **Audnexus:** a ruling that allows a cast on the `null` initialiser of a variable assigned in a callback.
+- **parseOverdriveMediaMarkers and abmetadataGenerator line 84:** a ruling that allows a cast on the result of an in-place conversion.
+- **parseNameString:** overloads in parseFullName.ts, plus `string | null | undefined` accepted in AuthorController.
+- **parseOpfMetadata:** a code change for the top-level `this`.
+- **Audible, iTunes, parseComicMetadata:** a bug fix first.
+
+## 3. Remaining errors in converted files
+
+None.
+
+## 4. Declarations needed
+
+None for the six converted files (set6/declarations-needed.md says the same). set6/pending.d.ts is unchanged.
+
+## 5. JSDoc typedefs
+
+- **EBookFileScanData (parseEbookMetadata, converted).** It stays importable under the same name through `declare namespace parseEbookMetadata { interface EBookFileScanData { ... } }` merged with the exported const, with the one-line comment.
+  - Importers: managers/CoverManager.ts line 21 (set 2, already uses it as a real type) and line 274; scanner/BookScanner.js lines 653 and 714 (set 3); parseComicMetadata.js line 36 and parseEpubMetadata.js line 71 (mine, still JavaScript, in `@returns`).
+  - The shape is the JSDoc typedef word for word (ebookCoverPath: string, metadata: BookMetadataObject), so importers see no change. It is too optimistic (bug 19).
+  - parseEbookMetadata.ts takes `BookMetadataObject` from `import('../../scanner/BookScanner').BookMetadataObject`, so set 3 must keep that name importable.
+- **iTunesPodcastSearchResult** (PodcastFinder.ts lines 4, 21) and **iTunesSearchParams** (no importer): iTunes stays JavaScript, nothing changes.
+- **AuthorSearchObj** (AuthorFinder.ts lines 15, 46): Audnexus stays JavaScript, nothing changes.
+- **MetadataCreatorObject** (parseOpfMetadata) and **OpenIdIssuerConfig** (OidcAuthStrategy): no importer found; both files stay JavaScript.
+- The other converted files have no typedef.
+
+## 6. Files whose methods a router binds
+
+None. A grep for `.bind(` in server/routers/ finds no method of a set 6 file.
+
+## 7. Effects between sets
+
+- **In my files:** nothing broke because of another set.
+- **From my files:** no error in another file names a set 6 file. CoverManager.ts (set 2) imports parseEbookMetadata and its typedef and stays clean. PodcastManager (set 1) calls `opmlGenerator.generate(podcasts)`, which now takes `Podcast[]`.
+- **The only breakage** was the restored parseNameString trial (AuthorController.ts, see 2).
+- **Seen in passing, not mine:**
+  - `TS2306 ... is not a module` for managers/CacheManager.ts, managers/CoverManager.ts and scanner/AudioFileScanner.ts, reported in AuthorController, CacheController, LibraryItemController and PodcastController. These were bare renames in progress and were gone later.
+  - `server/controllers/LibraryController.ts(1350,26): error TS2339: Property 'scan' does not exist on type 'typeof import(".../server/scanner/LibraryScanner")'` at 17:25.
+
+## 8. `import type` replacements (names undefined at runtime)
+
+None. `import type { AxiosRequestConfig } from 'axios'` in CustomProviderAdapter.ts is a new type-only import, not a replacement of a require.
+
+## 9. Bug log (set6/bugs.md, 21 entries; not fixed; line numbers of the JavaScript at HEAD)
+
+1. MusicBrainz.js:43 - `axios.get(url, { params: query }, config)` passes three arguments; `config` (the User-Agent header) is never sent.
+2. Audible.js:163, :171 - a catalog response without `products` makes `items` null and `items.filter(Boolean)` throws.
+3. Audible.js:171 - `... .map(...) || []`: an array is always truthy.
+4. iTunes.js:87, :149, typedef :24 - `cover` can be null although the typedef says string; also artistId can be null (:142), id is a number in the API, and trackCount (:150) is not in the typedef.
+5. iTunes.js:53 - `lang: options.lang` is not in iTunesSearchParams.
+6. Audnexus.js:72 - authorRequest() returns null, not a Promise, for an invalid ASIN; `image` can be null against `@property {string} image`.
+7. Audnexus.js:122 - findAuthorByName() writes `levenshteinDistance` onto the response objects.
+8. GoogleBooks.js:20, :35 - reads `volumeInfo.publisherDate`; the Google Books API documents `publishedDate`, so publishedYear is always null.
+9. CustomProviderAdapter.js:60-69 - a malformed response throws, but a failed request returns [] ("no matches").
+10. FantLab.js:101 - `authors.map` without a guard.
+11. FantLab.js:165 - `list.pop()` removes the edition from the response object.
+12. parseNameString.js:33, with Author.ts:50-52 and AuthorController.ts:143, :209 - nameToLastFirst() can return undefined, which reaches `lastFirst` (typed `string | null` there).
+13. parseNameString.js:42 - JSDoc says `{ names: string[] }`; the function returns null for an empty string.
+14. parseOpfMetadata.js:251 - a top-level arrow function uses `this` as the exports object.
+15. parseOpfMetadata.js:18, :20, :98 - parseCreators() returns null and `false` entries, and fetchIdentifier() returns null, against their JSDoc.
+16. parseOpfMetadata.js:80 - `isNaN` of a string.
+17. parseOpfMetadata.js:177 - `.replace` on a possibly null value, saved by the try/catch.
+18. parseComicMetadata.js:46-51 - a rejected getFilePaths() gives undefined and `filePaths.sort` throws; the outer catch logs a second, misleading error.
+19. parseEbookMetadata.js:8 - typedef EBookFileScanData: ebookCoverPath is not always set and metadata is not a BookMetadataObject.
+20. abmetadataGenerator.js:83-85 - `validated.series` has two shapes.
+21. parseOverdriveMediaMarkers.js:29 - `err` of xml2js.parseString is ignored and the code relies on a synchronous callback.
+
+## 10. CLAUDE.md and briefs: wrong, unclear or missing
+
+- **Missing rulings that decided five files:**
+  - a call with an extra argument (TS2554; I used an annotation in MusicBrainz, please confirm);
+  - a `let x = null` that is assigned only in a callback (narrowed to never);
+  - a function that changes the value type of its argument in place;
+  - a too-vague return type of an already converted file (allowance 3 covers only arguments).
+- **The `export = { ... }` recipe breaks one kind of file.** A file that calls `this.name` from a top-level arrow function (parseOpfMetadata.js:251) would fail at runtime. Worth a line in "Pitfalls".
+- **The axios precedent does not match three of my files.** OpenLibrary.js started from `require('axios').default`; MusicBrainz, GoogleBooks and FantLab did not.
+- **The watch list of brief-set6 has no server/controllers/.** The parseNameString breakage appeared only there, in AuthorController.ts.
+- **The probe counts did not predict the fit.** The files that failed did so on one to three errors (possibly-null, never, or a typedef that a converted finder relies on), not on the many implicit-any errors.
+- **Seventeen files in 70 minutes was too many for one agent.** Reading the converted importers (BookFinder.ts and the two finders) took as long as the edits.
+- **One thing I did not verify.** parseEbookMetadata.ts compiles while the two parsers it requires are still JavaScript. I did not check whether their JSDoc `@returns {Promise<import('./parseEbookMetadata').EBookFileScanData>}` resolves to the new namespace type or to `any`.
+
+====================================================================================================
+PO-S10 set 4 scanner objects  (arrived 04:35:48 UTC, which is +13h NZDT)
+====================================================================================================
+# PO-S10 set 4 report (server/scanner, server/objects, server/objects/files)
+
+**Result: 4 of 15 files are converted and clean; the other 11 are JavaScript, identical to HEAD.** Four of those were converted as a trial, did not fit the rules and were restored. Three more target files were not started because reading them shows the same kind of blocker. The four optional files (12 to 15) were not started.
+
+`set4/report.md` does not exist: the Write tool refuses report files from a sub-agent, and I did not work around that with a shell redirect. This message is the report. `set4/bugs.md` and `set4/declarations-needed.md` are written. The check outputs are `set4/check1.txt` to `check4.txt` and `check-final.txt`.
+
+**Final check (finished 17:34:11): no errors in the set-4 files and none in the watched importers.** The only error in the whole tree was `server/managers/MigrationManager.ts(8,25): error TS7016` (set 2, the pending semver declaration). I started at 17:04; my last change to a repository file was at 17:24.
+
+## 1. Files
+
+| file (server/) | status | lines js -> ts | ! F/A/L | index signatures | casts A1/A2/A3/other |
+|---|---|---|---|---|---|
+| scanner/MediaProbeData.js | restored (trial: 7 errors) | 68 | - | - | - |
+| objects/Backup.js | restored (trial: breaks BackupController.ts) | 81 | - | - | - |
+| objects/PodcastEpisodeDownload.ts | converted clean | 134 -> 154 | 8/0/0 | 0 | 0/0/0/1 |
+| objects/files/LibraryFile.js | restored (trial: 2 blocking errors) | 78 | - | - | - |
+| objects/files/AudioFile.js | not started (does not fit, by reading) | 199 | - | - | - |
+| objects/PlaybackSession.js | not started (does not fit, by reading) | 252 | - | - | - |
+| scanner/LibraryScan.ts | converted clean | 145 -> 178 | 8/0/0 | 0 | 0/0/0/3 |
+| scanner/OpfFileScanner.ts | converted clean | 48 -> 64 | 0/0/0 | 2 | 0/0/0/0 |
+| scanner/NfoFileScanner.js | restored (trial: 2 blocking errors) | 53 | - | - | - |
+| scanner/AbsMetadataFileScanner.ts | converted clean | 86 -> 105 | 0/0/0 | 2 | 0/0/0/2 |
+| scanner/LibraryItemScanner.js | not started (does not fit, by reading and probe) | 226 | - | - | - |
+| objects/Stream.js | not started (time) | 427 | - | - | - |
+| scanner/LibraryItemScanData.js | not started (time) | 377 | - | - | - |
+| scanner/PodcastScanner.js | not started (time) | 499 | - | - | - |
+| scanner/Scanner.js | not started (time) | 547 | - | - | - |
+
+Totals for the four converted files: `!` 16 (F 16, A 0, L 0); index signatures 4; casts A1 0, A2 0, A3 0, other 6.
+
+**Exports.** No file of the set uses `module.exports.x = ...`. All four had `module.exports = ...` as their last line, so `export =` keeps its position. None of the four is in a require cycle.
+
+**The `!` (all case F, each with a one-line comment; I read the callers):**
+- PodcastEpisodeDownload.ts, 8: `url` (line 75), `rssPodcastEpisode` (84, 88, 100, 101, 118), `libraryItem` and `targetFilename` (91). The only construction is PodcastManager.js line 62, and line 63 calls `setData()`, which sets all four. Line 75 already had a trailing comment, so its reason is a comment line above it.
+- LibraryScan.ts, 8: `library` (70, 73, 76, 79, 119), `elapsed` (90, 101), `startedAt` (144). The only two constructions (LibraryScanner.js 69-70, Scanner.js 486-487) call `setData()` on the next line. `elapsedTimestamp` and `scanResults` are read only after `setComplete()` (LibraryScanner.js 90/92/106 and 117/119/121, Scanner.js 527/529). `startedAt` follows the ScanLogger.ts precedent.
+
+**The index signatures (each with a comment):**
+- OpfFileScanner.ts: `BookMetadataPayload` (parameter, assigned by key) and `OpfMetadataPayload` (annotation of the local that holds the parser result, read by key).
+- AbsMetadataFileScanner.ts: `MediaMetadataPayload` (parameter, assigned by key) and `AbMetadataPayload` (parser result, read by key).
+
+**The "other" casts:**
+- PodcastEpisodeDownload.ts line 110: `sanitizeFilename(filename) as string`. Boundary to utils/fileUtils.js (set 5, still JavaScript, inferred as any). `sanitizeFilename` returns false only when its argument is not a string; here it is a template string. Please judge this one: it is the only cast that does not copy an existing precedent.
+- LibraryScan.ts line 7: the dateAndTime cast, copied from DailyLog.ts line 3 (adds one local const, as there).
+- LibraryScan.ts lines 165 and 173: fsExtra `mkdir` and `writeFile`, in the form of BackupController.ts line 129.
+- AbsMetadataFileScanner.ts lines 55 and 95: `(abmetadataGenerator.parseJson(...) as AbMetadataPayload | null) || {}`. Boundary to utils/generators/abmetadataGenerator.js (set 6, still JavaScript), whose JSDoc types the result as Object.
+
+**Also added:**
+- `declare const global: typeof globalThis & { MetadataPath: string }` in LibraryScan.ts and AbsMetadataFileScanner.ts.
+- `/// <reference path="../types/untypedModules.d.ts" />` (uuid) in PodcastEpisodeDownload.ts and LibraryScan.ts.
+- Return-type annotations on `PodcastEpisodeDownload.targetPath` and `getSanitizedFilename` (the helpers they call are inferred as any).
+- `libraryScan` in AbsMetadataFileScanner is typed `LibraryScan | ScanLogger`, because a ScanLogger really arrives (LibraryItemScanner.scanLibraryItem -> BookScanner/PodcastScanner). The JSDoc names only LibraryScan.
+
+**Behaviour check.** I reviewed `git diff -M` for all four: only imports, types, `declare` fields, comments and the export lines changed. I also transpiled the four files into `set4/emit/` (ts.transpileModule, nothing written to the repository) and compared with the JavaScript at HEAD. Only the require lines, "use strict", comments and the printer's line breaks differ; the parentheses of the casts are not emitted.
+
+## 2. Restored and not-started files
+
+**Restored after a trial** (exact compiler lines; .ts line numbers, with the .js line in brackets). All four have an empty diff against HEAD.
+
+- **scanner/MediaProbeData.js.** With the parameter of `setData()` typed as what utils/prober.js really passes (`audio_stream: ProbeStream | null`):
+  ```
+  server/scanner/MediaProbeData.ts(113,20): error TS2531: Object is possibly 'null'.   [js 54]
+  the same error at (114,18) (115,21) (116,21) (117,26) (118,21) (119,23)              [js 55 to 60]
+  ```
+  The original dereferences `this.audioStream` unguarded and the value can really be null (bug 1), so no `!` is allowed. It compiles clean only if the parameter claims that `audio_stream` is never null, which is not true; I did not do that.
+- **objects/Backup.js.** With the fields typed as what the class stores (`fullPath: string | null`, null until `construct()` or `setData()` runs):
+  ```
+  server/controllers/BackupController.ts(159,18): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  server/objects/Backup.ts(57,9): error TS2367: This comparison appears to be unintentional because the types 'string' and 'number' have no overlap.   [js 37]
+  ```
+  The second is allowance 1. The first is a converted importer that breaks, and the type cannot be widened to remove null.
+- **objects/files/LibraryFile.js.**
+  ```
+  server/objects/files/LibraryFile.ts(81,26): error TS2345: Argument of type 'false | { size: number; mtimeMs: number; ctimeMs: number; birthtimeMs: number; ino: string; }' is not assignable to parameter of type 'Record<string, unknown>'.   [js 66]
+  server/objects/files/LibraryFile.ts(86,27): error TS2339: Property 'ino' does not exist on type 'false | { size: number; mtimeMs: number; ctimeMs: number; birthtimeMs: number; ino: string; }'.   [js 71]
+  ```
+  This is a helper result that the original never tests (bug 2), and `!` does not remove false. The other 7 errors of the trial were TS2531 on `this.metadata` (ts 45, 58-62, 75; js 30, 43-47, 60) and would have been 7 case-F `!`. EBookFile.ts and LibraryItemController.ts stayed clean during the trial.
+- **scanner/NfoFileScanner.js.**
+  ```
+  server/scanner/NfoFileScanner.ts(53,20): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'NfoMetadata'.   [js 45]
+  server/scanner/NfoFileScanner.ts(54,31): error TS7053: (the same)   [js 46]
+  server/scanner/NfoFileScanner.ts(28,15): error TS18048: 'nfoMetadata.tags' is possibly 'undefined'.   [js 20]
+  server/scanner/NfoFileScanner.ts(33,15): error TS18048: 'nfoMetadata.genres' is possibly 'undefined'.   [js 25]
+  ```
+  `NfoMetadata` is an interface of the converted utils/parsers/parseNfoMetadata.ts without an index signature. Its result cannot be read by a dynamic key, and it cannot be annotated with an index-signature type either. No allowance covers a cast of the key. The last two errors would be 2 case-L `!` (the for-in loop guarantees the key).
+
+**Not started, because reading shows a blocker of the same kind** (not compiled; line numbers are those at HEAD):
+
+- **objects/files/AudioFile.js.** The converted objects/files/AudioTrack.ts reads `audioFile.metadata.filename` (line 42) and `audioFile.metadata.clone()` (line 47) without a guard. It compiles today because the JSDoc `@type {FileMetadata}` on `this.metadata = null` makes the field non-null. In TypeScript the field is `FileMetadata | null`, so AudioTrack.ts breaks and nobody may edit it. The other probe errors look solvable within the rules (not tried).
+- **objects/PlaybackSession.js.** Line 247 is `this.timeListening += Number.parseFloat(timeListened)`. `timeListening` is really null for a session built by `construct()` (`session.timeListening || null`), so a `!` would assert something false. Lines 239 and 247 also give the same value to `isNaN()` (number) and `Number.parseFloat()` (string), which no single type satisfies (bug 5). Likely too, not verified: models/PlaybackSession.ts `getFromOld()` passes the fields into model attributes that are declared non-null.
+- **scanner/LibraryItemScanner.js.** Lines 146-154 read `.ino`, `.mtimeMs`, `.ctimeMs` and `.birthtimeMs` of the untested result of `fileUtils.getFileTimestampsWithIno()`. The probe has TS2339 at (151,29) (152,33) (153,33) (154,37), "does not exist on type 'false'" (bug 3). Same case as LibraryFile.
+
+**Not started for time:** objects/Stream.js, scanner/LibraryItemScanData.js, scanner/PodcastScanner.js, scanner/Scanner.js (377 to 547 lines each). The trials and checks of files 1 to 11 ran until 17:29, and the cut-off for starting one of these was 17:30. In the probe of Stream.js, the calls into the vendored fluentFfmpeg (TS2769 x5, TS2345 with 'null | undefined' parameters) would need several boundary casts.
+
+## 3. Remaining errors in converted files
+None.
+
+## 4. Declarations needed
+None for the four converted files. Nothing was written to pending.d.ts: the only untyped package in my files is uuid, which untypedModules.d.ts already declares.
+
+For information (`set4/declarations-needed.md`), this is what would unblock three of the files that stayed JavaScript. Each needs a ruling, not a declaration in models/ or types/:
+1. **NfoFileScanner:** in server/utils/parsers/parseNfoMetadata.ts, inside `interface NfoMetadata`, the line `[key: string]: unknown // NfoFileScanner.scanBookNfoFile() reads the parsed fields by a dynamic key`. It is needed by NfoFileScanner.js lines 45-46.
+2. **Backup:** BackupController.ts line 159 needs `fullPath` as string. That takes either an edit there (`backup: Backup & { fullPath: string }` in RequestWithBackup) or a ruling on point 10.1.
+3. **AudioFile:** the same for AudioTrack.ts lines 42 and 47.
+
+## 5. JSDoc typedefs
+- The four converted files define no typedef.
+- Three files that stayed JavaScript define one each: LibraryItemScanData.js (`LibraryFileModifiedObject`), PodcastScanner.js (`PodcastMetadataObject`), Scanner.js (`QuickMatchOptions`). A grep for `import(...)` references to these names in server/ finds none; they are used only inside their own files.
+- My TypeScript now uses two typedefs of other files as real types, so they must keep their names:
+  - `import('../utils/podcastUtils').RssPodcastEpisode` (set 5) in PodcastEpisodeDownload.ts.
+  - `import('../models/LibraryItem').LibraryFileObject` (JavaScript model, not in this run) in OpfFileScanner.ts.
+- AbsMetadataFileScanner.ts uses the classes LibraryScan, ScanLogger and LibraryItemScanData (JavaScript) as types.
+
+## 6. Files whose methods a router binds
+None. No method of a set-4 class appears in a `.bind(` in server/routers/.
+
+## 7. Effects between sets
+
+**On my files: none.** The four files were clean in every check (17:17, 17:20, 17:23, 17:27 and the final one).
+
+**Seen in the watched importers, caused by other sets and gone again:**
+- 17:17: `server/controllers/LibraryItemController.ts(1041,48): error TS2339: Property 'probeAudioFile' does not exist on type 'typeof import(".../server/scanner/AudioFileScanner")'` (set 3, AudioFileScanner half converted).
+- 17:23: `error TS2306: File '.../server/managers/PlaybackSessionManager.ts' is not a module` at ShareController.ts(26,38), HlsRouter.ts(9,38), PublicRouter.ts and CronManager.ts (set 1, half converted).
+
+**From my files to others: not observable yet.** At 17:27 BookScanner, LibraryScanner, PodcastManager, fileUtils, utils/index, podcastUtils, prober, scandir, parseOpfMetadata and abmetadataGenerator were all still JavaScript. Expect these once they become TypeScript:
+- a. `LibraryScan.library` is now `Library | null` (the JSDoc said non-null). A caller that reads `libraryScan.library.x` directly needs a case-F `!` (LibraryScanner.js lines 154 and 262, set 3). The getters `libraryId`, `libraryName`, `libraryMediaType` and `libraryFolders` are not affected.
+- b. In PodcastEpisodeDownload, `url`, `libraryItem`, `rssPodcastEpisode` and `targetFilename` are `... | null`. PodcastManager.js (set 1, lines 77, 80, 115) and ffmpegHelpers.js (set 5, lines 120 to 159) read them directly and need case-F `!`.
+- c. `OpfFileScanner.scanBookOpfFile` and both AbsMetadataFileScanner methods take the metadata object as an index-signature interface. An argument typed by a type alias or an object literal is accepted. One typed by an `interface` gets "Index signature for type 'string' is missing" at the call (BookScanner, set 3).
+- d. My files assume things about files that other sets are converting:
+  - OpfFileScanner.ts line 32 annotates the result of `parseOpfMetadataXML` (set 6) with a local index-signature type. It breaks if set 6 gives that result an interface type.
+  - AbsMetadataFileScanner casts the result of `abmetadataGenerator.parseJson` (set 6).
+  - PodcastEpisodeDownload casts the result of `sanitizeFilename` and annotates `targetPath` as string (fileUtils, set 5).
+  - LibraryScan destructures `secondsToTimestamp` and `elapsedPretty` from utils/index (set 5) and passes them a number.
+
+## 8. `import type` replacements (names undefined at runtime)
+None in this set.
+
+## 9. Bug log (`set4/bugs.md`; nothing was fixed)
+1. scanner/MediaProbeData.js 54-60: `setData()` dereferences `this.audioStream`, which is null for a file with a video stream but no audio stream. The TypeError is swallowed by the `.catch` in `prober.probe()` and returned as `{ error }`, so the `!probeData.audioStream` test in AudioFileScanner can never see such a file.
+2. objects/files/LibraryFile.js 64-71: the result of `getFileTimestampsWithIno()` (false when fs.stat fails) is never tested. The library file is created silently with ino undefined and no size or timestamps.
+3. scanner/LibraryItemScanner.js 146-154: the same untested result; ino undefined and timestamps 0.
+4. objects/Backup.js 37: `this.key == 1` compares a string with a number and works only through loose equality.
+5. objects/PlaybackSession.js 239, 247 (by reading): `isNaN()` and `Number.parseFloat()` on the same value, and `+=` on a `timeListening` that is null, which works only because null coerces to 0.
+6. objects/PodcastEpisodeDownload.js 25: `startedAt` is never assigned, so clients always get `startedAt: null`.
+7. scanner/OpfFileScanner.js and NfoFileScanner.js 19-27: the comments say "only if tags/genres are empty", but the code overwrites whenever the parsed file has any.
+8. Documentation only. LibraryItemScanner.js JSDoc: `updateLibraryItemDetails` lacks `libraryFolderId` and `isFile`; an async method is documented as returning number; a ScanLogger is passed where LibraryScan is documented. AbsMetadataFileScanner.js documents `libraryScan` as LibraryScan only.
+9. Not my file: managers/PodcastManager.js 78 logs `this.currentDownload.episodeTitle` in the "already in queue" warning, where the queued episode is `podcastEpisodeDownload`.
+
+## 10. CLAUDE.md and briefs: wrong, unclear or missing
+1. **Unclear, and it decides Backup and AudioFile:** may case F be written once at the null initialiser, with the field declared non-null (`declare fullPath: string` and `this.fullPath = null! // set by construct() or setData() before it is read`)? Converted importers (BackupController.ts 159, AudioTrack.ts 42 and 47) already rely on the non-null type that the JSDoc gave. I did not use this form: no converted file has it, and the set brief says to type a field as what the code really stores.
+2. **Missing:** there is no rule for reading the result of an already converted file by a dynamic key when its type is an interface without index signature (NfoFileScanner). Allowance 3 covers only call arguments.
+3. **The probe understates.** Where a JavaScript parameter is untyped, checkJs reports no possibly-null error (MediaProbeData had 6 probe errors and none on `audioStream`). It also cannot show a conflict with a converted importer (Backup).
+4. **The set brief counts on 11 files, and 7 of them do not fit the rules as written.** Four have unguarded code (MediaProbeData, LibraryFile, LibraryItemScanner, PlaybackSession). Three are blocked by a converted file that nobody may edit (Backup, AudioFile, NfoFileScanner).
+5. **The hand-back file.** The brief asks for `set4/report.md`, but the Write tool refuses report files from a sub-agent.
+6. **Small:** `git --no-optional-locks status` shows exactly four entries for this set, all `RM` (the four renames).
+
+====================================================================================================
+PO-S10 set 5 utils  (arrived 04:36:54 UTC, which is +13h NZDT)
+====================================================================================================
+# Set 5 report (server/utils, 12 files)
+
+**Result: 2 of 12 files are converted and clean (profiler, comicBookExtractors). The other 10 stay JavaScript, because each needs something the rules forbid.** index.js, fileUtils.js and podcastUtils.js share one blocker that the brief did not foresee (section 2a), and it needs your decision.
+
+Last check at 17:34: no errors in my files, no line that mentions my two converted files, 0 error lines in the converted importers outside the sets. The ten JavaScript files are identical to HEAD. I started at 17:04.
+
+**set5/report.md does not exist.** The Write tool refused it ("Subagents should return findings as text, not write report files"), and I did not work around that with a shell redirect. This message is the report. set5/bugs.md and set5/declarations-needed.md were written.
+
+## 1. Files
+
+| File | Status | Lines | `!` F/A/L | Index signatures | Casts A1/A2/A3/other | How the exports were kept |
+|---|---|---|---|---|---|---|
+| areEquivalent.js | restored after a trial | 157 | - | - | - | unchanged |
+| profiler.ts | converted clean | 48 | 1/0/1 | 0 | 0/0/0/0 | `module.exports = { profile }` became `export = { profile }`, still the last statement |
+| zipHelpers.js | restored after a trial | 138 | - | - | - | unchanged |
+| rateLimiterFactory.js | not started | 83 | - | - | - | unchanged |
+| index.js | not started | 344 | - | - | - | unchanged |
+| fileUtils.js | not started | 579 | - | - | - | unchanged |
+| comicBookExtractors.ts | converted clean | 260 | 2/0/0 | 0 | 0/0/0/5 | `module.exports = { createComicBookExtractor }` became `export = { createComicBookExtractor }`, still the last statement |
+| scandir.js | not started | 318 | - | - | - | unchanged |
+| ffmpegHelpers.js | not started | 523 | - | - | - | unchanged |
+| libraryHelpers.js | not started | 267 | - | - | - | unchanged |
+| prober.js | not started | 343 | - | - | - | unchanged |
+| podcastUtils.js | not started | 457 | - | - | - | unchanged |
+
+Neither converted file was a `module.exports.name = ...` file. In both, the single `module.exports = {...}` was already the last statement, so `export =` emits it in the same place. I transpiled both files and their HEAD originals with the same options in my scratch folder (set5/emit): the emitted JavaScript differs only in the require lines and the new comments.
+
+**profiler.ts**
+- `!` L, line 20: `histograms.get(funcName)!`. The `if (!histograms.has(funcName))` block directly above sets the entry.
+- `!` F, line 40: `histogram.values!.push(duration)`. `values` is a property that the file adds to the perf_hooks histogram right after creating it, before the histogram goes into the map. It is an added property, not a class field. Say if that should not count as case F; without it the file does not fit.
+- Types: `profile<R>(asyncFunc: (...args: ProfiledArgs) => Promise<R>, isFindQuery = true, funcName = asyncFunc.name)`, where `ProfiledArgs` is `[findOptions: { logging?: (query: string, time?: number) => void; benchmark?: boolean }, ...rest: unknown[]]`. The local histogram is widened with an intersection annotation (`RecordableHistogram & { values?: number[] }`).
+
+**comicBookExtractors.ts**
+- `!` F, lines 111 and 122: `this.tmpDir!`. tmpDir starts as null; open() sets it before it sets archive, and both callers return early while archive is null.
+- Casts, all "other", all at a server/libs boundary:
+  - lines 49, 112, 132, 187: `(fs as FsWithNodeMethods).readFile / readdir / readFile / writeFile(...)`. fsExtra adds these methods in a loop; one cast per call site, one shared local type.
+  - line 165: `Archive.open(buffer as Parameters<typeof Archive.open>[0])`. The JSDoc of the vendored libs/libarchive types the parameter as Buffer, and getBuffer() can return null (bug log 4). It has the form of Allowance 3 and of LibraryController.ts line 708, but the callee is a server/libs file, not a converted file, so I counted it under "other". Please rule on it.
+- `declare const global: typeof globalThis & { MetadataPath: string }`.
+- The five probe TS2416 errors are gone because the base-class methods now have explicit return types (`Promise<void>`, `Promise<string[] | null>`, `Promise<boolean>`, `Promise<Uint8Array | null | undefined>`, `void`). Their bodies are unchanged.
+- One callback parameter is annotated, `(fo: { file: { _path: string } })`, because `getFilesArray()` of libarchive is untyped.
+
+## 2. Restored and not-started files
+
+### 2a. index.js, fileUtils.js, podcastUtils.js (not started): `this` inside module-level arrow functions
+
+These three files call their own exports through `this` inside arrow functions at module level:
+- index.js lines 155, 158, 162 (`this.isObject`, `this.copyValue` inside copyValue)
+- fileUtils.js lines 235 (`this.shouldIgnoreFile` inside recurseFiles), 357 (`this.downloadFile` inside downloadImageFile), 523 (`this.filePathToPOSIX` inside getDirectoriesInPath)
+- podcastUtils.js lines 394, 410 (`this.parsePodcastRssFeedXml`, `this.getPodcastFeed` inside getPodcastFeed), 420, 424 (`this.getPodcastFeed`, `this.findMatchingEpisodesInFeed` inside findMatchingEpisodes)
+
+In CommonJS, `this` at module level is the original `module.exports` object. The files only add properties to that object, so the calls work today. In a TypeScript module two things break:
+1. The compiler types top-level `this` as undefined: `error TS2532: Object is possibly 'undefined'.` No allowed construct removes it (an arrow function cannot take a `this` parameter).
+2. `export = {...}` compiles to `module.exports = {...}`, a new object, while `this` still points to the old, empty one. The call then fails at run time.
+
+I checked both with an 8-line copy of the pattern in my scratch folder (set5/exp/a.ts): the compiler reports the TS2532 above, and running the emitted file gives `this.isObject is not a function`.
+
+The brief says these calls must stay unchanged, so the three files cannot be converted under the current rules. I did not rename them even for a trial: index.js has 40 importers and fileUtils.js 37, many in the other five sets, and they would have seen a module without exports.
+
+Decision for you: either the three files stay JavaScript, or `this.` becomes `module.exports.` at those 10 places. The second is a code change. It still goes through the exports object, so test stubs keep working, but it needs the user's approval. Until then nothing changes for the other sets: their annotated imports of index.js and fileUtils.js stay valid.
+
+### 2b. areEquivalent.js (restored after a trial, 17:24 to 17:26)
+
+With `value1: unknown, value2: unknown, stack: unknown[] = []` the compiler reports:
+```
+server/utils/areEquivalent.ts(22,35): error TS2345: Argument of type '{} | undefined' is not assignable to parameter of type 'number'.
+server/utils/areEquivalent.ts(23,35): error TS2345: Argument of type '{} | undefined' is not assignable to parameter of type 'number'.
+server/utils/areEquivalent.ts(51,19): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+server/utils/areEquivalent.ts(51,36): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+server/utils/areEquivalent.ts(59,12): error TS18046: 'value1' is of type 'unknown'.
+server/utils/areEquivalent.ts(59,34): error TS18046: 'value2' is of type 'unknown'.
+server/utils/areEquivalent.ts(64,5): error TS2367: This comparison appears to be unintentional because the types '"string" | "symbol" | "undefined" | "object"' and '"function"' have no overlap.
+server/utils/areEquivalent.ts(116,29): error TS2769: No overload matches this call.
+server/utils/areEquivalent.ts(117,29): error TS2769: No overload matches this call.
+server/utils/areEquivalent.ts(145,24): error TS18046: 'value1' is of type 'unknown'.
+server/utils/areEquivalent.ts(145,42): error TS18046: 'value2' is of type 'unknown'.
+```
+Lines 22, 23 and 51 can be solved with the `declare function isNaN(value: unknown): boolean` precedent (LibraryController.ts line 48), and line 64 with Allowance 1. Lines 59, 116, 117 and 145 cannot: the function accepts any value and narrows it through `const type1 = typeof value1`, and because value1 is reassigned on line 22 the compiler does not narrow value1 from type1. `.toString()`, `Object.keys(value1)` and `value1[key]` then need `any` or a cast that is not at a boundary. I compiled only the `unknown` version; `{}`, an index-signature object and a recursive union I ruled out by reading (each fails on line 22, 116 or 145).
+
+### 2c. zipHelpers.js (restored after a trial, 17:13 to 17:19)
+
+server/libs/archiver/index.js is tagged `@constructor` in its JSDoc, so the compiler refuses the plain call `archiver('zip', {...})` on lines 11 and 69 (probe: TS2348). I tried three single-step casts of the callee:
+```
+(archiver as typeof archiver & ((format, options) => ZipArchive))(...)
+server/utils/zipHelpers.ts(24,21): error TS2348: Value of type 'ArchiverFactory' is not callable. Did you mean to include 'new'?
+
+(archiver as (format: string, options: {...}) => ZipArchive)(...)
+server/utils/zipHelpers.ts(24,22): error TS2352: Conversion of type 'typeof vending' to type 'ArchiverFactory' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+
+(archiver as typeof archiver.create)(...)
+server/utils/zipHelpers.ts(25,22): error TS2352: Conversion of type 'typeof vending' to type '(format: string, options: Object) => Archiver' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+```
+Each error appeared twice (the second call site is line 83 or 85). Only `as unknown as` compiles, and that is banned. The rest of the file was typed and clean in the trial, and LibraryController.ts, LibraryItemController.ts and ShareController.ts showed no error from it. What would unblock it is in section 4. managers/BackupManager.js line 435 makes the same call and will hit the same error.
+
+### 2d. rateLimiterFactory.js (not started)
+
+Line 60 returns `requestIp.getClientIp(req) || req.ip` from keyGenerator. `req.ip` is `string | undefined` in the express types and express-rate-limit requires a string. Probe line:
+```
+server/utils/rateLimiterFactory.js(58,7): TS2322: Type '(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>) => string | undefined' is not assignable to type 'ValueDeterminingMiddleware<string>'.
+```
+Only a `!` or a cast on a value that nothing guarantees would compile. The four probe TS2345 errors on lines 33, 34, 41 and 42 (`parseInt(process.env.X)`) are not the blocker: an ambient `declare function parseInt(string: string | undefined, radix?: number): number` would follow the isNaN precedent.
+
+### 2e. scandir.js (not started)
+
+Line 77 stores a string in the group map (`libraryItemGroup[item.name] = item.name`), lines 87 and 115 call `.push(relpath)` on the map's values, and the JSDoc return type is Record<string,string[]>. With `Record<string, string[]>` line 77 fails; with `Record<string, string | string[]>` lines 87 and 115 fail. Either way it needs a cast that is not at a boundary. The probe also has nine TS18048 errors for `match.groups` (lines 185, 214, 215, 216), where only the regular expression guarantees the groups; that would need a ruling too.
+
+### 2f. prober.js (not started)
+
+Lines 76 and 77: `const tagKey = Object.keys(stream.tags).find(...)`, then `stream.tags[tagKey]` with no test. Probe line:
+```
+server/utils/prober.js(77,31): TS2538: Type 'undefined' cannot be used as an index type.
+```
+That needs a `!` on a lookup result the code never tests, which rule 5 forbids.
+
+### 2g. libraryHelpers.js (not started)
+
+Results of `.find()` are dereferenced without a test on lines 31-32 (`series.bookSeries.sequence`), 169-170 and 224-229 (`filteredSeries.id`, `.name`, `.bookSeries`). Each needs a `!` on an unguaranteed lookup; this is the ground on which Session and Playlist were restored in PO-S09. Probe lines for the same places: `(31,26): TS18046: 'libraryItem.media.series' is of type 'unknown'`, `(224,32): TS18046: 'li.media.series' is of type 'unknown'`, and `(147,16): TS2790: The operand of a 'delete' operator must be optional`.
+
+### 2h. ffmpegHelpers.js (not started)
+
+Lines 162-184 build `taggings` from strings plus `year: podcastEpisodeDownload.pubYear`, which is `number | null` (PodcastEpisodeDownload.ts line 99, already converted by set 4). The loop on lines 186-193 reads `taggings[tag].length` and calls `.slice`. With an index-signature type that includes number, `.length` fails; with a string-only type the `year` line fails. It needs a cast that is not at a boundary. I decided this by reading, not by a trial: at 17:24 a 523-line file with six importers in three other sets could not have been finished and reviewed.
+
+## 3. Remaining errors in converted files
+
+No errors. Output of the filtered check at 17:34 for my files: empty.
+
+## 4. Declarations needed
+
+None for the two converted files. set5/pending.d.ts is unchanged: `xml2js` and `ssrf-req-filter` are only required by index.js, fileUtils.js, ffmpegHelpers.js and podcastUtils.js, which stay JavaScript.
+
+One blocker is a missing declaration that I cannot phrase as a line for server/models or server/types: server/libs/archiver (section 2c). It needs either a declaration file that the compiler prefers over the JavaScript (an index.d.ts next to it, as server/libs/fluentFfmpeg/index.d.ts does; server/libs is closed to everyone in this run) or a ruling on the cast. The same text is in set5/declarations-needed.md.
+
+## 5. JSDoc typedefs
+
+- profiler.js and comicBookExtractors.js define no typedef.
+- The typedefs of the files that stay JavaScript are untouched and still resolve: fileUtils `FilePathItem` (used by scandir.js), scandir `LibraryItemFilenameMetadata` (used by scanner/LibraryItemScanData), podcastUtils `RssPodcastEpisode`, `RssPodcast`, `RssPodcastMetadata`, `RssPodcastChapter` (used by PodcastController.ts line 26, models/Podcast.ts line 17, models/PodcastEpisode.ts line 8, PodcastManager, PodcastEpisodeDownload, Scanner).
+- I used the named-const-plus-namespace form nowhere.
+
+## 6. Files whose methods a router binds
+
+None. A grep of server/routers found no require of any of the twelve files and no `.bind(` on their exports.
+
+## 7. Effects between sets
+
+- Mine on others, final state: none seen. profiler has only JavaScript importers (three files in utils/queries, not checked by the compiler). comicBookExtractors has one importer, utils/parsers/parseComicMetadata.js (set 6, still JavaScript at 17:31); when it is converted it will see real types: `createComicBookExtractor` returns `CbrComicBookExtractor | CbzStreamZipComicBookExtractor`, `getFilePaths()` returns `Promise<string[] | null>`, `extractToFile()` returns `Promise<boolean>`.
+- Mine on others, temporary: zipHelpers.ts existed from 17:13 to 17:19 and areEquivalent.ts from 17:24 to 17:26, each with errors only in itself. An agent that ran an unfiltered check in those minutes may have seen those lines.
+- Others on mine: nothing broke. The unfiltered check showed other sets' half-finished files (for example `scanner/AudioFileScanner.ts is not a module` in LibraryItemController.ts at 17:14, and `managers/CoverManager.ts is not a module` at 17:18); both were gone at 17:34.
+- Converted importers outside the sets (controllers, finders, models, objects/settings, objects/DailyLog, managers/ShareManager): 0 error lines at 17:34.
+
+## 8. `import type` replacements (names undefined at runtime)
+
+None in the converted files. (`import type { RecordableHistogram } from 'perf_hooks'` in profiler.ts is a new type import, not a replacement.) The two candidates, `Response` in zipHelpers.js and `RateLimitRequestHandler` in rateLimiterFactory.js, are in files that stay JavaScript.
+
+## 9. Bug log
+
+Also in set5/bugs.md; nothing was fixed. Line numbers are those of the JavaScript files at HEAD.
+1. areEquivalent.js:110 - the array branch returns true without `stack.pop()`, so an array instance that occurs twice in value1 throws a false "areEquivalent value1 is circular". Reproduced with node: `areEquivalent({ a: arr, b: arr }, { a: [1], b: [1] })`.
+2. areEquivalent.js:64 - `type1 === 'function'` can never be true there (TS2367).
+3. comicBookExtractors.js:36 - `return fs.readFile(...)` inside `try` without `await`: a failed read is not caught by the catch on lines 37-40.
+4. comicBookExtractors.js:146-147 - CbzComicBookExtractor.open() passes a possibly null buffer to Archive.open(). The class is never instantiated.
+5. rateLimiterFactory.js:60 - keyGenerator can return undefined; express-rate-limit expects a string key.
+6. scandir.js:77 - a media file in the library root is stored as a string, all other groups are arrays, and lines 87 and 115 call `.push` on group values.
+7. scandir.js:128 - JSDoc says buildLibraryFile returns a LibraryFile; it returns Promise<LibraryFile[]> (documentation only).
+8. prober.js:76-77 - `stream.tags[tagKey]` is read with an undefined key when no tag matches (harmless unless a tag is named "undefined").
+9. libraryHelpers.js:31-32, 169-170, 224-229 - `.find()` results are dereferenced without a test; a book that lacks the requested series throws a TypeError.
+10. ffmpegHelpers.js:178, 186-191 - the tag loop treats every value as a string, but `year` is a number, so the length limit never applies to it (harmless today).
+11. ffmpegHelpers.js:108 - `new Promise(async (resolve) => ...)`: an exception inside the async executor is an unhandled rejection and the promise never settles.
+12. profiler.js:17-20 - a profiled function called without arguments throws on line 19 when isFindQuery is true; I did not check whether any caller does this.
+
+## 10. Wrong, unclear or missing in CLAUDE.md or the briefs
+
+1. The briefs assume that a `this.x(...)` call can stay unchanged in a `module.exports.name = ...` file. In a module-level arrow function it cannot (section 2a). This blocks the three most-imported files of the run and belongs in "Pitfalls".
+2. brief-set5 says areEquivalent only needs Allowance 1. It also needs dynamic access that only `any` gives (section 2b).
+3. The vendored libs/archiver cannot be called from TypeScript (section 2c). Not in "Pitfalls"; it affects every file that calls `archiver(...)`.
+4. Six converted files use `declare function isNaN(value: unknown): boolean`, but CLAUDE.md does not list an ambient redeclaration of a built-in as an allowed construct. It should say whether the same is allowed for `parseInt(process.env.X)`.
+5. Allowance 3 names only "an already converted file". LibraryController.ts line 708 already uses the same cast for a JavaScript file with JSDoc, and I used it for a server/libs file (comicBookExtractors.ts line 165). The text should cover these or forbid them.
+6. Rule 5 lists three cases for `!`. Two more came up: a property added to an object right after it is created (profiler.ts line 40, counted as F), and `match.groups` of a regular expression that has named groups (scandir.js, not used).
+7. `git diff -M` shows a small file with many changed lines as a delete plus an add (profiler), so the line-by-line review has to be done by reading both versions.
+8. The sub-agent harness refuses to write set5/report.md with the Write tool, so the hand-back file the brief asks for cannot be produced that way.
+9. Time: I was started at 17:04, not 16:47, which left 46 minutes of editing for 3492 lines.
+
+## Paths
+
+- Converted: D:\SEM-2\574\Project\audiobookshelf-po\server\utils\profiler.ts, D:\SEM-2\574\Project\audiobookshelf-po\server\utils\comicBookExtractors.ts
+- Scratch folder: C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\bca2b50b-ca0f-4d85-ae6b-75f7bfb74f79\scratchpad\set5\ (bugs.md, declarations-needed.md, check-final.txt, check6-areEquivalent-attempt.txt, exp\a.ts for the `this` experiment, emit\ for the compiled-output comparison)
+
+====================================================================================================
+PO-S10 set 1 managers  (arrived 04:38:58 UTC, which is +13h NZDT)
+====================================================================================================
+# Set 1 report (server/managers/) - PO-S10
+
+Result: 3 of 5 files are converted and clean (NotificationManager, CronManager, PlaybackSessionManager). RssFeedManager was tried and restored, because it needs three `!` that rule 5 forbids. PodcastManager was not started (time rule). Last check at 17:36: no errors in my files and none in the converted importers. Nothing was built, tested or committed.
+
+`set1/report.md` does not exist: the Write tool refused a report file from a sub-agent, and I did not write it through the shell instead. This message is the report. `set1/bugs.md` and `set1/declarations-needed.md` exist.
+
+Three things need your ruling before you commit (details in sections 1 and 10):
+- Two of the `!` (case F) rest on a test in the callers, not in the same method: NotificationManager.ts:244 and CronManager.ts:100.
+- CronManager.ts uses one erased overload, because the original calls `executePodcastCron()` with one argument too many (TS2554).
+- PlaybackSessionManager.ts uses a file-local `declare const Number` (emits nothing) for `Number.parseFloat(number)`, modelled on the `declare function isNaN` precedent.
+
+## 1. Files
+
+Lines are `wc -l` + 1, as in the brief. Line numbers below are those of the .ts files.
+
+| file | status | lines | ! F/A/L | index signatures | casts A1/A2/A3/other | exports |
+|---|---|---|---|---|---|---|
+| NotificationManager | converted clean | 237 -> 256 | 1/0/1 | 0 (plus 1 Record type) | 0/0/1/0 | `export = new NotificationManager()` (same instance export) |
+| CronManager | converted clean | 257 -> 288 | 1/1/0 | 0 (plus 1 Record annotation) | 0/0/0/5 | `export = CronManager` (class) |
+| RssFeedManager | restored | 408 (JS, identical to HEAD) | - | - | - | unchanged |
+| PlaybackSessionManager | converted clean | 500 -> 567 | 0/0/2 | 1 (plus 2 Record types) | 0/1/4/4 | `export = PlaybackSessionManager` (class) |
+| PodcastManager | not started | 744 (JS, identical to HEAD) | - | - | - | unchanged |
+
+No file uses `module.exports.x = ...`. In all three converted files the export was already the last statement, so `export =` does not move it.
+
+**`!` (6 in total, each with a one-line comment)**
+- NotificationManager.ts:224 `this.notificationQueue.shift()!` - L: `if (this.notificationQueue.length)` on the line above.
+- NotificationManager.ts:244 `Database.notificationSettings.appriseApiUrl!` - F: it starts as null and the guarantee is in the callers. `triggerNotification()` returns at its top unless `notificationSettings.isUseable` (= `!!appriseApiUrl`). The only caller of `sendTestNotification()` (NotificationController.sendNotificationTest) tests `isUseable` first. `axios.post()` takes a string, so there is no form without `!`.
+- CronManager.ts:100 `_library.settings.autoScanCronExpression!` - F: it starts as null and both callers test it. `initLibraryScanCrons()` has `if (library.settings.autoScanCronExpression)`; `updateLibraryScanCron()` reaches the call only in its second and third branch, with a set expression.
+- CronManager.ts:173 `podcast.libraryItem!.id` - A: the `findAll()` above includes `libraryItemModel`. The include is a left join, so a podcast row without a library item would still give null (bug log).
+- PlaybackSessionManager.ts:332 and :335 `userProgressForItem!` - L: both are inside `if (result.progressSynced)`. Earlier in the same method `progressSynced` is only set to true together with `userProgressForItem = updateResponse.mediaProgress` (truthy).
+
+**Index signatures and dictionary types (each with a comment)**
+- PlaybackSessionManager.ts `LocalSessionJson { [key: string]: unknown; ... }` is the only literal index signature. The whole object is handed to `new PlaybackSession()`, which copies its fields.
+- Record types (not literal index signatures, same purpose):
+  - NotificationManager.ts `NotificationEventData = Record<string, string | number | boolean | null>`: event template data, which the JSDoc left open.
+  - CronManager.ts `cronExpressionMap: Record<string, {...}>`: a local built as `{}` and filled by key.
+  - PlaybackSessionManager.ts `declare oldPlaybackSessionMap: Record<string, string>`: a field filled by key.
+  - PlaybackSessionManager.ts `libraryItemMediaMetadata: Record<string, unknown>`: a local read by a dynamic key.
+
+**Casts (15 in total, all single-step, each line commented)**
+- NotificationManager.ts:242 - A3: `eventData as Parameters<Notification['getApprisePayload']>[0]`. Notification.ts takes `Record<string, string>`; the events pass numbers, booleans and null, and `onTest()` passes nothing.
+- CronManager.ts:273 (two), 274, 279, 282 - other x5: `libraryItem.media as PodcastMedia`.
+  - LibraryItem.js (JS) types media as `BookExpanded | PodcastExpanded`.
+  - `checkUpdatePodcastCron()` keeps the parameter type `LibraryItem`, because LibraryItemController.ts:337 and PodcastController.ts:220 pass a plain LibraryItem.
+  - Precedent: PodcastController.ts:219, MeController.ts:521.
+  - `PodcastMedia = PodcastExpanded & { metadata?: { title?: string } }` describes the old-model `metadata` that line 279 still reads.
+- PlaybackSessionManager.ts:13 - other: `dateAndTime as typeof dateAndTime & { format(...) }` (libs/dateAndTime; copied from DailyLog.ts, FeedEpisode.ts, LibraryScan.ts).
+- PlaybackSessionManager.ts:196 - other: `libraryItem.media as PodcastExpanded` (same LibraryItem.js union; `isPodcast` is tested just before).
+- PlaybackSessionManager.ts:269 - A3: `sessionJson.episodeId as string` at `Podcast.getPlaybackDuration(episodeId: string)`.
+- PlaybackSessionManager.ts:388 - A3 x2: `options.supportedMimeTypes as string[]` and `episodeId as string` at `checkCanDirectPlay()` of Book.ts and Podcast.ts. The union call needs both; the bodies test `Array.isArray`.
+- PlaybackSessionManager.ts:408 - other: `episodeId as string | undefined` at `libraryItem.getTrackList()`. The JSDoc of LibraryItem.js types it as an optional string, and a book session passes null.
+- PlaybackSessionManager.ts:466 - A3: the property `markAsFinishedPercentComplete`, cast to `Parameters<User['createUpdateMediaProgressFromPayload']>[0]['markAsFinishedPercentComplete']`. The library setting is `number | null`; `User.ProgressUpdatePayload` has no null.
+- PlaybackSessionManager.ts:532 - A2: `(error as Error).message`.
+- PlaybackSessionManager.ts:536 - other: `fs as typeof fs & { readdir(...) }` (libs/fsExtra, form of LogManager.ts).
+
+**Other type-only devices**
+- CronManager.ts:219: `async executePodcastCron(expression: string, libraryItemIds?: string[]): Promise<void>` is an erased overload above the unchanged implementation `executePodcastCron(expression)`. `startPodcastCron()` calls it with two arguments.
+- PlaybackSessionManager.ts declares three file-local ambients:
+  - `declare const global: typeof globalThis & { MetadataPath: string }`
+  - `declare function isNaN(value: unknown): boolean` (precedent)
+  - `declare const Number: NumberConstructor & { parseFloat(value: unknown): number }` (new)
+- PlaybackSessionManager.ts `startSessionRequest()` takes `Request & { user: User; libraryItem: LibraryItem }`, so `req.body` has express's own default type there. A typed body is not possible: LibraryItemController.ts passes its request with Body = unknown, which is not assignable to a typed body. The two handlers that only SessionController.js calls use the Request generics with a typed body.
+
+**Compiled output**
+I transpiled the three files one by one (`ts.transpileModule`, target ES2022 / commonjs, written to `set1/emit/`, nothing in the repository) and diffed them with `po-s10-baseline`. Only require lines and comments differ. The order of the requires is unchanged and no require is elided. Extra local consts on the require lines:
+- `axiosModule` + `const axios = axiosModule.default` (same as AudiobookCovers.ts; I checked that `require('axios').default === require('axios')`)
+- `notifications`, `uuid`, `packageJson`, `constants`
+- `dateAndTime` + `const date = dateAndTime`
+
+## 2. Restored and not-started files
+
+**RssFeedManager.js - restored.** Renamed at 17:29, typed, checked once, restored at 17:31; `git diff HEAD` on it is empty.
+
+Reason: three places need a `!` on a value that no earlier code guarantees (rule 5), and the original leaves all three unguarded:
+- Original lines 90 and 122: `feed.entity = await feed.getEntity(...)`. `getEntity()` returns `... | null`, `Feed.entity` is declared non-null, and lines 94 and 137 dereference it at once.
+- Original line 186: `feed.buildXml(...)` after `feed = await feed.updateFeedForEntity()` (line 183), which returns `Feed | null` (Feed.ts returns null in four places).
+
+Compiler errors that were left after typing all signatures (the trial file had 16 extra header lines, so trial line = original line + 16):
+```
+server/managers/RssFeedManager.ts(106,7): error TS2322: Type 'LibraryItem | Series | Playlist | Collection | null' is not assignable to type 'LibraryItem | Series | Playlist | Collection'.
+server/managers/RssFeedManager.ts(112,23): error TS2339: Property 'mediaType' does not exist on type 'LibraryItem | Series | Playlist | Collection'.
+server/managers/RssFeedManager.ts(115,36): error TS2339: Property 'mediaId' does not exist on type 'LibraryItem | Series | Playlist | Collection'.
+server/managers/RssFeedManager.ts(127,29): error TS2339: Property 'mediaId' does not exist on type 'LibraryItem | Series | Playlist | Collection'.
+server/managers/RssFeedManager.ts(138,7): error TS2322: Type 'LibraryItem | Series | Playlist | Collection | null' is not assignable to type 'LibraryItem | Series | Playlist | Collection'.
+server/managers/RssFeedManager.ts(147,13): error TS2322: Type '{ model: typeof Book; attributes: string[]; through: { attributes: never[]; }; include: { model: typeof LibraryItem; attributes: string[]; }; }' is not assignable to type 'Includeable | Includeable[] | undefined'.
+server/managers/RssFeedManager.ts(153,43): error TS2339: Property 'books' does not exist on type 'LibraryItem | Series | Playlist | Collection'.
+server/managers/RssFeedManager.ts(153,57): error TS7006: Parameter 'total' implicitly has an 'any' type.
+server/managers/RssFeedManager.ts(153,64): error TS7006: Parameter 'book' implicitly has an 'any' type.
+server/managers/RssFeedManager.ts(160,51): error TS2339: Property 'books' does not exist on type 'LibraryItem | Series | Playlist | Collection'.
+server/managers/RssFeedManager.ts(160,65): error TS7006: Parameter 'mostRecent' implicitly has an 'any' type.
+server/managers/RssFeedManager.ts(160,77): error TS7006: Parameter 'book' implicitly has an 'any' type.
+server/managers/RssFeedManager.ts(202,17): error TS18047: 'feed' is possibly 'null'.
+server/managers/RssFeedManager.ts(270,27): error TS2339: Property 'createReadStream' does not exist on type '{ remove: ...; }'.   (libs/fsExtra; type text shortened)
+server/managers/RssFeedManager.ts(272,29): error TS7006: Parameter 'error' implicitly has an 'any' type.
+server/managers/RssFeedManager.ts(297,7): error TS2322: Type 'string | null' is not assignable to type 'string'.
+server/managers/RssFeedManager.ts(298,7): error TS2322: Type 'string | null' is not assignable to type 'string'.
+server/managers/RssFeedManager.ts(315,84): error TS2345: Argument of type 'LibraryItem' is not assignable to parameter of type 'LibraryItemExpandedByType'.
+```
+Lines 106, 138 and 202 decide it; I did not work on the other fifteen.
+
+During the trial RSSFeedController.ts showed three TS2345 at (78,82), (121,86) and (164,78): its `OpenFeedBody` was not assignable to my trial options type. They are gone with the restore. Whoever converts this file later must take the options type from that controller's body type.
+
+**PodcastManager.js - not started.** The third file was clean at 17:27, less than the 20 minutes before 17:42 that the set brief requires. From the probe, the null spots to look at first are (308,18) `libraryFile.metadata` possibly null and (615,33) `Database.sequelize` possibly null.
+
+## 3. Remaining errors in converted files
+
+None. Last check at 17:36, after my last edit:
+- Filtered to my files: no errors.
+- Filtered to the converted importers (`server/controllers/(Notification|Collection|Library|LibraryItem|RSSFeed|Series|Share|Podcast)Controller`, `server/routers/`): no errors.
+- The only line in the whole output was one error in server/managers/MigrationManager.ts (another set).
+
+## 4. Declarations needed
+
+None. `set1/declarations-needed.md` says so, and `pending.d.ts` is unchanged.
+
+Types in converted files that are narrower than what is passed (not edited; covered by the Allowance 3 casts above or seen in the RssFeedManager trial):
+- objects/Notification.ts: `data: Record<string, string>` in `getApprisePayload()` and the template methods.
+- models/Book.ts and models/Podcast.ts: `checkCanDirectPlay(supportedMimeTypes: string[])`, although the body handles a non-array.
+- models/User.ts: `ProgressUpdatePayload.markAsFinishedPercentComplete?: number` (the library setting can be null).
+- models/Feed.ts: `FeedOptions.ownerName` / `ownerEmail: string` (RssFeedManager.js passes null).
+
+## 5. JSDoc typedefs
+
+None of the five files has a `@typedef`. Other files reference only the class type through `import()`:
+- CronManager: PodcastManager.js:524, ApiRouter.js:53.
+- PlaybackSessionManager: ShareController.ts:26, HlsRouter.ts:9, PublicRouter.ts:4 and :11, ApiRouter.js:43, CronManager.ts.
+
+`export = <class>` keeps these resolving; the three TypeScript users are clean.
+
+## 6. Files whose methods a router binds
+
+None. There is no `.bind(` on a method of these managers in server/. PublicRouter.ts binds ShareController and SessionController methods, and HlsRouter.ts binds its own method. Server.js calls `RssFeedManager.getFeed` / `getFeedItem` / `getFeedCover` directly.
+
+## 7. Effects between sets
+
+- Nothing broke in my files because of another set. Other sets' half-finished files showed up only in the unfiltered output: AudioFileScanner.ts, LibraryFile.ts, NfoFileScanner.ts, LibraryScanner.ts, areEquivalent.ts, MigrationManager.ts, once LibraryItemController.ts(19,35) TS2306 and two lines in AuthorController.ts. None was caused by set 1.
+- Expect new errors in PlaybackSessionManager.ts when set 4 converts objects/PlaybackSession.js and objects/Stream.js (both still JavaScript at 17:38). It reads and writes many session fields that are untyped today.
+  - Lines 307 and 321 pass the same `markAsFinishedPercentComplete` as line 466. Only the untyped spread `...session.mediaProgressObject` hides the TS2322 there; the same Allowance 3 cast resolves it.
+  - I did not add casts where the compiler asks for none.
+- objects/Backup.js (set 4) is the type of `onBackupCompleted(backup)`. BackupManager.js (set 2) calls `onBackupCompleted(backup: Backup, totalBackupCount: number, removedOldest: boolean)` and `onBackupFailed(errorMsg: string)`.
+- The other way round: LibraryItemController.ts:510 (cast of the callee) and ShareController.ts:133 (cast of req) still compile, but their comments name "the JSDoc of PlaybackSessionManager.js (JS)", which no longer exists. The cast at :510 is no longer needed.
+
+## 8. `import type` replacements (names undefined at runtime)
+
+None in the converted files. PlaybackSessionManager.ts adds `import type { Request, Response } from 'express'`, but the original had no require of express. RssFeedManager.js has `const { Request, Response } = require('express')`; it stays JavaScript.
+
+## 9. Bug log (`set1/bugs.md`; nothing fixed; original line numbers)
+
+**CronManager.js**
+- 212-215: `executePodcastCron()` returns early without removing the expression from `podcastCronExpressionsExecuting`. A later cron with the same expression never runs ("already executing").
+- 166: extra argument to `executePodcastCron()`.
+- 248: `media.metadata?.title` reads the old model and is always undefined.
+- 143: unguarded `podcast.libraryItem.id`.
+- 175: log tag `[PodcastManager]`.
+
+**NotificationManager.js**
+- 141-143: `onTest()` sends no event data, so the template code would throw. It has no caller.
+- Notification.ts only substitutes truthy values, so `numFailed: 0` leaves the placeholder in the text.
+
+**PlaybackSessionManager.js**
+- 104-106: `req.body?.deviceInfo` is guarded, `req.body.sessions` is not.
+- 33-37: the JSDoc of `getSession()` omits undefined.
+- 240, 254, 399: a null setting in a payload typed without null.
+- 213 `isNaN(Date)` and 332 `Number.parseFloat(number)` work only through coercion.
+
+**RssFeedManager.js**
+- 183-186: `buildXml()` on a possibly null feed.
+- 90-94 and 122-137: unguarded `feed.entity` after `getEntity()`.
+- 57: the JSDoc omits null.
+- 281-282: null for `ownerName` / `ownerEmail` against the typedef.
+
+## 10. CLAUDE.md / brief: wrong, unclear or missing
+
+- Rule 5, case F ("set before it is read") does not say whether the guarantee may be a test in the callers. I used it that way twice (NotificationManager.ts:244, CronManager.ts:100). If that is not accepted, both files must be restored: `axios.post` and `cron.schedule` take a string, so there is no other form.
+- Rule 5, case A: an include is a left join, so "the query always loads an association" still allows null for an orphan row (CronManager.ts:173).
+- There is no rule for a call with too many arguments (TS2554). The erased overload keeps the code unchanged; the alternative is a code change.
+- There is no rule for a built-in called with the wrong primitive type, other than `isNaN`. `declare const Number` follows that precedent.
+- "Index signature" in the counting does not say whether `Record<string, T>` counts. I listed them separately.
+- Worth adding to "Pitfalls": a controller request typed with Body = unknown is not assignable to a manager parameter with a typed body. `Request & {...}` (express's default body) is the only form that accepts it.
+- The sub-agent Write tool refuses a file named as a report, so the hand-back file the brief asks for cannot be written.
+- The 20-minute rule for PodcastManager left about ten minutes before 17:42 unused. I spent them on the RssFeedManager trial and the compiled-output comparison.
+
+Paths:
+- D:\SEM-2\574\Project\audiobookshelf-po\server\managers\NotificationManager.ts
+- D:\SEM-2\574\Project\audiobookshelf-po\server\managers\CronManager.ts
+- D:\SEM-2\574\Project\audiobookshelf-po\server\managers\PlaybackSessionManager.ts
+- D:\SEM-2\574\Project\audiobookshelf-po\server\managers\RssFeedManager.js (unchanged)
+- D:\SEM-2\574\Project\audiobookshelf-po\server\managers\PodcastManager.js (unchanged)
+- Scratch folder: C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\bca2b50b-ca0f-4d85-ae6b-75f7bfb74f79\scratchpad\set1\ - `bugs.md`, `declarations-needed.md`, `check6.txt` (last check), `check4-rss.txt` (RssFeedManager trial errors), `emit\` (transpiled output), `transpile.js`
+
+====================================================================================================
+PO-S10 set 2 managers  (arrived 04:40:53 UTC, which is +13h NZDT)
+====================================================================================================
+# Set 2 report (server/managers/) - sent 17:41, last check 17:38
+
+Result: 4 of 8 files converted, 1 restored, 3 not started. Whole-tree no-emit check at 17:38: 1 error with tsconfig.check.json (my pending `semver` declaration), 0 errors with set2/tsconfig.pending.json.
+
+Note: set2/report.md does not exist. The Write tool refused it ("Subagents should return findings as text, not write report files") and I did not work around that; this message is the report. set2/bugs.md, set2/declarations-needed.md and set2/pending.d.ts are written.
+
+## 1. Files
+
+| file | status | lines (js -> ts) | ! F/A/L | index signatures | casts A1/A2/A3/other | exports |
+|---|---|---|---|---|---|---|
+| CoverSearchManager | converted clean | 255 -> 268 | 0/0/0 | 0 | 0/7/0/0 | `module.exports = new X()` -> `export = new X()`, same last line |
+| CacheManager | converted clean | 193 -> 211 | 2/0/0 | 0 | 0/1/0/8 | same form, last line |
+| MigrationManager | converted, waits for declaration (semver) | 326 -> 371 | 12/0/6 | 0 | 0/1/0/7 | `module.exports = MigrationManager` -> `export = MigrationManager`, last line |
+| CoverManager | converted clean | 348 -> 364 | 0/0/0 | 0 | 0/0/0/4 | same form, last line |
+| BinaryManager | restored | 438 | - | - | - | - |
+| BackupManager | not started | 506 | - | - | - | - |
+| AudioMetadataManager | not started | 290 | - | - | - | - |
+| AbMergeManager | not started | 302 | - | - | - | - |
+
+None of the four is a `module.exports.x` file. In each, the export line was already the last statement, so `export =` moves nothing.
+
+Detail of the counts:
+- **CoverSearchManager.ts**: A2 = 7 `(error as Error)` in three catch blocks (comment at the first). No `!`.
+- **CacheManager.ts**:
+  - `!` F x2 (lines 70, 184): `this.CoverCachePath!`, `this.ImageCachePath!`. They start as null and are set by ensureCachePaths(), which Server.init() awaits at Server.js:185.
+  - A2 x1.
+  - Other x8: `(fs as FsWithNodeMethods)` x6 (createReadStream x4, readdir, unlink; libs/fsExtra lacks them) and `(fs.remove(...) as Promise<void>)` x2 (the inferred return of libs/fsExtra `remove` is `Promise<any> | undefined`, TS2532 on `.catch`).
+- **MigrationManager.ts**:
+  - `!` F x12: `this.serverVersion!` and `this.databaseVersion!` (lines 123, 332, 335; set by init(), and runMigrations() tests this.initialized), `this.umzug!` x3 (130, 131, 150; set by initUmzug() on the line above), `this.migrationsDir!` x3 (182, 187, 312; set by init()).
+  - `!` L x6: `versionA!`, `versionB!` (233) and `migrationVersion!` x4 (332, 335). These are results of extractVersionFromTag() on migration names; the "Validate migration names" loop in initUmzug() throws when a name has no version.
+  - A2 x1.
+  - Other x7:
+    1. Line 4, the libs/umzug boundary you asked about: `const { Umzug, SequelizeStorage } = umzugLib as typeof umzugLib & UmzugExports`. UmzugExports is a local type with only the members used.
+    2. Line 7: `sequelizeModule as typeof sequelizeModule & { Sequelize: { QueryTypes: typeof sequelizeModule.QueryTypes } }`. The sequelize types lack the static `Sequelize.QueryTypes` that exists at runtime; the six `Sequelize.QueryTypes.X` expressions are unchanged.
+    3. `(fs as FsWithNodeMethods)` x3 (readdir x2, readFileSync).
+    4. `(Module as typeof Module & { _nodeModulePaths(...) })` and `;(module as Module & { _compile(...) })`: Node internals that are not in @types/node.
+  - Type arguments were added to three `sequelize.query<...>()` calls.
+- **CoverManager.ts**: other x4: `(fs as FsWithNodeMethods)` x3 (readdir, unlink, rename) and `(fs.copy(...) as Promise<void>)` x1. No `!`.
+
+Beyond the check, I compiled the HEAD versions of the four files and the new .ts files into my scratch folder only (set2/base-out and set2/emit, no build of the repository) and diffed them. Only require lines (including the split `const { a } = x`), the `/// <reference>` line and comments differ. `git diff -M` was reviewed for all four.
+
+## 2. Restored and not-started files
+
+- **BinaryManager** (restored 17:21: renamed, no edit made, `git mv` back, `git restore`, diff empty).
+  - Reason: line 157, `assets?.bin?.[this.platformSuffix]?.[assetName]`. `platformSuffix` is `string | null` (getPlatformSuffix() returns null at line 149 on an unsupported OS) and no earlier code tests it.
+  - Error (from the probe; the file was not compiled as TypeScript): `server/managers/BinaryManager.js(157,36): TS2538: Type 'null' cannot be used as an index type.` Only a `!` or cast on an unguarded value, or a code change, removes it.
+  - For the next attempt:
+    - The export form (`module.exports = BinaryManager` plus three `module.exports.X = X`) would need `declare static Binary/ffbinaries/nunicode` on the class, the three lines as `BinaryManager.X = X`, and `export = BinaryManager`. A scratch test showed this compiles and that TS 5.9.3 accepts `this` in the constructor default.
+    - `require('axios')`: the precedent in AudiobookCovers.ts is `axiosModule.default`.
+    - `process.pkg`: (332,35) TS2339.
+    - `process.env[...] = binaryPath`: (408,11) TS2322, because which.sync returns `string | string[]`.
+- **BackupManager** (not started). At 17:30 I judged that 506 lines with about 14 boundary casts and 7 `!` could not be finished and reviewed before the stop time.
+  - One spot needs a ruling first: uploadBackup() reads `req.files.file` unguarded (line 104), while BackupController.ts types it optional (`files: { file?: UploadedFile }`). BackupManager must accept that type (otherwise TS2345 in BackupController.ts), so `backupFile.name` needs a `!` whose only guarantee is the test in the caller.
+  - Other spots, from the probe and from reading:
+    - 98: scheduleTask possibly null (TS2531 x2; the else-if chain guarantees it).
+    - 130-162: `fs.remove().catch` (TS2532 x5).
+    - 157, 305: `new Backup({...})` against the JS constructor `data = null` (TS2345 x2).
+    - 266: `SocketAuthority.emitter('backup_applied')` (TS2554).
+    - 380: `createdAt` is `number | null`.
+    - 383: `oldBackup` comes from shift().
+    - 409: `Database.dbPath` is `string | null` (TS2769).
+    - 412: `db.backup` is not in the sqlite3 types (TS2339).
+    - 435: `archiver(...)` is not callable (TS2348).
+    - 486: `output.destroy('Backup too large')` passes a string, not an Error.
+- **AudioMetadataManager and AbMergeManager** (not started; they do not fit).
+  - Both read `task.data.<field>` throughout, and objects/Task.ts (converted) has `declare data: Record<string, unknown> | null`.
+  - Probe: 23 and 48 times `TS18047: 'task.data' is possibly 'null'`, plus TS18046/TS2345 "unknown" on each value read.
+  - Every read would need a `!` and a cast from unknown, which is not an allowed cast. They fit only after Task has typed data, which changes a converted file's type (your decision).
+  - AbMergeManager also has (33,5) TS2322, (33,44) and (137,7) `task` not on Task, (152,26) and (173,26) TS7009, (218,15) and (223,15) TS2532.
+
+## 3. Remaining errors in converted files
+
+Exactly one, in the normal check:
+`server/managers/MigrationManager.ts(8,25): error TS7016: Could not find a declaration file for module 'semver'. 'D:/SEM-2/574/Project/audiobookshelf-po/node_modules/semver/index.js' implicitly has an 'any' type.`
+
+It is resolved by copying the `declare module 'semver'` block (section 4) into server/types/untypedModules.d.ts. With set2/tsconfig.pending.json there are no errors.
+
+## 4. Declarations needed (also in set2/declarations-needed.md and set2/pending.d.ts)
+
+Required, target server/types/untypedModules.d.ts, needed by MigrationManager.ts line 8 (the file already starts with `/// <reference path="../types/untypedModules.d.ts" />`):
+```ts
+// Used by server/managers/MigrationManager.ts. Only gt, lte and compare are called. A value that is not a version string makes them throw a TypeError, so the parameters are strings.
+declare module 'semver' {
+  export function gt(v1: string, v2: string): boolean
+  export function lte(v1: string, v2: string): boolean
+  export function compare(v1: string, v2: string): 1 | 0 | -1
+}
+```
+
+Optional (no error without it), target server/models/Book.ts, interface AudioFileObject (line 63):
+`embeddedCoverArt?: string | null // not in the JSDoc typedef: AudioFile.toJSON() stores it and CoverManager.saveEmbeddedCoverArt() reads it`
+
+CoverManager.ts adds this member locally with an intersection type (`type AudioFileObject = import('../models/Book').AudioFileObject & { embeddedCoverArt?: string | null }`, an annotation, not a cast), so it is clean either way.
+
+## 5. JSDoc typedefs
+
+- The four converted files define none.
+- AudioMetadataManager.js (UpdateMetadataOptions, no importer) and AbMergeManager.js (AbMergeEncodeOptions, imported by server/utils/ffmpegHelpers.js:442) stay JavaScript, so both names resolve as before.
+- CoverManager.ts uses `import('../utils/parsers/parseEbookMetadata').EBookFileScanData`. Set 6 converted that file during the run and the name still resolves.
+
+## 6. Files whose methods a router binds
+
+None. `.bind(` in server/routers/*.ts and *.js has no match for the eight classes.
+
+## 7. Effects between sets
+
+- Nothing broke in my files because of another set.
+- Transient errors appeared in the watched importers, caused by other sets' half-finished files, and were gone in the final check:
+  - 17:12: LibraryItemController.ts(19,35) TS2306 "server/scanner/AudioFileScanner.ts is not a module" (set 3).
+  - 17:15: AuthorFinder.ts(4,27), (15,31) and BookFinder.ts(5,27) TS2306 "server/providers/Audnexus.ts is not a module", and BookFinder.ts(394,67) TS7006 (set 6).
+- To watch at the build: CacheManager.ts and CoverManager.ts leave the destructured helpers of utils/fileUtils.js, utils/ffmpegHelpers.js and utils/index.js unannotated (still JavaScript at 17:38, set 5). When they become TypeScript, these calls are checked against the real signatures:
+  - `resizeImage(coverPath, cachePath, width, height)` with height `number | null`
+  - `encodeUriPath(...)`, `isUUID(...)`
+  - `filePathToPOSIX(lf.metadata?.path)` (the argument may be undefined)
+  - `checkPathIsFile`, `downloadImageFile`, `extractCoverArt`
+- For the sets that call CoverManager (PodcastManager set 1, BookScanner set 3, PodcastScanner and Scanner set 4), the signatures are now:
+  - `saveEmbeddedCoverArt(audioFiles: AudioFileObject[], libraryItemId: string, libraryItemPath?: string | null): Promise<string | null>`
+  - `saveEbookCoverArt(ebookFileScanData: EBookFileScanData | null, libraryItemId: string, libraryItemPath?: string | null): Promise<string | null>`
+  - `downloadCoverFromUrlNew(url: string, libraryItemId: string, libraryItemPath?: string | null, forceLibraryItemFolder = false): Promise<{ error: string } | { cover: string }>`
+  - `removeFile(filepath: string)`
+- Two casts in converted controllers still compile but are no longer needed (I did not edit them): AuthorController.ts:448 (`options as Parameters<typeof CacheManager.handleAuthorCache>[2]`) and LibraryItemController.ts:365 (the callee cast on downloadCoverFromUrlNew).
+
+## 8. `import type` replacements
+
+None replaces a require. New erased imports: CacheManager.ts has `import type { Response } from 'express'` and `import type { ReadStream } from 'fs'`.
+
+## 9. Bug log (set2/bugs.md, not fixed; lines of the original .js)
+
+1. CoverSearchManager.js:67: `onError(error.message)` passes one argument, but the SocketAuthority.js:415 callback is `(provider, errorMessage)`. The message is emitted as `provider` and `error` is undefined.
+2. CoverSearchManager.js:227-235: there is no `else` after the string test, so `.covers` and `.cover` are also read on a string (harmless).
+3. MigrationManager.js:17: the default `global.configPath` is never set (the server sets `global.ConfigPath`), so the default is always undefined.
+4. CoverManager.js:25-32: getFilesInDirectory returns the promise without await inside try/catch, so the catch and its `[]` fallback are dead code.
+5. CoverManager.js:34-44: removeFile has the same pattern.
+6. CoverManager.js:50: '.jiff' in imageExtensions (probably '.jfif').
+7. CacheManager.js:65-70, 171-176: `res.sendStatus(500)` in the pipeline callback, on a response that may already be sending.
+8. BinaryManager.js:157: a null `platformSuffix` is used as an index on an unsupported platform (the key becomes 'null').
+9. BackupManager.js:486: `output.destroy('Backup too large')` passes a string where Node expects an Error.
+10. BackupManager.js:104: `req.files.file` is unguarded in uploadBackup, and nothing tests `req.files` itself.
+
+## 10. CLAUDE.md / brief: wrong, unclear or missing
+
+- **Boundary casts at typed modules.** Rule 5 allows a boundary cast at an "untyped module". Three of my casts are at typed modules whose types lack a member that exists at runtime (`Sequelize.QueryTypes`, `Module._nodeModulePaths`, `module._compile`). I used the same `x as typeof x & {...}` form and counted them as "other". Please rule.
+- **libs/fsExtra return types.** CLAUDE.md names only its missing methods. Its `remove` and `copy` also have the inferred return type `Promise<any> | undefined` (and `move`, per the probe), so `.catch` or `.then` on them is TS2532. I used `(fs.remove(x) as Promise<void>)`.
+- **MigrationManager `!` count.** It has 18 (F 12, L 6), all on init-then-use fields or validated names. Say if that count is acceptable.
+- **CoverSearchManager string result.** A string search result is typed `string & { covers?: undefined; cover?: undefined }`, because the code reads `.covers` and `.cover` on strings too (bug 2). This is an annotation, not a cast.
+- **Seeing the compiled output.** The no-emit check cannot show what a file compiles to. A private emit into the scratch folder (`--noEmit false --noEmitOnError false --outDir <scratch>`) did, and would be worth adding to the brief.
+- **Middleware-set properties.** The rule "a property that a middleware sets is required in the consumer's type" has no answer for a manager that a converted controller calls with the optional type (BackupManager.uploadBackup, section 2).
+- **Report file.** The brief asks for setN/report.md, but the harness refuses a sub-agent's Write of a report file.
+- **Scratch folder.** set2/ also holds my check artefacts: base-src, base-out, emit, the logs and thisprobe.ts.
+
+====================================================================================================
+PO-S10 set 3 scanners  (arrived 04:41:14 UTC, which is +13h NZDT)
+====================================================================================================
+# Set 3 report (PO-S10, sub-agent 3): server/scanner/
+
+Result: 1 of 3 files converted and clean (AudioFileScanner). LibraryScanner was tried and restored. BookScanner was not started.
+Last check: 17:37 to 17:38 local time. Hand-back: 17:41. I ran no build, no test and no commit.
+
+`set3/report.md` does not exist: the Write tool refuses report files from a sub-agent, and I did not write it through the shell instead. This message is the report. `set3/bugs.md` and `set3/declarations-needed.md` were written.
+
+Three points need your ruling before you commit AudioFileScanner.ts (details in sections 1 and 10):
+- Two file-local type adjustments that emit no code. They follow the form of the `declare function isNaN` precedent but are new: `Boolean` as a type guard, and a `replace` with an optional second parameter.
+- executeMediaFileScans() is typed `Promise<(AudioFile | null)[]>`, because no cast-free typing removes the null.
+- The compiled file loses `require('../models/LibraryItem')`, which the original used only in JSDoc.
+
+## 1. Files
+
+| file | status | lines | ! F/A/L | index signatures | casts A1/A2/A3/other | how the exports were kept |
+|---|---|---|---|---|---|---|
+| server/scanner/AudioFileScanner.js -> .ts | converted clean | 598 -> 658 | 2/0/1 | 0 | 0/0/0/0 | Not a module.exports.x file. `module.exports = new AudioFileScanner()` was the last statement and is now `export = new AudioFileScanner()` in the same place |
+| server/scanner/LibraryScanner.js | restored (`git diff HEAD` is empty) | 708 | - | - | - | - |
+| server/scanner/BookScanner.js | not started | 1046 | - | - | - | - |
+
+AudioFileScanner.ts in detail:
+- **`!` (3, each with a one-line comment):**
+  - Lines 231 and 232, case F: `probeData.audioMetaTags!.trackNumber` and `.discNumber`. MediaProbeData.audioMetaTags starts as null, and setData() sets it before prober.probe() returns the object. The field is typed `AudioMetaTags | null` whether MediaProbeData is JavaScript or TypeScript (I checked both states).
+  - Line 621, case L: `title = file.metaTags.tagTitle!`. `useMetaTagAsTitle` is only true when the number of distinct non-empty tag titles equals the number of files, so every file has one.
+- **Casts, index signatures, banned constructs:** none. No `any`, no `@ts-` comment.
+- **File-local type adjustments that emit no code** (not casts, not `!`):
+  1. Line 25: `declare function isNaN(value: unknown): boolean`. This is the precedent of LibraryController.ts and five other files. Used at line 187 (a regex match string) and line 528 (a Date).
+  2. Line 27: `declare function Boolean<T>(value: T | null | undefined): value is T`. New, same form as the isNaN precedent. lib.d.ts does not let `filter(Boolean)` remove null from the element type (lines 367, 378, 382). Without it `bookMetadata.series = series` (line 369) cannot compile, and a nullable element type would break line 388, which reads `s.name`.
+  3. Line 30: `type FilenameString = string & { replace(searchValue: string, replaceValue?: string): string }`, used as the annotation of `partbasename` (line 175). The code calls `partbasename.replace(publishedYear)` with one argument (TS2554, bug 2). The line is unchanged.
+- **executeMediaFileScans()** (line 250) returns `Promise<(AudioFile | null)[]>`; the JSDoc says `Promise<AudioFile[]>`. `scanResults.filter((sr) => sr)` removes the nulls at runtime, but an arrow callback is not a type guard (I tested this in a scratch file with this compiler), and a cast there is not in the allowances. The line has a comment.
+- **Parameter types** are small local types that contain only the keys the code reads (`AudioFileWithTags`, `PodcastEpisodeFromTags`, `PodcastMetadataFromTags`, `MediaMetadataFromScan`, `BookMetadataFromTags`), so they do not depend on files that other sets convert. In a scratch file (set3/t/callers.ts, with one failing line as a control) these arguments compile: the PodcastEpisode model, the plain new-episode object of PodcastScanner, Book.AudioFileObject, the AudioFile class and BookMetadataObject.
+- **The three `MetadataMapArray` tables** are annotated with literal key unions. This is why `bookMetadata[mapping.key] = value` and the two similar lines need no index signature.
+- **The result of `prober.probe()`** is annotated with a local union `ProbeResult` (line 36), not cast.
+- **`parseOverdriveMediaMarkersAsChapters`** is the annotated destructured import (lines 7 to 10), as CLAUDE.md says.
+- **Review:** `git diff -M HEAD` shows 99 insertions and 38 deletions. Every changed line is an import, a type, an annotation, one of the 3 `!` with its comment, the comment on line 258, or `export =`. No JSDoc block was changed.
+
+## 2. Restored and not-started files
+
+### LibraryScanner.js: restored at 17:26
+
+Reason: it could not be made clean in the time left, and three of its causes have no fix inside the rules. I renamed it, added imports, `declare` fields, signatures and the `LibraryItemModelStatic` cast at findAll, and checked once: 36 errors. The exact lines are in set3/LibraryScanner.errors.txt and my partial file is in set3/LibraryScanner.partial.ts.txt. Line numbers below are those of the `.js` file (the partial `.ts` is 18 lines longer at the top).
+
+No fix inside the rules (the reasons for the restore):
+- js:344, 354, 355, 356, 357 (5 errors): `TS2339: Property 'ino' does not exist on type 'false | { size: number; mtimeMs: number; ctimeMs: number; birthtimeMs: number; ino: string; }'` (the same for mtimeMs, ctimeMs, birthtimeMs). fileUtils.getFileTimestampsWithIno() returns false on failure and scanFolder() never tests it. `!` does not remove false, so this needs a cast or a code change.
+- js:95: `TS2322: Type 'number' is not assignable to type 'Date'`. The line is `library.lastScan = Date.now()`, and models/Library.ts declares `lastScan: Date | null`.
+- js:57: `TS18048: 'library.libraryFolders' is possibly 'undefined'`. Only the callers of scan() load the folders; no code in this file guarantees it. Under the PO-S09 ruling this `!` is not allowed.
+
+Would be resolved by a `!` that I consider justified (12 error lines, 11 assertions):
+- js:106, 121 `task.data`, js:450 `pendingTask.data`, js:453 `pendingTask.startedAt` (TS18047). Case F: Task.setData() sets them when TaskManager.createAndAddTask() creates the task. For pendingTask the task is created in Watcher.js, not in this file.
+- js:152, 153 `libraryScan.libraryFolders` (TS18048) and js:154, 206, 262 `libraryScan.library` (TS2345 and TS18047, "possibly null"). Case F: LibraryScan.setData(library) runs in scan() before scanLibrary().
+- js:409 `library.libraryFolders[0]` (TS18048). Case A: the findByPk above includes the folder model.
+- js:462 `this.scanFilesChanged(...this.pendingFileUpdatesToScan.shift())` (TS2556 and TS2488). Case L: the line is inside `if (this.pendingFileUpdatesToScan.length)`.
+
+Missing declarations (4 errors, see section 4): js:242 `update` (TS2769), js:514, 527, 613 `findOne` (TS2769).
+
+Allowance 1 (2 errors): js:326 and js:654, `TS2367: ... the types 'string' and 'string[]' have no overlap`.
+
+Caused by the JSDoc of files of other sets, and resolved only if those sets type them differently (4 errors):
+- js:284: `TS2345: Argument of type 'LibraryScan' is not assignable to parameter of type 'ScanLogger'` (LibraryItemScanner.finalizeAuthorsAndSeriesFromScan, set 4).
+- js:314: `TS2345: Argument of type 'boolean | undefined' is not assignable to parameter of type 'boolean'` (scandir.groupFileItemsIntoLibraryItemDirs, set 5).
+- js:335, 339: `TS2740: Type 'LibraryFile' is missing the following properties from type 'any[]'` (scandir.buildLibraryFile is documented as returning one LibraryFile, set 5).
+
+Resolved by a local annotation, not yet written (7 errors):
+- js:478: `file.libraryId` is not in the PendingFileUpdate typedef of Watcher.js (TS2339).
+- js:573: `LibraryItemExpanded | null` assigned to a variable inferred without null (TS2322).
+- js:578 to 581 and js:600: `updatedLibraryItemDetails = {}` is filled later (TS2339 x4, TS2345).
+
+### BookScanner.js: not started
+
+AudioFileScanner was first clean at 17:21, which is after the 17:20 limit for this file. No compiler run was made on it. Two things a later run should know:
+- It calls AudioFileScanner.executeMediaFileScans() (js:92, 119, 133, 449) and reads the elements without a null test. With the return type of section 1 these uses will not compile.
+- It passes AudioFile instances to AudioFileScanner.runSmartTrackOrder(), whose parameter is `AudioFileObject[]`, as its JSDoc says.
+
+## 3. Remaining errors in converted files
+
+None. Final check at 17:37:
+`npx tsc -p tsconfig.check.json --pretty false 2>&1 | grep -E "^server/scanner/(AudioFileScanner|LibraryScanner|BookScanner)\.ts"` printed no lines.
+
+The importer filter `^server/controllers/(LibraryItem|Library)Controller|^server/utils/parsers/parseComicInfoMetadata` also printed no lines. The only file with an error in the whole output was server/managers/MigrationManager.ts (set 2, 1 error).
+
+## 4. Declarations needed
+
+For AudioFileScanner.ts: none.
+
+For a later run of LibraryScanner (nothing waits for these now; the same text is in set3/declarations-needed.md). Target: server/types/libraryItemModel.d.ts, inside `export interface LibraryItemModelStatic`:
+
+    // inherited Model.findOne: LibraryScanner.scanFolderUpdates() calls it with attributes and where (LibraryScanner.js:514, :527, :613)
+    findOne(options?: LibraryItemFindOptions): Promise<import('../models/LibraryItem') | null>
+    // inherited Model.update: LibraryScanner.scanLibrary() marks the missing items with it (LibraryScanner.js:242)
+    update(values: Record<string, unknown>, options: import('sequelize').UpdateOptions): Promise<[affectedCount: number]>
+
+I did not compile these two lines.
+
+## 5. JSDoc typedefs
+
+- AudioFileScanner: defines none. No file refers to `import('./AudioFileScanner')` as a type.
+- LibraryScanner: defines none.
+- BookScanner (still JavaScript, unchanged): `BookMetadataObject` stays importable as before. Its importers now:
+  - server/utils/parsers/parseEbookMetadata.ts (set 6 converted it; line 5 is a real `type` import);
+  - server/utils/parsers/parseComicInfoMetadata.ts (a JSDoc comment, line 21);
+  - my AudioFileScanner.ts (line 18, a real `type` import).
+  A later conversion of BookScanner must keep the name with the namespace form of LogManager.ts line 14.
+
+## 6. Files whose methods a router binds
+
+None. `grep -rn "AudioFileScanner\|LibraryScanner\|BookScanner" server/routers/` finds only a comment (ApiRouter.js:467).
+
+## 7. Effects between sets
+
+In my file, caused by another set:
+- Check at 17:25: `server/scanner/AudioFileScanner.ts(352,11)` and `(354,11)`: `error TS2322: Type '(string | undefined)[]' is not assignable to type 'string[]'`, at `bookMetadata.narrators = parseNameString.parse(value)?.names || []` and the `authors` line. The errors were gone at 17:28 and I changed nothing for them. The value comes only from server/utils/parsers/parseNameString (set 6). That file was `.js` when I looked at 17:27 and 17:38; I never saw it as `.ts`, so the cause is inferred. If set 6 converts it with `names: (string | undefined)[]`, these two errors come back. Its JSDoc says `{ names: string[] }`.
+- server/scanner/MediaProbeData (set 4) was `.ts` with 7 errors of its own at 17:20 and `.js` again at 17:29. AudioFileScanner.ts was clean in both states.
+- server/scanner/LibraryScan (set 4) became `.ts`: no effect.
+- Check at 17:18: `server/controllers/LibraryItemController.ts(24,31): error TS2306: File '.../server/managers/CoverManager.ts' is not a module` (set 2, in progress). Gone in the later checks. Not caused by my file.
+
+Files that AudioFileScanner.ts imports and that were still JavaScript at 17:38. If they are converted after my last check, my file stays clean only if:
+- utils/prober (set 5): probe() resolves to `MediaProbeData | { error: string }`.
+- utils/parsers/parseNameString (set 6): parse() returns `{ names: string[] } | null`.
+- utils/parsers/parseOverdriveMediaMarkers (set 6): the function accepts files with `metaTags.tagOverdriveMediaMarker` and `duration`, and returns `ChapterObject[] | null`.
+- objects/files/AudioFile (set 4): the constructor can be called without arguments; the four track and disc fields accept `number | null`; setDataFromProbe() accepts a LibraryFileObject and a MediaProbeData.
+- scanner/LibraryItemScanData (set 4): `mediaMetadata` is not nullable and has `title` and `publishedYear` as strings.
+
+The other way round: PodcastScanner.js (set 4) calls executeMediaFileScans() at js:101, 136 and 276. If set 4 converts it, the nullable element type of section 1 will show as errors in their file.
+
+## 8. `import type` replacements
+
+None in AudioFileScanner.ts.
+
+One related change in the compiled file: the original line `const LibraryItem = require('../models/LibraryItem')` is used only in JSDoc types. It is now `import LibraryItem = require('../models/LibraryItem')`, used only as the type `LibraryItem.LibraryFileObject`, so TypeScript removes the require when it compiles. I confirmed this with a single-file transpile (set3/AudioFileScanner.out.js). The other require lines differ only as CLAUDE.md describes (`constants` and `parseOverdriveMediaMarkers` are required into a name and then destructured).
+
+## 9. Bug log (set3/bugs.md; nothing was fixed)
+
+AudioFileScanner (`.js` line at HEAD, `.ts` line in brackets):
+1. js:112 (ts:173): `author` and `series` are destructured from the scan metadata, which has `authors` and `seriesName`. Both are always undefined, so author and series are never removed from the file name before the track number is searched.
+2. js:120 (ts:181): `partbasename.replace(publishedYear)` has one argument. The year is replaced by the text "undefined" instead of being removed.
+3. js:468 (ts:529): `podcastEpisode.publishedAt = pubJsDate.valueOf()` stores a number in a field that the model declares as Date.
+4. js:138 (ts:199): `discFromFolder !== null` can never be false. Harmless.
+5. js:539 (ts:600): `afChaptersCleaned.length ?? 0`, the `?? 0` can never apply. Harmless.
+6. js:585 (ts:646): the separator '//' in parseGenresString() can never be chosen, because '/' is tested first. Harmless.
+7. JSDoc only:
+   - js:154: scan() can return null.
+   - js:107 and js:153: the type of mediaMetadataFromScan does not match LibraryItemFilenameMetadata.
+   - js:217: `@param audioFile` for the parameter `audioFiles`.
+   - js:417: scanLogger is a LibraryScan at every call.
+
+LibraryScanner (restored):
+8. js:342 to 357: the `false` result of getFileTimestampsWithIno() is read without a test. It works only because `false.ino` is undefined and the next line skips the item.
+9. js:95: a number is assigned to `library.lastScan`, which the model declares as Date | null.
+10. js:326 and js:654: a string is compared with a value that scandir documents as string[]. At runtime it is the path string for a media file in the library root, so the documented type is too narrow.
+11. js:57: `library.libraryFolders.length` is read without a test, and the model declares the association as optional.
+12. js:284: a LibraryScan is passed where the JSDoc says ScanLogger.
+13. js:478: `file.libraryId` is not in the PendingFileUpdate typedef. Watcher.js:314 does set it, so the typedef is incomplete.
+14. js:335, 339: buildLibraryFile is documented as returning one LibraryFile, and is used as an array.
+15. js:314: `audiobooksOnly` can be undefined where the JSDoc says boolean.
+
+## 10. CLAUDE.md and the brief: wrong, unclear or missing
+
+1. No rule covers a call that the compiler rejects for its argument count (TS2554, `replace(publishedYear)`). Allowance 1 covers only TS2367. I used a local intersection type (section 1, adjustment 3). If you do not accept it, AudioFileScanner cannot be converted without a code change.
+2. No rule covers `filter(Boolean)` and `filter((x) => x)`, which do not remove null from the element type. For `Boolean` I used a file-local declaration like the isNaN precedent. For the arrow callback nothing cast-free exists. I recommend a ruling that allows one cast with a comment at AudioFileScanner.ts line 258 (`as AudioFile[]`), so that the return type becomes `Promise<AudioFile[]>` again. Otherwise BookScanner and PodcastScanner cannot be converted without `!` at every use.
+3. CLAUDE.md does not say what to do with a require that is used only in JSDoc types. `import x = require()` is then removed from the compiled file (section 8). The express rule covers only the destructured case.
+4. The `!` cases F, A and L do not say whether the guarantee may be in another file (a caller that loads the association, or TaskManager that sets Task.data). LibraryScanner has both.
+5. `!` does not remove false. A result typed `false | {...}` that the code reads without a test (LibraryScanner js:344) has no allowed form, so that file cannot be converted under the current rules.
+6. A file of another set can be `.ts` in one check and `.js` in the next (MediaProbeData, and probably parseNameString). One check is not conclusive while the others work: errors appeared and disappeared in my file without a change of mine.
+7. In a TypeScript importer, a JSDoc `@returns {Object}` of a JavaScript file is the type `Object`, not any (TS2696 when I annotated probeAudioFile() as `Promise<unknown>`). I left the return type of probeAudioFile() to inference.
+8. The task asks for set3/report.md, but the Write tool refuses report files from a sub-agent. The report exists only as this message.
+
+Scratch files, all in set3/: bugs.md, declarations-needed.md, LibraryScanner.errors.txt, LibraryScanner.partial.ts.txt, check-final.txt (and check1 to check7), AudioFileScanner.out.js, AudioFileScanner.orig.js, transpile.js, t/callers.ts, t/f.ts, t/probe.ts.
+
+Repository state of my set: `server/scanner/AudioFileScanner.js` renamed to `server/scanner/AudioFileScanner.ts` (git mv, with edits); `server/scanner/LibraryScanner.js` and `server/scanner/BookScanner.js` unchanged.

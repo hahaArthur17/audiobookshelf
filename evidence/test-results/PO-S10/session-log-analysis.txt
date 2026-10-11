@@ -1,0 +1,147 @@
+PO-S10 session log analysis (made by Claude from the saved Claude Code logs; numbers are counted by a script)
+Source: po-session-backup/PO-S10 (session bca2b50b, main log + 6 sub-agent logs). Times are NZDT, 2026-10-11. The Windows user name is masked.
+
+1. Timeline
+  16:40:44  Command: /model
+  16:41:36  Command: /plugin
+  16:46:49  User pastes the prompt (4794 characters)
+  16:46:53  First command: date (as the prompt asked)
+  17:02:07  First command: date (as the prompt asked)
+  17:02:45  Agent started: PO-S10 set 1 managers (brief 3801 characters)
+  17:02:57  Agent started: PO-S10 set 2 managers (brief 3986 characters)
+  17:03:09  Agent started: PO-S10 set 3 scanners (brief 3796 characters)
+  17:03:23  Agent started: PO-S10 set 4 scanner objects (brief 4644 characters)
+  17:03:39  Agent started: PO-S10 set 5 utils (brief 5060 characters)
+  17:03:56  Agent started: PO-S10 set 6 providers parsers auth (brief 5405 characters)
+  17:03:57  Sub-agent first log line: PO-S10 set 1 managers
+  17:03:57  Sub-agent first log line: PO-S10 set 2 managers
+  17:03:57  Sub-agent first log line: PO-S10 set 3 scanners
+  17:03:57  Sub-agent first log line: PO-S10 set 4 scanner objects
+  17:03:57  Sub-agent first log line: PO-S10 set 5 utils
+  17:03:57  Sub-agent first log line: PO-S10 set 6 providers parsers auth
+  17:10:21  System: turn_duration
+  17:33:34  Hand-back from PO-S10 set 6 providers parsers auth (19118 characters)
+  17:33:36  Sub-agent last log line: PO-S10 set 6 providers parsers auth
+  17:33:47  System: turn_duration
+  17:35:48  Hand-back from PO-S10 set 4 scanner objects (18266 characters)
+  17:35:49  Sub-agent last log line: PO-S10 set 4 scanner objects
+  17:36:54  Hand-back from PO-S10 set 5 utils (20248 characters)
+  17:36:55  Sub-agent last log line: PO-S10 set 5 utils
+  17:38:58  Hand-back from PO-S10 set 1 managers (19059 characters)
+  17:38:59  Sub-agent last log line: PO-S10 set 1 managers
+  17:40:08  System: turn_duration
+  17:40:53  Hand-back from PO-S10 set 2 managers (14432 characters)
+  17:40:54  Sub-agent last log line: PO-S10 set 2 managers
+  17:41:14  Hand-back from PO-S10 set 3 scanners (18196 characters)
+  17:41:14  Sub-agent last log line: PO-S10 set 3 scanners
+  17:42:25  TaskStop (timer stopped)
+  17:42:25  TaskStop (timer stopped)
+  17:42:25  TaskStop (timer stopped)
+  17:48:21  Commit c717a73c [PO-S10] types: declare semver in untypedModules.d.ts
+  17:48:22  Commit 19e5ff12 [PO-S10] set 1: Notification, Cron and PlaybackSession managers to TypeScript
+  17:48:46  Commit f5646086 [PO-S10] set 6: four providers, opmlGenerator and parseEbookMetadata to TypeScript
+  17:48:48  Commit 6c52529a [PO-S10] set 2: CoverSearch, Cache, Migration and Cover managers to TypeScript
+  17:48:51  Commit 8c3c7a36 [PO-S10] set 3: AudioFileScanner to TypeScript
+  17:48:53  Commit b90bc8f4 [PO-S10] set 4: PodcastEpisodeDownload and three scanner files to TypeScript
+  17:48:56  Commit 3dfc6779 [PO-S10] set 5: profiler and comicBookExtractors to TypeScript
+  17:55:47  System: turn_duration
+
+2. Agents: API messages and tokens counted in the logs (one row per API message, no double counting)
+   agent                                           msgs    input   output   cache read   cache wr wall min
+   main                                              59      124   205534     12572959     349456     75.0
+   PO-S10 set 6 providers parsers auth               39       78    30180      6810064     261356     29.6
+   PO-S10 set 1 managers                             45       90    25222      7273203     278235     35.0
+   PO-S10 set 4 scanner objects                      40       80    20691      7383711     279807     31.9
+   PO-S10 set 3 scanners                             27       54    59352      5229878     299426     37.3
+   PO-S10 set 2 managers                             33       66    46712      5590475     295878     37.0
+   PO-S10 set 5 utils                                34       68    13691      5608416     244941     33.0
+   TOTAL in the logs                                277      560   401382     50468706    2009099
+   Models named in the assistant lines: {'claude-opus-5-5': 1008}
+   /usage at the end (Opus 5.5, from the terminal): input 816.3k, output 1.0m, cache read 100.9m, cache write 2.8m, cost $59.35 (Haiku 5.5: input 2.9k, output 25, $0.0003)
+   Not found in the logs (usage minus logs): input 815.7k, output 598.6k, cache read 50431.3k, cache write 790.9k
+   Permission decisions made by the auto-mode classifier in the logs: 266.
+   Weighted tokens (input 1 : output 5 : cache read 0.1 : cache write 2, an assumption): the part not found in the logs is 49% of the total.
+   Share of the logged weighted tokens by agent (same ratios):
+     main                                           26.9%
+     PO-S10 set 6 providers parsers auth            12.2%
+     PO-S10 set 1 managers                          12.7%
+     PO-S10 set 4 scanner objects                   12.7%
+     PO-S10 set 3 scanners                          12.8%
+     PO-S10 set 2 managers                          12.5%
+     PO-S10 set 5 utils                             10.1%
+
+3. Tool calls per agent
+   main                                           {'Bash': 53, 'Write': 23, 'Agent': 6, 'Edit': 5, 'Read': 4, 'TaskStop': 3, 'ToolSearch': 1}
+                                                  git verbs: {'status': 11, 'log': 11, 'show': 6, 'commit': 4, 'add': 3, 'checkout': 2, 'rev-parse': 2, 'ls-files': 2}
+   PO-S10 set 6 providers parsers auth            {'Edit': 47, 'Bash': 35, 'Read': 23, 'Write': 3, 'Grep': 1, 'SubagentHandback': 1}
+                                                  git verbs: {'mv': 10, 'diff': 6, 'grep': 2, 'restore': 2, 'log': 2, 'status': 2, 'show': 1}
+   PO-S10 set 1 managers                          {'Edit': 72, 'Bash': 37, 'Read': 10, 'Write': 3, 'Grep': 1, 'SubagentHandback': 1}
+                                                  git verbs: {'diff': 7, 'mv': 5, 'ls-files': 1, 'restore': 1, 'status': 1}
+   PO-S10 set 4 scanner objects                   {'Bash': 40, 'Edit': 38, 'Read': 14, 'Write': 3, 'SubagentHandback': 1}
+                                                  git verbs: {'mv': 14, 'diff': 5, 'restore': 4, 'show': 1, 'state': 1, 'status': 1}
+   PO-S10 set 3 scanners                          {'Edit': 44, 'Bash': 24, 'Read': 12, 'Write': 3, 'SubagentHandback': 1}
+                                                  git verbs: {'diff': 6, 'mv': 3, 'status': 3, 'show': 1, 'restore': 1}
+   PO-S10 set 2 managers                          {'Edit': 65, 'Bash': 36, 'Read': 16, 'Write': 4, 'SubagentHandback': 1}
+                                                  git verbs: {'mv': 6, 'diff': 3, 'status': 2, 'restore': 1, 'show': 1, 'state': 1}
+   PO-S10 set 5 utils                             {'Bash': 30, 'Edit': 29, 'Read': 17, 'Write': 3, 'SubagentHandback': 1}
+                                                  git verbs: {'mv': 6, 'diff': 5, 'restore': 2, 'status': 2, 'show': 1, 'state': 1}
+
+4. Permissions
+   main                                           {'accept/classifier': 59, 'accept/mode': 4, 'accept/other': 28, 'accept/None': 4}
+   PO-S10 set 6 providers parsers auth            {'accept/mode': 64, 'accept/other': 9, 'accept/classifier': 36}
+   PO-S10 set 1 managers                          {'accept/mode': 80, 'accept/other': 4, 'accept/classifier': 37, 'accept/subcommandResults': 1}
+   PO-S10 set 4 scanner objects                   {'accept/other': 6, 'accept/classifier': 41, 'accept/mode': 48}
+   PO-S10 set 3 scanners                          {'accept/mode': 51, 'accept/other': 7, 'accept/classifier': 25}
+   PO-S10 set 2 managers                          {'accept/mode': 72, 'accept/other': 12, 'accept/classifier': 37}
+   PO-S10 set 5 utils                             {'accept/mode': 44, 'accept/other': 4, 'accept/classifier': 31}
+
+5. Did any agent touch evidence/, the hold folders, the settings or the memory folder? (strict search of every tool call of every agent, then of every tool result)
+   Tool calls whose input contains: evidence, PO-S0x, PO-S1x notes or prompt, po-sNN-hold/store/baseline, po-session-backup, _to_delete, cat-file, ls-tree, sparse, .claude settings or projects, memory/.
+   16 hits in 711 tool calls (main 95, sub-agents 616). None reads a file in evidence/ or in a hold folder:
+   - 16:47:22 and 16:47:40 (main): `ls .claude` and `cat .claude/settings.local.json`. The agent read the permission file of the run (it is not part of the evidence).
+   - 16:48 to 17:45 (main and the sets): the folder name po-s10-baseline, which the prompt told the agent to create in its scratchpad.
+   - 16:59:36 (main, Write): the common brief says "Do not look in older commits for notes or results of earlier runs (CLAUDE.md: evidence/)". The agent passed the rule to the sub-agents.
+   - 17:35 and 17:39 (set 5 and set 3 reports): the word PO-S09 as a name of the precedent (commit subjects).
+   - 17:49 (main): the branch name po-s01 in a git checkout of its own commits.
+   Tool results that show an evidence path: 1. At 16:52:17 the main agent ran `git log -4 --format='%h %s%n%b'` to see the commit format. The output (4 commit messages) names evidence/notes/PO-S09-notes.md, evidence/plans/PO-S09-prompt.md and evidence/test-results/PO-S09/ and lists the section titles of the notes ("design, predictions and the results section (what happened, predictions against results, why 3 controllers stayed JavaScript, threats to the result, changes for the next run)"). At 16:46:54 `git log --oneline | head -5` showed the five subjects. No note, prompt or result file was opened, and nothing in the agent's later work refers to the content.
+   Deny rules: the permission lists show no denied request (the Recent tab of /permissions was empty). The five new deny rules (git show, log and grep with the word evidence, cat-file, ls-tree) were never triggered. The rules did not cover a plain `git log` without a path, which is the command that showed the commit messages.
+   git show / git log / git grep / git cat-file / git ls-tree commands per agent: all name a path under server/ except the commit-format commands of the main agent (16:46:54, 16:52:17 and 17:48 to 17:54 on its own commits).
+
+6. Writes outside the repo and shell writes
+   Write/Edit tool calls whose path is not inside the repo (memory files and the like):
+   Shell commands that write in place, by agent (sed -i, perl -i, python or node file writes, redirects into server/, tee, rm, git checkout/restore/stash/reset):
+     main                                     {'rm ': 2, 'writeFileSync': 1, '> server/': 1, 'git checkout': 2}
+     PO-S10 set 6 providers parsers auth      {'git restore': 2}
+     PO-S10 set 1 managers                    {'writeFileSync': 1, 'git restore': 1, 'rm ': 2}
+     PO-S10 set 4 scanner objects             {'git restore': 4, 'writeFileSync': 1}
+     PO-S10 set 3 scanners                    {'writeFileSync': 1, 'git restore': 1}
+     PO-S10 set 2 managers                    {'git restore': 1}
+     PO-S10 set 5 utils                       {'git restore': 2, 'writeFileSync': 1}
+
+7. Memory and files outside the repository
+   No Write or Edit call outside the repository and the scratchpad by any agent. Backup-S10 and Move-S10Memory both reported 0 files in the Claude memory folder (in PO-S09 the main agent wrote 2). The setting autoMemoryEnabled false and the variable CLAUDE_CODE_DISABLE_AUTO_MEMORY=1 worked.
+   The only mentions of memory in the sub-agent logs are the words memoryStorage and memory in a grep of server/libs/umzug (set 2).
+
+8. Sub-agent timeline (NZDT, from the logs; edits = Edit tool calls, git mv = rename commands including the restores)
+   set   first line  first git mv  first edit  last edit  last line  hand-back  files converted  edits  git mv
+   1     17:03       17:07         17:08       17:34      17:38      17:38      3 of 5            72     5
+   2     17:03       17:06         17:06       17:36      17:40      17:40      4 of 8           65     6
+   3     17:03       17:09         17:16       17:31      17:41      17:41      1 of 3           44     3
+   4     17:03       17:12         17:12       17:30      17:35      17:35      4 of 15          38     14
+   5     17:03       17:13         17:13       17:24      17:36      17:36      2 of 12          29     6
+   6     17:03       17:08         17:08       17:25      17:33      17:33      6 of 17          47     10
+   The stop time in the prompt was 17:57. The last hand-back came at 17:41, 16 minutes before it. The last edit of any sub-agent was at 17:36, 21 minutes before it. Set 5 made its last edit at 17:24 (33 minutes before the stop time).
+   Agent minutes: 6 sub-agents x 54 minutes between the start (17:03) and the stop time = 324; the logs show 29.6 to 37.3 minutes per sub-agent (204 in total, 63%). The time between the first and the last edit was 26, 30, 15, 18, 11 and 17 minutes for sets 1 to 6 (117 minutes in total, 36% of 324).
+
+9. Why the sub-agents stopped before the stop time (the cut-offs in the briefs)
+   The prompt gave one stop time (70 minutes after the start = 17:57). The main agent wrote earlier cut-offs into the briefs (brief-common.md and brief-set*.md):
+   - common: "Do not start a new file after 17:42, unless it is under 100 lines"; "At 17:50 stop editing".
+   - set 1: start the last file only if at least 20 minutes remain before 17:42. Set 3: do not start BookScanner after 17:20. Set 4: files 12 to 15 not after 17:30. Set 5: do not convert index.js or fileUtils.js after 17:30. Set 6: TokenManager and OidcAuthStrategy only before 17:25.
+   The hand-backs give "time" or "the 17:25 rule" for 10 files (PodcastManager, BackupManager, BookScanner, Stream, LibraryItemScanData, PodcastScanner, Scanner, parseEpubMetadata, TokenManager, OidcAuthStrategy). In each case the cut-off was one of the brief's own, not the stop time of the prompt. The final report of the main agent says "only ten were left for time" and does not say that the cut-offs were set by the briefs.
+   The other 30 files: 11 were tried and restored (compiler output saved for LibraryScanner, RssFeedManager and areEquivalent, section 3 of post-run-checks.txt) and 19 were not started because reading the file and the probe showed a blocker. No trial conversion exists for these 19.
+
+10. Cost model (estimate)
+   The panel cost of both runs fits the weights input 1 : output 5 : cache read 0.1 : cache write 1.25 at about $3.04 per million input tokens (PO-S09: model $47.8 against panel $47.66; PO-S10: model $59.0 against panel $59.35). This is a fit to two data points, not a price list.
+   With these weights the logged messages are worth about $29.1 (49% of the panel): main $8.27, set 1 $3.65, set 2 $3.53, set 3 $3.63, set 4 $3.62, set 5 $2.84, set 6 $3.52. The other 51% is not in the logs (PO-S09: 30%). The cause is not known. The auto-mode classifier made 266 decisions in the logs; if each is a model call, they could explain part of it, but this was not checked.
+   Cost per converted file: $59.35 / 20 = $2.97 (PO-S09: $9.53 per controller). Cost per converted non-blank line of the original: $59.35 / 3,513 = $0.0169 (PO-S09: $0.0135).
+

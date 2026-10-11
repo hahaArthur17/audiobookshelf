@@ -1,0 +1,134 @@
+{"CacheManager.ts":{"cast":9,"castUnknown":0,"castErrorMsg":0,"nonnull":2,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":4,"lines":182},"CoverManager.ts":{"cast":4,"castUnknown":0,"castErrorMsg":0,"nonnull":0,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":315},"CoverSearchManager.ts":{"cast":7,"castUnknown":0,"castErrorMsg":0,"nonnull":0,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":3,"lines":230},"CronManager.ts":{"cast":5,"castUnknown":0,"castErrorMsg":0,"nonnull":2,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":5,"lines":253},"MigrationManager.ts":{"cast":8,"castUnknown":0,"castErrorMsg":0,"nonnull":18,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":10,"lines":325},"NotificationManager.ts":{"cast":1,"castUnknown":0,"castErrorMsg":0,"nonnull":2,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":2,"lines":223},"PlaybackSessionManager.ts":{"cast":9,"castUnknown":0,"castErrorMsg":0,"nonnull":2,"indexsig":1,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":3,"lines":505},"PodcastEpisodeDownload.ts":{"cast":1,"castUnknown":0,"castErrorMsg":0,"nonnull":8,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":13,"lines":137},"CustomProviderAdapter.ts":{"cast":0,"castUnknown":0,"castErrorMsg":0,"nonnull":0,"indexsig":1,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":174},"FantLab.ts":{"cast":0,"castUnknown":0,"castErrorMsg":0,"nonnull":1,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":215},"GoogleBooks.ts":{"cast":0,"castUnknown":0,"castErrorMsg":0,"nonnull":1,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":101},"MusicBrainz.ts":{"cast":0,"castUnknown":0,"castErrorMsg":0,"nonnull":0,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":58},"AbsMetadataFileScanner.ts":{"cast":2,"castUnknown":0,"castErrorMsg":0,"nonnull":0,"indexsig":2,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":89},"AudioFileScanner.ts":{"cast":0,"castUnknown":0,"castErrorMsg":0,"nonnull":3,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":596},"LibraryScan.ts":{"cast":3,"castUnknown":0,"castErrorMsg":0,"nonnull":8,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":14,"lines":150},"OpfFileScanner.ts":{"cast":0,"castUnknown":0,"castErrorMsg":0,"nonnull":0,"indexsig":2,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":59},"comicBookExtractors.ts":{"cast":5,"castUnknown":0,"castErrorMsg":0,"nonnull":2,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":5,"lines":225},"opmlGenerator.ts":{"cast":0,"castUnknown":0,"castErrorMsg":0,"nonnull":0,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":68},"parseEbookMetadata.ts":{"cast":0,"castUnknown":0,"castErrorMsg":0,"nonnull":0,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":54},"profiler.ts":{"cast":0,"castUnknown":0,"castErrorMsg":0,"nonnull":2,"indexsig":0,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":0,"lines":43}}
+TOTAL {"cast":54,"castUnknown":0,"castErrorMsg":0,"nonnull":51,"indexsig":6,"thisApiRouter":0,"any":0,"tsIgnore":0,"declare":59,"lines":4002}
+## CacheManager.ts
+   cast 55 error as Error
+   nonnull 70 this.CoverCachePath!
+   cast 80 fs as FsWithNodeMethods
+   cast 106 fs as FsWithNodeMethods
+   cast 121 fs as FsWithNodeMethods
+   cast 135 fs as FsWithNodeMethods
+   cast 149 fs.remove(this.CachePath) as Promise<void>
+   cast 160 fs.remove(this.ItemCachePath) as Promise<void>
+   nonnull 184 this.ImageCachePath!
+   cast 188 fs as FsWithNodeMethods
+   cast 207 fs as FsWithNodeMethods
+## CoverManager.ts
+   cast 43 fs as FsWithNodeMethods
+   cast 54 fs as FsWithNodeMethods
+   cast 209 fs
+        .copy(coverPath, newCoverPath, { overwr as Promise<void>
+   cast 347 fs as FsWithNodeMethods
+## CoverSearchManager.ts
+   cast 77 error as Error
+   cast 81 error as Error
+   cast 121 error as Error
+   cast 123 error as Error
+   cast 166 error as Error
+   cast 167 error as Error
+   cast 168 error as Error
+## CronManager.ts
+   nonnull 100 _library.settings.autoScanCronExpression!
+   nonnull 173 podcast.libraryItem!
+   cast 273 libraryItem.media as PodcastMedia
+   cast 273 libraryItem.media as PodcastMedia
+   cast 274 libraryItem.media as PodcastMedia
+   cast 279 libraryItem.media as PodcastMedia
+   cast 282 libraryItem.media as PodcastMedia
+## MigrationManager.ts
+   cast 4 umzugLib as typeof umzugLib & UmzugExports
+   cast 7 sequelizeModule as typeof sequelizeModule & { Sequelize: { QueryTypes: typeof sequelizeMo
+   cast 87 error as Error
+   nonnull 123 this.serverVersion!
+   nonnull 123 this.databaseVersion!
+   nonnull 130 this.umzug!
+   nonnull 131 this.umzug!
+   nonnull 150 this.umzug!
+   cast 182 fs as FsWithNodeMethods
+   nonnull 182 this.migrationsDir!
+   nonnull 187 this.migrationsDir!
+   cast 205 fs as FsWithNodeMethods
+   cast 210 Module as typeof Module & { _nodeModulePaths(from: string): string[] }
+   cast 211 module as Module & { _compile(content: string, filename: string): unknown }
+   nonnull 233 versionA!
+   nonnull 233 versionB!
+   cast 306 fs as FsWithNodeMethods
+   nonnull 312 this.migrationsDir!
+   nonnull 332 migrationVersion!
+   nonnull 332 this.databaseVersion!
+   nonnull 332 migrationVersion!
+   nonnull 332 this.serverVersion!
+   nonnull 335 migrationVersion!
+   nonnull 335 this.databaseVersion!
+   nonnull 335 migrationVersion!
+   nonnull 335 this.serverVersion!
+## NotificationManager.ts
+   nonnull 224 this.notificationQueue.shift()!
+   cast 242 eventData as Parameters<Notification['getApprisePayload']>[0]
+   nonnull 244 Database.notificationSettings.appriseApiUrl!
+## PlaybackSessionManager.ts
+   cast 13 dateAndTime as typeof dateAndTime & { format(dateObj: Date, formatString: string): st
+   indexsig 60 [key: string]: unknown
+   cast 196 libraryItem.media as PodcastExpanded
+   cast 269 sessionJson.episodeId as string
+   nonnull 332 userProgressForItem!
+   nonnull 335 userProgressForItem!
+   cast 388 options.supportedMimeTypes as string[]
+   cast 388 episodeId as string
+   cast 408 episodeId as string | undefined
+   cast 466 library.librarySettings.markAsFinishedPercentCompl as Parameters<User['createUpdateMediaProgressFromPayload']>[0]['markAsFin
+   cast 532 error as Error
+   cast 536 fs as typeof fs & { readdir(path: string): Promise<string[]> }
+## PodcastEpisodeDownload.ts
+   nonnull 75 this.url!
+   nonnull 84 this.rssPodcastEpisode!
+   nonnull 88 this.rssPodcastEpisode!
+   nonnull 91 this.libraryItem!
+   nonnull 91 this.targetFilename!
+   nonnull 100 this.rssPodcastEpisode!
+   nonnull 101 this.rssPodcastEpisode!
+   cast 110 sanitizeFilename(filename) as string
+   nonnull 118 this.rssPodcastEpisode!
+## CustomProviderAdapter.ts
+   indexsig 52 [key: string]: unknown
+## FantLab.ts
+   nonnull 216 bookEditions.list.pop()!
+## GoogleBooks.ts
+   nonnull 63 Object.keys(imageLinks).pop()!
+## MusicBrainz.ts
+## AbsMetadataFileScanner.ts
+   indexsig 16 [key: string]: unknown
+   indexsig 20 [key: string]: unknown
+   cast 55 abmetadataGenerator.parseJson(metadataText, 'book' as AbMetadataPayload | null
+   cast 95 abmetadataGenerator.parseJson(metadataText, 'podca as AbMetadataPayload | null
+## AudioFileScanner.ts
+   nonnull 231 probeData.audioMetaTags!
+   nonnull 232 probeData.audioMetaTags!
+   nonnull 621 file.metaTags.tagTitle!
+## LibraryScan.ts
+   cast 7 dateAndTime as typeof dateAndTime & { format(dateObj: Date, formatString: string): st
+   nonnull 70 this.library!
+   nonnull 73 this.library!
+   nonnull 76 this.library!
+   nonnull 79 this.library!
+   nonnull 90 this.elapsed!
+   nonnull 101 this.elapsed!
+   nonnull 119 this.library!
+   nonnull 144 this.startedAt!
+   cast 165 fs as typeof fs & { mkdir(path: string): Promise<void> }
+   cast 173 fs as typeof fs & { writeFile(path: string, data: string): Promise<void> }
+## OpfFileScanner.ts
+   indexsig 9 [key: string]: unknown
+   indexsig 13 [key: string]: unknown
+## comicBookExtractors.ts
+   cast 49 fs as FsWithNodeMethods
+   nonnull 111 this.tmpDir!
+   cast 112 fs as FsWithNodeMethods
+   nonnull 122 this.tmpDir!
+   cast 132 fs as FsWithNodeMethods
+   cast 165 buffer as Parameters<typeof Archive.open>[0]
+   cast 187 fs as FsWithNodeMethods
+## opmlGenerator.ts
+## parseEbookMetadata.ts
+## profiler.ts
+   nonnull 20 histograms.get(funcName)!
+   nonnull 40 histogram.values!

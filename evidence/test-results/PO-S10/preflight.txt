@@ -1,0 +1,17 @@
+PO-S10 preflight (run by the user with Prep-S10)
+date: 2026-10-11 16:38
+branch: Aung-Min-Myat/po-s01
+HEAD before layout commit: 12b7401f [PO-S10] setup: CLAUDE.md for the six-set run
+evidence files parked: 449
+HEAD after layout commit: 6752a047 [PO-S10] setup: run layout
+evidence folder visible: False
+evidence paths tracked at HEAD: 0
+CLAUDE_CODE_DISABLE_AUTO_MEMORY: 1
+files in the Claude memory folder: 0
+node: v24.21.0, tsc: Version 5.9.3
+error TS lines in the build: 0
+error TS lines in npm test: 0
+test lines:   375 passing (9s)
+baseline files copied: 471
+permissions: mode acceptEdits, allow 17, deny 25, autoMemoryEnabled False
+git status: 
