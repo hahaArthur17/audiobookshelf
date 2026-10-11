@@ -1,5 +1,6 @@
 const { startApi } = require('./helpers/harness')
 const { matchSnapshot } = require('./helpers/snapshot')
+const Database = require('../../server/Database')
 const { createLibrary, createBook } = require('./helpers/seed-library')
 
 // Reference characterization test: every route of one controller, as different users, snapshotting status, body and side effects.
@@ -110,5 +111,49 @@ describe('CollectionController (characterization)', () => {
       snap(this, await api.request('GET', `/api/collections/${collection.id}`, { as: 'root' }), 'find after delete')
       snap(this, await api.request('DELETE', `/api/collections/${collection.id}`, { as: 'root' }), 'delete again')
     })
+  })
+  // Tag restrictions (User.checkCanAccessLibraryItemWithTags): an allowlist user (selectedTagsNotAccessible=false) only sees items with
+  // at least one selected tag; a denylist user (true) sees items unless ALL their tags are selected. Same method guards item GET,
+  // collection list/detail (Collection.js) and the other listings.
+  describe('tag restricted users', () => {
+    let tagged, collection
+    const TAGS = { untagged: [], good: ['good'], mixed: ['good', 'bad'], bad: ['bad'] }
+    const setTags = async (username, perms) => {
+      const row = await Database.userModel.findOne({ where: { username } })
+      await row.update({ permissions: { ...row.permissions, accessAllTags: false, ...perms } })
+    }
+    const mkUser = async (username, perms) => {
+      const permissions = Database.userModel.getDefaultPermissionsForUserType('user')
+      await Database.userModel.create({ username, pash: 'hash', token: `token-${username}`, type: 'user', isActive: true, permissions, bookmarks: [], extraData: { seriesHideFromContinueListening: [] } })
+      await setTags(username, perms)
+    }
+
+    beforeEach(async function () {
+      tagged = {}
+      for (const [key, tags] of Object.entries(TAGS)) tagged[key] = (await createBook(lf, { title: `Tag ${key}`, extra: { tags, explicit: false } })).libraryItem
+      await mkUser('allow', { selectedTagsNotAccessible: false, itemTagsSelected: ['good'] })
+      await mkUser('deny', { selectedTagsNotAccessible: true, itemTagsSelected: ['bad'] })
+      const res = await api.request('POST', '/api/collections', { as: 'admin', json: { libraryId: lf.library.id, name: 'Tagged', books: Object.values(tagged).map((i) => i.id) } })
+      collection = res.body
+      api.emitted.splice(0)
+    })
+    const tagIds = () => new Map([[collection.id, '<collection>'], ...Object.entries(tagged).map(([k, i]) => [i.id, `<${k}>`])])
+
+    for (const username of ['admin', 'allow', 'deny']) {
+      it(`item GET as ${username}`, async function () {
+        this.ids = tagIds()
+        for (const key of Object.keys(TAGS)) snap(this, await api.request('GET', `/api/items/${tagged[key].id}`, { as: username }), key)
+      })
+      it(`library item list as ${username}`, async function () {
+        this.ids = tagIds()
+        snap(this, await api.request('GET', `/api/libraries/${lf.library.id}/items?minified=1&sort=media.metadata.title`, { as: username }), 'items')
+      })
+      it(`collections as ${username}`, async function () {
+        this.ids = tagIds()
+        snap(this, await api.request('GET', '/api/collections', { as: username }), 'list')
+        snap(this, await api.request('GET', `/api/collections/${collection.id}`, { as: username }), 'find')
+        snap(this, await api.request('GET', `/api/libraries/${lf.library.id}/collections`, { as: username }), 'library collections')
+      })
+    }
   })
 })
