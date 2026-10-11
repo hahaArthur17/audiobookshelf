@@ -93,6 +93,7 @@ describe('LibraryItemController (characterization)', () => {
       probe: sinon.stub(AudioFileScanner, 'probeAudioFile').resolves({ format: { duration: '60.0' }, streams: [{ codec_name: 'mp3' }] })
     }
 
+    this.emitIds = new Map()
     this.ids = new Map([
       [items.book.id, '<book>'],
       [items.second.id, '<second>'],
@@ -120,9 +121,24 @@ describe('LibraryItemController (characterization)', () => {
   })
 
   // ---------------------------------------------------------------------------------------------------------------------------
-  const compressEmitted = (e) => (e.method === 'libraryItemEmitter' ? { method: e.method, event: e.args[0], id: e.args[1]?.id } : e)
+  // libraryItemEmitter carries the item JSON that clients receive (item_updated): keep it whole, next to the id, so a wrong, stale or
+  // incomplete payload fails. The other emit methods are already recorded in full.
+  // Uuids in the payload that the test did not label (folder, library file ids, ...) get their own numbering, so the payload does not
+  // shift the "<uuid-N>" numbers the responses use.
+  const compressEmitted = (ctx) => (e) => {
+    if (e.method !== 'libraryItemEmitter') return e
+    const own = ctx.emitIds
+    const payload = JSON.parse(
+      JSON.stringify(e.args.slice(1)).replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, (id) => {
+        if (ctx.ids.has(id)) return id
+        if (!own.has(id)) own.set(id, `<emitted-uuid-${own.size + 1}>`)
+        return own.get(id)
+      })
+    )
+    return { method: e.method, event: e.args[0], id: e.args[1]?.id, payload }
+  }
   const snap = (ctx, res, label, extra = {}) => {
-    const emitted = api.emitted.splice(0).map(compressEmitted)
+    const emitted = api.emitted.splice(0).map(compressEmitted(ctx))
     matchSnapshot(ctx, { res, emitted, ...extra }, { label, ids: ctx.ids, tmpDirs: [api.tmp] })
   }
   // batch routes process items in database (random uuid) order: replace ids by their names and sort so the snapshot is stable
@@ -134,7 +150,7 @@ describe('LibraryItemController (characterization)', () => {
   const snapSorted = (ctx, res, label, extra = {}) => {
     const emitted = api.emitted
       .splice(0)
-      .map(compressEmitted)
+      .map(compressEmitted(ctx))
       .sort((a, b) => (labelled(ctx, a) < labelled(ctx, b) ? -1 : 1))
     matchSnapshot(ctx, { res, emitted, ...extra }, { label, ids: ctx.ids, tmpDirs: [api.tmp] })
   }

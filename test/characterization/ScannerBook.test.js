@@ -5,7 +5,7 @@ const { startApi } = require('./helpers/harness')
 const { matchSnapshot } = require('./helpers/snapshot')
 const { makeTree, rmTree, mkTmp } = require('./helpers/seed-scanner-fs')
 const media = require('./helpers/seed-scanner-media')
-const { scrub, setupScan, runScan, viewItems, stable } = require('./helpers/seed-scanner-run')
+const { scrub, setupScan, runScan, viewItems, stable, itemPayloads } = require('./helpers/seed-scanner-run')
 
 const Database = require('../../server/Database')
 const AudioFileScanner = require('../../server/scanner/AudioFileScanner')
@@ -208,7 +208,7 @@ describe('ScannerBook (characterization)', function () {
     const scanOnce = async (o = {}) => {
       const c = await setupScan(api, root, o.library)
       const scan = await runScan(c)
-      return { c, view: await stable(c, { scan, items: await viewItems(c), emitted: emittedNames() }) }
+      return { c, view: await stable(c, { scan, items: await viewItems(c), emitted: emittedNames(), ...(o.payloads ? { payloads: itemPayloads(api.emitted) } : {}) }) }
     }
 
     it('a single audio file in the library root (isFile item)', async function () {
@@ -221,7 +221,7 @@ describe('ScannerBook (characterization)', function () {
       media.makeAudio(path.join(dir, '10 Last.mp3'), { tags: { title: 'Last', track: '3/3' } })
       media.makeAudio(path.join(dir, '02 Middle.mp3'), { tags: { title: 'Middle', track: '2/3' } })
       media.makeAudio(path.join(dir, '01 First.mp3'), { tags: { title: 'First', track: '1/3' } })
-      snap(this, (await scanOnce()).view)
+      snap(this, (await scanOnce({ payloads: true })).view)
     })
 
     it('multi-disc folders order by disc then track', async function () {
@@ -430,7 +430,7 @@ describe('ScannerBook (characterization)', function () {
       const series = await Database.seriesModel.findAll({ where: { libraryId: c.library.id } })
       const items = (await viewItems(c)).map((i) => ({ relPath: i.relPath, authors: i.media.metadata.authors.map((a) => a.name), series: i.media.metadata.series.map((s) => `${s.name} #${s.sequence}`) }))
       const emitted = api.emitted.map((e) => (e.args[0] === 'authors_num_books_updated' ? `${e.method}:${e.args[0]}:${e.args[1].authors.map((a) => a.numBooks).join(',')}` : `${e.method}:${e.args[0]}`))
-      snap(this, await stable(c, { scan, items, numAuthors: authors.length, numSeries: series.length, authorLastFirst: authors.map((a) => a.lastFirst), emitted }))
+      snap(this, await stable(c, { scan, items, numAuthors: authors.length, numSeries: series.length, authorLastFirst: authors.map((a) => a.lastFirst), emitted, payloads: itemPayloads(api.emitted, { sort: true }) }))
     })
 
     it('saveMetadataFile writes metadata.json to <metadata>/items/<id>, or into the item folder with storeMetadataWithItem', async function () {
@@ -479,7 +479,7 @@ describe('ScannerBook (characterization)', function () {
       await change(c)
       const second = await runScan(c, { force })
       const after = (await viewItems(c)).map(brief)
-      return { c, view: await stable(c, { first: { added: first.added, updated: first.updated, missing: first.missing }, before, second: { added: second.added, updated: second.updated, missing: second.missing, logs: second.logs }, after, emitted: emittedNames() }) }
+      return { c, view: await stable(c, { first: { added: first.added, updated: first.updated, missing: first.missing }, before, second: { added: second.added, updated: second.updated, missing: second.missing, logs: second.logs }, after, emitted: emittedNames(), payloads: itemPayloads(api.emitted, { sort: true }) }) }
     }
     const bump = (file) => fs.utimesSync(file, future(), future())
     const book = () => path.join(root, 'Rescan Book')
@@ -591,13 +591,16 @@ describe('ScannerBook (characterization)', function () {
       snap(this, r.view)
       fs.writeFileSync(path.join(book(), 'metadata.json'), JSON.stringify({ title: 'Json Title 2', authors: ['Other Author'], description: 'v2' }))
       bump(path.join(book(), 'metadata.json'))
+      const m0 = api.emitted.length // emissions before this point belong to the first scan and `change`; the names snapshot below keeps them all
       const edited = await runScan(c)
+      const payloadsEdited = itemPayloads(api.emitted.slice(m0))
+      const m1 = api.emitted.length
       const afterEdit = (await viewItems(c)).map(brief)
       fs.rmSync(path.join(book(), 'metadata.json'))
       const deleted = await runScan(c)
       snap(
         this,
-        await stable(c, { edited: { updated: edited.updated, logs: edited.logs }, afterEdit, deleted: { updated: deleted.updated, logs: deleted.logs }, afterDelete: (await viewItems(c)).map(brief), authors: (await Database.authorModel.findAll()).map((a) => a.name).sort(), series: (await Database.seriesModel.findAll()).map((s) => s.name).sort(), emitted: emittedNames() }),
+        await stable(c, { edited: { updated: edited.updated, logs: edited.logs }, payloadsEdited, afterEdit, deleted: { updated: deleted.updated, logs: deleted.logs }, afterDelete: (await viewItems(c)).map(brief), payloadsDeleted: itemPayloads(api.emitted.slice(m1)), authors: (await Database.authorModel.findAll()).map((a) => a.name).sort(), series: (await Database.seriesModel.findAll()).map((s) => s.name).sort(), emitted: emittedNames() }),
         'edit and delete'
       )
     })

@@ -4,7 +4,7 @@ const { startApi } = require('./helpers/harness')
 const { matchSnapshot } = require('./helpers/snapshot')
 const { rmTree, mkTmp } = require('./helpers/seed-scanner-fs')
 const media = require('./helpers/seed-scanner-media')
-const { setupScan, runScan, viewItems, stable } = require('./helpers/seed-scanner-run')
+const { setupScan, runScan, viewItems, stable, itemPayloads } = require('./helpers/seed-scanner-run')
 
 const Database = require('../../server/Database')
 const AudioFileScanner = require('../../server/scanner/AudioFileScanner')
@@ -115,14 +115,14 @@ describe('ScannerPodcast (characterization)', function () {
     const scanOnce = async (o = {}) => {
       const c = await setupScan(api, root, { mediaType: 'podcast', ...o })
       const scan = await runScan(c)
-      return { c, view: await stable(c, { scan, items: (await viewItems(c)).map(brief), emitted: emittedNames() }) }
+      return { c, view: await stable(c, { scan, items: (await viewItems(c)).map(brief), emitted: emittedNames(), ...(o.payloads ? { payloads: itemPayloads(api.emitted) } : {}) }) }
     }
 
     it('episodes with tags: title, subtitle, season, episode, type, date, description, and podcast metadata from the first episode', async function () {
       media.makeAudio(pod('ep1.mp3'), { tags: { ...showTags, title: 'First Episode', subtitle: 'The start', date: '2021-05-04T10:00:00Z', disc: '1', track: '1', comment: 'About the first', 'episode-type': 'full' } })
       media.makeAudio(pod('ep2.mp3'), { tags: { ...showTags, title: 'Second Episode', date: '2021-05-11T10:00:00Z', disc: '1', track: '2', description: 'About the second', 'episode-type': 'bonus' } })
       media.makeAudio(pod('ep3.mp3'), { tags: { ...showTags, title: 'Third Episode', date: 'garbage', 'episode-type': 'nonsense' } })
-      snap(this, (await scanOnce()).view)
+      snap(this, (await scanOnce({ payloads: true })).view)
     })
 
     it('without tags the folder is the title and file names are the episode titles (season/episode are not parsed from names)', async function () {
@@ -223,7 +223,7 @@ describe('ScannerPodcast (characterization)', function () {
       await change(c)
       const second = await runScan(c, { force })
       const after = (await viewItems(c)).map(brief)
-      return { c, view: await stable(c, { first: { added: first.added }, before, second: { added: second.added, updated: second.updated, missing: second.missing, logs: second.logs }, after, emitted: emittedNames() }) }
+      return { c, view: await stable(c, { first: { added: first.added }, before, second: { added: second.added, updated: second.updated, missing: second.missing, logs: second.logs }, after, emitted: emittedNames(), payloads: itemPayloads(api.emitted, { sort: true }) }) }
     }
     const twoEpisodes = () => {
       media.makeAudio(pod('ep1.mp3'), { tags: { ...showTags, title: 'One' } })

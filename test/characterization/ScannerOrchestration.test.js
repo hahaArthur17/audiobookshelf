@@ -7,7 +7,7 @@ const { startApi } = require('./helpers/harness')
 const { matchSnapshot } = require('./helpers/snapshot')
 const { rmTree, mkTmp } = require('./helpers/seed-scanner-fs')
 const media = require('./helpers/seed-scanner-media')
-const { setupScan, runScan, viewItems, stable } = require('./helpers/seed-scanner-run')
+const { setupScan, runScan, viewItems, stable, itemPayloads } = require('./helpers/seed-scanner-run')
 
 const Database = require('../../server/Database')
 const Logger = require('../../server/Logger')
@@ -175,7 +175,7 @@ describe('ScannerOrchestration (characterization)', function () {
       makeBooks()
       const c = await setupScan(api, root)
       await scan(c.library)
-      snap(this, await stable(c, { tasks: taskEvents(), library: await libraryRow(c), items: (await viewItems(c)).map((i) => i.relPath), info: loggerCalls('info'), emitted: api.emitted.filter((e) => !String(e.args[0]).startsWith('task_')).map((e) => `${e.method}:${e.args[0]}`) }))
+      snap(this, await stable(c, { tasks: taskEvents(), library: await libraryRow(c), items: (await viewItems(c)).map((i) => i.relPath), info: loggerCalls('info'), emitted: api.emitted.filter((e) => !String(e.args[0]).startsWith('task_')).map((e) => `${e.method}:${e.args[0]}`), payloads: itemPayloads(api.emitted) }))
     })
 
     it('second scan with nothing changed: no changes needed', async function () {
@@ -206,7 +206,9 @@ describe('ScannerOrchestration (characterization)', function () {
           emitted: api.emitted
             .filter((e) => !String(e.args[0]).startsWith('task_'))
             .map((e) => `${e.method}:${e.args[0]}:${Array.isArray(e.args[1]) ? e.args[1].length : ''}`)
-            .sort()
+            .sort(),
+          // full payloads: items_added carries Book Three, items_updated carries Book One and Book Two (isMissing: true)
+          payloads: itemPayloads(api.emitted, { sort: true })
         })
       )
     })
@@ -219,10 +221,14 @@ describe('ScannerOrchestration (characterization)', function () {
       // Book Two disappears, Book One is renamed (same inode)
       fs.renameSync(path.join(root, 'Author/Book Two'), path.join(root, 'Hidden Away'))
       fs.renameSync(path.join(root, 'Author/Book One'), path.join(root, 'Author/Renamed One'))
+      api.emitted.length = 0
       const second = await runScan(c)
+      const payloadsSecond = itemPayloads(api.emitted, { sort: true })
       const afterSecond = (await viewItems(c)).map((i) => ({ relPath: i.relPath, path: i.path, isMissing: i.isMissing }))
       fs.renameSync(path.join(root, 'Hidden Away'), path.join(root, 'Author/Book Two'))
+      api.emitted.length = 0
       const third = await runScan(c)
+      const payloadsThird = itemPayloads(api.emitted, { sort: true })
       const items = await Database.libraryItemModel.findAll()
       snap(
         this,
@@ -232,9 +238,27 @@ describe('ScannerOrchestration (characterization)', function () {
           third: { added: third.added, updated: third.updated, missing: third.missing, logs: third.logs },
           final: (await viewItems(c)).map((i) => ({ relPath: i.relPath, isMissing: i.isMissing })),
           sameRows: items.every((i) => Object.values(idsBefore).includes(i.id)),
-          count: items.length
+          count: items.length,
+          payloadsSecond,
+          payloadsThird
         })
       )
+    })
+
+    it('a book folder that leaves the library is broadcast as missing, and as found again when it comes back (full payloads)', async function () {
+      makeBooks()
+      const c = await setupScan(api, root)
+      await scan(c.library)
+      const away = `${root}-away`
+      fs.renameSync(path.join(root, 'Author/Book Two'), away)
+      api.emitted.length = 0
+      const gone = await runScan(c)
+      const payloadsGone = itemPayloads(api.emitted)
+      fs.renameSync(away, path.join(root, 'Author/Book Two'))
+      api.emitted.length = 0
+      const back = await runScan(c)
+      const payloadsBack = itemPayloads(api.emitted)
+      snap(this, await stable(c, { gone: { added: gone.added, updated: gone.updated, missing: gone.missing }, payloadsGone, back: { added: back.added, updated: back.updated, missing: back.missing }, payloadsBack }))
     })
 
     it('forced rescan re-reads metadata even when files did not change', async function () {
@@ -376,10 +400,11 @@ describe('ScannerOrchestration (characterization)', function () {
       api.emitted.length = 0
       const updated = await LibraryItemScanner.scanLibraryItem(item.id)
       const eventsUpdated = itemEvents()
+      const payloadsUpdated = itemPayloads(api.emitted)
       const unknown = await LibraryItemScanner.scanLibraryItem('00000000-0000-4000-8000-000000000000')
       await Database.libraryModel.destroy({ where: { id: c.library.id } })
       const noLibrary = await LibraryItemScanner.scanLibraryItem(item.id).catch((e) => `throws ${e.message}`)
-      snap(this, await stable(c, { upToDate: scanResultName(upToDate), updated: scanResultName(updated), unknown: scanResultName(unknown), noLibrary: typeof noLibrary === 'number' ? scanResultName(noLibrary) : noLibrary, eventsUpToDate, eventsUpdated, errors: loggerCalls('error'), numTracks: (await Database.bookModel.findByPk(item.mediaId)).audioFiles.length }))
+      snap(this, await stable(c, { upToDate: scanResultName(upToDate), updated: scanResultName(updated), unknown: scanResultName(unknown), noLibrary: typeof noLibrary === 'number' ? scanResultName(noLibrary) : noLibrary, eventsUpToDate, eventsUpdated, errors: loggerCalls('error'), numTracks: (await Database.bookModel.findByPk(item.mediaId)).audioFiles.length, payloadsUpdated }))
     })
 
     it('scanLibraryItem: files removed from disk, then the whole item folder removed', async function () {
@@ -388,10 +413,13 @@ describe('ScannerOrchestration (characterization)', function () {
       fs.rmSync(book('01.mp3'))
       media.makeAudio(book('02.mp3'))
       const filesSwapped = await LibraryItemScanner.scanLibraryItem(item.id)
+      const payloadsSwapped = itemPayloads(api.emitted)
       fs.rmSync(path.join(root, 'Author'), { recursive: true })
+      api.emitted.length = 0
       const folderGone = await LibraryItemScanner.scanLibraryItem(item.id)
+      const payloadsGone = itemPayloads(api.emitted)
       const row = await Database.libraryItemModel.findByPk(item.id)
-      snap(this, await stable(c, { filesSwapped: scanResultName(filesSwapped), folderGone: scanResultName(folderGone), isMissing: row.isMissing, libraryFiles: row.libraryFiles.length, logsInfo: loggerCalls('info') }))
+      snap(this, await stable(c, { filesSwapped: scanResultName(filesSwapped), folderGone: scanResultName(folderGone), isMissing: row.isMissing, libraryFiles: row.libraryFiles.length, logsInfo: loggerCalls('info'), payloadsSwapped, payloadsGone }))
     })
 
     it('scanLibraryItem with watcher details (item folder renamed): path and relPath follow', async function () {
@@ -470,6 +498,7 @@ describe('ScannerOrchestration (characterization)', function () {
       const task = TaskManager.createAndAddTask('watcher-scan', { text: 'Scanning file changes', key: 'MessageTaskScanningFileChanges', subs: [] }, null, true, { libraryId: c.library.id, libraryName: c.library.name })
       api.emitted.length = 0
       await LibraryScanner.scanFilesChanged(updates, task)
+      c.payloads = itemPayloads(api.emitted, { sort: true })
       return { scanResults: maskElapsed(task.data.scanResults), isFinished: task.isFinished, events: api.emitted.map((e) => `${e.method}:${e.args[0]}`).sort() }
     }
     const rows = async (c) => (await viewItems(c)).map((i) => ({ relPath: i.relPath, isMissing: i.isMissing, isFile: i.isFile, numTracks: i.media.numTracks ?? i.media.numEpisodes, files: i.libraryFiles.map((f) => f.metadata.relPath) }))
@@ -479,33 +508,35 @@ describe('ScannerOrchestration (characterization)', function () {
       media.makeAudio(path.join(root, 'Author/Book Three/01.mp3'), { tags: { album: 'Book Three', artist: 'Author' } })
       fs.writeFileSync(path.join(root, 'Author/Book Three/cover.jpg'), media.makeJpeg())
       const result = await watcherRun(c, [update(c, 'Author/Book Three/01.mp3'), update(c, 'Author/Book Three/cover.jpg')])
-      snap(this, await stable(c, { result, items: await rows(c), debug: loggerCalls('debug').filter((l) => /Folder update|Folder scan results/.test(l)) }))
+      snap(this, await stable(c, { result, items: await rows(c), payloads: c.payloads, debug: loggerCalls('debug').filter((l) => /Folder update|Folder scan results/.test(l)) }))
     })
 
     it('a root-level media file becomes an isFile item', async function () {
       const c = await setup()
       media.makeAudio(path.join(root, 'Loose Book.mp3'), { tags: { album: 'Loose Book' } })
       const result = await watcherRun(c, [update(c, 'Loose Book.mp3')])
-      snap(this, await stable(c, { result, items: await rows(c) }))
+      snap(this, await stable(c, { result, items: await rows(c), payloads: c.payloads }))
     })
 
     it('a file added to, modified in and removed from an existing item', async function () {
       const c = await setup()
       media.makeAudio(book('02.mp3'))
       const added = await watcherRun(c, [update(c, 'Author/Book One/02.mp3')])
+      const payloadsAdded = c.payloads
       const afterAdd = await rows(c)
       fs.writeFileSync(book('desc.txt'), 'hello')
       const textAdded = await watcherRun(c, [update(c, 'Author/Book One/desc.txt')])
+      const payloadsText = c.payloads
       fs.rmSync(book('01.mp3'))
       const removed = await watcherRun(c, [update(c, 'Author/Book One/01.mp3', 'deleted')])
-      snap(this, await stable(c, { added, afterAdd, textAdded, removed, final: await rows(c) }))
+      snap(this, await stable(c, { added, payloadsAdded, afterAdd, textAdded, payloadsText, removed, payloadsRemoved: c.payloads, final: await rows(c) }))
     })
 
     it('an item folder deleted from disk is marked missing', async function () {
       const c = await setup()
       fs.rmSync(path.join(root, 'Author/Book Two'), { recursive: true })
       const result = await watcherRun(c, [update(c, 'Author/Book Two/01.mp3', 'deleted')])
-      snap(this, await stable(c, { result, items: await rows(c), info: loggerCalls('info').filter((l) => /marking as missing/.test(l)) }))
+      snap(this, await stable(c, { result, items: await rows(c), payloads: c.payloads, info: loggerCalls('info').filter((l) => /marking as missing/.test(l)) }))
     })
 
     it('an item folder moved (deleted + added with the same inode) keeps its row', async function () {
@@ -514,7 +545,7 @@ describe('ScannerOrchestration (characterization)', function () {
       fs.renameSync(path.join(root, 'Author/Book Two'), path.join(root, 'Moved Book'))
       const result = await watcherRun(c, [update(c, 'Author/Book Two/01.mp3', 'deleted'), update(c, 'Moved Book/01.mp3')])
       const after = await Database.libraryItemModel.findAll()
-      snap(this, await stable(c, { result, items: await rows(c), sameRow: after.some((i) => i.id === before && i.relPath === 'Moved Book'), count: after.length }))
+      snap(this, await stable(c, { result, items: await rows(c), sameRow: after.some((i) => i.id === before && i.relPath === 'Moved Book'), count: after.length, payloads: c.payloads }))
     })
 
     it('changes that do not matter are ignored: hidden files, unknown extensions, non-media outside an item', async function () {
@@ -561,7 +592,7 @@ describe('ScannerOrchestration (characterization)', function () {
       await runScan(c)
       media.makeAudio(path.join(root, 'Pod/ep2.mp3'), { tags: { title: 'E2' } })
       const result = await watcherRun(c, [update(c, 'Pod/ep2.mp3')])
-      snap(this, await stable(c, { result, items: await rows(c) }))
+      snap(this, await stable(c, { result, items: await rows(c), payloads: c.payloads }))
     })
 
     it('an empty or missing update list returns immediately; an unknown library is skipped', async function () {

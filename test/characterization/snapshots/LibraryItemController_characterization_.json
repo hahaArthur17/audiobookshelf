@@ -956,7 +956,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ],
     "files": {
@@ -1197,7 +1307,53 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<podcast>"
+        "id": "<podcast>",
+        "payload": [
+          {
+            "id": "<podcast>",
+            "ino": null,
+            "path": "<tmp>/pods/The Podcast",
+            "relPath": "The Podcast",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "podcast",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 30,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "902",
+                "metadata": {
+                  "filename": "ep2.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/pods/The Podcast/ep2.mp3",
+                  "relPath": "ep2.mp3",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-pods>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ],
     "state": {
@@ -1435,7 +1591,53 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<second>"
+        "id": "<second>",
+        "payload": [
+          {
+            "id": "<second>",
+            "ino": null,
+            "path": "<tmp>/books/Second Book",
+            "relPath": "Second Book",
+            "mediaId": "<emitted-uuid-3>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": true,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 14,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "402",
+                "metadata": {
+                  "filename": "folder.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/Second Book/folder.png",
+                  "relPath": "folder.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ]
   },
@@ -1451,7 +1653,101 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -1865,7 +2161,101 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ],
     "files": {
@@ -2084,7 +2474,101 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -2100,7 +2584,85 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -2166,7 +2728,101 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -7883,7 +8539,69 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<second>"
+        "id": "<second>",
+        "payload": [
+          {
+            "id": "<second>",
+            "ino": null,
+            "path": "<tmp>/books/Second Book",
+            "relPath": "Second Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 14,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "401",
+                "metadata": {
+                  "filename": "only.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/Second Book/only.mp3",
+                  "relPath": "only.mp3",
+                  "size": 14,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "402",
+                "metadata": {
+                  "filename": "folder.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/Second Book/folder.png",
+                  "relPath": "folder.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ],
     "files": {
@@ -8157,7 +8875,69 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<ebook-only>"
+        "id": "<ebook-only>",
+        "payload": [
+          {
+            "id": "<ebook-only>",
+            "ino": null,
+            "path": "<tmp>/books/Ebook Only",
+            "relPath": "Ebook Only",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": true,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 0,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "501",
+                "metadata": {
+                  "filename": "solo.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/Ebook Only/solo.epub",
+                  "relPath": "solo.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "502",
+                "metadata": {
+                  "filename": "solo.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/Ebook Only/solo.pdf",
+                  "relPath": "solo.pdf",
+                  "size": 14,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -8173,7 +8953,69 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<ebook-only>"
+        "id": "<ebook-only>",
+        "payload": [
+          {
+            "id": "<ebook-only>",
+            "ino": null,
+            "path": "<tmp>/books/Ebook Only",
+            "relPath": "Ebook Only",
+            "mediaId": "<uuid-18>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 0,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "501",
+                "metadata": {
+                  "filename": "solo.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/Ebook Only/solo.epub",
+                  "relPath": "solo.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "502",
+                "metadata": {
+                  "filename": "solo.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/Ebook Only/solo.pdf",
+                  "relPath": "solo.pdf",
+                  "size": 14,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ]
   },
@@ -8847,7 +9689,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<uuid-18>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ]
   },
@@ -8863,7 +9815,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -9191,7 +10253,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -9466,7 +10638,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -9736,7 +11018,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<uuid-18>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ]
   },
@@ -10031,7 +11423,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<uuid-18>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ],
     "state": {
@@ -10317,7 +11819,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -10836,7 +12448,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<uuid-18>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ],
     "state": {
@@ -11122,7 +12844,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<uuid-18>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ]
   },
@@ -12183,7 +14015,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -12502,7 +14444,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -13163,7 +15215,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -13393,7 +15555,69 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<podcast>"
+        "id": "<podcast>",
+        "payload": [
+          {
+            "id": "<podcast>",
+            "ino": null,
+            "path": "<tmp>/pods/The Podcast",
+            "relPath": "The Podcast",
+            "mediaId": "<uuid-18>",
+            "mediaType": "podcast",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 30,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "901",
+                "metadata": {
+                  "filename": "ep1.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/pods/The Podcast/ep1.mp3",
+                  "relPath": "ep1.mp3",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "902",
+                "metadata": {
+                  "filename": "ep2.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/pods/The Podcast/ep2.mp3",
+                  "relPath": "ep2.mp3",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-pods>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ]
   },
@@ -13908,7 +16132,69 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<podcast>"
+        "id": "<podcast>",
+        "payload": [
+          {
+            "id": "<podcast>",
+            "ino": null,
+            "path": "<tmp>/pods/The Podcast",
+            "relPath": "The Podcast",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "podcast",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 30,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "901",
+                "metadata": {
+                  "filename": "ep1.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/pods/The Podcast/ep1.mp3",
+                  "relPath": "ep1.mp3",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "902",
+                "metadata": {
+                  "filename": "ep2.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/pods/The Podcast/ep2.mp3",
+                  "relPath": "ep2.mp3",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-pods>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -14130,7 +16416,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -14385,7 +16781,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<uuid-18>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ]
   },
@@ -14941,7 +17447,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -15517,7 +18133,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<uuid-18>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<uuid-17>"
+          }
+        ]
       }
     ]
   },
@@ -15536,7 +18262,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -15555,7 +18391,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -15989,7 +18935,117 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>"
+          }
+        ]
       }
     ]
   },
@@ -18654,12 +21710,477 @@
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<book>"
+        "id": "<book>",
+        "payload": [
+          {
+            "id": "<book>",
+            "ino": null,
+            "path": "<tmp>/books/The Book",
+            "relPath": "The Book",
+            "mediaId": "<emitted-uuid-1>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 32,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "101",
+                "metadata": {
+                  "filename": "01 one.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/01 one.mp3",
+                  "relPath": "01 one.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "102",
+                "metadata": {
+                  "filename": "02 two.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/books/The Book/02 two.mp3",
+                  "relPath": "02 two.mp3",
+                  "size": 16,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": false,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "202",
+                "metadata": {
+                  "filename": "extra.pdf",
+                  "ext": ".pdf",
+                  "path": "<tmp>/books/The Book/extra.pdf",
+                  "relPath": "extra.pdf",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": true,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "301",
+                "metadata": {
+                  "filename": "cover.png",
+                  "ext": ".png",
+                  "path": "<tmp>/books/The Book/cover.png",
+                  "relPath": "cover.png",
+                  "size": 70,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-books>",
+            "libraryFolderId": "<emitted-uuid-2>",
+            "media": {
+              "id": "<emitted-uuid-1>",
+              "title": "Batch Title",
+              "titleIgnorePrefix": "Batch Title",
+              "subtitle": null,
+              "publishedYear": null,
+              "publishedDate": null,
+              "publisher": null,
+              "description": null,
+              "isbn": null,
+              "asin": null,
+              "language": null,
+              "explicit": false,
+              "abridged": null,
+              "coverPath": "<tmp>/books/The Book/cover.png",
+              "duration": 120,
+              "narrators": [],
+              "audioFiles": [
+                {
+                  "index": 1,
+                  "ino": "101",
+                  "metadata": {
+                    "filename": "01 one.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/books/The Book/01 one.mp3",
+                    "relPath": "01 one.mp3",
+                    "size": 16,
+                    "mtimeMs": 1000,
+                    "ctimeMs": 1000,
+                    "birthtimeMs": 1000
+                  },
+                  "addedAt": 2000,
+                  "updatedAt": 2000,
+                  "trackNumFromMeta": 1,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "exclude": false,
+                  "format": "MP2/3 (MPEG audio layer 2/3)",
+                  "duration": 60,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                {
+                  "index": 2,
+                  "ino": "102",
+                  "metadata": {
+                    "filename": "02 two.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/books/The Book/02 two.mp3",
+                    "relPath": "02 two.mp3",
+                    "size": 16,
+                    "mtimeMs": 1000,
+                    "ctimeMs": 1000,
+                    "birthtimeMs": 1000
+                  },
+                  "addedAt": 2000,
+                  "updatedAt": 2000,
+                  "trackNumFromMeta": 2,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "exclude": false,
+                  "format": "MP2/3 (MPEG audio layer 2/3)",
+                  "duration": 60,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                }
+              ],
+              "ebookFile": {
+                "ino": "201",
+                "metadata": {
+                  "filename": "book.epub",
+                  "ext": ".epub",
+                  "path": "<tmp>/books/The Book/book.epub",
+                  "relPath": "book.epub",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "ebookFormat": "epub",
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              "chapters": [
+                {
+                  "id": 0,
+                  "start": 0,
+                  "end": 60,
+                  "title": "Chapter 1"
+                },
+                {
+                  "id": 1,
+                  "start": 60,
+                  "end": 120,
+                  "title": "Chapter 2"
+                }
+              ],
+              "tags": [
+                "x"
+              ],
+              "genres": [],
+              "createdAt": "<iso-date>",
+              "updatedAt": "<iso-date>",
+              "authors": [
+                {
+                  "id": "<emitted-uuid-3>",
+                  "name": "Ann Author",
+                  "lastFirst": null,
+                  "asin": null,
+                  "description": null,
+                  "imagePath": null,
+                  "createdAt": "<iso-date>",
+                  "updatedAt": "<iso-date>",
+                  "libraryId": "<lib-books>"
+                }
+              ],
+              "series": [
+                {
+                  "id": "<emitted-uuid-4>",
+                  "name": "Saga",
+                  "nameIgnorePrefix": null,
+                  "description": null,
+                  "createdAt": "<iso-date>",
+                  "updatedAt": "<iso-date>",
+                  "libraryId": "<lib-books>",
+                  "bookSeries": {
+                    "id": "<emitted-uuid-5>",
+                    "sequence": "1"
+                  }
+                },
+                {
+                  "id": "<emitted-uuid-6>",
+                  "name": "Batch Saga",
+                  "nameIgnorePrefix": "Batch Saga",
+                  "libraryId": "<lib-books>",
+                  "updatedAt": "<iso-date>",
+                  "createdAt": "<iso-date>"
+                }
+              ]
+            }
+          }
+        ]
       },
       {
         "method": "libraryItemEmitter",
         "event": "item_updated",
-        "id": "<podcast>"
+        "id": "<podcast>",
+        "payload": [
+          {
+            "id": "<podcast>",
+            "ino": null,
+            "path": "<tmp>/pods/The Podcast",
+            "relPath": "The Podcast",
+            "mediaId": "<emitted-uuid-7>",
+            "mediaType": "podcast",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<iso-date>",
+            "ctime": "<iso-date>",
+            "birthtime": "<iso-date>",
+            "size": 30,
+            "lastScan": null,
+            "lastScanVersion": null,
+            "libraryFiles": [
+              {
+                "ino": "901",
+                "metadata": {
+                  "filename": "ep1.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/pods/The Podcast/ep1.mp3",
+                  "relPath": "ep1.mp3",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              },
+              {
+                "ino": "902",
+                "metadata": {
+                  "filename": "ep2.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/pods/The Podcast/ep2.mp3",
+                  "relPath": "ep2.mp3",
+                  "size": 15,
+                  "mtimeMs": 1000,
+                  "ctimeMs": 1000,
+                  "birthtimeMs": 1000
+                },
+                "isSupplementary": null,
+                "addedAt": 2000,
+                "updatedAt": 2000
+              }
+            ],
+            "extraData": null,
+            "title": null,
+            "titleIgnorePrefix": null,
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<iso-date>",
+            "updatedAt": "<iso-date>",
+            "libraryId": "<lib-pods>",
+            "libraryFolderId": "<emitted-uuid-8>",
+            "media": {
+              "id": "<emitted-uuid-7>",
+              "title": "The Podcast",
+              "titleIgnorePrefix": null,
+              "author": "Batch Author",
+              "releaseDate": null,
+              "feedURL": null,
+              "imageURL": null,
+              "description": null,
+              "itunesPageURL": null,
+              "itunesId": null,
+              "itunesArtistId": null,
+              "language": null,
+              "podcastType": null,
+              "explicit": null,
+              "autoDownloadEpisodes": false,
+              "autoDownloadSchedule": "0 0 * * 1",
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "coverPath": null,
+              "tags": [],
+              "genres": [],
+              "numEpisodes": 2,
+              "createdAt": "<iso-date>",
+              "updatedAt": "<iso-date>",
+              "podcastEpisodes": [
+                {
+                  "id": "<episode-1>",
+                  "index": 1,
+                  "season": null,
+                  "episode": null,
+                  "episodeType": null,
+                  "title": "Episode 1",
+                  "subtitle": null,
+                  "description": null,
+                  "pubDate": null,
+                  "enclosureURL": null,
+                  "enclosureSize": null,
+                  "enclosureType": null,
+                  "publishedAt": "<iso-date>",
+                  "audioFile": {
+                    "index": 1,
+                    "ino": "901",
+                    "metadata": {
+                      "filename": "ep1.mp3",
+                      "ext": ".mp3",
+                      "path": "<tmp>/pods/The Podcast/ep1.mp3",
+                      "relPath": "ep1.mp3",
+                      "size": 15,
+                      "mtimeMs": 1000,
+                      "ctimeMs": 1000,
+                      "birthtimeMs": 1000
+                    },
+                    "addedAt": 2000,
+                    "updatedAt": 2000,
+                    "trackNumFromMeta": 1,
+                    "discNumFromMeta": null,
+                    "trackNumFromFilename": null,
+                    "discNumFromFilename": null,
+                    "manuallyVerified": false,
+                    "exclude": false,
+                    "format": "MP2/3 (MPEG audio layer 2/3)",
+                    "duration": 30,
+                    "bitRate": 64000,
+                    "language": null,
+                    "codec": "mp3",
+                    "timeBase": "1/14112000",
+                    "channels": 2,
+                    "channelLayout": "stereo",
+                    "chapters": [],
+                    "metaTags": {},
+                    "mimeType": "audio/mpeg"
+                  },
+                  "chapters": [],
+                  "extraData": {},
+                  "createdAt": "<iso-date>",
+                  "updatedAt": "<iso-date>",
+                  "podcastId": "<emitted-uuid-7>"
+                },
+                {
+                  "id": "<episode-2>",
+                  "index": 2,
+                  "season": null,
+                  "episode": null,
+                  "episodeType": null,
+                  "title": "Episode 2",
+                  "subtitle": null,
+                  "description": null,
+                  "pubDate": null,
+                  "enclosureURL": null,
+                  "enclosureSize": null,
+                  "enclosureType": null,
+                  "publishedAt": "<iso-date>",
+                  "audioFile": {
+                    "index": 1,
+                    "ino": "902",
+                    "metadata": {
+                      "filename": "ep2.mp3",
+                      "ext": ".mp3",
+                      "path": "<tmp>/pods/The Podcast/ep2.mp3",
+                      "relPath": "ep2.mp3",
+                      "size": 15,
+                      "mtimeMs": 1000,
+                      "ctimeMs": 1000,
+                      "birthtimeMs": 1000
+                    },
+                    "addedAt": 2000,
+                    "updatedAt": 2000,
+                    "trackNumFromMeta": 1,
+                    "discNumFromMeta": null,
+                    "trackNumFromFilename": null,
+                    "discNumFromFilename": null,
+                    "manuallyVerified": false,
+                    "exclude": false,
+                    "format": "MP2/3 (MPEG audio layer 2/3)",
+                    "duration": 30,
+                    "bitRate": 64000,
+                    "language": null,
+                    "codec": "mp3",
+                    "timeBase": "1/14112000",
+                    "channels": 2,
+                    "channelLayout": "stereo",
+                    "chapters": [],
+                    "metaTags": {},
+                    "mimeType": "audio/mpeg"
+                  },
+                  "chapters": [],
+                  "extraData": {},
+                  "createdAt": "<iso-date>",
+                  "updatedAt": "<iso-date>",
+                  "podcastId": "<emitted-uuid-7>"
+                }
+              ]
+            }
+          }
+        ]
       },
       {
         "method": "emitter",

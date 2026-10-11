@@ -140,6 +140,95 @@
     ],
     "emitted": [
       "libraryItemsEmitter:items_updated"
+    ],
+    "payloads": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:My Podcast>",
+              "ino": "<masked>",
+              "path": "<tmp>/My Podcast",
+              "relPath": "My Podcast",
+              "mediaId": "<book:My Podcast>",
+              "mediaType": "podcast",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "cover.jpg",
+                    "ext": ".jpg",
+                    "path": "<tmp>/My Podcast/cover.jpg",
+                    "relPath": "cover.jpg",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "image"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep1.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep1.mp3",
+                    "relPath": "ep1.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep2.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep2.mp3",
+                    "relPath": "ep2.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Show Album",
+              "titleIgnorePrefix": "Show Album",
+              "authorNamesFirstLast": null,
+              "authorNamesLastFirst": null,
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
     ]
   },
   "ScannerPodcast (characterization) > rescanning a podcast > a cover added, then removed > cover removed": {
@@ -360,6 +449,78 @@
     ],
     "emitted": [
       "libraryItemsEmitter:items_updated"
+    ],
+    "payloads": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:My Podcast>",
+              "ino": "<masked>",
+              "path": "<tmp>/My Podcast",
+              "relPath": "My Podcast",
+              "mediaId": "<book:My Podcast>",
+              "mediaType": "podcast",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep1.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep1.mp3",
+                    "relPath": "ep1.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep2.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep2.mp3",
+                    "relPath": "ep2.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Show Album",
+              "titleIgnorePrefix": "Show Album",
+              "authorNamesFirstLast": null,
+              "authorNamesLastFirst": null,
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
     ]
   },
   "ScannerPodcast (characterization) > rescanning a podcast > a modified episode file that became corrupt keeps its old episode": {
@@ -500,6 +661,78 @@
     ],
     "emitted": [
       "libraryItemsEmitter:items_updated"
+    ],
+    "payloads": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:My Podcast>",
+              "ino": "<masked>",
+              "path": "<tmp>/My Podcast",
+              "relPath": "My Podcast",
+              "mediaId": "<book:My Podcast>",
+              "mediaType": "podcast",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep1.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep1.mp3",
+                    "relPath": "ep1.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep2.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep2.mp3",
+                    "relPath": "ep2.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Show Album",
+              "titleIgnorePrefix": "Show Album",
+              "authorNamesFirstLast": null,
+              "authorNamesLastFirst": null,
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
     ]
   },
   "ScannerPodcast (characterization) > rescanning a podcast > an episode added": {
@@ -661,6 +894,95 @@
     ],
     "emitted": [
       "libraryItemsEmitter:items_updated"
+    ],
+    "payloads": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:My Podcast>",
+              "ino": "<masked>",
+              "path": "<tmp>/My Podcast",
+              "relPath": "My Podcast",
+              "mediaId": "<book:My Podcast>",
+              "mediaType": "podcast",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep1.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep1.mp3",
+                    "relPath": "ep1.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep2.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep2.mp3",
+                    "relPath": "ep2.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep3.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep3.mp3",
+                    "relPath": "ep3.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Show Album",
+              "titleIgnorePrefix": "Show Album",
+              "authorNamesFirstLast": null,
+              "authorNamesLastFirst": null,
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
     ]
   },
   "ScannerPodcast (characterization) > rescanning a podcast > an episode removed: its media progress and playlist entries go with it": {
@@ -792,6 +1114,78 @@
       "emitted": [
         "clientEmitter:<uuid-1>",
         "libraryItemsEmitter:items_updated"
+      ],
+      "payloads": [
+        {
+          "method": "clientEmitter",
+          "event": "<uuid-1>",
+          "payload": [
+            "playlist_removed",
+            {
+              "id": "<uuid-2>",
+              "name": "Mine",
+              "libraryId": "<library>",
+              "userId": "<uuid-1>",
+              "description": null,
+              "lastUpdate": "<masked>",
+              "createdAt": "<masked>",
+              "items": []
+            }
+          ]
+        },
+        {
+          "method": "libraryItemsEmitter",
+          "event": "items_updated",
+          "payload": [
+            [
+              {
+                "id": "<item:My Podcast>",
+                "ino": "<masked>",
+                "path": "<tmp>/My Podcast",
+                "relPath": "My Podcast",
+                "mediaId": "<book:My Podcast>",
+                "mediaType": "podcast",
+                "isFile": false,
+                "isMissing": false,
+                "isInvalid": false,
+                "mtime": "<masked>",
+                "ctime": "<masked>",
+                "birthtime": "<masked>",
+                "size": "<size>",
+                "lastScan": "<masked>",
+                "lastScanVersion": "<masked>",
+                "libraryFiles": [
+                  {
+                    "ino": "<masked>",
+                    "metadata": {
+                      "filename": "ep2.mp3",
+                      "ext": ".mp3",
+                      "path": "<tmp>/My Podcast/ep2.mp3",
+                      "relPath": "ep2.mp3",
+                      "size": "<size>",
+                      "mtimeMs": "<masked>",
+                      "ctimeMs": "<masked>",
+                      "birthtimeMs": "<masked>"
+                    },
+                    "isSupplementary": null,
+                    "addedAt": "<masked>",
+                    "updatedAt": "<masked>",
+                    "fileType": "audio"
+                  }
+                ],
+                "extraData": {},
+                "title": "Show Album",
+                "titleIgnorePrefix": "Show Album",
+                "authorNamesFirstLast": null,
+                "authorNamesLastFirst": null,
+                "createdAt": "<masked>",
+                "updatedAt": "<masked>",
+                "libraryId": "<library>",
+                "libraryFolderId": "<folder>"
+              }
+            ]
+          ]
+        }
       ]
     },
     "progressLeft": 1,
@@ -927,7 +1321,8 @@
         ]
       }
     ],
-    "emitted": []
+    "emitted": [],
+    "payloads": []
   },
   "ScannerPodcast (characterization) > rescanning a podcast > forced rescan with nothing changed": {
     "first": {
@@ -1066,7 +1461,8 @@
         ]
       }
     ],
-    "emitted": []
+    "emitted": [],
+    "payloads": []
   },
   "ScannerPodcast (characterization) > rescanning a podcast > metadata.json added and edited; the saved copy under <metadata>/items still wins afterwards": {
     "first": {
@@ -1215,6 +1611,95 @@
     ],
     "emitted": [
       "libraryItemsEmitter:items_updated"
+    ],
+    "payloads": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:My Podcast>",
+              "ino": "<masked>",
+              "path": "<tmp>/My Podcast",
+              "relPath": "My Podcast",
+              "mediaId": "<book:My Podcast>",
+              "mediaType": "podcast",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep1.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep1.mp3",
+                    "relPath": "ep1.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep2.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep2.mp3",
+                    "relPath": "ep2.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "metadata.json",
+                    "ext": ".json",
+                    "path": "<tmp>/My Podcast/metadata.json",
+                    "relPath": "metadata.json",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "metadata"
+                }
+              ],
+              "extraData": {},
+              "title": "Show Album",
+              "titleIgnorePrefix": "Show Album",
+              "authorNamesFirstLast": null,
+              "authorNamesLastFirst": null,
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
     ]
   },
   "ScannerPodcast (characterization) > rescanning a podcast > metadata.json added and edited; the saved copy under <metadata>/items still wins afterwards > edited": {
@@ -1429,7 +1914,8 @@
         ]
       }
     ],
-    "emitted": []
+    "emitted": [],
+    "payloads": []
   },
   "ScannerPodcast (characterization) > rescanning a podcast > the whole podcast folder removed: the podcast is marked missing": {
     "first": {
@@ -1606,6 +2092,201 @@
     "emitted": [
       "libraryItemsEmitter:items_added",
       "libraryItemsEmitter:items_updated"
+    ],
+    "payloads": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_added",
+        "payload": [
+          [
+            {
+              "ino": "<masked>",
+              "path": "<tmp>/Other",
+              "relPath": "Other",
+              "mediaType": "podcast",
+              "isFile": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Other/ep.mp3",
+                    "relPath": "ep.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>",
+              "size": "<size>",
+              "id": "<item:Other>",
+              "isMissing": false,
+              "isInvalid": false,
+              "extraData": {},
+              "title": "Other",
+              "titleIgnorePrefix": "Other",
+              "podcast": {
+                "id": "<book:Other>",
+                "title": "Other",
+                "titleIgnorePrefix": "Other",
+                "podcastType": "episodic",
+                "explicit": false,
+                "tags": [],
+                "genres": [],
+                "autoDownloadEpisodes": false,
+                "autoDownloadSchedule": "0 * * * *",
+                "lastEpisodeCheck": 0,
+                "maxEpisodesToKeep": 0,
+                "maxNewEpisodesToDownload": 3,
+                "podcastEpisodes": [
+                  {
+                    "id": "<uuid-1>",
+                    "title": "ep",
+                    "subtitle": null,
+                    "season": null,
+                    "episode": null,
+                    "episodeType": null,
+                    "pubDate": null,
+                    "publishedAt": null,
+                    "description": null,
+                    "audioFile": {
+                      "index": 1,
+                      "ino": "<masked>",
+                      "metadata": {
+                        "filename": "ep.mp3",
+                        "ext": ".mp3",
+                        "path": "<tmp>/Other/ep.mp3",
+                        "relPath": "ep.mp3",
+                        "size": "<size>",
+                        "mtimeMs": "<masked>",
+                        "ctimeMs": "<masked>",
+                        "birthtimeMs": "<masked>"
+                      },
+                      "addedAt": "<masked>",
+                      "updatedAt": "<masked>",
+                      "trackNumFromMeta": null,
+                      "discNumFromMeta": null,
+                      "trackNumFromFilename": null,
+                      "discNumFromFilename": null,
+                      "manuallyVerified": false,
+                      "exclude": false,
+                      "error": null,
+                      "format": "MP2/3 (MPEG audio layer 2/3)",
+                      "duration": 1,
+                      "bitRate": "<masked>",
+                      "language": null,
+                      "codec": "mp3",
+                      "timeBase": "<masked>",
+                      "channels": 1,
+                      "channelLayout": "mono",
+                      "chapters": [],
+                      "embeddedCoverArt": null,
+                      "metaTags": {
+                        "tagEncoder": "<masked>"
+                      },
+                      "mimeType": "audio/mpeg"
+                    },
+                    "chapters": [],
+                    "podcastId": "<book:Other>",
+                    "updatedAt": "<masked>",
+                    "createdAt": "<masked>"
+                  }
+                ],
+                "numEpisodes": 1,
+                "coverPath": null,
+                "updatedAt": "<masked>",
+                "createdAt": "<masked>"
+              },
+              "updatedAt": "<masked>",
+              "createdAt": "<masked>",
+              "mediaId": "<book:Other>"
+            }
+          ]
+        ]
+      },
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:My Podcast>",
+              "ino": "<masked>",
+              "path": "<tmp>/My Podcast",
+              "relPath": "My Podcast",
+              "mediaId": "<book:My Podcast>",
+              "mediaType": "podcast",
+              "isFile": false,
+              "isMissing": true,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep1.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep1.mp3",
+                    "relPath": "ep1.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep2.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep2.mp3",
+                    "relPath": "ep2.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Show Album",
+              "titleIgnorePrefix": "Show Album",
+              "authorNamesFirstLast": null,
+              "authorNamesLastFirst": null,
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
     ]
   },
   "ScannerPodcast (characterization) > scanning a new podcast > corrupt audio is skipped; a folder with nothing playable is not added": {
@@ -1966,6 +2647,309 @@
     ],
     "emitted": [
       "libraryItemsEmitter:items_added"
+    ],
+    "payloads": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_added",
+        "payload": [
+          [
+            {
+              "ino": "<masked>",
+              "path": "<tmp>/My Podcast",
+              "relPath": "My Podcast",
+              "mediaType": "podcast",
+              "isFile": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep1.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep1.mp3",
+                    "relPath": "ep1.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep2.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep2.mp3",
+                    "relPath": "ep2.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "ep3.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/My Podcast/ep3.mp3",
+                    "relPath": "ep3.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>",
+              "size": "<size>",
+              "id": "<item:My Podcast>",
+              "isMissing": false,
+              "isInvalid": false,
+              "extraData": {},
+              "title": "Show Album",
+              "titleIgnorePrefix": "Show Album",
+              "podcast": {
+                "id": "<book:My Podcast>",
+                "title": "Show Album",
+                "titleIgnorePrefix": "Show Album",
+                "author": "Show Host",
+                "itunesId": "12345",
+                "language": "eng",
+                "podcastType": "serial",
+                "explicit": false,
+                "tags": [],
+                "genres": [
+                  "Technology",
+                  "News"
+                ],
+                "autoDownloadEpisodes": false,
+                "autoDownloadSchedule": "0 * * * *",
+                "lastEpisodeCheck": 0,
+                "maxEpisodesToKeep": 0,
+                "maxNewEpisodesToDownload": 3,
+                "podcastEpisodes": [
+                  {
+                    "id": "<uuid-1>",
+                    "title": "First Episode",
+                    "subtitle": "The start",
+                    "season": "1",
+                    "episode": "1",
+                    "episodeType": "full",
+                    "pubDate": "2021",
+                    "publishedAt": "<iso-date>",
+                    "description": "About the first",
+                    "audioFile": {
+                      "index": 1,
+                      "ino": "<masked>",
+                      "metadata": {
+                        "filename": "ep1.mp3",
+                        "ext": ".mp3",
+                        "path": "<tmp>/My Podcast/ep1.mp3",
+                        "relPath": "ep1.mp3",
+                        "size": "<size>",
+                        "mtimeMs": "<masked>",
+                        "ctimeMs": "<masked>",
+                        "birthtimeMs": "<masked>"
+                      },
+                      "addedAt": "<masked>",
+                      "updatedAt": "<masked>",
+                      "trackNumFromMeta": 1,
+                      "discNumFromMeta": 1,
+                      "trackNumFromFilename": null,
+                      "discNumFromFilename": null,
+                      "manuallyVerified": false,
+                      "exclude": false,
+                      "error": null,
+                      "format": "MP2/3 (MPEG audio layer 2/3)",
+                      "duration": 1,
+                      "bitRate": "<masked>",
+                      "language": null,
+                      "codec": "mp3",
+                      "timeBase": "<masked>",
+                      "channels": 1,
+                      "channelLayout": "mono",
+                      "chapters": [],
+                      "embeddedCoverArt": null,
+                      "metaTags": {
+                        "tagAlbum": "Show Album",
+                        "tagGenre": "Technology;News",
+                        "tagTitle": "First Episode",
+                        "tagTrack": "1",
+                        "tagDisc": "1",
+                        "tagSubtitle": "The start",
+                        "tagAlbumArtist": "Show Host",
+                        "tagDate": "2021",
+                        "tagComment": "About the first",
+                        "tagEncoder": "<masked>",
+                        "tagLanguage": "eng",
+                        "tagItunesId": "12345",
+                        "tagPodcastType": "serial",
+                        "tagEpisodeType": "full"
+                      },
+                      "mimeType": "audio/mpeg"
+                    },
+                    "chapters": [],
+                    "podcastId": "<book:My Podcast>",
+                    "updatedAt": "<masked>",
+                    "createdAt": "<masked>"
+                  },
+                  {
+                    "id": "<uuid-2>",
+                    "title": "Second Episode",
+                    "subtitle": null,
+                    "season": "1",
+                    "episode": "2",
+                    "episodeType": "bonus",
+                    "pubDate": "2021",
+                    "publishedAt": "<iso-date>",
+                    "description": "About the second",
+                    "audioFile": {
+                      "index": 1,
+                      "ino": "<masked>",
+                      "metadata": {
+                        "filename": "ep2.mp3",
+                        "ext": ".mp3",
+                        "path": "<tmp>/My Podcast/ep2.mp3",
+                        "relPath": "ep2.mp3",
+                        "size": "<size>",
+                        "mtimeMs": "<masked>",
+                        "ctimeMs": "<masked>",
+                        "birthtimeMs": "<masked>"
+                      },
+                      "addedAt": "<masked>",
+                      "updatedAt": "<masked>",
+                      "trackNumFromMeta": 2,
+                      "discNumFromMeta": 1,
+                      "trackNumFromFilename": null,
+                      "discNumFromFilename": null,
+                      "manuallyVerified": false,
+                      "exclude": false,
+                      "error": null,
+                      "format": "MP2/3 (MPEG audio layer 2/3)",
+                      "duration": 1,
+                      "bitRate": "<masked>",
+                      "language": null,
+                      "codec": "mp3",
+                      "timeBase": "<masked>",
+                      "channels": 1,
+                      "channelLayout": "mono",
+                      "chapters": [],
+                      "embeddedCoverArt": null,
+                      "metaTags": {
+                        "tagAlbum": "Show Album",
+                        "tagGenre": "Technology;News",
+                        "tagTitle": "Second Episode",
+                        "tagTrack": "2",
+                        "tagDisc": "1",
+                        "tagAlbumArtist": "Show Host",
+                        "tagDate": "2021",
+                        "tagDescription": "About the second",
+                        "tagEncoder": "<masked>",
+                        "tagLanguage": "eng",
+                        "tagItunesId": "12345",
+                        "tagPodcastType": "serial",
+                        "tagEpisodeType": "bonus"
+                      },
+                      "mimeType": "audio/mpeg"
+                    },
+                    "chapters": [],
+                    "podcastId": "<book:My Podcast>",
+                    "updatedAt": "<masked>",
+                    "createdAt": "<masked>"
+                  },
+                  {
+                    "id": "<uuid-3>",
+                    "title": "Third Episode",
+                    "subtitle": null,
+                    "season": null,
+                    "episode": null,
+                    "episodeType": null,
+                    "pubDate": null,
+                    "publishedAt": null,
+                    "description": null,
+                    "audioFile": {
+                      "index": 1,
+                      "ino": "<masked>",
+                      "metadata": {
+                        "filename": "ep3.mp3",
+                        "ext": ".mp3",
+                        "path": "<tmp>/My Podcast/ep3.mp3",
+                        "relPath": "ep3.mp3",
+                        "size": "<size>",
+                        "mtimeMs": "<masked>",
+                        "ctimeMs": "<masked>",
+                        "birthtimeMs": "<masked>"
+                      },
+                      "addedAt": "<masked>",
+                      "updatedAt": "<masked>",
+                      "trackNumFromMeta": null,
+                      "discNumFromMeta": null,
+                      "trackNumFromFilename": null,
+                      "discNumFromFilename": null,
+                      "manuallyVerified": false,
+                      "exclude": false,
+                      "error": null,
+                      "format": "MP2/3 (MPEG audio layer 2/3)",
+                      "duration": 1,
+                      "bitRate": "<masked>",
+                      "language": null,
+                      "codec": "mp3",
+                      "timeBase": "<masked>",
+                      "channels": 1,
+                      "channelLayout": "mono",
+                      "chapters": [],
+                      "embeddedCoverArt": null,
+                      "metaTags": {
+                        "tagAlbum": "Show Album",
+                        "tagGenre": "Technology;News",
+                        "tagTitle": "Third Episode",
+                        "tagAlbumArtist": "Show Host",
+                        "tagDate": "garbage",
+                        "tagEncoder": "<masked>",
+                        "tagLanguage": "eng",
+                        "tagItunesId": "12345",
+                        "tagPodcastType": "serial",
+                        "tagEpisodeType": "nonsense"
+                      },
+                      "mimeType": "audio/mpeg"
+                    },
+                    "chapters": [],
+                    "podcastId": "<book:My Podcast>",
+                    "updatedAt": "<masked>",
+                    "createdAt": "<masked>"
+                  }
+                ],
+                "numEpisodes": 3,
+                "coverPath": null,
+                "updatedAt": "<masked>",
+                "createdAt": "<masked>"
+              },
+              "updatedAt": "<masked>",
+              "createdAt": "<masked>",
+              "mediaId": "<book:My Podcast>"
+            }
+          ]
+        ]
+      }
     ]
   },
   "ScannerPodcast (characterization) > scanning a new podcast > folders: season subfolders become separate podcasts, nested author folders keep the last folder as title, root files are ignored": {

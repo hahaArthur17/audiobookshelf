@@ -37,6 +37,51 @@ function scrub(value, { keepSize = false } = {}) {
   return walk(value)
 }
 
+// Keys masked (not dropped, so a payload that loses the field still differs) in emitted payloads: machine-specific values.
+//   ino / bitRate / timeBase / tagEncoder / lastScanVersion / times / lastScan / tracks' codec info vary per filesystem or ffmpeg build.
+const MASK_KEYS = new Set(['ino', 'bitRate', 'timeBase', 'tagEncoder', 'lastScanVersion', 'addedAt', 'updatedAt', 'birthtimeMs', 'ctimeMs', 'mtimeMs', 'birthtime', 'ctime', 'mtime', 'lastScan', 'createdAt', 'lastUpdate'])
+const RELPATH_ORDER = (a, b) => ((a?.relPath ?? '') < (b?.relPath ?? '') ? -1 : (a?.relPath ?? '') > (b?.relPath ?? '') ? 1 : 0)
+
+/** like scrub(), but masks instead of deleting, keeps nonzero sizes as '<size>', and leaves everything else (isMissing, metadata, files) in place */
+function maskPayload(value) {
+  const walk = (v, key) => {
+    if (Array.isArray(v)) {
+      const arr = v.map((x) => walk(x, key))
+      // libraryFiles come back in filesystem order, which differs between machines
+      if (key === 'libraryFiles') arr.sort((a, b) => (a.metadata.relPath < b.metadata.relPath ? -1 : a.metadata.relPath > b.metadata.relPath ? 1 : 0))
+      return arr
+    }
+    if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, walk(x, k)]))
+    if (key === 'size' && typeof v === 'number' && v > 0) return '<size>' // encoded fixture sizes differ per ffmpeg build
+    if (MASK_KEYS.has(key) && v !== null && v !== undefined) return '<masked>'
+    if (typeof v === 'number' && ROUND_KEYS.has(key)) return Math.round(v)
+    if (typeof v === 'string') return v.replace(/\/file\/\d+/g, '/file/<ino>')
+    return v
+  }
+  return walk(value)
+}
+
+/**
+ * Everything the server pushed to clients about library items, in emission order, with full payloads:
+ *   [{ method, event, payload: [...args after the event name] }]
+ * Task events are left to the tests' own taskEvents(). When one emission carries a list of items (items_added / items_updated, which
+ * are built per chunk in filesystem order) the list is sorted by relPath; the order of the emissions themselves is kept unless `sort`.
+ * Wrap the result in stable(ctx, ...) to turn ids into labels.
+ * @param {{method:string,args:any[]}[]} emitted api.emitted
+ * @param {{ events?: string[], sort?: boolean }} [o] only these event names; sort the emissions by event and first relPath
+ */
+function itemPayloads(emitted, o = {}) {
+  const out = emitted
+    .filter((e) => !String(e.args[0]).startsWith('task_') && (!o.events || o.events.includes(e.args[0])))
+    .map((e) => {
+      const payload = maskPayload(e.args.slice(1))
+      for (const [i, p] of payload.entries()) if (Array.isArray(p) && p.every((x) => x && typeof x === 'object' && 'relPath' in x)) payload[i] = [...p].sort(RELPATH_ORDER)
+      return { method: e.method, event: e.args[0], payload }
+    })
+  if (o.sort) out.sort((a, b) => (JSON.stringify([a.event, a.payload]) < JSON.stringify([b.event, b.payload]) ? -1 : 1))
+  return out
+}
+
 /**
  * @param {import('./harness').Api|any} api
  * @param {string} root library folder path
@@ -114,4 +159,4 @@ async function stable(ctx, value, o = {}) {
   return walk(out)
 }
 
-module.exports = { scrub, setupScan, runScan, viewItems, stable }
+module.exports = { scrub, maskPayload, itemPayloads, setupScan, runScan, viewItems, stable }

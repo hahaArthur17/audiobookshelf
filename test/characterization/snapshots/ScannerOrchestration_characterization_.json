@@ -51,7 +51,94 @@
     "folderGone": "UPDATED",
     "isMissing": true,
     "libraryFiles": 0,
-    "logsInfo": []
+    "logsInfo": [],
+    "payloadsSwapped": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<item:Author/Book One>",
+            "ino": "<masked>",
+            "path": "<tmp>/Author/Book One",
+            "relPath": "Author/Book One",
+            "mediaId": "<book:Author/Book One>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": "<size>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "02.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book One/02.mp3",
+                  "relPath": "02.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              }
+            ],
+            "extraData": {},
+            "title": "Book One",
+            "titleIgnorePrefix": "Book One",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
+        ]
+      }
+    ],
+    "payloadsGone": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<item:Author/Book One>",
+            "path": "<tmp>/Author/Book One",
+            "relPath": "Author/Book One",
+            "mediaId": "<book:Author/Book One>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": true,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": 0,
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [],
+            "extraData": {},
+            "title": "Book One",
+            "titleIgnorePrefix": "Book One",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
+        ]
+      }
+    ]
   },
   "ScannerOrchestration (characterization) > LibraryItemScanner > scanLibraryItem: up to date, updated (file added), item not found, library not found": {
     "upToDate": "UPTODATE",
@@ -66,7 +153,77 @@
       "[LibraryItemScanner] Library item not found \"<uuid-1>\"",
       "[LibraryItemScanner] Library \"null\" not found for library item \"<uuid-2>\""
     ],
-    "numTracks": 2
+    "numTracks": 2,
+    "payloadsUpdated": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<uuid-2>",
+            "ino": "<masked>",
+            "path": "<tmp>/Author/Book One",
+            "relPath": "Author/Book One",
+            "mediaId": "<uuid-3>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": "<size>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "01.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book One/01.mp3",
+                  "relPath": "01.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              },
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "02.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book One/02.mp3",
+                  "relPath": "02.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              }
+            ],
+            "extraData": {},
+            "title": "Book One",
+            "titleIgnorePrefix": "Book One",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
+        ]
+      }
+    ]
   },
   "ScannerOrchestration (characterization) > LibraryItemScanner > scanPotentialNewLibraryItem: a folder with files becomes an item, an empty folder is ignored": {
     "created": {
@@ -240,6 +397,128 @@
       }
     ]
   },
+  "ScannerOrchestration (characterization) > LibraryScanner.scan: a whole library scan > a book folder that leaves the library is broadcast as missing, and as found again when it comes back (full payloads)": {
+    "gone": {
+      "added": 0,
+      "updated": 0,
+      "missing": 1
+    },
+    "payloadsGone": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:Author/Book Two>",
+              "ino": "<masked>",
+              "path": "<tmp>/Author/Book Two",
+              "relPath": "Author/Book Two",
+              "mediaId": "<book:Author/Book Two>",
+              "mediaType": "book",
+              "isFile": false,
+              "isMissing": true,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book Two/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Book Two",
+              "titleIgnorePrefix": "Book Two",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
+    ],
+    "back": {
+      "added": 0,
+      "updated": 1,
+      "missing": 0
+    },
+    "payloadsBack": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:Author/Book Two>",
+              "ino": "<masked>",
+              "path": "<tmp>/Author/Book Two",
+              "relPath": "Author/Book Two",
+              "mediaId": "<book:Author/Book Two>",
+              "mediaType": "book",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book Two/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Book Two",
+              "titleIgnorePrefix": "Book Two",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
+    ]
+  },
   "ScannerOrchestration (characterization) > LibraryScanner.scan: a whole library scan > a changed library metadataPrecedence forces a rescan on the next scan and is stored as lastScanMetadataPrecedence": {
     "first": {
       "lastScanSet": true,
@@ -361,7 +640,162 @@
       }
     ],
     "sameRows": true,
-    "count": 3
+    "count": 3,
+    "payloadsSecond": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:Author/Renamed One>",
+              "ino": "<masked>",
+              "path": "<tmp>/Author/Renamed One",
+              "relPath": "Author/Renamed One",
+              "mediaId": "<book:Author/Renamed One>",
+              "mediaType": "book",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Renamed One/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Book One",
+              "titleIgnorePrefix": "Book One",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            },
+            {
+              "id": "<item:Author/Book Two>",
+              "ino": "<masked>",
+              "path": "<tmp>/Hidden Away",
+              "relPath": "Hidden Away",
+              "mediaId": "<book:Author/Book Two>",
+              "mediaType": "book",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Hidden Away/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Book Two",
+              "titleIgnorePrefix": "Book Two",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
+    ],
+    "payloadsThird": [
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:Author/Book Two>",
+              "ino": "<masked>",
+              "path": "<tmp>/Author/Book Two",
+              "relPath": "Author/Book Two",
+              "mediaId": "<book:Author/Book Two>",
+              "mediaType": "book",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book Two/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Book Two",
+              "titleIgnorePrefix": "Book Two",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
+    ]
   },
   "ScannerOrchestration (characterization) > LibraryScanner.scan: a whole library scan > cancelLibraryScan stops a running scan: no lastScan update and a \"canceled by user\" task": {
     "flagsBefore": {
@@ -539,6 +973,374 @@
       "emitter:author_added",
       "emitter:authors_num_books_updated",
       "libraryItemsEmitter:items_added"
+    ],
+    "payloads": [
+      {
+        "method": "emitter",
+        "event": "author_added",
+        "payload": [
+          {
+            "id": "<author:Author>",
+            "name": "Author",
+            "libraryId": "<library>",
+            "addedAt": "<masked>",
+            "updatedAt": "<masked>"
+          }
+        ]
+      },
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_added",
+        "payload": [
+          [
+            {
+              "ino": "<masked>",
+              "path": "<tmp>/Author/Book One",
+              "relPath": "Author/Book One",
+              "mediaType": "book",
+              "isFile": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book One/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>",
+              "size": "<size>",
+              "id": "<item:Author/Book One>",
+              "isMissing": false,
+              "isInvalid": false,
+              "extraData": {},
+              "title": "Book One",
+              "titleIgnorePrefix": "Book One",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "book": {
+                "id": "<book:Author/Book One>",
+                "title": "Book One",
+                "titleIgnorePrefix": "Book One",
+                "narrators": [],
+                "genres": [],
+                "tags": [],
+                "chapters": [],
+                "explicit": false,
+                "abridged": false,
+                "audioFiles": [
+                  {
+                    "index": 1,
+                    "ino": "<masked>",
+                    "metadata": {
+                      "filename": "01.mp3",
+                      "ext": ".mp3",
+                      "path": "<tmp>/Author/Book One/01.mp3",
+                      "relPath": "01.mp3",
+                      "size": "<size>",
+                      "mtimeMs": "<masked>",
+                      "ctimeMs": "<masked>",
+                      "birthtimeMs": "<masked>"
+                    },
+                    "addedAt": "<masked>",
+                    "updatedAt": "<masked>",
+                    "trackNumFromMeta": null,
+                    "discNumFromMeta": null,
+                    "trackNumFromFilename": 1,
+                    "discNumFromFilename": null,
+                    "manuallyVerified": false,
+                    "exclude": false,
+                    "error": null,
+                    "format": "MP2/3 (MPEG audio layer 2/3)",
+                    "duration": 1,
+                    "bitRate": "<masked>",
+                    "language": null,
+                    "codec": "mp3",
+                    "timeBase": "<masked>",
+                    "channels": 1,
+                    "channelLayout": "mono",
+                    "chapters": [],
+                    "embeddedCoverArt": null,
+                    "metaTags": {
+                      "tagAlbum": "Book One",
+                      "tagArtist": "Author",
+                      "tagEncoder": "<masked>"
+                    },
+                    "mimeType": "audio/mpeg"
+                  }
+                ],
+                "ebookFile": null,
+                "duration": 1,
+                "bookAuthors": [
+                  {
+                    "id": "<uuid-3>",
+                    "authorId": "<author:Author>",
+                    "bookId": "<book:Author/Book One>",
+                    "createdAt": "<masked>"
+                  }
+                ],
+                "bookSeries": [],
+                "updatedAt": "<masked>",
+                "createdAt": "<masked>"
+              },
+              "updatedAt": "<masked>",
+              "createdAt": "<masked>",
+              "mediaId": "<book:Author/Book One>"
+            },
+            {
+              "ino": "<masked>",
+              "path": "<tmp>/Author/Book Two",
+              "relPath": "Author/Book Two",
+              "mediaType": "book",
+              "isFile": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book Two/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>",
+              "size": "<size>",
+              "id": "<item:Author/Book Two>",
+              "isMissing": false,
+              "isInvalid": false,
+              "extraData": {},
+              "title": "Book Two",
+              "titleIgnorePrefix": "Book Two",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "book": {
+                "id": "<book:Author/Book Two>",
+                "title": "Book Two",
+                "titleIgnorePrefix": "Book Two",
+                "narrators": [],
+                "genres": [],
+                "tags": [],
+                "chapters": [],
+                "explicit": false,
+                "abridged": false,
+                "audioFiles": [
+                  {
+                    "index": 1,
+                    "ino": "<masked>",
+                    "metadata": {
+                      "filename": "01.mp3",
+                      "ext": ".mp3",
+                      "path": "<tmp>/Author/Book Two/01.mp3",
+                      "relPath": "01.mp3",
+                      "size": "<size>",
+                      "mtimeMs": "<masked>",
+                      "ctimeMs": "<masked>",
+                      "birthtimeMs": "<masked>"
+                    },
+                    "addedAt": "<masked>",
+                    "updatedAt": "<masked>",
+                    "trackNumFromMeta": null,
+                    "discNumFromMeta": null,
+                    "trackNumFromFilename": 1,
+                    "discNumFromFilename": null,
+                    "manuallyVerified": false,
+                    "exclude": false,
+                    "error": null,
+                    "format": "MP2/3 (MPEG audio layer 2/3)",
+                    "duration": 1,
+                    "bitRate": "<masked>",
+                    "language": null,
+                    "codec": "mp3",
+                    "timeBase": "<masked>",
+                    "channels": 1,
+                    "channelLayout": "mono",
+                    "chapters": [],
+                    "embeddedCoverArt": null,
+                    "metaTags": {
+                      "tagAlbum": "Book Two",
+                      "tagArtist": "Author",
+                      "tagEncoder": "<masked>"
+                    },
+                    "mimeType": "audio/mpeg"
+                  }
+                ],
+                "ebookFile": null,
+                "duration": 1,
+                "bookAuthors": [
+                  {
+                    "id": "<uuid-4>",
+                    "createdAt": "<masked>",
+                    "author": {
+                      "id": "<author:Author>",
+                      "libraryId": "<library>",
+                      "name": "Author",
+                      "lastFirst": "Author",
+                      "updatedAt": "<masked>",
+                      "createdAt": "<masked>"
+                    },
+                    "bookId": "<book:Author/Book Two>",
+                    "authorId": "<author:Author>"
+                  }
+                ],
+                "bookSeries": [],
+                "updatedAt": "<masked>",
+                "createdAt": "<masked>"
+              },
+              "updatedAt": "<masked>",
+              "createdAt": "<masked>",
+              "mediaId": "<book:Author/Book Two>"
+            },
+            {
+              "ino": "<masked>",
+              "path": "<tmp>/Standalone.mp3",
+              "relPath": "Standalone.mp3",
+              "mediaType": "book",
+              "isFile": true,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "Standalone.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Standalone.mp3",
+                    "relPath": "Standalone.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>",
+              "size": "<size>",
+              "id": "<item:Standalone.mp3>",
+              "isMissing": false,
+              "isInvalid": false,
+              "extraData": {},
+              "title": "Standalone",
+              "titleIgnorePrefix": "Standalone",
+              "authorNamesFirstLast": "",
+              "authorNamesLastFirst": "",
+              "book": {
+                "id": "<book:Standalone.mp3>",
+                "title": "Standalone",
+                "titleIgnorePrefix": "Standalone",
+                "narrators": [],
+                "genres": [],
+                "tags": [],
+                "chapters": [],
+                "explicit": false,
+                "abridged": false,
+                "audioFiles": [
+                  {
+                    "index": 1,
+                    "ino": "<masked>",
+                    "metadata": {
+                      "filename": "Standalone.mp3",
+                      "ext": ".mp3",
+                      "path": "<tmp>/Standalone.mp3",
+                      "relPath": "Standalone.mp3",
+                      "size": "<size>",
+                      "mtimeMs": "<masked>",
+                      "ctimeMs": "<masked>",
+                      "birthtimeMs": "<masked>"
+                    },
+                    "addedAt": "<masked>",
+                    "updatedAt": "<masked>",
+                    "trackNumFromMeta": null,
+                    "discNumFromMeta": null,
+                    "trackNumFromFilename": null,
+                    "discNumFromFilename": null,
+                    "manuallyVerified": false,
+                    "exclude": false,
+                    "error": null,
+                    "format": "MP2/3 (MPEG audio layer 2/3)",
+                    "duration": 1,
+                    "bitRate": "<masked>",
+                    "language": null,
+                    "codec": "mp3",
+                    "timeBase": "<masked>",
+                    "channels": 1,
+                    "channelLayout": "mono",
+                    "chapters": [],
+                    "embeddedCoverArt": null,
+                    "metaTags": {
+                      "tagAlbum": "Standalone",
+                      "tagEncoder": "<masked>"
+                    },
+                    "mimeType": "audio/mpeg"
+                  }
+                ],
+                "ebookFile": null,
+                "duration": 1,
+                "bookAuthors": [],
+                "bookSeries": [],
+                "updatedAt": "<masked>",
+                "createdAt": "<masked>"
+              },
+              "updatedAt": "<masked>",
+              "createdAt": "<masked>",
+              "mediaId": "<book:Standalone.mp3>"
+            }
+          ]
+        ]
+      },
+      {
+        "method": "emitter",
+        "event": "authors_num_books_updated",
+        "payload": [
+          {
+            "libraryId": "<library>",
+            "authors": [
+              {
+                "id": "<author:Author>",
+                "numBooks": 2
+              }
+            ]
+          }
+        ]
+      }
     ]
   },
   "ScannerOrchestration (characterization) > LibraryScanner.scan: a whole library scan > forced rescan re-reads metadata even when files did not change": {
@@ -780,6 +1582,255 @@
       "emitter:authors_num_books_updated:",
       "libraryItemsEmitter:items_added:1",
       "libraryItemsEmitter:items_updated:2"
+    ],
+    "payloads": [
+      {
+        "method": "emitter",
+        "event": "authors_num_books_updated",
+        "payload": [
+          {
+            "libraryId": "<library>",
+            "authors": [
+              {
+                "id": "<author:Author>",
+                "numBooks": 3
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_added",
+        "payload": [
+          [
+            {
+              "ino": "<masked>",
+              "path": "<tmp>/Author/Book Three",
+              "relPath": "Author/Book Three",
+              "mediaType": "book",
+              "isFile": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book Three/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>",
+              "size": "<size>",
+              "id": "<item:Author/Book Three>",
+              "isMissing": false,
+              "isInvalid": false,
+              "extraData": {},
+              "title": "Book Three",
+              "titleIgnorePrefix": "Book Three",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "book": {
+                "id": "<book:Author/Book Three>",
+                "title": "Book Three",
+                "titleIgnorePrefix": "Book Three",
+                "narrators": [],
+                "genres": [],
+                "tags": [],
+                "chapters": [],
+                "explicit": false,
+                "abridged": false,
+                "audioFiles": [
+                  {
+                    "index": 1,
+                    "ino": "<masked>",
+                    "metadata": {
+                      "filename": "01.mp3",
+                      "ext": ".mp3",
+                      "path": "<tmp>/Author/Book Three/01.mp3",
+                      "relPath": "01.mp3",
+                      "size": "<size>",
+                      "mtimeMs": "<masked>",
+                      "ctimeMs": "<masked>",
+                      "birthtimeMs": "<masked>"
+                    },
+                    "addedAt": "<masked>",
+                    "updatedAt": "<masked>",
+                    "trackNumFromMeta": null,
+                    "discNumFromMeta": null,
+                    "trackNumFromFilename": 1,
+                    "discNumFromFilename": null,
+                    "manuallyVerified": false,
+                    "exclude": false,
+                    "error": null,
+                    "format": "MP2/3 (MPEG audio layer 2/3)",
+                    "duration": 1,
+                    "bitRate": "<masked>",
+                    "language": null,
+                    "codec": "mp3",
+                    "timeBase": "<masked>",
+                    "channels": 1,
+                    "channelLayout": "mono",
+                    "chapters": [],
+                    "embeddedCoverArt": null,
+                    "metaTags": {
+                      "tagAlbum": "Book Three",
+                      "tagEncoder": "<masked>"
+                    },
+                    "mimeType": "audio/mpeg"
+                  }
+                ],
+                "ebookFile": null,
+                "duration": 1,
+                "bookAuthors": [
+                  {
+                    "id": "<uuid-2>",
+                    "authorId": "<author:Author>",
+                    "bookId": "<book:Author/Book Three>",
+                    "createdAt": "<masked>"
+                  }
+                ],
+                "bookSeries": [],
+                "updatedAt": "<masked>",
+                "createdAt": "<masked>"
+              },
+              "updatedAt": "<masked>",
+              "createdAt": "<masked>",
+              "mediaId": "<book:Author/Book Three>"
+            }
+          ]
+        ]
+      },
+      {
+        "method": "libraryItemsEmitter",
+        "event": "items_updated",
+        "payload": [
+          [
+            {
+              "id": "<item:Author/Book One>",
+              "ino": "<masked>",
+              "path": "<tmp>/Author/Book One",
+              "relPath": "Author/Book One",
+              "mediaId": "<book:Author/Book One>",
+              "mediaType": "book",
+              "isFile": false,
+              "isMissing": false,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book One/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                },
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "02.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book One/02.mp3",
+                    "relPath": "02.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Book One",
+              "titleIgnorePrefix": "Book One",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            },
+            {
+              "id": "<item:Author/Book Two>",
+              "ino": "<masked>",
+              "path": "<tmp>/Author/Book Two",
+              "relPath": "Author/Book Two",
+              "mediaId": "<book:Author/Book Two>",
+              "mediaType": "book",
+              "isFile": false,
+              "isMissing": true,
+              "isInvalid": false,
+              "mtime": "<masked>",
+              "ctime": "<masked>",
+              "birthtime": "<masked>",
+              "size": "<size>",
+              "lastScan": "<masked>",
+              "lastScanVersion": "<masked>",
+              "libraryFiles": [
+                {
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book Two/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "isSupplementary": null,
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "fileType": "audio"
+                }
+              ],
+              "extraData": {},
+              "title": "Book Two",
+              "titleIgnorePrefix": "Book Two",
+              "authorNamesFirstLast": "Author",
+              "authorNamesLastFirst": "Author",
+              "createdAt": "<masked>",
+              "updatedAt": "<masked>",
+              "libraryId": "<library>",
+              "libraryFolderId": "<folder>"
+            }
+          ]
+        ]
+      }
     ]
   },
   "ScannerOrchestration (characterization) > LibraryScanner.scan: a whole library scan > scanFolder: a library folder that no longer exists makes all its items missing": {
@@ -954,6 +2005,76 @@
         "libraryItemEmitter:item_updated"
       ]
     },
+    "payloadsAdded": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<item:Author/Book One>",
+            "ino": "<masked>",
+            "path": "<tmp>/Author/Book One",
+            "relPath": "Author/Book One",
+            "mediaId": "<book:Author/Book One>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": "<size>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "01.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book One/01.mp3",
+                  "relPath": "01.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              },
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "02.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book One/02.mp3",
+                  "relPath": "02.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              }
+            ],
+            "extraData": {},
+            "title": "Book One",
+            "titleIgnorePrefix": "Book One",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
+        ]
+      }
+    ],
     "afterAdd": [
       {
         "relPath": "Author/Book One",
@@ -989,6 +2110,93 @@
         "libraryItemEmitter:item_updated"
       ]
     },
+    "payloadsText": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<item:Author/Book One>",
+            "ino": "<masked>",
+            "path": "<tmp>/Author/Book One",
+            "relPath": "Author/Book One",
+            "mediaId": "<book:Author/Book One>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": "<size>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "01.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book One/01.mp3",
+                  "relPath": "01.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              },
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "02.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book One/02.mp3",
+                  "relPath": "02.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              },
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "desc.txt",
+                  "ext": ".txt",
+                  "path": "<tmp>/Author/Book One/desc.txt",
+                  "relPath": "desc.txt",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "text"
+              }
+            ],
+            "extraData": {},
+            "title": "Book One",
+            "titleIgnorePrefix": "Book One",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
+        ]
+      }
+    ],
     "removed": {
       "scanResults": {
         "added": 0,
@@ -1003,6 +2211,76 @@
         "libraryItemEmitter:item_updated"
       ]
     },
+    "payloadsRemoved": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<item:Author/Book One>",
+            "ino": "<masked>",
+            "path": "<tmp>/Author/Book One",
+            "relPath": "Author/Book One",
+            "mediaId": "<book:Author/Book One>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": "<size>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "02.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book One/02.mp3",
+                  "relPath": "02.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              },
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "desc.txt",
+                  "ext": ".txt",
+                  "path": "<tmp>/Author/Book One/desc.txt",
+                  "relPath": "desc.txt",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "text"
+              }
+            ],
+            "extraData": {},
+            "title": "Book One",
+            "titleIgnorePrefix": "Book One",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
+        ]
+      }
+    ],
     "final": [
       {
         "relPath": "Author/Book One",
@@ -1071,6 +2349,157 @@
         ]
       }
     ],
+    "payloads": [
+      {
+        "method": "emitter",
+        "event": "authors_num_books_updated",
+        "payload": [
+          {
+            "libraryId": "<library>",
+            "authors": [
+              {
+                "id": "<author:Author>",
+                "numBooks": 3
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_added",
+        "payload": [
+          {
+            "ino": "<masked>",
+            "path": "<tmp>/Author/Book Three",
+            "relPath": "Author/Book Three",
+            "mediaType": "book",
+            "isFile": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "01.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book Three/01.mp3",
+                  "relPath": "01.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              },
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "cover.jpg",
+                  "ext": ".jpg",
+                  "path": "<tmp>/Author/Book Three/cover.jpg",
+                  "relPath": "cover.jpg",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "image"
+              }
+            ],
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>",
+            "size": "<size>",
+            "id": "<item:Author/Book Three>",
+            "isMissing": false,
+            "isInvalid": false,
+            "extraData": {},
+            "title": "Book Three",
+            "titleIgnorePrefix": "Book Three",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "book": {
+              "id": "<book:Author/Book Three>",
+              "title": "Book Three",
+              "titleIgnorePrefix": "Book Three",
+              "narrators": [],
+              "genres": [],
+              "tags": [],
+              "chapters": [],
+              "explicit": false,
+              "abridged": false,
+              "coverPath": "<tmp>/Author/Book Three/cover.jpg",
+              "audioFiles": [
+                {
+                  "index": 1,
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "01.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Author/Book Three/01.mp3",
+                    "relPath": "01.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": 1,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "exclude": false,
+                  "error": null,
+                  "format": "MP2/3 (MPEG audio layer 2/3)",
+                  "duration": 1,
+                  "bitRate": "<masked>",
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "<masked>",
+                  "channels": 1,
+                  "channelLayout": "mono",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {
+                    "tagAlbum": "Book Three",
+                    "tagArtist": "Author",
+                    "tagEncoder": "<masked>"
+                  },
+                  "mimeType": "audio/mpeg"
+                }
+              ],
+              "ebookFile": null,
+              "duration": 1,
+              "bookAuthors": [
+                {
+                  "id": "<uuid-1>",
+                  "authorId": "<author:Author>",
+                  "bookId": "<book:Author/Book Three>",
+                  "createdAt": "<masked>"
+                }
+              ],
+              "bookSeries": [],
+              "updatedAt": "<masked>",
+              "createdAt": "<masked>"
+            },
+            "updatedAt": "<masked>",
+            "createdAt": "<masked>",
+            "mediaId": "<book:Author/Book Three>"
+          }
+        ]
+      }
+    ],
     "debug": [
       "[LibraryScanner] Folder update group must be a new item \"Author/Book Three\" in library \"Books\"",
       "[LibraryScanner] Folder scan results {\"Author/Book Three\":1}"
@@ -1117,6 +2546,116 @@
         "numTracks": 1,
         "files": [
           "Loose Book.mp3"
+        ]
+      }
+    ],
+    "payloads": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_added",
+        "payload": [
+          {
+            "ino": "<masked>",
+            "path": "<tmp>/Loose Book.mp3",
+            "relPath": "Loose Book.mp3",
+            "mediaType": "book",
+            "isFile": true,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "Loose Book.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Loose Book.mp3",
+                  "relPath": "Loose Book.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              }
+            ],
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>",
+            "size": "<size>",
+            "id": "<item:Loose Book.mp3>",
+            "isMissing": false,
+            "isInvalid": false,
+            "extraData": {},
+            "title": "Loose Book",
+            "titleIgnorePrefix": "Loose Book",
+            "authorNamesFirstLast": "",
+            "authorNamesLastFirst": "",
+            "book": {
+              "id": "<book:Loose Book.mp3>",
+              "title": "Loose Book",
+              "titleIgnorePrefix": "Loose Book",
+              "narrators": [],
+              "genres": [],
+              "tags": [],
+              "chapters": [],
+              "explicit": false,
+              "abridged": false,
+              "audioFiles": [
+                {
+                  "index": 1,
+                  "ino": "<masked>",
+                  "metadata": {
+                    "filename": "Loose Book.mp3",
+                    "ext": ".mp3",
+                    "path": "<tmp>/Loose Book.mp3",
+                    "relPath": "Loose Book.mp3",
+                    "size": "<size>",
+                    "mtimeMs": "<masked>",
+                    "ctimeMs": "<masked>",
+                    "birthtimeMs": "<masked>"
+                  },
+                  "addedAt": "<masked>",
+                  "updatedAt": "<masked>",
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "exclude": false,
+                  "error": null,
+                  "format": "MP2/3 (MPEG audio layer 2/3)",
+                  "duration": 1,
+                  "bitRate": "<masked>",
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "<masked>",
+                  "channels": 1,
+                  "channelLayout": "mono",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {
+                    "tagAlbum": "Loose Book",
+                    "tagEncoder": "<masked>"
+                  },
+                  "mimeType": "audio/mpeg"
+                }
+              ],
+              "ebookFile": null,
+              "duration": 1,
+              "bookAuthors": [],
+              "bookSeries": [],
+              "updatedAt": "<masked>",
+              "createdAt": "<masked>"
+            },
+            "updatedAt": "<masked>",
+            "createdAt": "<masked>",
+            "mediaId": "<book:Loose Book.mp3>"
+          }
         ]
       }
     ]
@@ -1177,6 +2716,59 @@
         ]
       }
     ],
+    "payloads": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<item:Author/Book Two>",
+            "ino": "<masked>",
+            "path": "<tmp>/Author/Book Two",
+            "relPath": "Author/Book Two",
+            "mediaId": "<book:Author/Book Two>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": true,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": "<size>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "01.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book Two/01.mp3",
+                  "relPath": "01.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              }
+            ],
+            "extraData": {},
+            "title": "Book Two",
+            "titleIgnorePrefix": "Book Two",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
+        ]
+      }
+    ],
     "info": [
       "[LibraryScanner] Scanning file update group and library item was deleted \"Book Two\" - marking as missing"
     ]
@@ -1218,7 +2810,111 @@
       }
     ],
     "sameRow": true,
-    "count": 2
+    "count": 2,
+    "payloads": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<item:Moved Book>",
+            "ino": "<masked>",
+            "path": "<tmp>/Author/Book Two",
+            "relPath": "Author/Book Two",
+            "mediaId": "<book:Moved Book>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": true,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": "<size>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "01.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Author/Book Two/01.mp3",
+                  "relPath": "01.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              }
+            ],
+            "extraData": {},
+            "title": "Book Two",
+            "titleIgnorePrefix": "Book Two",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
+        ]
+      },
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<item:Moved Book>",
+            "ino": "<masked>",
+            "path": "<tmp>/Moved Book",
+            "relPath": "Moved Book",
+            "mediaId": "<book:Moved Book>",
+            "mediaType": "book",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": "<size>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "01.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Moved Book/01.mp3",
+                  "relPath": "01.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              }
+            ],
+            "extraData": {},
+            "title": "Book Two",
+            "titleIgnorePrefix": "Book Two",
+            "authorNamesFirstLast": "Author",
+            "authorNamesLastFirst": "Author",
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
+        ]
+      }
+    ]
   },
   "ScannerOrchestration (characterization) > LibraryScanner.scanFilesChanged (the watcher path) > an update for a path that does not exist (deleted before the scan ran) is ignored": {
     "result": {
@@ -1393,6 +3089,76 @@
         "files": [
           "ep1.mp3",
           "ep2.mp3"
+        ]
+      }
+    ],
+    "payloads": [
+      {
+        "method": "libraryItemEmitter",
+        "event": "item_updated",
+        "payload": [
+          {
+            "id": "<item:Pod>",
+            "ino": "<masked>",
+            "path": "<tmp>/Pod",
+            "relPath": "Pod",
+            "mediaId": "<book:Pod>",
+            "mediaType": "podcast",
+            "isFile": false,
+            "isMissing": false,
+            "isInvalid": false,
+            "mtime": "<masked>",
+            "ctime": "<masked>",
+            "birthtime": "<masked>",
+            "size": "<size>",
+            "lastScan": "<masked>",
+            "lastScanVersion": "<masked>",
+            "libraryFiles": [
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "ep1.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Pod/ep1.mp3",
+                  "relPath": "ep1.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              },
+              {
+                "ino": "<masked>",
+                "metadata": {
+                  "filename": "ep2.mp3",
+                  "ext": ".mp3",
+                  "path": "<tmp>/Pod/ep2.mp3",
+                  "relPath": "ep2.mp3",
+                  "size": "<size>",
+                  "mtimeMs": "<masked>",
+                  "ctimeMs": "<masked>",
+                  "birthtimeMs": "<masked>"
+                },
+                "isSupplementary": null,
+                "addedAt": "<masked>",
+                "updatedAt": "<masked>",
+                "fileType": "audio"
+              }
+            ],
+            "extraData": {},
+            "title": "Pod",
+            "titleIgnorePrefix": "Pod",
+            "authorNamesFirstLast": null,
+            "authorNamesLastFirst": null,
+            "createdAt": "<masked>",
+            "updatedAt": "<masked>",
+            "libraryId": "<library>",
+            "libraryFolderId": "<folder>"
+          }
         ]
       }
     ]
