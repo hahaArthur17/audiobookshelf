@@ -206,6 +206,22 @@ describe('MeController (characterization)', () => {
       snap(this, await patch('user', `/api/me/progress/${B.libraryItem.id}`, { hideFromContinueListening: true }), 'hide an item')
       snap(this, await get('/api/me', 'user'), 'user afterwards')
     })
+    it('finishing an existing unfinished progress with isFinished:true sets progress 1 and finishedAt', async function () {
+      this.ids = named()
+      // A (300/3600) and the hidden C (60/600) are existing unfinished rows; no `progress` or `currentTime` is sent
+      snap(this, await get(`/api/me/progress/${A.libraryItem.id}`, 'user'), 'A before')
+      snap(this, await patch('user', `/api/me/progress/${A.libraryItem.id}`, { isFinished: true }), 'finish A')
+      snap(this, await get(`/api/me/progress/${A.libraryItem.id}`, 'user'), 'A after finish')
+      snap(this, await patch('user', `/api/me/progress/${C.libraryItem.id}`, { isFinished: true, finishedAt: 1710000000000 }), 'finish hidden C with a finishedAt')
+      snap(this, await get(`/api/me/progress/${C.libraryItem.id}`, 'user'), 'C after finish')
+      snap(this, await get('/api/me/items-in-progress', 'user'), 'items in progress afterwards')
+      const progress = (await get(`/api/me/progress/${A.libraryItem.id}`, 'user')).body
+      expect(progress.isFinished).to.equal(true)
+      expect(progress.progress).to.equal(1)
+      expect(progress.finishedAt).to.be.a('number')
+      const c = (await get(`/api/me/progress/${C.libraryItem.id}`, 'user')).body
+      expect(c.finishedAt).to.equal(1710000000000)
+    })
     it('handles podcast items and episodes', async function () {
       this.ids = named()
       snap(this, await patch('user', `/api/me/progress/${pod.libraryItem.id}/${fixedId(12)}`, { duration: 1800, currentTime: 30 }), 'new episode progress')
@@ -460,6 +476,62 @@ describe('MeController (characterization)', () => {
       snap(this, await get('/api/me/items-in-progress?limit=2', 'user'), 'limit 2')
       snap(this, await get('/api/me/items-in-progress?limit=0', 'user'), 'limit 0 falls back to 25')
       snap(this, await get('/api/me/items-in-progress?limit=abc', 'user'), 'invalid limit falls back to 25')
+    })
+    describe('with more than 25 items in progress', () => {
+      const COUNT = 28
+      const pad = (i) => String(i).padStart(2, '0')
+      // compact view: status, counts and the titles in returned order (newest progress first)
+      const summary = (res) => ({ status: res.status, count: res.body.libraryItems?.length, titles: res.body.libraryItems?.map((li) => li.media.metadata.title) })
+      beforeEach(async () => {
+        // guest has no seeded progress; Bulk 01 has the oldest progress, Bulk 28 the newest
+        for (let i = 1; i <= COUNT; i++) {
+          const book = await createBook(lf, { title: `Bulk ${pad(i)}`, extra: audioBookExtra({ id: fixedId(100 + i), duration: 1000 }) })
+          await createProgress(users.guest, { libraryItem: book.libraryItem, mediaItemId: book.book.id, duration: 1000, currentTime: 100, updatedAt: `2024-04-${pad(i)}T12:00:00Z` })
+        }
+      })
+      it('returns 25 by default, newest first', async function () {
+        const res = await get('/api/me/items-in-progress', 'guest')
+        expect(res.status).to.equal(200)
+        expect(res.body.libraryItems).to.have.length(25)
+        snap(this, summary(res), 'default')
+      })
+      it('honours an explicit limit (below, equal to and above the default)', async function () {
+        const out = {}
+        for (const limit of [1, 10, 25, 26, 27, 28, 100]) {
+          const res = await get(`/api/me/items-in-progress?limit=${limit}`, 'guest')
+          expect(res.status).to.equal(200)
+          out[limit] = summary(res)
+        }
+        expect(out[26].count).to.equal(26)
+        expect(out[100].count).to.equal(COUNT)
+        snap(this, out, 'explicit limits')
+      })
+      it('falls back to 25 for zero, empty and non-numeric limits', async function () {
+        const out = {}
+        for (const limit of ['0', '', 'abc', '10abc', 'NaN', 'undefined']) {
+          const res = await get(`/api/me/items-in-progress?limit=${limit}`, 'guest')
+          expect(res.status).to.equal(200)
+          out[limit] = summary(res)
+          expect(res.body.libraryItems).to.have.length(25)
+        }
+        snap(this, out, 'invalid limits')
+      })
+      it('passes unusual numeric limits to slice (negative drops from the end, fraction truncates, exponent parsed)', async function () {
+        const out = {}
+        for (const limit of ['-1', '-5', '2.5', '1e1', '0x10', '+3', ' 4 ']) {
+          const res = await get(`/api/me/items-in-progress?limit=${encodeURIComponent(limit)}`, 'guest')
+          expect(res.status).to.equal(200)
+          out[limit] = summary(res)
+        }
+        snap(this, out, 'unusual numeric limits')
+      })
+      it('a repeated limit parameter is an array, so it falls back to 25', async function () {
+        const out = {}
+        const res = await get('/api/me/items-in-progress?limit=3&limit=5', 'guest')
+        out['limit=3&limit=5'] = summary(res)
+        out['other user with limit 100 only gets own items'] = summary(await get('/api/me/items-in-progress?limit=100', 'user'))
+        snap(this, out, 'repeated limit')
+      })
     })
     it('does not filter by library access', async function () {
       this.ids = named()

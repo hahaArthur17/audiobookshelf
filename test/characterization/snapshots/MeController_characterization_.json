@@ -2078,6 +2078,600 @@
     },
     "emitted": []
   },
+  "MeController (characterization) > GET /api/me/items-in-progress > with more than 25 items in progress > a repeated limit parameter is an array, so it falls back to 25 > repeated limit": {
+    "res": {
+      "limit=3&limit=5": {
+        "status": 200,
+        "count": 25,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04"
+        ]
+      },
+      "other user with limit 100 only gets own items": {
+        "status": 200,
+        "count": 3,
+        "titles": [
+          "Pod",
+          "Book A",
+          "Book C"
+        ]
+      }
+    },
+    "emitted": []
+  },
+  "MeController (characterization) > GET /api/me/items-in-progress > with more than 25 items in progress > falls back to 25 for zero, empty and non-numeric limits > invalid limits": {
+    "res": {
+      "0": {
+        "status": 200,
+        "count": 25,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04"
+        ]
+      },
+      "": {
+        "status": 200,
+        "count": 25,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04"
+        ]
+      },
+      "abc": {
+        "status": 200,
+        "count": 25,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04"
+        ]
+      },
+      "10abc": {
+        "status": 200,
+        "count": 25,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04"
+        ]
+      },
+      "NaN": {
+        "status": 200,
+        "count": 25,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04"
+        ]
+      },
+      "undefined": {
+        "status": 200,
+        "count": 25,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04"
+        ]
+      }
+    },
+    "emitted": []
+  },
+  "MeController (characterization) > GET /api/me/items-in-progress > with more than 25 items in progress > honours an explicit limit (below, equal to and above the default) > explicit limits": {
+    "res": {
+      "1": {
+        "status": 200,
+        "count": 1,
+        "titles": [
+          "Bulk 28"
+        ]
+      },
+      "10": {
+        "status": 200,
+        "count": 10,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19"
+        ]
+      },
+      "25": {
+        "status": 200,
+        "count": 25,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04"
+        ]
+      },
+      "26": {
+        "status": 200,
+        "count": 26,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04",
+          "Bulk 03"
+        ]
+      },
+      "27": {
+        "status": 200,
+        "count": 27,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04",
+          "Bulk 03",
+          "Bulk 02"
+        ]
+      },
+      "28": {
+        "status": 200,
+        "count": 28,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04",
+          "Bulk 03",
+          "Bulk 02",
+          "Bulk 01"
+        ]
+      },
+      "100": {
+        "status": 200,
+        "count": 28,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04",
+          "Bulk 03",
+          "Bulk 02",
+          "Bulk 01"
+        ]
+      }
+    },
+    "emitted": []
+  },
+  "MeController (characterization) > GET /api/me/items-in-progress > with more than 25 items in progress > passes unusual numeric limits to slice (negative drops from the end, fraction truncates, exponent parsed) > unusual numeric limits": {
+    "res": {
+      "-1": {
+        "status": 200,
+        "count": 27,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06",
+          "Bulk 05",
+          "Bulk 04",
+          "Bulk 03",
+          "Bulk 02"
+        ]
+      },
+      "-5": {
+        "status": 200,
+        "count": 23,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13",
+          "Bulk 12",
+          "Bulk 11",
+          "Bulk 10",
+          "Bulk 09",
+          "Bulk 08",
+          "Bulk 07",
+          "Bulk 06"
+        ]
+      },
+      "2.5": {
+        "status": 200,
+        "count": 2,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27"
+        ]
+      },
+      "1e1": {
+        "status": 200,
+        "count": 10,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19"
+        ]
+      },
+      "0x10": {
+        "status": 200,
+        "count": 16,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25",
+          "Bulk 24",
+          "Bulk 23",
+          "Bulk 22",
+          "Bulk 21",
+          "Bulk 20",
+          "Bulk 19",
+          "Bulk 18",
+          "Bulk 17",
+          "Bulk 16",
+          "Bulk 15",
+          "Bulk 14",
+          "Bulk 13"
+        ]
+      },
+      "+3": {
+        "status": 200,
+        "count": 3,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26"
+        ]
+      },
+      " 4 ": {
+        "status": 200,
+        "count": 4,
+        "titles": [
+          "Bulk 28",
+          "Bulk 27",
+          "Bulk 26",
+          "Bulk 25"
+        ]
+      }
+    },
+    "emitted": []
+  },
+  "MeController (characterization) > GET /api/me/items-in-progress > with more than 25 items in progress > returns 25 by default, newest first > default": {
+    "res": {
+      "status": 200,
+      "count": 25,
+      "titles": [
+        "Bulk 28",
+        "Bulk 27",
+        "Bulk 26",
+        "Bulk 25",
+        "Bulk 24",
+        "Bulk 23",
+        "Bulk 22",
+        "Bulk 21",
+        "Bulk 20",
+        "Bulk 19",
+        "Bulk 18",
+        "Bulk 17",
+        "Bulk 16",
+        "Bulk 15",
+        "Bulk 14",
+        "Bulk 13",
+        "Bulk 12",
+        "Bulk 11",
+        "Bulk 10",
+        "Bulk 09",
+        "Bulk 08",
+        "Bulk 07",
+        "Bulk 06",
+        "Bulk 05",
+        "Bulk 04"
+      ]
+    },
+    "emitted": []
+  },
   "MeController (characterization) > GET /api/me/listening-sessions > lists the own sessions newest first with paging > admin": {
     "res": {
       "status": 200,
@@ -5428,6 +6022,475 @@
         ]
       }
     ]
+  },
+  "MeController (characterization) > PATCH /api/me/progress/:libraryItemId/:episodeId? > finishing an existing unfinished progress with isFinished:true sets progress 1 and finishedAt > A after finish": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<uuid-12>",
+        "userId": "<user>",
+        "libraryItemId": "<item-A>",
+        "episodeId": null,
+        "mediaItemId": "<uuid-13>",
+        "mediaItemType": "book",
+        "duration": 3600,
+        "progress": 1,
+        "currentTime": 300,
+        "isFinished": true,
+        "hideFromContinueListening": false,
+        "ebookLocation": null,
+        "ebookProgress": 0,
+        "lastUpdate": "<timestamp>",
+        "startedAt": "<timestamp>",
+        "finishedAt": "<timestamp>"
+      }
+    },
+    "emitted": []
+  },
+  "MeController (characterization) > PATCH /api/me/progress/:libraryItemId/:episodeId? > finishing an existing unfinished progress with isFinished:true sets progress 1 and finishedAt > A before": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<uuid-12>",
+        "userId": "<user>",
+        "libraryItemId": "<item-A>",
+        "episodeId": null,
+        "mediaItemId": "<uuid-13>",
+        "mediaItemType": "book",
+        "duration": 3600,
+        "progress": 0.08333333333333333,
+        "currentTime": 300,
+        "isFinished": false,
+        "hideFromContinueListening": false,
+        "ebookLocation": null,
+        "ebookProgress": 0,
+        "lastUpdate": 1710504000000,
+        "startedAt": "<timestamp>",
+        "finishedAt": null
+      }
+    },
+    "emitted": []
+  },
+  "MeController (characterization) > PATCH /api/me/progress/:libraryItemId/:episodeId? > finishing an existing unfinished progress with isFinished:true sets progress 1 and finishedAt > C after finish": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<uuid-16>",
+        "userId": "<user>",
+        "libraryItemId": "<item-C>",
+        "episodeId": null,
+        "mediaItemId": "<uuid-17>",
+        "mediaItemType": "book",
+        "duration": 600,
+        "progress": 1,
+        "currentTime": 60,
+        "isFinished": true,
+        "hideFromContinueListening": true,
+        "ebookLocation": null,
+        "ebookProgress": 0,
+        "lastUpdate": "<timestamp>",
+        "startedAt": "<timestamp>",
+        "finishedAt": "<timestamp>"
+      }
+    },
+    "emitted": []
+  },
+  "MeController (characterization) > PATCH /api/me/progress/:libraryItemId/:episodeId? > finishing an existing unfinished progress with isFinished:true sets progress 1 and finishedAt > finish A": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "body": "OK"
+    },
+    "emitted": [
+      {
+        "method": "clientEmitter",
+        "args": [
+          "<user>",
+          "user_updated",
+          {
+            "id": "<user>",
+            "username": "user",
+            "email": null,
+            "type": "user",
+            "token": "token-user",
+            "mediaProgress": [
+              {
+                "id": "<uuid-12>",
+                "userId": "<user>",
+                "libraryItemId": "<item-A>",
+                "episodeId": null,
+                "mediaItemId": "<uuid-13>",
+                "mediaItemType": "book",
+                "duration": 3600,
+                "progress": 1,
+                "currentTime": 300,
+                "isFinished": true,
+                "hideFromContinueListening": false,
+                "ebookLocation": null,
+                "ebookProgress": 0,
+                "lastUpdate": "<timestamp>",
+                "startedAt": "<timestamp>",
+                "finishedAt": "<timestamp>"
+              },
+              {
+                "id": "<uuid-14>",
+                "userId": "<user>",
+                "libraryItemId": "<item-B>",
+                "episodeId": null,
+                "mediaItemId": "<uuid-15>",
+                "mediaItemType": "book",
+                "duration": 1800,
+                "progress": 1,
+                "currentTime": 1800,
+                "isFinished": true,
+                "hideFromContinueListening": false,
+                "ebookLocation": null,
+                "ebookProgress": 0,
+                "lastUpdate": 1710072000000,
+                "startedAt": "<timestamp>",
+                "finishedAt": "<timestamp>"
+              },
+              {
+                "id": "<uuid-16>",
+                "userId": "<user>",
+                "libraryItemId": "<item-C>",
+                "episodeId": null,
+                "mediaItemId": "<uuid-17>",
+                "mediaItemType": "book",
+                "duration": 600,
+                "progress": 0.1,
+                "currentTime": 60,
+                "isFinished": false,
+                "hideFromContinueListening": true,
+                "ebookLocation": null,
+                "ebookProgress": 0,
+                "lastUpdate": 1710244800000,
+                "startedAt": "<timestamp>",
+                "finishedAt": null
+              },
+              {
+                "id": "<uuid-18>",
+                "userId": "<user>",
+                "libraryItemId": "<podcast>",
+                "episodeId": "<uuid-19>",
+                "mediaItemId": "<uuid-19>",
+                "mediaItemType": "podcastEpisode",
+                "duration": 1800,
+                "progress": 0.06666666666666667,
+                "currentTime": 120,
+                "isFinished": false,
+                "hideFromContinueListening": false,
+                "ebookLocation": null,
+                "ebookProgress": 0,
+                "lastUpdate": 1710936000000,
+                "startedAt": "<timestamp>",
+                "finishedAt": null
+              }
+            ],
+            "seriesHideFromContinueListening": [],
+            "bookmarks": [
+              {
+                "libraryItemId": "<item-A>",
+                "time": 10,
+                "title": "Intro",
+                "createdAt": "<timestamp>"
+              },
+              {
+                "libraryItemId": "<item-A>",
+                "time": 60,
+                "title": "Chapter 2",
+                "createdAt": "<timestamp>"
+              },
+              {
+                "libraryItemId": "<item-B>",
+                "time": 5,
+                "title": "Book B mark",
+                "createdAt": "<timestamp>"
+              }
+            ],
+            "isActive": true,
+            "isLocked": false,
+            "lastSeen": null,
+            "createdAt": "<timestamp>",
+            "permissions": {
+              "download": true,
+              "update": false,
+              "delete": false,
+              "upload": false,
+              "createEreader": false,
+              "accessAllLibraries": true,
+              "accessAllTags": true,
+              "accessExplicitContent": false,
+              "selectedTagsNotAccessible": false
+            },
+            "librariesAccessible": [],
+            "itemTagsSelected": [],
+            "hasOpenIDLink": false
+          }
+        ]
+      }
+    ]
+  },
+  "MeController (characterization) > PATCH /api/me/progress/:libraryItemId/:episodeId? > finishing an existing unfinished progress with isFinished:true sets progress 1 and finishedAt > finish hidden C with a finishedAt": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "body": "OK"
+    },
+    "emitted": [
+      {
+        "method": "clientEmitter",
+        "args": [
+          "<user>",
+          "user_updated",
+          {
+            "id": "<user>",
+            "username": "user",
+            "email": null,
+            "type": "user",
+            "token": "token-user",
+            "mediaProgress": [
+              {
+                "id": "<uuid-12>",
+                "userId": "<user>",
+                "libraryItemId": "<item-A>",
+                "episodeId": null,
+                "mediaItemId": "<uuid-13>",
+                "mediaItemType": "book",
+                "duration": 3600,
+                "progress": 1,
+                "currentTime": 300,
+                "isFinished": true,
+                "hideFromContinueListening": false,
+                "ebookLocation": null,
+                "ebookProgress": 0,
+                "lastUpdate": "<timestamp>",
+                "startedAt": "<timestamp>",
+                "finishedAt": "<timestamp>"
+              },
+              {
+                "id": "<uuid-14>",
+                "userId": "<user>",
+                "libraryItemId": "<item-B>",
+                "episodeId": null,
+                "mediaItemId": "<uuid-15>",
+                "mediaItemType": "book",
+                "duration": 1800,
+                "progress": 1,
+                "currentTime": 1800,
+                "isFinished": true,
+                "hideFromContinueListening": false,
+                "ebookLocation": null,
+                "ebookProgress": 0,
+                "lastUpdate": 1710072000000,
+                "startedAt": "<timestamp>",
+                "finishedAt": "<timestamp>"
+              },
+              {
+                "id": "<uuid-16>",
+                "userId": "<user>",
+                "libraryItemId": "<item-C>",
+                "episodeId": null,
+                "mediaItemId": "<uuid-17>",
+                "mediaItemType": "book",
+                "duration": 600,
+                "progress": 1,
+                "currentTime": 60,
+                "isFinished": true,
+                "hideFromContinueListening": true,
+                "ebookLocation": null,
+                "ebookProgress": 0,
+                "lastUpdate": "<timestamp>",
+                "startedAt": "<timestamp>",
+                "finishedAt": "<timestamp>"
+              },
+              {
+                "id": "<uuid-18>",
+                "userId": "<user>",
+                "libraryItemId": "<podcast>",
+                "episodeId": "<uuid-19>",
+                "mediaItemId": "<uuid-19>",
+                "mediaItemType": "podcastEpisode",
+                "duration": 1800,
+                "progress": 0.06666666666666667,
+                "currentTime": 120,
+                "isFinished": false,
+                "hideFromContinueListening": false,
+                "ebookLocation": null,
+                "ebookProgress": 0,
+                "lastUpdate": 1710936000000,
+                "startedAt": "<timestamp>",
+                "finishedAt": null
+              }
+            ],
+            "seriesHideFromContinueListening": [],
+            "bookmarks": [
+              {
+                "libraryItemId": "<item-A>",
+                "time": 10,
+                "title": "Intro",
+                "createdAt": "<timestamp>"
+              },
+              {
+                "libraryItemId": "<item-A>",
+                "time": 60,
+                "title": "Chapter 2",
+                "createdAt": "<timestamp>"
+              },
+              {
+                "libraryItemId": "<item-B>",
+                "time": 5,
+                "title": "Book B mark",
+                "createdAt": "<timestamp>"
+              }
+            ],
+            "isActive": true,
+            "isLocked": false,
+            "lastSeen": null,
+            "createdAt": "<timestamp>",
+            "permissions": {
+              "download": true,
+              "update": false,
+              "delete": false,
+              "upload": false,
+              "createEreader": false,
+              "accessAllLibraries": true,
+              "accessAllTags": true,
+              "accessExplicitContent": false,
+              "selectedTagsNotAccessible": false
+            },
+            "librariesAccessible": [],
+            "itemTagsSelected": [],
+            "hasOpenIDLink": false
+          }
+        ]
+      }
+    ]
+  },
+  "MeController (characterization) > PATCH /api/me/progress/:libraryItemId/:episodeId? > finishing an existing unfinished progress with isFinished:true sets progress 1 and finishedAt > items in progress afterwards": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "libraryItems": [
+          {
+            "id": "<podcast>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<uuid-20>",
+            "folderId": "<uuid-21>",
+            "path": "/test/pods/Pod",
+            "relPath": "Pod",
+            "isFile": null,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<uuid-22>",
+              "metadata": {
+                "title": "Pod",
+                "author": "Pod Author",
+                "description": null,
+                "releaseDate": null,
+                "genres": [],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": null,
+                "language": null,
+                "type": null,
+                "titleIgnorePrefix": "Pod"
+              },
+              "coverPath": null,
+              "tags": [],
+              "numEpisodes": 2,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 2000
+            },
+            "numFiles": 0,
+            "size": null,
+            "recentEpisode": {
+              "libraryItemId": "<podcast>",
+              "podcastId": "<uuid-22>",
+              "id": "<uuid-19>",
+              "oldEpisodeId": null,
+              "index": 1,
+              "season": null,
+              "episode": null,
+              "episodeType": null,
+              "title": "Ep 1",
+              "subtitle": null,
+              "description": null,
+              "enclosure": null,
+              "guid": null,
+              "pubDate": null,
+              "chapters": [],
+              "audioFile": {
+                "index": 1,
+                "ino": "Ep 1.mp3",
+                "metadata": {
+                  "filename": "Ep 1.mp3",
+                  "ext": ".mp3",
+                  "path": "/x/Ep 1.mp3",
+                  "relPath": "Ep 1.mp3",
+                  "size": 1000,
+                  "mtimeMs": 1,
+                  "ctimeMs": 1,
+                  "birthtimeMs": 1
+                },
+                "addedAt": 1,
+                "updatedAt": 1,
+                "trackNumFromMeta": null,
+                "discNumFromMeta": null,
+                "trackNumFromFilename": null,
+                "discNumFromFilename": null,
+                "manuallyVerified": false,
+                "format": "MP3",
+                "duration": 1800,
+                "bitRate": 64000,
+                "language": null,
+                "codec": "mp3",
+                "timeBase": "1/14112000",
+                "channels": 2,
+                "channelLayout": "stereo",
+                "chapters": [],
+                "embeddedCoverArt": null,
+                "metaTags": {},
+                "mimeType": "audio/mpeg"
+              },
+              "publishedAt": null,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>"
+            },
+            "progressLastUpdate": 1710936000000
+          }
+        ]
+      }
+    },
+    "emitted": []
   },
   "MeController (characterization) > PATCH /api/me/progress/:libraryItemId/:episodeId? > handles podcast items and episodes > episode afterwards": {
     "res": {
