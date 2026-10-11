@@ -1,0 +1,245 @@
+{
+  "exports": [
+    [
+      "probe",
+      1,
+      true
+    ],
+    [
+      "rawProbe",
+      1,
+      true
+    ]
+  ],
+  "ok": {
+    "data": {
+      "format": "QuickTime",
+      "duration": 65.5,
+      "size": 1048576,
+      "sizeMb": 1,
+      "bit_rate": 256000,
+      "tags": {
+        "file_tag_encoder": "Tool",
+        "file_tag_title": "Book"
+      },
+      "rawTags": {
+        "TITLE": " Book ",
+        "encoder": "Tool"
+      },
+      "video_stream": {
+        "index": 0,
+        "type": "video",
+        "codec": "h264",
+        "codec_long": null,
+        "codec_time_base": null,
+        "time_base": null,
+        "bit_rate": 144000,
+        "language": "eng",
+        "title": null,
+        "tags": {
+          "language": "eng"
+        },
+        "profile": null,
+        "is_avc": true,
+        "pix_fmt": null,
+        "frame_rate": 29.97002997002997,
+        "width": 1920,
+        "height": 1080,
+        "color_range": null,
+        "color_space": null,
+        "color_transfer": null,
+        "color_primaries": null
+      },
+      "audio_stream": {
+        "index": 1,
+        "type": "audio",
+        "codec": "aac",
+        "codec_long": null,
+        "codec_time_base": null,
+        "time_base": null,
+        "bit_rate": 112000,
+        "language": null,
+        "title": "Main",
+        "tags": {
+          "title": " Main ",
+          "BPS": "128000"
+        },
+        "is_default": true,
+        "channels": 2,
+        "sample_rate": 44100,
+        "channel_layout": "stereo"
+      },
+      "chapters": [
+        {
+          "start": 0,
+          "end": 30,
+          "title": "One",
+          "id": 0
+        },
+        {
+          "start": 30.5,
+          "end": 60,
+          "title": "Two",
+          "id": 1
+        }
+      ]
+    }
+  },
+  "empty": {
+    "error": "Invalid media file: no audio or video streams found"
+  },
+  "raw-error": {
+    "error": "invalid data"
+  },
+  "malformed": {
+    "error": "Probe Failed"
+  },
+  "reject": {
+    "error": {
+      "name": "Error",
+      "message": "spawn failed"
+    }
+  },
+  "rawOk": {
+    "format": {
+      "format_long_name": "QuickTime",
+      "duration": "65.5",
+      "size": "1048576",
+      "bit_rate": "256000",
+      "tags": {
+        "TITLE": " Book ",
+        "encoder": "Tool"
+      }
+    },
+    "streams": [
+      {
+        "index": 0,
+        "codec_type": "video",
+        "codec_name": "h264",
+        "bit_rate": "144000",
+        "avg_frame_rate": "30000/1001",
+        "width": "1920",
+        "height": "1080",
+        "tags": {
+          "language": "eng"
+        }
+      },
+      {
+        "index": 1,
+        "codec_type": "audio",
+        "codec_name": "aac",
+        "bit_rate": "112000",
+        "sample_rate": "44100",
+        "channels": 2,
+        "channel_layout": "stereo(side)",
+        "disposition": {
+          "default": 1
+        },
+        "tags": {
+          "title": " Main ",
+          "BPS": "128000"
+        }
+      },
+      {
+        "index": 2,
+        "codec_type": "audio",
+        "codec_name": "mp3",
+        "sample_rate": "48000",
+        "disposition": {
+          "default": 0
+        },
+        "tags": {
+          "BPS-eng": "96000"
+        }
+      },
+      {
+        "index": 3,
+        "codec_type": "subtitle",
+        "codec_name": "srt",
+        "disposition": {
+          "default": "1"
+        }
+      }
+    ],
+    "chapters": [
+      {
+        "start_time": "30.5",
+        "end_time": "60.0",
+        "tags": {
+          "title": " Two "
+        }
+      },
+      {
+        "start": 0,
+        "end": 30000,
+        "time_base": "1/1000",
+        "TAG:title": " One "
+      }
+    ]
+  },
+  "rawReject": {
+    "error": {
+      "name": "Error",
+      "message": "spawn failed"
+    }
+  },
+  "events": [
+    [
+      "ffprobe",
+      "ok",
+      "/fake/ffprobe"
+    ],
+    [
+      "debug",
+      "Tags",
+      {
+        "TITLE": " Book ",
+        "encoder": "Tool"
+      }
+    ],
+    [
+      "MediaProbeData.new"
+    ],
+    [
+      "MediaProbeData.setData"
+    ],
+    [
+      "ffprobe",
+      "empty",
+      "/fake/ffprobe"
+    ],
+    [
+      "ffprobe",
+      "raw-error",
+      "/fake/ffprobe"
+    ],
+    [
+      "ffprobe",
+      "malformed",
+      "/fake/ffprobe"
+    ],
+    [
+      "console.error",
+      "Parse failed",
+      {
+        "name": "TypeError",
+        "message": "Cannot read properties of undefined (reading 'size')"
+      }
+    ],
+    [
+      "ffprobe",
+      "reject",
+      "/fake/ffprobe"
+    ],
+    [
+      "ffprobe",
+      "ok",
+      "/fake/ffprobe"
+    ],
+    [
+      "ffprobe",
+      "reject",
+      "/fake/ffprobe"
+    ]
+  ]
+}
