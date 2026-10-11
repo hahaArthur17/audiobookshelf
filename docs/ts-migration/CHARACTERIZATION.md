@@ -170,6 +170,11 @@ Reported by the test-writing agents while reading the code and recording respons
 - Singletons leak between tests unless reset: `CacheManager` (reset by the harness), `ShareManager`, `Logger.logLevel`, `Database.libraryFilterData`, the rate limiter on `PATCH /me/password` (40 calls per 10 minutes per process).
 - `api.request` returns only `content-type` in `headers`; `set-cookie` values are on the non-enumerable `res.cookies`. It still cannot send a body on GET; use `fetch` against `api.base` for that.
 
+### Found while closing sweep findings F1 and F2 (recorded, not fixed)
+
+- Tag restrictions are enforced inconsistently. Item GET uses `User.checkCanAccessLibraryItemWithTags`; library item lists filter in SQL (`libraryItemsBookFilters.getUserPermissionBookWhereQuery`), which also hides books whose `explicit` is NULL from non-admins. `GET /api/collections` and `GET /api/libraries/:id/collections` do not filter books by tag at all (a restricted user sees books there that item GET answers 403). `GET /api/collections/:id` skips the check for untagged books, so an allowlist user sees an untagged book in a collection that item GET refuses. Pinned in `CollectionController` "tag restricted users".
+- `Database.userModel.update(values, {where})` (the static update) leaves the in-memory user cache stale, so a deactivated user's bearer token or API key still authenticates until the cache entry is replaced. Instance `row.update()` invalidates it. The same pattern probably applies to `ApiKey`. Tests deactivate through the instance. An expired API key is also deactivated in the database as a side effect of a rejected request (pinned in `AuthRoutes`).
+
 ## How the suite is kept honest
 `npm run audit:characterization` (see `test/characterization/README.md`) measures instead of trusting claims: 202 of 202 route handlers are hit and each has at least one 2xx/3xx response; every snapshot entry is compared by a test; no `.only`, no assertion-free test, no stub that replaces code under test; the only reshaping of responses before snapshotting is sorting where the server's own order is random, masking of times/versions/ids, and reducing the random "discover" shelf to its size. `npm run oracle:check` plus the Characterization Guard workflow stop the oracle from changing without a deliberate `[oracle-update]` commit.
 
