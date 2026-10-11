@@ -1,21 +1,20 @@
 # Context for the JavaScript to TypeScript migration of server/
 
 Goal: migrate the Audiobookshelf server (server/, minus the out-of-scope list below) from JavaScript to TypeScript with meaningful types, type-only.
-Done so far: server/finders/, 24 of the 25 files in server/models/ (LibraryItem.js is still JavaScript), and files in auth/, managers/, objects/, providers/, routers/, scanner/ and utils/ (see git log for [PO-S01] to [PO-S07]). Use them as worked examples. The current run (PO-S08) converts server/controllers/; CacheController.ts is the one controller already converted.
-The spec and plan for the finders are in evidence/plans/ (reference only).
+Done so far: server/finders/, 24 of the 25 files in server/models/ (LibraryItem.js is still JavaScript), 15 of the 23 controllers in server/controllers/, and files in auth/, managers/, objects/, providers/, routers/, scanner/ and utils/ (see git log for [PO-S01] to [PO-S08]). Use them as worked examples. The current run (PO-S09) has two phases (see the task). Phase A adds declarations in the layer below the controllers. Phase B converts the 8 controllers that are still JavaScript: ApiKey, Session, User, Collection, Playlist, Library, LibraryItem and Podcast.
 
 ## Scope and order
 - Out of scope: server/libs/ (vendored), server/migrations/ (MigrationManager copies and loads these by name), server/utils/htmlEntities.js (a data table), server/models/ is IN scope from stage PO-S03, using the uncallable-overload pattern below. Convert models only after the settings classes they depend on.
 - Work leaf-first: files with no relative require() first, preferring files that have tests; then files whose relative requires point only at files already converted.
 - Leave the root files (Server.js, Database.js, Auth.js and the like) for last.
-- Controllers (PO-S08): the 22 remaining controllers in server/controllers/ are in scope. A controller may require JavaScript files that are not converted yet (Logger, Database, SocketAuthority, utils/index, scanner/, managers/ and so on), so the leaf-first order does not apply to controllers. Do not edit or convert server/routers/ApiRouter.js, server/Server.js or any other file outside server/controllers/ in this run.
+- Controllers (PO-S08 and PO-S09): the controllers in server/controllers/ that are still JavaScript are in scope. A controller may require JavaScript files that are not converted yet (Logger, Database, SocketAuthority, utils/index, scanner/, managers/ and so on), so the leaf-first order does not apply to controllers. In PO-S09, besides server/controllers/, only the main agent may edit server/models/*.ts and server/types/ (declarations, Phase A in the task). Do not edit or convert server/routers/ApiRouter.js, server/Server.js or any other file.
 
 ## Rules
 1. Type-only: no change in runtime behaviour, no bug fixes. List any bug you find in the bug log named in the task.
 2. Rename with `git mv x.js x.ts`.
 3. Keep the CommonJS shape: `import x = require('...')` and `export = ...`. What a JavaScript caller gets from require() must stay identical. For types from a package use `import type { ... } from '...'` (erased when compiled).
 4. Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, as any, as unknown as.
-5. Allowed, with a one-line comment each time: a class or payload/data-interface index signature ([key: string]: unknown) where the code assigns or reads by a dynamic key; an import type that replaces a require of names that are undefined at runtime (name it in the commit message); a non-null assertion (!) where a field starts as null and is set before it is read; a single-step `as` cast only at a boundary where an untyped module returns a wrong or too-vague type. Controllers (PO-S08) have three more allowances, listed in the section "Controllers and Express" and nowhere else.
+5. Allowed, with a one-line comment each time: a class or payload/data-interface index signature ([key: string]: unknown) where the code assigns or reads by a dynamic key; an import type that replaces a require of names that are undefined at runtime (name it in the commit message); a non-null assertion (!) where a field starts as null and is set before it is read, where the query always loads an association (an include), or where earlier code guarantees that a lookup finds its item (PO-S09 ruling; give the reason in the one-line comment and count each use; `!` removes null and undefined, not false); a single-step `as` cast only at a boundary where an untyped module returns a wrong or too-vague type. Controllers (PO-S08) have three more allowances, listed in the section "Controllers and Express" and nowhere else.
 6. Do not edit test/, tsconfig.server.json, package.json, package-lock.json or server/libs/. Do not install packages. Do not push, merge, rebase, reset or clean.
 7. Leave existing JSDoc comments unchanged. Use targeted edits, not whole-file rewrites.
 
@@ -27,7 +26,7 @@ The spec and plan for the finders are in evidence/plans/ (reference only).
 ## Pitfalls found so far
 - Class fields: declare them with `declare` (the target is ES2022; a plain field would compile to a real field that starts as undefined and changes behaviour).
 - Comments: a comment directly above an interface or type disappears when compiled, and TypeScript drops comments placed above `export =`. Put new types above existing JSDoc blocks, and leave a blank line after a file-header comment.
-- TypeScript 5.9.3 can crash ("Debug Failure. False expression") in an incremental build right after a bare rename, or with `declare global`. Add the imports and types in the same edit as the rename. A non-incremental, no-emit check shows the real errors (see evidence/test-results/SP-S01/tsconfig.redcheck.json). Never run `tsc --declaration` on the whole program.
+- TypeScript 5.9.3 can crash ("Debug Failure. False expression") in an incremental build right after a bare rename, or with `declare global`. Add the imports and types in the same edit as the rename. A non-incremental, no-emit check shows the real errors (`npx tsc -p tsconfig.check.json`). Never run `tsc --declaration` on the whole program.
 - Globals set elsewhere: declare them in the file (`declare const global: typeof globalThis & { MetadataPath: string }`). Never use `declare global`.
 - Untyped npm packages: describe only what is used in server/types/untypedModules.d.ts and pull it in with `/// <reference path="...">` (tsconfig excludes *.d.ts). Types for express, cookie-parser, express-session, passport and passport-jwt are installed (@types).
 - Untyped helpers in server/utils return any. Annotate the destructured import once instead of casting at each call.
@@ -42,8 +41,13 @@ The spec and plan for the finders are in evidence/plans/ (reference only).
 - Untyped JS constructors with a `settings = null` default are inferred as taking null: convert those classes first (EmailSettings, NotificationSettings, ServerSettings), then the models that use them. A cast at a constructor call is a last resort and needs a comment.
 - Convert models one at a time, with a build and 375 tests after each. If a model does not fit, restore it, record the compiler errors in the commit-free notes, and move on.
 
+## Declarations for the layer below (PO-S09, Phase A)
+- A controller cannot be typed until the models and helpers it calls declare what they return. Missing association mixins and fields that a query adds are declared with `declare` in the model file, with a one-line comment that names where the mixin or field comes from. Precedents: Collection.ts (getBooks, getFeeds, feeds) and Feed.ts (getLibraryItem and the other getters).
+- A `declare` emits no JavaScript. Add declarations only. Do not change a method signature, a return type or any runtime line. If a type in a converted file is wrong and not just missing, do not fix it; report it.
+- After each edit run npm run build:server and npm test (375 passing), and compare dist-server with the copy you made at the start: only comments and require lines may differ.
+
 ## Settings (important)
-- Only Edit(path) deny rules work; Write(path) rules are ignored (Claude Code warns about them). Edit rules cover all file-editing tools. Shell commands that write files are not covered by any rule.
+- Only Edit(path) deny rules work; Write(path) rules are ignored (Claude Code warns about them). Edit rules cover all file-editing tools. Shell commands that write files are not covered by any rule, with one exception: `sed -i` and `perl -i` are denied in this run. Use the Edit tool for every change to a file.
 ## Type check without building (PO-S03)
 - Run `npx tsc -p tsconfig.check.json` for a no-emit check. It writes nothing, so it is safe to run while other agents work. Filter its output to your own folder (for example with grep "^server/utils/").
 - Only the main agent runs `npm run build:server` and `npm test`, and only the main agent commits.
