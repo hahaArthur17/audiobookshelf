@@ -1,24 +1,84 @@
-const { Request, Response, NextFunction } = require('express')
-const Path = require('path')
-const fs = require('../libs/fsExtra')
-const cron = require('../libs/nodeCron')
-const uaParserJs = require('../libs/uaParser')
-const Logger = require('../Logger')
-const SocketAuthority = require('../SocketAuthority')
-const Database = require('../Database')
+import type { LibraryItemModelStatic } from '../types/libraryItemModel'
+import type { NextFunction, Request, Response } from 'express'
+import Path = require('path')
+import fs = require('../libs/fsExtra')
+import cron = require('../libs/nodeCron')
+import uaParserJs = require('../libs/uaParser')
+import Logger = require('../Logger')
+import SocketAuthority = require('../SocketAuthority')
+import Database = require('../Database')
 
-const zipHelpers = require('../utils/zipHelpers')
-const { reqSupportsWebp, clampPositiveInt } = require('../utils/index')
-const { ScanResult, AudioMimeType } = require('../utils/constants')
-const { getAudioMimeTypeFromExtname, encodeUriPath } = require('../utils/fileUtils')
-const LibraryItemScanner = require('../scanner/LibraryItemScanner')
-const AudioFileScanner = require('../scanner/AudioFileScanner')
-const Scanner = require('../scanner/Scanner')
+import zipHelpers = require('../utils/zipHelpers')
+import utils = require('../utils/index')
+const { reqSupportsWebp, clampPositiveInt } = utils
+import constants = require('../utils/constants')
+const { ScanResult, AudioMimeType }: { ScanResult: { [key: string]: number }; AudioMimeType: typeof constants.AudioMimeType } = constants // index signature: scan() reads ScanResult by a dynamic key (Object.keys)
+import fileUtils = require('../utils/fileUtils')
+const { getAudioMimeTypeFromExtname, encodeUriPath } = fileUtils
+import LibraryItemScanner = require('../scanner/LibraryItemScanner')
+import AudioFileScanner = require('../scanner/AudioFileScanner')
+import Scanner = require('../scanner/Scanner')
 
-const RssFeedManager = require('../managers/RssFeedManager')
-const CacheManager = require('../managers/CacheManager')
-const CoverManager = require('../managers/CoverManager')
-const ShareManager = require('../managers/ShareManager')
+import RssFeedManager = require('../managers/RssFeedManager')
+import CacheManager = require('../managers/CacheManager')
+import CoverManager = require('../managers/CoverManager')
+import ShareManager = require('../managers/ShareManager')
+
+type User = import('../models/User')
+type LibraryItem = import('../models/LibraryItem')
+type LibraryFile = import('../objects/files/LibraryFile')
+type FileMetadata = import('../objects/metadata/FileMetadata')
+type Feed = import('../models/Feed')
+type ApiRouter = import('../routers/ApiRouter')
+type BookExpanded = import('../models/Book').BookExpanded
+type PodcastExpanded = import('../models/Podcast').PodcastExpanded
+type PodcastEpisodeDownloadJson = ReturnType<import('../objects/PodcastEpisodeDownload')['toJSONForClient']>
+type QuickMatchOptions = NonNullable<Parameters<typeof Scanner.quickMatchLibraryItem>[2]>
+
+declare const global: typeof globalThis & { XAccel?: string }
+
+// Query values are assumed to be strings (the original code assumes this, for example when it calls .split on include)
+type LibraryItemQuery = { include?: string; expanded?: string; episode?: string; hard?: string; width?: string; height?: string; format?: string; raw?: string; ts?: string }
+type LibraryItemParams = { id: string; fileid: string; episodeId: string }
+type RequestUserObject = { user: User }
+type RequestWithUser<Body = unknown> = Request<LibraryItemParams, unknown, Body, LibraryItemQuery> & RequestUserObject
+/** changed(key, dirty) of a Sequelize model: its overloads do not resolve on the Book | Podcast union of media (TS2554), so the form the cover handlers call is declared once more for both */
+type ChangedSetter = { changed(key: string, dirty: boolean): void }
+/**
+ * LibraryItem.js (JS) types media as a book or a podcast and isBook/isPodcast as boolean. These two types tie them together
+ * (the getters test mediaType), so a handler that tests isBook or isPodcast reads media as that type without a cast.
+ */
+type BookLibraryItem = Omit<LibraryItem, 'media' | 'isBook' | 'isPodcast'> & { media: BookExpanded & ChangedSetter; isBook: true; isPodcast: false }
+type PodcastLibraryItem = Omit<LibraryItem, 'media' | 'isBook' | 'isPodcast'> & { media: PodcastExpanded & ChangedSetter; isBook: false; isPodcast: true }
+type RequestEntityObject = { libraryItem: BookLibraryItem | PodcastLibraryItem }
+type LibraryItemControllerRequest<Body = unknown> = RequestWithUser<Body> & RequestEntityObject
+// middleware() takes libraryFile from the library item's own files, whose metadata, path and filename are set when the file is scanned: LibraryFile.js (JS) and FileMetadata type them as possibly null
+type RequestLibraryFileObject = { libraryFile: LibraryFile & { metadata: FileMetadata & { path: string; filename: string } } }
+type LibraryItemControllerRequestWithFile = RequestWithUser & RequestEntityObject & RequestLibraryFileObject
+/** A file from req.files (express-fileupload): only the members that CoverManager.uploadCover() uses */
+type UploadedFile = { name: string; mv: (path: string) => Promise<void> }
+// Body fields have the types the handlers assume after their own checks; a field that a handler tests itself is unknown
+type MediaPayload = Parameters<BookExpanded['updateFromRequest']>[0] & Parameters<PodcastExpanded['updateFromRequest']>[0] & { url?: string; autoDownloadEpisodes?: boolean; autoDownloadSchedule?: string; metadata?: { series?: unknown; authors?: unknown } }
+type MatchBody = { overrideCover?: unknown; overrideDetails?: unknown; [key: string]: unknown } // index signature: match() reads req.body by a dynamic key
+type BatchIdsBody = { libraryItemIds?: string[] }
+type BatchUpdateBody = { id?: string; mediaPayload: MediaPayload }[]
+type BatchQuickMatchBody = BatchIdsBody & { options?: { provider?: unknown; overrideCover?: unknown; overrideDetails?: unknown } }
+/** toOldJSONExpanded() of a library item plus the keys that findOne() adds to the same object */
+type ItemJsonWithIncludes = ReturnType<LibraryItem['toOldJSONExpanded']> & {
+  userMediaProgress?: ReturnType<User['getOldMediaProgress']>
+  rssFeed?: ReturnType<Feed['toOldJSONMinified']> | null
+  mediaItemShare?: ReturnType<typeof ShareManager.findByMediaItemId>
+  episodeDownloadsQueued?: PodcastEpisodeDownloadJson[]
+  episodesDownloading?: PodcastEpisodeDownloadJson[]
+}
+/** CoverManager (JS) resolves with { error } or { cover }; the code reads both keys */
+type CoverResult = { error?: string; cover?: string }
+/** The same for validateCoverPath(): written as two cases so that a truthy `updated` gives `cover` as a string */
+type CoverValidationResult = { error: string; cover?: undefined; updated?: undefined } | { error?: undefined; cover: string; updated: boolean }
+/** quickMatchLibraryItem() of Scanner.js (JS) also resolves with { warning }, which its JSDoc does not list */
+type QuickMatchResult = { updated?: boolean; warning?: string }
+/** updateEbookFileStatus() turns the JSON of a library file into the ebook file of the book: isSupplementary and fileType are deleted and ebookFormat is set */
+type PrimaryEbookFile = import('../models/Book').EBookFileObject & { isSupplementary?: boolean | null; fileType?: string }
 
 /**
  * @typedef RequestUserObject
@@ -45,7 +105,7 @@ const ShareManager = require('../managers/ShareManager')
  * @param {import('../models/LibraryItem')[]} libraryItems
  * @returns {boolean} true if the user may access every item; false if 403 was sent
  */
-function ensureUserCanAccessLibraryItemsForBatch(req, res, libraryItems) {
+function ensureUserCanAccessLibraryItemsForBatch(req: RequestWithUser, res: Response, libraryItems: LibraryItem[]) {
   for (const libraryItem of libraryItems) {
     if (!req.user.checkCanAccessLibraryItem(libraryItem)) {
       res.sendStatus(403)
@@ -67,10 +127,10 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async findOne(req, res) {
+  async findOne(this: ApiRouter, req: LibraryItemControllerRequest, res: Response) {
     const includeEntities = (req.query.include || '').split(',')
-    if (req.query.expanded == 1) {
-      const item = req.libraryItem.toOldJSONExpanded()
+    if ((req.query.expanded as unknown) == 1) { // Allowance 1 (TS2367): the query value is a string and is compared with the number 1; == coerces it at runtime
+      const item: ItemJsonWithIncludes = req.libraryItem.toOldJSONExpanded()
 
       // Include users media progress
       if (includeEntities.includes('progress')) {
@@ -111,8 +171,9 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async delete(req, res) {
-    const hardDelete = req.query.hard == 1 // Delete from file system
+  async delete(this: ApiRouter, req: LibraryItemControllerRequest, res: Response) {
+    // Allowance 1 (TS2367): the query value is a string and is compared with the number 1; == coerces it at runtime
+    const hardDelete = (req.query.hard as unknown) == 1 // Delete from file system
     const libraryItemPath = req.libraryItem.path
 
     const mediaItemIds = []
@@ -133,7 +194,7 @@ class LibraryItemController {
     await this.handleDeleteLibraryItem(req.libraryItem.id, mediaItemIds, req.libraryItem.libraryId)
     if (hardDelete) {
       Logger.info(`[LibraryItemController] Deleting library item from file system at "${libraryItemPath}"`)
-      await fs.remove(libraryItemPath).catch((error) => {
+      await (fs as { remove(path: string): Promise<void> }).remove(libraryItemPath).catch((error) => { // boundary: libs/fsExtra (vendored JS) infers remove() as a promise or undefined (undefined only when a callback is passed)
         Logger.error(`[LibraryItemController] Failed to delete library item from file system at "${libraryItemPath}"`, error)
       })
     }
@@ -149,9 +210,9 @@ class LibraryItemController {
     res.sendStatus(200)
   }
 
-  static handleDownloadError(error, res) {
+  static handleDownloadError(error: unknown, res: Response) {
     if (!res.headersSent) {
-      if (error.code === 'ENOENT') {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') { // catch variables are unknown; the code reads .code with no instanceof test before it
         return res.status(404).send('File not found')
       } else {
         return res.status(500).send('Download failed')
@@ -166,7 +227,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async download(req, res) {
+  async download(req: LibraryItemControllerRequest, res: Response) {
     if (!req.user.canDownload) {
       Logger.warn(`User "${req.user.username}" attempted to download without permission`)
       return res.sendStatus(403)
@@ -184,7 +245,7 @@ class LibraryItemController {
         if (audioMimeType) {
           res.setHeader('Content-Type', audioMimeType)
         }
-        await new Promise((resolve, reject) => res.download(libraryItemPath, req.libraryItem.relPath, (error) => (error ? reject(error) : resolve())))
+        await new Promise<void>((resolve, reject) => res.download(libraryItemPath, req.libraryItem.relPath, (error) => (error ? reject(error) : resolve())))
       } else {
         const filename = `${itemTitle}.zip`
         await zipHelpers.zipDirectoryPipe(libraryItemPath, filename, res)
@@ -205,7 +266,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async updateMedia(req, res) {
+  async updateMedia(this: ApiRouter, req: LibraryItemControllerRequest<MediaPayload>, res: Response) {
     const mediaPayload = req.body
 
     if (mediaPayload.url) {
@@ -292,16 +353,16 @@ class LibraryItemController {
    * @param {Response} res
    * @param {boolean} [updateAndReturnJson=true] - Allows the function to be used for both direct API calls and internally
    */
-  async uploadCover(req, res, updateAndReturnJson = true) {
+  async uploadCover(req: LibraryItemControllerRequest<{ url?: string }> & { files?: { cover?: UploadedFile } }, res: Response, updateAndReturnJson = true) {
     if (!req.user.canUpload) {
       Logger.warn(`User "${req.user.username}" attempted to upload a cover without permission`)
       return res.sendStatus(403)
     }
 
-    let result = null
+    let result: CoverResult | null = null
     if (req.body?.url) {
       Logger.debug(`[LibraryItemController] Requesting download cover from url "${req.body.url}"`)
-      result = await CoverManager.downloadCoverFromUrlNew(req.body.url, req.libraryItem.id, req.libraryItem.isFile ? null : req.libraryItem.path)
+      result = await (CoverManager.downloadCoverFromUrlNew as (url: string, libraryItemId: string, libraryItemPath?: string | null) => ReturnType<typeof CoverManager.downloadCoverFromUrlNew>)(req.body.url, req.libraryItem.id, req.libraryItem.isFile ? null : req.libraryItem.path) // boundary: the JSDoc of CoverManager.js (JS) types libraryItemPath as string and also says "null if library item isFile" (TS2345)
     } else if (req.files?.cover) {
       Logger.debug(`[LibraryItemController] Handling uploaded cover`)
       result = await CoverManager.uploadCover(req.libraryItem, req.files.cover)
@@ -341,13 +402,13 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async updateCover(req, res) {
+  async updateCover(req: LibraryItemControllerRequest<{ cover?: string }>, res: Response) {
     if (!req.body.cover) {
       return res.status(400).send('Invalid request no cover path')
     }
 
     // Must be a cover file path inside the libraryFiles array
-    const validationResult = await CoverManager.validateCoverPath(req.body.cover, req.libraryItem)
+    const validationResult: CoverValidationResult = await CoverManager.validateCoverPath(req.body.cover, req.libraryItem)
     if (validationResult.error) {
       return res.status(500).send(validationResult.error)
     }
@@ -374,7 +435,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async removeCover(req, res) {
+  async removeCover(req: LibraryItemControllerRequest, res: Response) {
     if (req.libraryItem.media.coverPath) {
       req.libraryItem.media.coverPath = null
       req.libraryItem.media.changed('coverPath', true)
@@ -398,7 +459,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async getCover(req, res) {
+  async getCover(req: RequestWithUser, res: Response) {
     const {
       query: { width, height, format, raw }
     } = req
@@ -440,13 +501,13 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  startPlaybackSession(req, res) {
+  startPlaybackSession(this: ApiRouter, req: LibraryItemControllerRequest, res: Response) {
     if (!req.libraryItem.hasAudioTracks) {
       Logger.error(`[LibraryItemController] startPlaybackSession cannot playback ${req.libraryItem.id}`)
       return res.sendStatus(404)
     }
 
-    this.playbackSessionManager.startSessionRequest(req, res, null)
+    (this.playbackSessionManager.startSessionRequest as (req: LibraryItemControllerRequest, res: Response, episodeId?: string | null) => unknown)(req, res, null) // boundary: the JSDoc of PlaybackSessionManager.js (JS) types episodeId as string, and this call passes null (TS2345)
   }
 
   /**
@@ -457,7 +518,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  startEpisodePlaybackSession(req, res) {
+  startEpisodePlaybackSession(this: ApiRouter, req: LibraryItemControllerRequest, res: Response) {
     if (!req.libraryItem.isPodcast) {
       Logger.error(`[LibraryItemController] startEpisodePlaybackSession invalid media type ${req.libraryItem.id}`)
       return res.sendStatus(400)
@@ -478,7 +539,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async updateTracks(req, res) {
+  async updateTracks(req: LibraryItemControllerRequest<{ orderedFileData?: unknown }>, res: Response) {
     const orderedFileData = req.body?.orderedFileData
 
     if (!req.libraryItem.isBook) {
@@ -490,14 +551,14 @@ class LibraryItemController {
       return res.sendStatus(400)
     }
     // Ensure that each orderedFileData has a valid ino and is in the book audioFiles
-    if (orderedFileData.some((fileData) => !fileData?.ino || !req.libraryItem.media.audioFiles.some((af) => af.ino === fileData.ino))) {
+    if (orderedFileData.some((fileData) => !fileData?.ino || !(req.libraryItem.media as BookExpanded).audioFiles.some((af) => af.ino === fileData.ino))) { // boundary: isBook was tested above, but that narrowing of media does not reach into a callback
       Logger.error(`[LibraryItemController] updateTracks invalid orderedFileData ${req.libraryItem.id}`)
       return res.sendStatus(400)
     }
 
     let index = 1
     const updatedAudioFiles = orderedFileData.map((fileData) => {
-      const audioFile = req.libraryItem.media.audioFiles.find((af) => af.ino === fileData.ino)
+      const audioFile = (req.libraryItem.media as BookExpanded).audioFiles.find((af) => af.ino === fileData.ino)! // boundary: as on the some() line above (callback); and that some() test guarantees that this ino is found
       audioFile.manuallyVerified = true
       audioFile.exclude = !!fileData.exclude
       if (audioFile.exclude) {
@@ -523,10 +584,10 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async match(req, res) {
+  async match(this: ApiRouter, req: LibraryItemControllerRequest<MatchBody>, res: Response) {
     const reqBody = req.body || {}
 
-    const options = {}
+    const options: QuickMatchOptions & { [key: string]: unknown } = {} // index signature: filled by a dynamic key
     const matchOptions = ['provider', 'title', 'author', 'isbn', 'asin']
     for (const key of matchOptions) {
       if (reqBody[key] && typeof reqBody[key] === 'string') {
@@ -555,12 +616,13 @@ class LibraryItemController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async batchDelete(req, res) {
+  async batchDelete(this: ApiRouter, req: RequestWithUser<BatchIdsBody>, res: Response) {
     if (!req.user.canDelete) {
       Logger.warn(`[LibraryItemController] User "${req.user.username}" attempted to delete without permission`)
       return res.sendStatus(403)
     }
-    const hardDelete = req.query.hard == 1 // Delete files from filesystem
+    // Allowance 1 (TS2367): the query value is a string and is compared with the number 1; == coerces it at runtime
+    const hardDelete = (req.query.hard as unknown) == 1 // Delete files from filesystem
 
     const { libraryItemIds } = req.body
     if (!libraryItemIds?.length || !Array.isArray(libraryItemIds)) {
@@ -569,7 +631,7 @@ class LibraryItemController {
 
     const itemsToDelete = await Database.libraryItemModel.findAllExpandedWhere({
       id: libraryItemIds
-    })
+    }) as (BookLibraryItem | PodcastLibraryItem)[] // boundary: LibraryItem.js (JS) types media as a book or a podcast and isBook/isPodcast as boolean; these types tie them together
 
     if (!itemsToDelete.length) {
       return res.sendStatus(404)
@@ -602,7 +664,7 @@ class LibraryItemController {
       await this.handleDeleteLibraryItem(libraryItem.id, mediaItemIds, libraryItem.libraryId)
       if (hardDelete) {
         Logger.info(`[LibraryItemController] Deleting library item from file system at "${libraryItemPath}"`)
-        await fs.remove(libraryItemPath).catch((error) => {
+        await (fs as { remove(path: string): Promise<void> }).remove(libraryItemPath).catch((error) => { // boundary: libs/fsExtra (vendored JS) infers remove() as a promise or undefined (undefined only when a callback is passed)
           Logger.error(`[LibraryItemController] Failed to delete library item from file system at "${libraryItemPath}"`, error)
         })
       }
@@ -627,7 +689,7 @@ class LibraryItemController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async batchUpdate(req, res) {
+  async batchUpdate(this: ApiRouter, req: RequestWithUser<BatchUpdateBody>, res: Response) {
     if (!req.user.canUpdate) {
       Logger.warn(`[LibraryItemController] User "${req.user.username}" attempted to batch update without permission`)
       return res.sendStatus(403)
@@ -649,7 +711,7 @@ class LibraryItemController {
     // Get all library items to update
     const libraryItems = await Database.libraryItemModel.findAllExpandedWhere({
       id: libraryItemIds
-    })
+    }) as (BookLibraryItem | PodcastLibraryItem)[] // boundary: LibraryItem.js (JS) types media as a book or a podcast and isBook/isPodcast as boolean; these types tie them together
     if (updatePayloads.length !== libraryItems.length) {
       Logger.error(`[LibraryItemController] Batch update failed. Not all library items found`)
       return res.sendStatus(404)
@@ -667,7 +729,7 @@ class LibraryItemController {
 
     for (const updatePayload of updatePayloads) {
       const mediaPayload = updatePayload.mediaPayload
-      const libraryItem = libraryItems.find((li) => li.id === updatePayload.id)
+      const libraryItem = libraryItems.find((li) => li.id === updatePayload.id)! // the ids are unique and the length check above found a library item for every payload
 
       if (libraryItem.isPodcast && mediaPayload.autoDownloadSchedule && !cron.validate(mediaPayload.autoDownloadSchedule)) {
         Logger.warn(`[LibraryItemController] Invalid auto download schedule cron expression "${mediaPayload.autoDownloadSchedule}" for library item "${libraryItem.media.title}" - skipping update`)
@@ -737,7 +799,7 @@ class LibraryItemController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async batchGet(req, res) {
+  async batchGet(req: RequestWithUser<BatchIdsBody>, res: Response) {
     const libraryItemIds = req.body.libraryItemIds || []
     if (!libraryItemIds.length) {
       return res.status(403).send('Invalid payload')
@@ -760,7 +822,7 @@ class LibraryItemController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async batchQuickMatch(req, res) {
+  async batchQuickMatch(this: ApiRouter, req: RequestWithUser<BatchQuickMatchBody>, res: Response) {
     if (!req.user.isAdminOrUp) {
       Logger.warn(`Non-admin user "${req.user.username}" other than admin attempted to batch quick match library items`)
       return res.sendStatus(403)
@@ -783,7 +845,7 @@ class LibraryItemController {
     res.sendStatus(200)
 
     const reqBodyOptions = req.body.options || {}
-    const options = {}
+    const options: QuickMatchOptions = {}
     if (reqBodyOptions.provider && typeof reqBodyOptions.provider === 'string') {
       options.provider = reqBodyOptions.provider
     }
@@ -795,7 +857,7 @@ class LibraryItemController {
     }
 
     for (const libraryItem of libraryItems) {
-      const matchResult = await Scanner.quickMatchLibraryItem(this, libraryItem, options)
+      const matchResult: QuickMatchResult = await Scanner.quickMatchLibraryItem(this, libraryItem, options)
       if (matchResult.updated) {
         itemsUpdated++
       } else if (matchResult.warning) {
@@ -817,7 +879,7 @@ class LibraryItemController {
    * @param {RequestWithUser} req
    * @param {Response} res
    */
-  async batchScan(req, res) {
+  async batchScan(req: RequestWithUser<BatchIdsBody>, res: Response) {
     if (!req.user.isAdminOrUp) {
       Logger.warn(`Non-admin user "${req.user.username}" other than admin attempted to batch scan library items`)
       return res.sendStatus(403)
@@ -827,7 +889,7 @@ class LibraryItemController {
       return res.sendStatus(400)
     }
 
-    const libraryItems = await Database.libraryItemModel.findAll({
+    const libraryItems = await (Database.libraryItemModel as LibraryItemModelStatic).findAll({ // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
       where: {
         id: req.body.libraryItemIds
       },
@@ -857,7 +919,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async scan(req, res) {
+  async scan(req: LibraryItemControllerRequest, res: Response) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[LibraryItemController] Non-admin user "${req.user.username}" attempted to scan library item`)
       return res.sendStatus(403)
@@ -881,7 +943,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  getMetadataObject(req, res) {
+  getMetadataObject(this: ApiRouter, req: LibraryItemControllerRequest, res: Response) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[LibraryItemController] Non-admin user "${req.user.username}" attempted to get metadata object`)
       return res.sendStatus(403)
@@ -901,7 +963,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async updateMediaChapters(req, res) {
+  async updateMediaChapters(req: LibraryItemControllerRequest<{ chapters?: unknown }>, res: Response) {
     if (!req.user.canUpdate) {
       Logger.error(`[LibraryItemController] User "${req.user.username}" attempted to update chapters with invalid permissions`)
       return res.sendStatus(403)
@@ -964,7 +1026,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async getFFprobeData(req, res) {
+  async getFFprobeData(req: LibraryItemControllerRequest, res: Response) {
     if (!req.user.isAdminOrUp) {
       Logger.error(`[LibraryItemController] Non-admin user "${req.user.username}" attempted to get ffprobe data`)
       return res.sendStatus(403)
@@ -986,7 +1048,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequestWithFile} req
    * @param {Response} res
    */
-  async getLibraryFile(req, res) {
+  async getLibraryFile(req: LibraryItemControllerRequestWithFile, res: Response) {
     const libraryFile = req.libraryFile
 
     if (global.XAccel) {
@@ -1009,12 +1071,12 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequestWithFile} req
    * @param {Response} res
    */
-  async deleteLibraryFile(req, res) {
+  async deleteLibraryFile(req: LibraryItemControllerRequestWithFile, res: Response) {
     const libraryFile = req.libraryFile
 
     Logger.info(`[LibraryItemController] User "${req.user.username}" requested file delete at "${libraryFile.metadata.path}"`)
 
-    await fs.remove(libraryFile.metadata.path).catch((error) => {
+    await (fs as { remove(path: string): Promise<void> }).remove(libraryFile.metadata.path).catch((error) => { // boundary: libs/fsExtra (vendored JS) infers remove() as a promise or undefined (undefined only when a callback is passed)
       Logger.error(`[LibraryItemController] Failed to delete library file at "${libraryFile.metadata.path}"`, error)
     })
 
@@ -1033,7 +1095,7 @@ class LibraryItemController {
         req.libraryItem.isMissing = true
       }
     } else if (req.libraryItem.media.podcastEpisodes.some((ep) => ep.audioFile.ino === req.params.fileid)) {
-      const episodeToRemove = req.libraryItem.media.podcastEpisodes.find((ep) => ep.audioFile.ino === req.params.fileid)
+      const episodeToRemove = req.libraryItem.media.podcastEpisodes.find((ep) => ep.audioFile.ino === req.params.fileid)! // the some() test on the line above found this episode
       // Remove episode from all playlists
       await Database.playlistModel.removeMediaItemsFromPlaylists([episodeToRemove.id])
 
@@ -1070,7 +1132,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequestWithFile} req
    * @param {Response} res
    */
-  async downloadLibraryFile(req, res) {
+  async downloadLibraryFile(req: LibraryItemControllerRequestWithFile, res: Response) {
     const libraryFile = req.libraryFile
     const ua = uaParserJs(req.headers['user-agent'])
 
@@ -1101,7 +1163,7 @@ class LibraryItemController {
     }
 
     try {
-      await new Promise((resolve, reject) => res.download(libraryFile.metadata.path, libraryFile.metadata.filename, (error) => (error ? reject(error) : resolve())))
+      await new Promise<void>((resolve, reject) => res.download(libraryFile.metadata.path, libraryFile.metadata.filename, (error) => (error ? reject(error) : resolve())))
       Logger.info(`[LibraryItemController] Downloaded file "${libraryFile.metadata.path}"`)
     } catch (error) {
       Logger.error(`[LibraryItemController] Failed to download file "${libraryFile.metadata.path}"`, error)
@@ -1118,7 +1180,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequest} req
    * @param {Response} res
    */
-  async getEBookFile(req, res) {
+  async getEBookFile(req: LibraryItemControllerRequest, res: Response) {
     let ebookFile = null
     if (req.params.fileid) {
       ebookFile = req.libraryItem.getLibraryFileWithIno(req.params.fileid)
@@ -1127,14 +1189,14 @@ class LibraryItemController {
         return res.status(400).send('Invalid ebook file id')
       }
     } else {
-      ebookFile = req.libraryItem.media.ebookFile
+      ebookFile = (req.libraryItem.media as BookExpanded).ebookFile // boundary: LibraryItem.js (JS) types media as a book or a podcast, and this handler does not test isBook; a podcast has no ebookFile, so the 404 below answers
     }
 
     if (!ebookFile) {
       Logger.error(`[LibraryItemController] No ebookFile for library item "${req.libraryItem.media.title}"`)
       return res.sendStatus(404)
     }
-    const ebookFilePath = ebookFile.metadata.path
+    const ebookFilePath = ebookFile.metadata!.path! // metadata (LibraryFile.js) and path (FileMetadata) start as null and are set when the library file is built from the scanned file
 
     Logger.info(`[LibraryItemController] User "${req.user.username}" requested download for item "${req.libraryItem.media.title}" ebook at "${ebookFilePath}"`)
 
@@ -1145,7 +1207,7 @@ class LibraryItemController {
     }
 
     try {
-      await new Promise((resolve, reject) => res.sendFile(ebookFilePath, (error) => (error ? reject(error) : resolve())))
+      await new Promise<void>((resolve, reject) => res.sendFile(ebookFilePath, (error) => (error ? reject(error) : resolve())))
       Logger.info(`[LibraryItemController] Downloaded ebook file "${ebookFilePath}"`)
     } catch (error) {
       Logger.error(`[LibraryItemController] Failed to download ebook file "${ebookFilePath}"`, error)
@@ -1162,7 +1224,7 @@ class LibraryItemController {
    * @param {LibraryItemControllerRequestWithFile} req
    * @param {Response} res
    */
-  async updateEbookFileStatus(req, res) {
+  async updateEbookFileStatus(req: LibraryItemControllerRequestWithFile, res: Response) {
     if (!req.libraryItem.isBook) {
       Logger.error(`[LibraryItemController] Invalid media type for ebook file status update`)
       return res.sendStatus(400)
@@ -1173,7 +1235,7 @@ class LibraryItemController {
     }
 
     const ebookLibraryFile = req.libraryFile
-    let primaryEbookFile = null
+    let primaryEbookFile: PrimaryEbookFile | null = null
 
     const ebookLibraryFileInos = req.libraryItem
       .getLibraryFiles()
@@ -1183,7 +1245,7 @@ class LibraryItemController {
     if (ebookLibraryFile.isSupplementary) {
       Logger.info(`[LibraryItemController] Updating ebook file "${ebookLibraryFile.metadata.filename}" to primary`)
 
-      primaryEbookFile = ebookLibraryFile.toJSON()
+      primaryEbookFile = ebookLibraryFile.toJSON() as PrimaryEbookFile // boundary: LibraryFile.js (JS) returns the JSON of a library file; the next three lines turn it into the ebook file of the book
       delete primaryEbookFile.isSupplementary
       delete primaryEbookFile.fileType
       primaryEbookFile.ebookFormat = ebookLibraryFile.metadata.format
@@ -1217,7 +1279,7 @@ class LibraryItemController {
    * @param {Response} res
    * @param {NextFunction} next
    */
-  async middleware(req, res, next) {
+  async middleware(req: RequestWithUser & { libraryItem?: LibraryItem; libraryFile?: LibraryFile }, res: Response, next: NextFunction) {
     req.libraryItem = await Database.libraryItemModel.getExpandedById(req.params.id)
     if (!req.libraryItem?.media) return res.sendStatus(404)
 
@@ -1248,4 +1310,4 @@ class LibraryItemController {
     next()
   }
 }
-module.exports = new LibraryItemController()
+export = new LibraryItemController()
