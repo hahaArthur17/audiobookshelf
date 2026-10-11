@@ -34,10 +34,12 @@ Scanner (written on macOS/Node 24 by a local agent, verified on Linux/Node 22; f
 
 `AuthRateLimit.test.js` (10 tests) characterizes the auth rate limiter through the real server in a child process (`helpers/child-server.js`, shared boot helper; the limiter is a process-wide singleton configured from env vars on first use): the 429 and its headers, `RATE_LIMIT_AUTH_MAX` / `_WINDOW` / `_MESSAGE`, `=0` disabling, the default of 40, which routes share the budget, and the client key.
 
+`OidcFlow.test.js` (41 tests) runs the whole OpenID Connect login through the real `OidcAuthStrategy`, openid-client and passport against a fake identity provider (`helpers/fake-idp.js`: discovery, authorize, token with client secret and PKCE check, RS256 id_token plus JWKS, userinfo, end-session, with switches for denied access, bad signature, wrong issuer/audience, expired token, sub mismatch and endpoint failures). The browser is simulated with a cookie jar, so every hop is recorded: start (`/auth/openid` web and mobile, redirect-uri whitelist, PKCE, scope with the group/permission claims, subfolder), `/mobile-redirect`, the callback (success redirect with tokens and cookies, every error redirect together with the error and warning lines that were logged), user matching (sub, email, username, linking, inactive, auto-register), group and advanced-permission claims, the issuer config helper, the mobile app flow with `code_verifier`, logout end-session URLs, and strategy lifecycle. It runs in process on `startAuthApi`; the rate limiter is bypassed there (see `AuthRateLimit.test.js`).
+
 Skipped (6): real zip download (`GET /libraries/:id/download`), author image resize (needs ffmpeg), item cover upload and cover cache-miss resize (LibraryItem), `POST /notifications` without `urls` (hangs), `GET /logger-data` with no log manager (hangs).
 
 ## Not covered yet
-The OIDC flow (`/auth/openid`, `/callback`, `/mobile-redirect`; needs a fake identity provider), `Database.js` init, the scanner (`scanner/*`), `Server.js` boot, `HlsRouter`, and anything needing ffmpeg/real media. The upgrade smoke test (`scripts/upgrade-smoke`) covers migrations end to end.
+Nothing planned is left. Not exercised: a real provider (Keycloak, Authentik) and its quirks, `PATCH /api/auth-settings` switching the OIDC strategy on and off (needs the real `Server` wiring; `useAuthStrategy`/`unuse` are covered directly), and Windows. The upgrade smoke test (`scripts/upgrade-smoke`) covers migrations end to end.
 
 ## Findings (recorded as-is, nothing fixed)
 Reported by the test-writing agents while reading the code and recording responses; not independently verified beyond the snapshots. Candidates for upstream issues, roughly by importance.
@@ -143,10 +145,24 @@ Reported by the test-writing agents while reading the code and recording respons
 - The window is `RATE_LIMIT_AUTH_WINDOW` in ms (the policy header rounds it up to whole seconds); a non-numeric or non-positive `RATE_LIMIT_AUTH_MAX` silently keeps the default of 40, and only `0` disables the limiter. The env vars are read once, the first time the limiter is created.
 - The 429 body is `{ error: <message> }` (default `Too many authentication requests`) with standard `RateLimit-*` and `Retry-After` headers; every rejection logs a WARN with IP, endpoint and user agent. The 401 for a wrong password is a bare `Unauthorized` text, so clients see a different body type before and after the limit.
 
+**OIDC (from `OidcFlow.test.js`)**
+- The `auth_state` cookie is dead code: the web flow rejects a `state` query param (400) and the API-based flows skip the cookie, so it is never set.
+- A mobile login that fails at the callback answers with the web redirect `/login?error=...`, never the 401/500 text. The callback checks `session.mobile === true`, but the login route stores the `redirect_uri` string there.
+- With auto-register off and no matching user, `verifyCallback` logs "auto-register is disabled" and then throws `Cannot read properties of null (reading 'isActive')`; the catch turns it into the same `Unauthorized`, so only the log differs.
+- If `authOpenIDSubfolderForRedirectURLs` was never set, the redirect uri is built from the literal string `undefined` (`/undefined/auth/openid/callback`); migration 2.17.4 writes `''` for existing OIDC installs.
+- `GET /auth/openid` with invalid or incomplete settings answers 500 with Express' HTML error page including the stack and file paths (`getClient()` throws outside the try block).
+- `/auth/openid/mobile-redirect` forwards a missing `code` as the text `undefined`. Entries in `openIdAuthSession` (mobile logins started) are removed only when `/mobile-redirect` is called for that state, so abandoned logins accumulate in memory. The route is unauthenticated and rate limited by a spoofable key.
+- The `setToken` redirect parameter is the literal `null` for a user whose legacy `token` column is empty (the seeded users), and a JWT for a user created by auto-register.
+- Matching: the sub is linked on the first email/username match, email and username comparisons are case insensitive, a missing `email_verified` counts as verified for matching but a new auto-registered user only gets an email if `email_verified` is truthy, and a username match works for preferred_username first, then `username`.
+- Root can log in with the `admin` group (type unchanged) but is refused for any other group; the advanced-permissions claim is ignored for admins and the login is refused when it is missing, contains an unknown key, or has non-string library ids. A user created by auto-register is deleted again when any of these fail.
+- Every OIDC failure the user sees is `Unauthorized` or `Error in callback`; the cause (OPError/RPError text, group claim, linked sub) is only in the server log.
+
 **Harness/seed quirks to remember when writing more tests**
 - `User.js` keeps a module-private LRU of users that outlives the database; the harness now evicts them in `stop()`, otherwise a later test's username lookup returns a previous test's user.
 - The auth rate limiter is a process-wide singleton; `startAuthApi` bypasses it on its own `Auth` instance. Its real behaviour is characterized in `AuthRateLimit.test.js` via a child process.
 - Scanner tests: the scanner recognizes moved folders by inode, and ext4/overlayfs reuse a freed inode for the next new file (APFS does not). Create replacement files before deleting the old ones in a test, or a "delete folder, create other folder" case turns into a rename on Linux.
+- `User.createUserFromOpenIdUserInfo` signs with the `TokenManager` module the model loaded, not the fresh copy `startAuthApi` configures, so a test that auto-registers users must set `TokenManager.TokenSecret` on that one too (`OidcFlow.test.js` does); without it every auto-register fails with "secretOrPrivateKey must have a value" and the error is only in the (stubbed) log.
+- Use an instance update (`row.update(...)`), not `Model.update`, to change a user in a test: `Model.update` leaves the module-private user cache stale.
 - Login responses carry `serverSettings.timeZone`, which defaults to the machine's `TZ`; `AuthRoutes.test.js` masks it (`<env>`), as it does `logLevel`.
 - `createBook` leaves `explicit` NULL, which hides books from `user`/`guest`; `createLibrary` leaves `library.settings` NULL (public share GET then 500s).
 - Singletons leak between tests unless reset: `CacheManager` (reset by the harness), `ShareManager`, `Logger.logLevel`, `Database.libraryFilterData`, the rate limiter on `PATCH /me/password` (40 calls per 10 minutes per process).
