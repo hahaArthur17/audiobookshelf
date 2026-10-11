@@ -91,6 +91,73 @@ describe('Auth routes (characterization)', () => {
       matchSnapshot(this, Object.fromEntries(Object.entries(results).map(([k, v]) => [k, scrub(v)])))
     })
 
+    describe('real credentials through passport jwtAuthCheck', () => {
+      const crypto = require('crypto')
+      const jwt = require('jsonwebtoken')
+      const Database = require('../../server/Database')
+      const SECRET = 'characterization-test-secret'
+      const me = async (token) => scrub(await api.authRequest('GET', '/api/me', { bearer: token }))
+      const makeKey = async (users, name, o = {}) => {
+        const id = crypto.randomUUID()
+        const payload = { keyId: id, name, type: 'api' }
+        if (o.expSecondsAgo) payload.exp = Math.floor(Date.now() / 1000) - o.expSecondsAgo
+        const token = jwt.sign(payload, SECRET)
+        const key = await Database.apiKeyModel.create({ id, name, userId: users.user.id, isActive: o.isActive ?? true, expiresAt: null, createdByUserId: users.admin.id, permissions: Database.apiKeyModel.getDefaultPermissions() })
+        return { key, token }
+      }
+
+      it('api key bearer: active works; inactive, expired, unknown and inactive-owner keys are rejected', async function () {
+        const users = await Database.userModel.findAll()
+        const byName = Object.fromEntries(users.map((u) => [u.username, u]))
+        const active = await makeKey(byName, 'active')
+        const inactive = await makeKey(byName, 'inactive', { isActive: false })
+        const expired = await makeKey(byName, 'expired', { expSecondsAgo: 60 })
+        const unknown = jwt.sign({ keyId: crypto.randomUUID(), name: 'ghost', type: 'api' }, SECRET)
+        const results = {
+          active: await me(active.token),
+          inactive: await me(inactive.token),
+          expired: await me(expired.token),
+          unknown: await me(unknown)
+        }
+        // an expired key is also deactivated as a side effect
+        const expiredRow = await Database.apiKeyModel.findByPk(expired.key.id)
+        const activeRow = await Database.apiKeyModel.findByPk(active.key.id)
+        // owner deactivated: the previously working key is now rejected
+        // instance update: it invalidates the user cache (the static Model.update does not, so a cached user would stay active)
+        await byName.user.update({ isActive: false })
+        results.ownerInactive = await me(active.token)
+        matchSnapshot(this, { results, expiredKeyActiveAfter: expiredRow.isActive, activeKeyActiveAfter: activeRow.isActive })
+        expect(results.active.status).to.equal(200)
+        expect(results.active.body.username).to.equal('user')
+      })
+
+      it('expired access token is rejected, a fresh one is accepted', async function () {
+        const users = await Database.userModel.findAll()
+        const user = users.find((u) => u.username === 'user')
+        const mk = (o) => jwt.sign({ userId: user.id, username: user.username, type: 'access' }, SECRET, o)
+        const results = { valid: await me(mk({ expiresIn: 600 })), expired: await me(mk({ expiresIn: -60 })) }
+        matchSnapshot(this, results)
+        expect(results.valid.status).to.equal(200)
+        expect(results.valid.body.username).to.equal('user')
+      })
+
+      it('valid access token of an inactive user is rejected', async function () {
+        const { body } = await login('user', pass('user'))
+        const token = body.user.accessToken
+        const before = await me(token)
+        const row = await Database.userModel.findOne({ where: { username: 'user' } })
+        await row.update({ isActive: false })
+        const after = await me(token)
+        matchSnapshot(this, { before, after })
+        expect(before.status).to.equal(200)
+      })
+
+      it('a refresh token used as bearer is rejected', async function () {
+        const { body } = await login('user', pass('user'), { 'x-return-tokens': 'true' })
+        matchSnapshot(this, await me(body.user.refreshToken))
+      })
+    })
+
     it('lets cover and author image GETs through without authentication', async function () {
       const cover = await api.authRequest('GET', '/api/items/does-not-exist/cover')
       const image = await api.authRequest('GET', '/api/authors/does-not-exist/image')

@@ -633,6 +633,157 @@
       "cookies": []
     }
   },
+  "Auth routes (characterization) > bearer authentication on /api > real credentials through passport jwtAuthCheck > a refresh token used as bearer is rejected": {
+    "status": 401,
+    "location": null,
+    "body": "Unauthorized",
+    "cookies": []
+  },
+  "Auth routes (characterization) > bearer authentication on /api > real credentials through passport jwtAuthCheck > api key bearer: active works; inactive, expired, unknown and inactive-owner keys are rejected": {
+    "results": {
+      "active": {
+        "status": 200,
+        "location": null,
+        "body": {
+          "id": "<uuid-1>",
+          "username": "user",
+          "email": null,
+          "type": "user",
+          "token": null,
+          "mediaProgress": [],
+          "seriesHideFromContinueListening": [],
+          "bookmarks": [],
+          "isActive": true,
+          "isLocked": false,
+          "lastSeen": null,
+          "createdAt": "<timestamp>",
+          "permissions": {
+            "download": true,
+            "update": false,
+            "delete": false,
+            "upload": false,
+            "createEreader": false,
+            "accessAllLibraries": true,
+            "accessAllTags": true,
+            "accessExplicitContent": false,
+            "selectedTagsNotAccessible": false
+          },
+          "librariesAccessible": [],
+          "itemTagsSelected": [],
+          "hasOpenIDLink": false
+        },
+        "cookies": []
+      },
+      "inactive": {
+        "status": 401,
+        "location": null,
+        "body": "Unauthorized",
+        "cookies": []
+      },
+      "expired": {
+        "status": 401,
+        "location": null,
+        "body": "Unauthorized",
+        "cookies": []
+      },
+      "unknown": {
+        "status": 401,
+        "location": null,
+        "body": "Unauthorized",
+        "cookies": []
+      },
+      "ownerInactive": {
+        "status": 401,
+        "location": null,
+        "body": "Unauthorized",
+        "cookies": []
+      }
+    },
+    "expiredKeyActiveAfter": false,
+    "activeKeyActiveAfter": true
+  },
+  "Auth routes (characterization) > bearer authentication on /api > real credentials through passport jwtAuthCheck > expired access token is rejected, a fresh one is accepted": {
+    "valid": {
+      "status": 200,
+      "location": null,
+      "body": {
+        "id": "<uuid-1>",
+        "username": "user",
+        "email": null,
+        "type": "user",
+        "token": null,
+        "mediaProgress": [],
+        "seriesHideFromContinueListening": [],
+        "bookmarks": [],
+        "isActive": true,
+        "isLocked": false,
+        "lastSeen": null,
+        "createdAt": "<timestamp>",
+        "permissions": {
+          "download": true,
+          "update": false,
+          "delete": false,
+          "upload": false,
+          "createEreader": false,
+          "accessAllLibraries": true,
+          "accessAllTags": true,
+          "accessExplicitContent": false,
+          "selectedTagsNotAccessible": false
+        },
+        "librariesAccessible": [],
+        "itemTagsSelected": [],
+        "hasOpenIDLink": false
+      },
+      "cookies": []
+    },
+    "expired": {
+      "status": 401,
+      "location": null,
+      "body": "Unauthorized",
+      "cookies": []
+    }
+  },
+  "Auth routes (characterization) > bearer authentication on /api > real credentials through passport jwtAuthCheck > valid access token of an inactive user is rejected": {
+    "before": {
+      "status": 200,
+      "location": null,
+      "body": {
+        "id": "<uuid-1>",
+        "username": "user",
+        "email": null,
+        "type": "user",
+        "token": null,
+        "mediaProgress": [],
+        "seriesHideFromContinueListening": [],
+        "bookmarks": [],
+        "isActive": true,
+        "isLocked": false,
+        "lastSeen": null,
+        "createdAt": "<timestamp>",
+        "permissions": {
+          "download": true,
+          "update": false,
+          "delete": false,
+          "upload": false,
+          "createEreader": false,
+          "accessAllLibraries": true,
+          "accessAllTags": true,
+          "accessExplicitContent": false,
+          "selectedTagsNotAccessible": false
+        },
+        "librariesAccessible": [],
+        "itemTagsSelected": [],
+        "hasOpenIDLink": false
+      },
+      "cookies": []
+    },
+    "after": {
+      "status": 401,
+      "location": null,
+      "body": "Unauthorized",
+      "cookies": []
+    }
+  },
   "Auth routes (characterization) > bearer authentication on /api > rejects missing, malformed and wrongly signed tokens with 401": {
     "none": {
       "status": 401,
