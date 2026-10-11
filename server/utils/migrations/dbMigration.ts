@@ -545,7 +545,7 @@ function migrateLibraryItems(oldLibraryItems: LegacyLibraryItem[]): MigrationRow
 
     let size = 0
     for (const libraryFile of oldLibraryItem.libraryFiles) {
-      if (libraryFile.metadata?.size && !isNaN(libraryFile.metadata.size as number)) {
+      if (libraryFile.metadata?.size && !isNaN(libraryFile.metadata?.size as number)) {
         size += libraryFile.metadata!.size as number
       }
     }
@@ -887,7 +887,7 @@ function migrateSessions(oldSessions: LegacySession[]): MigrationRows {
         let clientVersion = null
         let deviceName = null
         let deviceVersion = oldDeviceInfo.browserVersion || null
-        const extraData: Record<string, unknown> = {}
+        let extraData: Record<string, unknown> = {}
         if (oldDeviceInfo.sdkVersion) {
           clientName = 'Abs Android'
           clientVersion = oldDeviceInfo.clientVersion || null
@@ -1053,7 +1053,7 @@ function migratePlaylists(oldPlaylists: LegacyPlaylist[]): MigrationRows {
     }
 
     let mediaItemType = 'book'
-    const MediaItemIds: string[] = []
+    let MediaItemIds: string[] = []
     oldPlaylist.items.forEach((itemObj) => {
       if (itemObj.episodeId) {
         mediaItemType = 'podcastEpisode'
