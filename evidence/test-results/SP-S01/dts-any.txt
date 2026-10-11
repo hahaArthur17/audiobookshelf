@@ -1,0 +1,41 @@
+# V7: every `any` in the declaration output of the three finders
+
+Method (approved deviation from spec §10 V7):
+- Script: v7-dts-emit-finders.js. It builds the same program with the same options as the spec V7 tsc command, then calls
+  program.emit() for AuthorFinder.ts, BookFinder.ts and PodcastFinder.ts only.
+- Output: dts/AuthorFinder.d.ts, dts/BookFinder.d.ts, dts/PodcastFinder.d.ts.
+- Run log: v7-dts-emit.txt (exit 0, 3 files written, 0 declaration diagnostics; written to the session scratchpad,
+  then copied here).
+
+Why the deviation:
+- The spec V7 command (tsc --declaration --emitDeclarationOnly --allowJs on the 3 finders) writes declarations for
+  all 251 program files.
+- It crashes tsc 5.9.3 on the vendored server/libs/archiver/buffer-crc32/index.js, which is part of that program.
+- Evidence: v7-tsc-crash.txt (the spec command's output), graph-check-output.txt + graph-check.js (the file is in the
+  program), crash-isolated-archiver.txt (the file crashes on its own).
+
+Count commands:
+- grep -nw any dts/AuthorFinder.d.ts dts/BookFinder.d.ts dts/PodcastFinder.d.ts
+  Result: no matches (grep exit 1).
+- grep -ow any dts/*.d.ts | wc -l
+  Result: 0.
+
+RESULT: 0 occurrences of `any` in the declaration output. There is no file, line or source to list.
+
+NOTE: the any count is a LOWER BOUND.
+Declaration output covers only the declared and exported types: class fields, method signatures, and the module-local
+interfaces and type aliases they reference. It does not show:
+- `any` inside function bodies (local values that are never part of a signature);
+- `any` inside types imported from JS modules (e.g. the provider classes used as field types). Those belong to the JS
+  modules, not to the finders.
+
+Known internal `any` flows, NOT measured by V7 (UNCHECKED):
+- AuthorFinder.ts, saveAuthorImage: the results of fs.pathExists(...) and fs.ensureDir(...) are `any`, from fsExtra's
+  universalify wrappers. They are used only in `if (!await ...)` and as a statement. (spec §6.6; probe P-1 showed
+  pathExists is assignable to number)
+- AuthorFinder.ts, saveAuthorImage: downloadImageFile(...) resolves Promise<any> (fileUtils.js:351 `@returns {Promise}`).
+  The value is ignored. (spec §6.6)
+- Parameters of untyped JS functions are `any` on the callee side (Logger.debug/error ...args,
+  htmlSanitizer.stripAllTags(html)). (spec §6.6)
+- Possible, not verified: the return value of htmlSanitizer.stripAllTags(...), assigned to descriptionPlain in
+  BookFinder.runSearch, may be `any`, because stripAllTags and libs/sanitizeHtml have no return-type JSDoc. Not in spec §6.6.

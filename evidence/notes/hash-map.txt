@@ -1,0 +1,29 @@
+b3abccb6 -> 5e75859c  [SP-S00] evidence: baseline npm ci and npm test (356 passing)
+932e7a51 -> 66612036  [SP-S00] evidence: Superpowers test, permissions, workflow card
+5968b516 -> 64a6896c  [SP-S01] evidence: first prompt
+a9848335 -> fe158873  [SP-S01] evidence: session notes (in progress)
+14551248 -> 4218eefa  [SP-S01] evidence: session notes (corrected)
+36485063 -> e360242e  [SP-S01] evidence: session notes (design section 1)
+588a9d13 -> afa339f6  [SP-S01] evidence: notes and replies (design approved)
+d9e180f9 -> d340731d  [SP-S01] evidence: notes and replies (design approved)
+15075ddd -> bf900f50  [SP-S01] evidence: notes (spec written)
+bbf7f854 -> 8cf76626  [SP-S01] plan: design spec for server/finders TypeScript migration
+632d284b -> a1d649af  [SP-S01] evidence: notes and replies (spec approved)
+b40bd988 -> 7142877c  [SP-S01] evidence: notes (no tests mention AuthorFinder or PodcastFinder)
+9a885c7b -> ead99390  [SP-S01] plan: implementation plan for server/finders TypeScript migration
+e740459a -> 03b2a919  [SP-S01] evidence: notes (plan written and checked)
+b29f4b0b -> 70229191  [SP-S01] evidence: notes (execution started, Native mode)
+e04edd40 -> 5fd90928  [SP-S01] evidence: notes (Task 1 red check and typing)
+8cf42a71 -> 06e1c1ba  [SP-S01] PodcastFinder: migrate to TypeScript (type-only)
+2df899a3 -> c57cc742  [SP-S01] evidence: notes (Task 1 complete, times corrected)
+83c1a0ab -> e79bc961  [SP-S01] AuthorFinder: migrate to TypeScript (type-only)
+ff0c14d0 -> d272c2de  [SP-S01] BookFinder: migrate to TypeScript (type-only)
+f7c3968b -> 50184fb4  [SP-S01] evidence: notes, replies, ledger and V7 declaration output
+04d89232 -> 663c1ee8  [SP-S01] evidence: notes (Tasks 2 and 3, V7)
+b1a5d162 -> e7d0990b  [SP-S01] evidence: notes (Tasks 2 and 3, V7)
+e2f314c4 -> 513d6431  [SP-S01] evidence: notes (remove duplicate lines)
+07ef8452 -> e409b515  [SP-S01] evidence: notes (skills, corrections, usage readings)
+68f83be8 -> 38ee48c0  [SP-S01] evidence: notes (S02 start)
+7548c1b2 -> b7d7f00f  [SP-S01] evidence: final verification and report
+400c9a9e -> 945e220d  [SP-S01] evidence: replies 5-15
+d988cfe0 -> 2ebf5049  [SP-S01] evidence: notes (cleaned, S02 and cost added), token check, clean-build check and ledger

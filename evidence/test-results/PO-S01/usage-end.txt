@@ -1,0 +1,47 @@
+ Session
+
+   Total cost:            $5.28
+   Total duration (API):  15m 25s
+   Total duration (wall): 1h 28m 28s
+   Total code changes:    334 lines added, 90 lines removed
+   Usage by model:
+       claude-haiku-4-5:  904 input, 10 output, 0 cache read, 0 cache write ($0.0010)
+        claude-opus-5-5:  928 input, 93.1k output, 9.3m cache read, 194.3k cache write ($5.28)
+   Prompt cache (main):   67 requests · 98% of input tokens from cache · no misses · warm (1h TTL, last activity 4m 3s ago)
+
+   Current session
+   ██▌                                                5% used
+   Resets 7am (Pacific/Auckland)
+
+   Current week (all models)
+   ████████████████▌                                  33% used
+   Resets Oct 6, 6am (Pacific/Auckland)
+
+   Current week (Fable)
+   ██████                                             12% used
+   Resets Oct 6, 6am (Pacific/Auckland)
+
+   What's contributing to your limits usage?
+   Approximate, based on local sessions on this machine — does not include other devices or claude.ai
+
+   Last 24h · these are independent characteristics of your usage, not a breakdown
+
+   79% of your usage was at >150k context
+    Longer sessions are more expensive even when cached. /compact mid-task, /clear when switching to new tasks.
+
+   17% of your usage came from the plugin "superpowers"
+    Review what this plugin contributes — its agents, skills, and MCP tools all count toward your limit.
+
+Skills                  % of usage
+/superpowers:test-driven-de…    9%
+/superpowers:writing-plans      4%
+/superpowers:verification-b…    2%
+/superpowers:executing-plans    1%
+
+Plugins                 % of usage
+superpowers                    17%
+
+d to day · w to week
+
+Usage credits
+Usage credits are off · /usage-credits to turn them on

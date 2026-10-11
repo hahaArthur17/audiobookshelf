@@ -1,0 +1,43 @@
+# PO-S07 Collection, bug: this.books = books inside the static getOldCollectionsJsonExpanded() (Collection.js:99)
+# BEFORE the fix. Code at HEAD 16c6d9e0 plus the new test file only. 2026-10-10 20:52:38
+# Command: npm run build:server, then npx mocha dist-server/test/server/bugfix/Collection.getOldCollectionsJsonExpanded.test.js
+# Log lines "DEBUG: [LibraryItemsBookFilters] ..." are filtered out of this file.
+
+
+
+  Collection.getOldCollectionsJsonExpanded
+    ✔ returns every book of the collection to a user who can access explicit content
+    1) leaves out the books that the user is not allowed to access
+    2) does not store the filtered books on the Collection class
+
+
+  1 passing (1s)
+  2 failing
+
+  1) Collection.getOldCollectionsJsonExpanded
+       leaves out the books that the user is not allowed to access:
+
+      AssertionError: expected [ …(2) ] to deeply equal [ Array(1) ]
+      + expected - actual
+
+       [
+         "9423c9ca-4ee4-469d-828a-c4c614c4c261"
+      -  "eeb5c1ae-ec04-4542-9da0-f2dbd5c154d9"
+       ]
+      
+      at Context.<anonymous> (dist-server\test\server\bugfix\Collection.getOldCollectionsJsonExpanded.test.js:68:65)
+
+  2) Collection.getOldCollectionsJsonExpanded
+       does not store the filtered books on the Collection class:
+
+      AssertionError: expected true to be false
+      + expected - actual
+
+      -true
+      +false
+      
+      at Context.<anonymous> (dist-server\test\server\bugfix\Collection.getOldCollectionsJsonExpanded.test.js:72:94)
+
+
+
+exit code: 2

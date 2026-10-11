@@ -1,0 +1,66 @@
+server/models/Collection.ts(85,7): error TS2322: Type '{ libraryId: string; } | null' is not assignable to type 'WhereOptions<any> | undefined'.
+  Type 'null' is not assignable to type 'WhereOptions<any> | undefined'.
+server/models/MediaItemShare.ts(145,92): error TS2345: Argument of type 'null' is not assignable to parameter of type 'BindOrReplacements | undefined'.
+server/models/MediaProgress.ts(180,8): error TS2352: Conversion of type 'ModelCtor<Model<any, any>>' to type 'typeof User' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'ModelCtor<Model<any, any>>' is missing the following properties from type 'typeof User': accountTypes, permissionMapping, getSampleAbsPermissions, getDefaultPermissionsForUserType, and 12 more.
+server/models/PlaybackSession.ts(1,9): error TS2451: Cannot redeclare block-scoped variable 'DataTypes'.
+server/models/PlaybackSession.ts(1,20): error TS2451: Cannot redeclare block-scoped variable 'Model'.
+server/models/PlaybackSession.ts(6,15): error TS7006: Parameter 'values' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(6,23): error TS7006: Parameter 'options' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(64,34): error TS7006: Parameter 'session' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(67,24): error TS7006: Parameter 'sessionId' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(79,32): error TS7006: Parameter 'playbackSessionExpanded' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(110,21): error TS7006: Parameter 'sessionId' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(118,24): error TS7006: Parameter 'oldPlaybackSession' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(125,24): error TS7006: Parameter 'oldPlaybackSession' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(135,21): error TS7006: Parameter 'oldPlaybackSession' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(164,16): error TS7006: Parameter 'options' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(174,15): error TS7006: Parameter 'sequelize' implicitly has an 'any' type.
+server/models/PlaybackSession.ts(234,43): error TS7006: Parameter 'findResult' implicitly has an 'any' type.
+server/models/Playlist.ts(18,59): error TS2306: File 'D:/SEM-2/574/Project/audiobookshelf-po/server/models/Podcast.ts' is not a module.
+server/models/Playlist.ts(122,15): error TS2322: Type '{ model: typeof PlaylistMediaItem; include: ({ model: sequelizeModule.ModelCtor<sequelizeModule.Model<any, any>>; include: ({ model: sequelizeModule.ModelCtor<...>; } | { ...; })[]; } | { ...; })[]; }' is not assignable to type 'Includeable | Includeable[] | undefined'.
+  Types of property 'include' are incompatible.
+    Type '({ model: ModelCtor<Model<any, any>>; include: ({ model: ModelCtor<Model<any, any>>; } | { model: ModelCtor<Model<any, any>>; through: { ...; }; })[]; } | { ...; })[]' is not assignable to type 'Includeable[]'.
+      Type '{ model: sequelizeModule.ModelCtor<sequelizeModule.Model<any, any>>; include: { model: sequelizeModule.ModelCtor<sequelizeModule.Model<any, any>>; include: sequelizeModule.ModelCtor<...>; }; }' is not assignable to type 'Includeable'.
+        Types of property 'include' are incompatible.
+          Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+server/models/Playlist.ts(170,13): error TS2353: Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+server/models/Playlist.ts(349,15): error TS2322: Type 'ModelCtor<Model<any, any>>' is not assignable to type 'Includeable[] | undefined'.
+server/models/Podcast.ts(1,9): error TS2451: Cannot redeclare block-scoped variable 'DataTypes'.
+server/models/Podcast.ts(1,20): error TS2451: Cannot redeclare block-scoped variable 'Model'.
+server/models/Podcast.ts(15,15): error TS7006: Parameter 'values' implicitly has an 'any' type.
+server/models/Podcast.ts(15,23): error TS7006: Parameter 'options' implicitly has an 'any' type.
+server/models/Podcast.ts(79,34): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+server/models/Podcast.ts(79,43): error TS7006: Parameter 'transaction' implicitly has an 'any' type.
+server/models/Podcast.ts(83,93): error TS7006: Parameter 'g' implicitly has an 'any' type.
+server/models/Podcast.ts(84,69): error TS7006: Parameter 't' implicitly has an 'any' type.
+server/models/Podcast.ts(112,62): error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
+server/models/Podcast.ts(127,15): error TS7006: Parameter 'sequelize' implicitly has an 'any' type.
+server/models/Podcast.ts(165,44): error TS7006: Parameter 'instance' implicitly has an 'any' type.
+server/models/Podcast.ts(169,43): error TS7006: Parameter 'instance' implicitly has an 'any' type.
+server/models/Podcast.ts(184,41): error TS7006: Parameter 'total' implicitly has an 'any' type.
+server/models/Podcast.ts(184,48): error TS7006: Parameter 'episode' implicitly has an 'any' type.
+server/models/Podcast.ts(211,27): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+server/models/Podcast.ts(259,84): error TS7006: Parameter 'item' implicitly has an 'any' type.
+server/models/Podcast.ts(266,60): error TS7006: Parameter 'item' implicitly has an 'any' type.
+server/models/Podcast.ts(302,22): error TS7006: Parameter 'supportedMimeTypes' implicitly has an 'any' type.
+server/models/Podcast.ts(302,42): error TS7006: Parameter 'episodeId' implicitly has an 'any' type.
+server/models/Podcast.ts(307,48): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+server/models/Podcast.ts(324,16): error TS7006: Parameter 'libraryItemId' implicitly has an 'any' type.
+server/models/Podcast.ts(324,31): error TS7006: Parameter 'episodeId' implicitly has an 'any' type.
+server/models/Podcast.ts(325,48): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+server/models/Podcast.ts(340,15): error TS7006: Parameter 'episodeId' implicitly has an 'any' type.
+server/models/Podcast.ts(341,48): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+server/models/Podcast.ts(350,20): error TS7006: Parameter 'episodeId' implicitly has an 'any' type.
+server/models/Podcast.ts(351,48): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+server/models/Podcast.ts(364,23): error TS7006: Parameter 'episodeId' implicitly has an 'any' type.
+server/models/Podcast.ts(365,48): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+server/models/Podcast.ts(379,41): error TS7006: Parameter 'latest' implicitly has an 'any' type.
+server/models/Podcast.ts(379,49): error TS7006: Parameter 'episode' implicitly has an 'any' type.
+server/models/Podcast.ts(393,32): error TS7006: Parameter 'feedEpisode' implicitly has an 'any' type.
+server/models/Podcast.ts(396,39): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+server/models/Podcast.ts(422,21): error TS2339: Property 'titleIgnorePrefix' does not exist on type '{ title: any; author: any; description: any; releaseDate: any; genres: any[]; feedUrl: any; imageUrl: any; itunesPageUrl: any; itunesId: any; itunesArtistId: any; explicit: any; language: any; type: any; }'.
+server/models/Podcast.ts(431,13): error TS7006: Parameter 'libraryItemId' implicitly has an 'any' type.
+server/models/Podcast.ts(445,43): error TS7006: Parameter 'episode' implicitly has an 'any' type.
+server/models/Podcast.ts(482,21): error TS7006: Parameter 'libraryItemId' implicitly has an 'any' type.
+server/models/Podcast.ts(493,43): error TS7006: Parameter 'e' implicitly has an 'any' type.

@@ -1,0 +1,1017 @@
+===== 16:04:19 | a0a40682-69e7-4c99-baaf-5047a9625006.jsonl | Agent
+--- description:
+Convert models set 1
+--- subagent_type:
+general-purpose
+--- prompt:
+You are sub-agent 1 of 4 in a parallel JavaScript-to-TypeScript migration of the Sequelize models in D:\SEM-2\574\Project\audiobookshelf-po (branch Aung-Min-Myat/po-s01). I am the main agent: I integrate, build, test and commit. Three other sub-agents are converting other models in the same working tree at the same time as you.
+
+## Your set (yours alone), in this order
+1. server/models/BookSeries.js (78 lines, no relative requires)
+2. server/models/BookAuthor.js (110 lines, no relative requires)
+3. server/models/Book.js (691 lines)
+4. server/models/LibraryItem.js (1044 lines; requires ./Book (yours) and ./Podcast (sub-agent 3) at runtime and reads the model registry 31 times). Do it last, and only start it if you have at least 20 minutes left.
+
+## Read first, then start
+1. CLAUDE.md at the repo root, all of it. It is binding. "Rules", "Pitfalls found so far" and "Sequelize models" matter most. Follow the Sequelize section exactly as written (init as two overloads then the JSDoc then the implementation; optional constructor parameters; `declare` fields; the three-line import shape).
+2. The three converted models are your worked examples: server/models/Setting.ts, LibraryFolder.ts, Session.ts. `git show 96f5fc41` shows what one conversion diff looks like.
+
+## Hard limits
+- Edit only the files of your set, and rename them only with `git mv server/models/X.js server/models/X.ts`. Create, edit, move or delete nothing else in the repo: not other models, not server/types/, not test/, not config files, no scratch files inside the repo.
+- Do not run `npm run build:server`, `npm test`, `npm install`, or any tsc command except the check below. Do not commit, add, stash, reset, checkout, rebase, clean or push.
+- If `git mv` or `git restore` fails with an index.lock error, another agent is using git: wait a few seconds and retry.
+- Type check (no emit, writes nothing): `npx tsc -p tsconfig.check.json`. It checks the whole program and four agents share the machine, so run it per batch of edits, not per line. Capture once and filter, for example:
+  `out=$(npx tsc -p tsconfig.check.json 2>&1); echo "$out" | grep -E "^server/models/(BookSeries|BookAuthor|Book|LibraryItem)\.ts"; echo "$out" | grep -E "BookSeries|BookAuthor|models/Book'|LibraryItem" | grep -v "^server/models/(BookSeries|BookAuthor|Book|LibraryItem)\.ts" | head -20`
+  The second grep shows errors in other files that name your models. Do not fix other files; report those errors to me. If tsc prints "Debug Failure", wait 30 seconds and run it again (another agent may be mid-rename).
+- Do the rename and the first imports/types in one go before you run a check (see the TypeScript crash pitfall in CLAUDE.md).
+- Do not ask the user anything. If you are stuck on a file, restore it and move on.
+
+## Stop time
+Hard stop at 16:46 local time (NZDT); `date +%H:%M:%S` shows the clock. Check it before each model. Your final report must be sent by 16:46. From 16:38, start no new model: only finish or restore the one in hand. No half-converted file may remain: at the stop, a model either passes the check in your own files or is fully restored.
+
+Restore procedure (also for a file that does not fit the rules):
+`git mv server/models/X.ts server/models/X.js` then `git restore --source=HEAD --staged --worktree -- server/models/X.js`, then confirm `git status --short -- server/models/X.js server/models/X.ts` prints nothing. Keep the compiler errors for your report.
+
+## What a conversion is
+Type-only. The compiled JavaScript must stay the same as before except for the require lines. So in emitted code change nothing but type annotations: no reordering, no new variables, no optional chaining, no new runtime requires, no bug fixes (report bugs instead). Keep `export = X` at the end. Leave every existing JSDoc comment unchanged, including the `/** @type */ this.field` lines in the constructor. Add `declare field: Type` lines at the top of the class. Use targeted edits, not whole-file rewrites. Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, as any, as unknown as.
+
+## Things I already checked that will save you time
+A. Packages: uuid is declared in server/types/untypedModules.d.ts and needs `/// <reference path="../types/untypedModules.d.ts" />` at the top of the file (precedent: server/objects/DeviceInfo.ts). jsonwebtoken has @types installed. lru-cache ships its own types (precedent: server/managers/ApiCacheManager.ts). If you need a declaration that does not exist, do not create it: send me the exact text in your report.
+
+B. The model registry. CLAUDE.md does not cover this yet. Sequelize types `sequelize.models.<name>` as `ModelCtor<Model<any, any>>`, and the static `Model.sequelize` is optional in its typings (node_modules/sequelize/types/model.d.ts:1943). So in a static method `this.sequelize.models.book.findByPk(id)` gives TS18048, and the result has no Book members. Handle it in this order of preference:
+  1. Where the code needs nothing model-specific from the entry (hasMany, belongsTo, count, destroy, a result that is only passed on), leave the entry vague. `const { book } = sequelize.models` inside init() uses the parameter and needs nothing.
+  2. Otherwise declare the registry once per class, in erased code, instead of asserting at every use:
+     ```ts
+     /** Registry entries this file reads by name, with their model classes */
+     type RegisteredModels = { book: typeof import('./Book'); bookAuthor: typeof import('./BookAuthor') }
+
+     class Author extends Model {
+       declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entries this file reads
+       declare readonly sequelize: Sequelize & { models: RegisteredModels } // same, on the instance
+     ```
+     List only the entries the file really needs typed. Try this on the first model of yours that needs it and run the check. If it type-checks, use it for the rest of your set. Count these declarations separately from casts and `!` in your report.
+  3. If (2) does not type-check for a reason you cannot resolve in a few minutes, fall back to what rule 5 allows as written: `this.sequelize!.models...` and a single-step `as` cast of the registry entry (`as typeof import('./Book')`), each with a one-line comment, and tell me exactly what failed.
+
+C. Models that are still .js. A JS model class is not assignable to Sequelize's `ModelStatic` (its `init` override), so calling an inherited Sequelize static (findAll, findByPk, create, ...) on `typeof import('./ThatModel')` gives TS2684 until its owner converts it. Such an error is not yours and will disappear: do not restore your file for it. List it in the report as "waiting on <Model>". An error that would remain after all 22 models are converted is yours. Instance types of JS models work through their JSDoc (`type Podcast = import('./Podcast')`).
+
+D. Other models as types: `type Author = import('./Author')` emits nothing. Never add a runtime require that the original file does not have (the models load in an order that matters). For each original `const x = require('...')` write `import x = require('...')`. Warning: TypeScript drops an `import x = require()` from the output when x is used only as a type. Every original require line must still be emitted, so check that each import keeps at least one value use; if one would not, tell me in the report rather than inventing a workaround.
+
+E. JSDoc `@typedef`s stop being types once the file is .ts (the comment itself stays, unchanged). If a TypeScript file reads one as `import('./X').Name` or `import('../models/X').Name`, keep it resolvable: write it as a real type and export it from a type-only namespace merged with the class (`declare namespace X { ... }`; precedent: server/managers/LogManager.ts line 15). Find consumers with a grep for `models/X')` and `'./X')` across server/. JS consumers are not type-checked, TS consumers are. Remember the pitfall: a comment directly above an interface or type is dropped from the compiled file, so put new types above the existing JSDoc blocks, not between a JSDoc block and the code it documents.
+
+F. Untyped helpers from server/utils (still .js) come back as loosely typed or any: annotate the destructured import once instead of casting at each call (CLAUDE.md pitfall). server/libs/fsExtra needs one boundary cast per call site for methods added in a loop (CLAUDE.md pitfall), each with a one-line comment.
+
+G. Type nullable columns honestly from init() (allowNull) and from how the code uses them, with a short trailing comment on the `declare` line where that differs from the constructor JSDoc (see Session.ts). Comments on `declare` lines, type aliases and overloads are erased with them, which keeps the compiled file unchanged. A `!` or `as` inside a method body still needs its one-line comment under rule 5; list those lines in your report because they show up in the compiled file.
+
+## Final report (your last message; it is the only thing I see)
+For each model of your set, one of: CONVERTED, SKIPPED (does not fit the rules: the reason and the exact compiler errors; file fully restored), NOT REACHED (untouched or restored for lack of time).
+For each converted model: the number of `!` assertions, index signatures, `as` casts and registry declarations (B.2) you added, with line numbers and the reason for each `!`/cast/index signature; any `import type` that replaces a require of names that are undefined at runtime (I must name it in the commit message); "waiting on <Model>" errors still showing; errors in other files that name your models.
+Also: declarations you need in server/types/ (exact text); bugs you found and did not fix (file:line and what is wrong); whether the Sequelize pattern in CLAUDE.md worked as written and exactly what you had to do differently; whether B.2 worked; the last filtered check output; and the output of `git status --short -- server/models/`.
+
+===== 16:04:44 | a0a40682-69e7-4c99-baaf-5047a9625006.jsonl | Agent
+--- description:
+Convert models set 2
+--- subagent_type:
+general-purpose
+--- prompt:
+You are sub-agent 2 of 4 in a parallel JavaScript-to-TypeScript migration of the Sequelize models in D:\SEM-2\574\Project\audiobookshelf-po (branch Aung-Min-Myat/po-s01). I am the main agent: I integrate, build, test and commit. Three other sub-agents are converting other models in the same working tree at the same time as you.
+
+## Your set (yours alone), in this order
+1. server/models/CustomMetadataProvider.js (106 lines, no relative requires)
+2. server/models/Device.js (177 lines; requires ../objects/DeviceInfo, which is already TypeScript)
+3. server/models/MediaProgress.js (270 lines)
+4. server/models/ApiKey.js (272 lines; jsonwebtoken and lru-cache)
+5. server/models/User.js (1026 lines; uuid, lru-cache, SocketAuthority, auth/TokenManager; reads the model registry 13 times). Do it last, and only start it if you have at least 20 minutes left. TypeScript files that already consume User: server/auth/LocalAuthStrategy.ts, server/controllers/CacheController.ts, server/managers/ApiCacheManager.ts, server/objects/settings/EmailSettings.ts (all as `type User = import('.../models/User')`) and server/objects/settings/ServerSettings.ts (`import User = require('../../models/User')`). After converting User, check those files for new errors and report them; do not edit them.
+
+## Read first, then start
+1. CLAUDE.md at the repo root, all of it. It is binding. "Rules", "Pitfalls found so far" and "Sequelize models" matter most. Follow the Sequelize section exactly as written (init as two overloads then the JSDoc then the implementation; optional constructor parameters; `declare` fields; the three-line import shape).
+2. The three converted models are your worked examples: server/models/Setting.ts, LibraryFolder.ts, Session.ts. `git show 96f5fc41` shows what one conversion diff looks like.
+
+## Hard limits
+- Edit only the files of your set, and rename them only with `git mv server/models/X.js server/models/X.ts`. Create, edit, move or delete nothing else in the repo: not other models, not server/types/, not test/, not config files, no scratch files inside the repo.
+- Do not run `npm run build:server`, `npm test`, `npm install`, or any tsc command except the check below. Do not commit, add, stash, reset, checkout, rebase, clean or push.
+- If `git mv` or `git restore` fails with an index.lock error, another agent is using git: wait a few seconds and retry.
+- Type check (no emit, writes nothing): `npx tsc -p tsconfig.check.json`. It checks the whole program and four agents share the machine, so run it per batch of edits, not per line. Capture once and filter, for example:
+  `out=$(npx tsc -p tsconfig.check.json 2>&1); echo "$out" | grep -E "^server/models/(CustomMetadataProvider|Device|MediaProgress|ApiKey|User)\.ts"; echo "$out" | grep -E "CustomMetadataProvider|models/Device|MediaProgress|ApiKey|models/User" | grep -v "^server/models/(CustomMetadataProvider|Device|MediaProgress|ApiKey|User)\.ts" | head -20`
+  The second grep shows errors in other files that name your models. Do not fix other files; report those errors to me. If tsc prints "Debug Failure", wait 30 seconds and run it again (another agent may be mid-rename).
+- Do the rename and the first imports/types in one go before you run a check (see the TypeScript crash pitfall in CLAUDE.md).
+- Do not ask the user anything. If you are stuck on a file, restore it and move on.
+
+## Stop time
+Hard stop at 16:46 local time (NZDT); `date +%H:%M:%S` shows the clock. Check it before each model. Your final report must be sent by 16:46. From 16:38, start no new model: only finish or restore the one in hand. No half-converted file may remain: at the stop, a model either passes the check in your own files or is fully restored.
+
+Restore procedure (also for a file that does not fit the rules):
+`git mv server/models/X.ts server/models/X.js` then `git restore --source=HEAD --staged --worktree -- server/models/X.js`, then confirm `git status --short -- server/models/X.js server/models/X.ts` prints nothing. Keep the compiler errors for your report.
+
+## What a conversion is
+Type-only. The compiled JavaScript must stay the same as before except for the require lines. So in emitted code change nothing but type annotations: no reordering, no new variables, no optional chaining, no new runtime requires, no bug fixes (report bugs instead). Keep `export = X` at the end. Leave every existing JSDoc comment unchanged, including the `/** @type */ this.field` lines in the constructor. Add `declare field: Type` lines at the top of the class. Use targeted edits, not whole-file rewrites. Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, as any, as unknown as.
+
+## Things I already checked that will save you time
+A. Packages: uuid is declared in server/types/untypedModules.d.ts and needs `/// <reference path="../types/untypedModules.d.ts" />` at the top of the file (precedent: server/objects/DeviceInfo.ts). jsonwebtoken has @types installed. lru-cache ships its own types (precedent: server/managers/ApiCacheManager.ts). If you need a declaration that does not exist, do not create it: send me the exact text in your report.
+
+B. The model registry. CLAUDE.md does not cover this yet. Sequelize types `sequelize.models.<name>` as `ModelCtor<Model<any, any>>`, and the static `Model.sequelize` is optional in its typings (node_modules/sequelize/types/model.d.ts:1943). So in a static method `this.sequelize.models.book.findByPk(id)` gives TS18048, and the result has no Book members. Handle it in this order of preference:
+  1. Where the code needs nothing model-specific from the entry (hasMany, belongsTo, count, destroy, a result that is only passed on), leave the entry vague. `const { book } = sequelize.models` inside init() uses the parameter and needs nothing.
+  2. Otherwise declare the registry once per class, in erased code, instead of asserting at every use:
+     ```ts
+     /** Registry entries this file reads by name, with their model classes */
+     type RegisteredModels = { book: typeof import('./Book'); bookAuthor: typeof import('./BookAuthor') }
+
+     class Author extends Model {
+       declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entries this file reads
+       declare readonly sequelize: Sequelize & { models: RegisteredModels } // same, on the instance
+     ```
+     List only the entries the file really needs typed. Try this on the first model of yours that needs it and run the check. If it type-checks, use it for the rest of your set. Count these declarations separately from casts and `!` in your report.
+  3. If (2) does not type-check for a reason you cannot resolve in a few minutes, fall back to what rule 5 allows as written: `this.sequelize!.models...` and a single-step `as` cast of the registry entry (`as typeof import('./Book')`), each with a one-line comment, and tell me exactly what failed.
+
+C. Models that are still .js. A JS model class is not assignable to Sequelize's `ModelStatic` (its `init` override), so calling an inherited Sequelize static (findAll, findByPk, create, ...) on `typeof import('./ThatModel')` gives TS2684 until its owner converts it. Such an error is not yours and will disappear: do not restore your file for it. List it in the report as "waiting on <Model>". An error that would remain after all 22 models are converted is yours. Instance types of JS models work through their JSDoc (`type Podcast = import('./Podcast')`).
+
+D. Other models as types: `type Author = import('./Author')` emits nothing. Never add a runtime require that the original file does not have (the models load in an order that matters). For each original `const x = require('...')` write `import x = require('...')`. Warning: TypeScript drops an `import x = require()` from the output when x is used only as a type. Every original require line must still be emitted, so check that each import keeps at least one value use; if one would not, tell me in the report rather than inventing a workaround.
+
+E. JSDoc `@typedef`s stop being types once the file is .ts (the comment itself stays, unchanged). If a TypeScript file reads one as `import('./X').Name` or `import('../models/X').Name`, keep it resolvable: write it as a real type and export it from a type-only namespace merged with the class (`declare namespace X { ... }`; precedent: server/managers/LogManager.ts line 15). Find consumers with a grep for `models/X')` and `'./X')` across server/. JS consumers are not type-checked, TS consumers are. Remember the pitfall: a comment directly above an interface or type is dropped from the compiled file, so put new types above the existing JSDoc blocks, not between a JSDoc block and the code it documents.
+
+F. Untyped helpers from server/utils (still .js) come back as loosely typed or any: annotate the destructured import once instead of casting at each call (CLAUDE.md pitfall).
+
+G. Type nullable columns honestly from init() (allowNull) and from how the code uses them, with a short trailing comment on the `declare` line where that differs from the constructor JSDoc (see Session.ts). Comments on `declare` lines, type aliases and overloads are erased with them, which keeps the compiled file unchanged. A `!` or `as` inside a method body still needs its one-line comment under rule 5; list those lines in your report because they show up in the compiled file.
+
+## Final report (your last message; it is the only thing I see)
+For each model of your set, one of: CONVERTED, SKIPPED (does not fit the rules: the reason and the exact compiler errors; file fully restored), NOT REACHED (untouched or restored for lack of time).
+For each converted model: the number of `!` assertions, index signatures, `as` casts and registry declarations (B.2) you added, with line numbers and the reason for each `!`/cast/index signature; any `import type` that replaces a require of names that are undefined at runtime (I must name it in the commit message); "waiting on <Model>" errors still showing; errors in other files that name your models.
+Also: declarations you need in server/types/ (exact text); bugs you found and did not fix (file:line and what is wrong); whether the Sequelize pattern in CLAUDE.md worked as written and exactly what you had to do differently; whether B.2 worked; the last filtered check output; and the output of `git status --short -- server/models/`.
+
+===== 16:05:10 | a0a40682-69e7-4c99-baaf-5047a9625006.jsonl | Agent
+--- description:
+Convert models set 3
+--- subagent_type:
+general-purpose
+--- prompt:
+You are sub-agent 3 of 4 in a parallel JavaScript-to-TypeScript migration of the Sequelize models in D:\SEM-2\574\Project\audiobookshelf-po (branch Aung-Min-Myat/po-s01). I am the main agent: I integrate, build, test and commit. Three other sub-agents are converting other models in the same working tree at the same time as you.
+
+## Your set (yours alone), in this order
+1. server/models/MediaItemShare.js (184 lines, no relative requires). Note: server/managers/ShareManager.ts already reads three of its typedefs as `import('../models/MediaItemShare').MediaItemShareModel`, `.MediaItemShareObject` and `.MediaItemShareForClient`. They must stay resolvable after the conversion (see E below). Do not edit ShareManager.ts; report any error left in it.
+2. server/models/Series.js (189 lines)
+3. server/models/Author.js (208 lines)
+4. server/models/Library.js (222 lines)
+5. server/models/PodcastEpisode.js (241 lines)
+6. server/models/PlaybackSession.js (257 lines; requires ../objects/PlaybackSession)
+7. server/models/Podcast.js (498 lines). Do it last. LibraryItem (sub-agent 1) requires it at runtime, so `export = Podcast` must keep the same shape.
+
+## Read first, then start
+1. CLAUDE.md at the repo root, all of it. It is binding. "Rules", "Pitfalls found so far" and "Sequelize models" matter most. Follow the Sequelize section exactly as written (init as two overloads then the JSDoc then the implementation; optional constructor parameters; `declare` fields; the three-line import shape).
+2. The three converted models are your worked examples: server/models/Setting.ts, LibraryFolder.ts, Session.ts. `git show 96f5fc41` shows what one conversion diff looks like.
+
+## Hard limits
+- Edit only the files of your set, and rename them only with `git mv server/models/X.js server/models/X.ts`. Create, edit, move or delete nothing else in the repo: not other models, not server/types/, not test/, not config files, no scratch files inside the repo.
+- Do not run `npm run build:server`, `npm test`, `npm install`, or any tsc command except the check below. Do not commit, add, stash, reset, checkout, rebase, clean or push.
+- If `git mv` or `git restore` fails with an index.lock error, another agent is using git: wait a few seconds and retry.
+- Type check (no emit, writes nothing): `npx tsc -p tsconfig.check.json`. It checks the whole program and four agents share the machine, so run it per batch of edits, not per line. Capture once and filter, for example:
+  `out=$(npx tsc -p tsconfig.check.json 2>&1); echo "$out" | grep -E "^server/models/(MediaItemShare|Series|Author|Library|PodcastEpisode|PlaybackSession|Podcast)\.ts"; echo "$out" | grep -E "MediaItemShare|models/Series|models/Author|models/Library'|PodcastEpisode|models/PlaybackSession|models/Podcast'" | grep -v "^server/models/(MediaItemShare|Series|Author|Library|PodcastEpisode|PlaybackSession|Podcast)\.ts" | head -20`
+  The second grep shows errors in other files that name your models. Do not fix other files; report those errors to me. If tsc prints "Debug Failure", wait 30 seconds and run it again (another agent may be mid-rename).
+- Do the rename and the first imports/types in one go before you run a check (see the TypeScript crash pitfall in CLAUDE.md).
+- Do not ask the user anything. If you are stuck on a file, restore it and move on.
+
+## Stop time
+Hard stop at 16:46 local time (NZDT); `date +%H:%M:%S` shows the clock. Check it before each model. Your final report must be sent by 16:46. From 16:38, start no new model: only finish or restore the one in hand. No half-converted file may remain: at the stop, a model either passes the check in your own files or is fully restored.
+
+Restore procedure (also for a file that does not fit the rules):
+`git mv server/models/X.ts server/models/X.js` then `git restore --source=HEAD --staged --worktree -- server/models/X.js`, then confirm `git status --short -- server/models/X.js server/models/X.ts` prints nothing. Keep the compiler errors for your report.
+
+## What a conversion is
+Type-only. The compiled JavaScript must stay the same as before except for the require lines. So in emitted code change nothing but type annotations: no reordering, no new variables, no optional chaining, no new runtime requires, no bug fixes (report bugs instead). Keep `export = X` at the end. Leave every existing JSDoc comment unchanged, including the `/** @type */ this.field` lines in the constructor. Add `declare field: Type` lines at the top of the class. Use targeted edits, not whole-file rewrites. Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, as any, as unknown as.
+
+## Things I already checked that will save you time
+A. Packages: uuid is declared in server/types/untypedModules.d.ts and needs `/// <reference path="../types/untypedModules.d.ts" />` at the top of the file (precedent: server/objects/DeviceInfo.ts). jsonwebtoken has @types installed. lru-cache ships its own types (precedent: server/managers/ApiCacheManager.ts). If you need a declaration that does not exist, do not create it: send me the exact text in your report.
+
+B. The model registry. CLAUDE.md does not cover this yet. Sequelize types `sequelize.models.<name>` as `ModelCtor<Model<any, any>>`, and the static `Model.sequelize` is optional in its typings (node_modules/sequelize/types/model.d.ts:1943). So in a static method `this.sequelize.models.book.findByPk(id)` gives TS18048, and the result has no Book members. Handle it in this order of preference:
+  1. Where the code needs nothing model-specific from the entry (hasMany, belongsTo, count, destroy, a result that is only passed on), leave the entry vague. `const { book } = sequelize.models` inside init() uses the parameter and needs nothing.
+  2. Otherwise declare the registry once per class, in erased code, instead of asserting at every use:
+     ```ts
+     /** Registry entries this file reads by name, with their model classes */
+     type RegisteredModels = { book: typeof import('./Book'); bookAuthor: typeof import('./BookAuthor') }
+
+     class Author extends Model {
+       declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entries this file reads
+       declare readonly sequelize: Sequelize & { models: RegisteredModels } // same, on the instance
+     ```
+     List only the entries the file really needs typed. Try this on the first model of yours that needs it and run the check. If it type-checks, use it for the rest of your set. Count these declarations separately from casts and `!` in your report.
+  3. If (2) does not type-check for a reason you cannot resolve in a few minutes, fall back to what rule 5 allows as written: `this.sequelize!.models...` and a single-step `as` cast of the registry entry (`as typeof import('./Book')`), each with a one-line comment, and tell me exactly what failed.
+
+C. Models that are still .js. A JS model class is not assignable to Sequelize's `ModelStatic` (its `init` override), so calling an inherited Sequelize static (findAll, findByPk, create, ...) on `typeof import('./ThatModel')` gives TS2684 until its owner converts it. Such an error is not yours and will disappear: do not restore your file for it. List it in the report as "waiting on <Model>". An error that would remain after all 22 models are converted is yours. Instance types of JS models work through their JSDoc (`type Book = import('./Book')`).
+
+D. Other models as types: `type Author = import('./Author')` emits nothing. Never add a runtime require that the original file does not have (the models load in an order that matters). For each original `const x = require('...')` write `import x = require('...')`. Warning: TypeScript drops an `import x = require()` from the output when x is used only as a type. Every original require line must still be emitted, so check that each import keeps at least one value use; if one would not, tell me in the report rather than inventing a workaround.
+
+E. JSDoc `@typedef`s stop being types once the file is .ts (the comment itself stays, unchanged). If a TypeScript file reads one as `import('./X').Name` or `import('../models/X').Name`, keep it resolvable: write it as a real type and export it from a type-only namespace merged with the class (`declare namespace X { ... }`; precedent: server/managers/LogManager.ts line 15). Find consumers with a grep for `models/X')` and `'./X')` across server/. JS consumers are not type-checked, TS consumers are. Remember the pitfall: a comment directly above an interface or type is dropped from the compiled file, so put new types above the existing JSDoc blocks, not between a JSDoc block and the code it documents.
+
+F. Untyped helpers from server/utils (still .js) come back as loosely typed or any: annotate the destructured import once instead of casting at each call (CLAUDE.md pitfall).
+
+G. Type nullable columns honestly from init() (allowNull) and from how the code uses them, with a short trailing comment on the `declare` line where that differs from the constructor JSDoc (see Session.ts). Comments on `declare` lines, type aliases and overloads are erased with them, which keeps the compiled file unchanged. A `!` or `as` inside a method body still needs its one-line comment under rule 5; list those lines in your report because they show up in the compiled file.
+
+## Final report (your last message; it is the only thing I see)
+For each model of your set, one of: CONVERTED, SKIPPED (does not fit the rules: the reason and the exact compiler errors; file fully restored), NOT REACHED (untouched or restored for lack of time).
+For each converted model: the number of `!` assertions, index signatures, `as` casts and registry declarations (B.2) you added, with line numbers and the reason for each `!`/cast/index signature; any `import type` that replaces a require of names that are undefined at runtime (I must name it in the commit message); "waiting on <Model>" errors still showing; errors in other files that name your models.
+Also: declarations you need in server/types/ (exact text); bugs you found and did not fix (file:line and what is wrong); whether the Sequelize pattern in CLAUDE.md worked as written and exactly what you had to do differently; whether B.2 worked; the last filtered check output; and the output of `git status --short -- server/models/`.
+
+===== 16:05:36 | a0a40682-69e7-4c99-baaf-5047a9625006.jsonl | Agent
+--- description:
+Convert models set 4
+--- subagent_type:
+general-purpose
+--- prompt:
+You are sub-agent 4 of 4 in a parallel JavaScript-to-TypeScript migration of the Sequelize models in D:\SEM-2\574\Project\audiobookshelf-po (branch Aung-Min-Myat/po-s01). I am the main agent: I integrate, build, test and commit. Three other sub-agents are converting other models in the same working tree at the same time as you.
+
+## Your set (yours alone), in this order
+1. server/models/CollectionBook.js (55 lines, no relative requires)
+2. server/models/PlaylistMediaItem.js (104 lines, no relative requires)
+3. server/models/Collection.js (292 lines, no relative requires; reads the model registry 15 times). Note: it destructures `Sequelize` from require('sequelize') as a runtime value, so the type-only import of `Sequelize` in the CLAUDE.md import shape would clash with it. Keep the runtime destructuring as it is and name the type differently (for example `sequelizeModule.Sequelize` in type positions, or an aliased `import type`), and tell me what you chose.
+4. server/models/FeedEpisode.js (349 lines; uuid, ../libs/dateAndTime, ../utils)
+5. server/models/Playlist.js (379 lines; reads the registry 24 times)
+6. server/models/Feed.js (682 lines; ../libs/rss). Do it last, and only start it if you have at least 20 minutes left.
+
+## Read first, then start
+1. CLAUDE.md at the repo root, all of it. It is binding. "Rules", "Pitfalls found so far" and "Sequelize models" matter most. Follow the Sequelize section exactly as written (init as two overloads then the JSDoc then the implementation; optional constructor parameters; `declare` fields; the three-line import shape).
+2. The three converted models are your worked examples: server/models/Setting.ts, LibraryFolder.ts, Session.ts. `git show 96f5fc41` shows what one conversion diff looks like.
+
+## Hard limits
+- Edit only the files of your set, and rename them only with `git mv server/models/X.js server/models/X.ts`. Create, edit, move or delete nothing else in the repo: not other models, not server/types/, not server/libs/, not test/, not config files, no scratch files inside the repo.
+- Do not run `npm run build:server`, `npm test`, `npm install`, or any tsc command except the check below. Do not commit, add, stash, reset, checkout, rebase, clean or push.
+- If `git mv` or `git restore` fails with an index.lock error, another agent is using git: wait a few seconds and retry.
+- Type check (no emit, writes nothing): `npx tsc -p tsconfig.check.json`. It checks the whole program and four agents share the machine, so run it per batch of edits, not per line. Capture once and filter, for example:
+  `out=$(npx tsc -p tsconfig.check.json 2>&1); echo "$out" | grep -E "^server/models/(CollectionBook|PlaylistMediaItem|Collection|FeedEpisode|Playlist|Feed)\.ts"; echo "$out" | grep -E "CollectionBook|PlaylistMediaItem|models/Collection'|FeedEpisode|models/Playlist'|models/Feed'" | grep -v "^server/models/(CollectionBook|PlaylistMediaItem|Collection|FeedEpisode|Playlist|Feed)\.ts" | head -20`
+  The second grep shows errors in other files that name your models. Do not fix other files; report those errors to me. If tsc prints "Debug Failure", wait 30 seconds and run it again (another agent may be mid-rename).
+- Do the rename and the first imports/types in one go before you run a check (see the TypeScript crash pitfall in CLAUDE.md).
+- Do not ask the user anything. If you are stuck on a file, restore it and move on.
+
+## Stop time
+Hard stop at 16:46 local time (NZDT); `date +%H:%M:%S` shows the clock. Check it before each model. Your final report must be sent by 16:46. From 16:38, start no new model: only finish or restore the one in hand. No half-converted file may remain: at the stop, a model either passes the check in your own files or is fully restored.
+
+Restore procedure (also for a file that does not fit the rules):
+`git mv server/models/X.ts server/models/X.js` then `git restore --source=HEAD --staged --worktree -- server/models/X.js`, then confirm `git status --short -- server/models/X.js server/models/X.ts` prints nothing. Keep the compiler errors for your report.
+
+## What a conversion is
+Type-only. The compiled JavaScript must stay the same as before except for the require lines. So in emitted code change nothing but type annotations: no reordering, no new variables, no optional chaining, no new runtime requires, no bug fixes (report bugs instead). Keep `export = X` at the end. Leave every existing JSDoc comment unchanged, including the `/** @type */ this.field` lines in the constructor. Add `declare field: Type` lines at the top of the class. Use targeted edits, not whole-file rewrites. Banned: any, @ts-ignore, @ts-nocheck, @ts-expect-error, as any, as unknown as.
+
+## Things I already checked that will save you time
+A. Packages: uuid is declared in server/types/untypedModules.d.ts and needs `/// <reference path="../types/untypedModules.d.ts" />` at the top of the file (precedent: server/objects/DeviceInfo.ts). jsonwebtoken has @types installed. lru-cache ships its own types (precedent: server/managers/ApiCacheManager.ts). If you need a declaration that does not exist, do not create it: send me the exact text in your report.
+
+B. The model registry. CLAUDE.md does not cover this yet. Sequelize types `sequelize.models.<name>` as `ModelCtor<Model<any, any>>`, and the static `Model.sequelize` is optional in its typings (node_modules/sequelize/types/model.d.ts:1943). So in a static method `this.sequelize.models.book.findByPk(id)` gives TS18048, and the result has no Book members. Handle it in this order of preference:
+  1. Where the code needs nothing model-specific from the entry (hasMany, belongsTo, count, destroy, a result that is only passed on), leave the entry vague. `const { book } = sequelize.models` inside init() uses the parameter and needs nothing.
+  2. Otherwise declare the registry once per class, in erased code, instead of asserting at every use:
+     ```ts
+     /** Registry entries this file reads by name, with their model classes */
+     type RegisteredModels = { book: typeof import('./Book'); bookAuthor: typeof import('./BookAuthor') }
+
+     class Author extends Model {
+       declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entries this file reads
+       declare readonly sequelize: Sequelize & { models: RegisteredModels } // same, on the instance
+     ```
+     List only the entries the file really needs typed. Try this on the first model of yours that needs it and run the check. If it type-checks, use it for the rest of your set. Count these declarations separately from casts and `!` in your report.
+  3. If (2) does not type-check for a reason you cannot resolve in a few minutes, fall back to what rule 5 allows as written: `this.sequelize!.models...` and a single-step `as` cast of the registry entry (`as typeof import('./Book')`), each with a one-line comment, and tell me exactly what failed.
+
+C. Models that are still .js. A JS model class is not assignable to Sequelize's `ModelStatic` (its `init` override), so calling an inherited Sequelize static (findAll, findByPk, create, ...) on `typeof import('./ThatModel')` gives TS2684 until its owner converts it. Such an error is not yours and will disappear: do not restore your file for it. List it in the report as "waiting on <Model>". An error that would remain after all 22 models are converted is yours. Instance types of JS models work through their JSDoc (`type Book = import('./Book')`).
+
+D. Other models as types: `type Author = import('./Author')` emits nothing. Never add a runtime require that the original file does not have (the models load in an order that matters). For each original `const x = require('...')` write `import x = require('...')`. Warning: TypeScript drops an `import x = require()` from the output when x is used only as a type. Every original require line must still be emitted, so check that each import keeps at least one value use; if one would not, tell me in the report rather than inventing a workaround.
+
+E. JSDoc `@typedef`s stop being types once the file is .ts (the comment itself stays, unchanged). If a TypeScript file reads one as `import('./X').Name` or `import('../models/X').Name`, keep it resolvable: write it as a real type and export it from a type-only namespace merged with the class (`declare namespace X { ... }`; precedent: server/managers/LogManager.ts line 15). Find consumers with a grep for `models/X')` and `'./X')` across server/. JS consumers are not type-checked, TS consumers are. Remember the pitfall: a comment directly above an interface or type is dropped from the compiled file, so put new types above the existing JSDoc blocks, not between a JSDoc block and the code it documents.
+
+F. Untyped helpers from server/utils (still .js) come back as loosely typed or any: annotate the destructured import once instead of casting at each call (CLAUDE.md pitfall). server/libs/ is vendored and untyped in places: a single-step boundary cast with a one-line comment is allowed where it returns a wrong or too-vague type.
+
+G. Type nullable columns honestly from init() (allowNull) and from how the code uses them, with a short trailing comment on the `declare` line where that differs from the constructor JSDoc (see Session.ts). Comments on `declare` lines, type aliases and overloads are erased with them, which keeps the compiled file unchanged. A `!` or `as` inside a method body still needs its one-line comment under rule 5; list those lines in your report because they show up in the compiled file.
+
+## Final report (your last message; it is the only thing I see)
+For each model of your set, one of: CONVERTED, SKIPPED (does not fit the rules: the reason and the exact compiler errors; file fully restored), NOT REACHED (untouched or restored for lack of time).
+For each converted model: the number of `!` assertions, index signatures, `as` casts and registry declarations (B.2) you added, with line numbers and the reason for each `!`/cast/index signature; any `import type` that replaces a require of names that are undefined at runtime (I must name it in the commit message); "waiting on <Model>" errors still showing; errors in other files that name your models.
+Also: declarations you need in server/types/ (exact text); bugs you found and did not fix (file:line and what is wrong); whether the Sequelize pattern in CLAUDE.md worked as written and exactly what you had to do differently; whether B.2 worked; the last filtered check output; and the output of `git status --short -- server/models/`.
+
+===== 16:29:39 | a0a40682-69e7-4c99-baaf-5047a9625006.jsonl | SendMessage
+--- to:
+ac14425a6e4f40abc
+--- summary:
+Resume sub-agent 4 on Feed until 16:44
+--- message:
+Main agent here: thank you for the report. Wave 1 still has time, so please use it on server/models/Feed.js, the last model of your set, under exactly the same rules as before.
+
+Your three skips stand (Collection, FeedEpisode and Playlist stay JavaScript for this run), so Feed must type-check against their .js versions. Leave a registry entry vague (B.1) wherever the code only calls Sequelize statics on it, because a typed entry for a model that is still .js gives TS2684.
+
+Order of work:
+1. Test your own predicted blockers first, before typing the whole file: the correlated call at Feed.js:527 (`feedEpisodeCreateFunc(feedEpisodeCreateFuncEntity, ...)`), the Book/Podcast union reads at Feed.js:126-127, and the `destroy` at Feed.js:534. If one of them has no type-only fix inside the rules, that settles it: restore Feed and report it as SKIPPED with the exact compiler errors.
+2. Otherwise convert it fully.
+
+Hard stop 16:44 local time (check with `date +%H:%M:%S`). If Feed does not pass the check in your own file by 16:42, save your copy outside the repo (the same a4 scratch folder, as Feed.ts.partial), restore Feed completely (git mv back, git restore, confirm `git status --short -- server/models/Feed.js server/models/Feed.ts` prints nothing) and report it as NOT REACHED with what is left to do, so that it can be continued in wave 2.
+
+Same limits as before: edit only server/models/Feed.*, no build, no tests, no commit, no files inside the repo other than Feed, and only `npx tsc -p tsconfig.check.json` for checking (no other compile or transpile of repo files this time, please; I do the compiled-output comparison myself).
+
+Final report, short: Feed CONVERTED / SKIPPED (errors) / NOT REACHED (what is left); counts of `!`, index signatures, casts and B.2 declarations with line numbers and reasons; "waiting on <Model>" errors; bugs found; the last filtered check output; `git status --short -- server/models/Feed.js server/models/Feed.ts`.
+--- type:
+message
+--- recipient:
+ac14425a6e4f40abc
+--- recipient_kind:
+agent
+--- content:
+Main agent here: thank you for the report. Wave 1…
+
+===== 16:46:42 | a0a40682-69e7-4c99-baaf-5047a9625006.jsonl | SendMessage
+--- to:
+a5ab35e18afcd2747
+--- summary:
+Wave 2: sub-agent 2 on User until 17:36
+--- message:
+Main agent here: wave 2 starts now, and your one model is server/models/User.js (the only model that was not reached). Same rules and limits as in wave 1; your four wave-1 models are committed, so edit only server/models/User.*.
+
+State of the tree (HEAD 053a778b, clean):
+- TypeScript now (17 models): Setting, LibraryFolder, Session, BookSeries, BookAuthor, Book, CustomMetadataProvider, Device, MediaProgress, ApiKey, MediaItemShare, Series, Library, PodcastEpisode, Podcast, CollectionBook, PlaylistMediaItem.
+- JavaScript for the rest of this run (skipped, will not be converted): LibraryItem, Author, PlaybackSession, Collection, FeedEpisode, Playlist, Feed. User must type-check against their .js versions. A typed registry entry for a .js model gives TS2684 on inherited Sequelize statics, so leave such an entry vague (B.1) where the code only calls Sequelize statics on it.
+
+How I applied rule 5 at integration (apply the same reading):
+- Accepted, single-step and with a one-line comment: a cast on a value that Sequelize RETURNS with a wrong or too-vague type (a registry entry, raw rows). Precedent: ShareManager.ts:109, BookAuthor.ts:63, MediaProgress.ts:180.
+- Not accepted: a cast that forces an ARGUMENT into Sequelize's parameter types (where: null, a nested include given as one object, an unknown option key). A hand-written registry entry that replaces Sequelize's own signature to let such an argument through is the same thing and is not accepted either. Collection, Playlist and PlaybackSession were skipped for exactly this.
+- Accepted with a comment: a hand-written registry entry that describes a first-party static of a model that is still JavaScript, where its JSDoc is wrong (MediaItemShare.ts does this for LibraryItem.findOneExpanded).
+- `!` accepted with a comment where the code guarantees the value (set before it is read, or a guard in the same condition that the compiler cannot follow; your two in MediaProgress stay). Not accepted on a nullable result that the code never checks (Author was skipped for author!.books).
+- No casts inside first-party code that is not at a module boundary; use an annotation instead (as Book.getTracklist() now does) or it is a skip.
+
+Requirements specific to User:
+- Keep import('./User').ProgressUpdatePayload resolvable (MediaProgress.ts:10 reads it), and any other typedef a TypeScript file reads, through a type-only namespace merged with the class.
+- TypeScript consumers of User that must stay error-free: server/auth/LocalAuthStrategy.ts, server/controllers/CacheController.ts, server/managers/ApiCacheManager.ts, server/objects/settings/EmailSettings.ts, server/objects/settings/ServerSettings.ts (runtime import), server/models/Session.ts and server/models/MediaProgress.ts:180 (the cast to typeof user & typeof import('./User')). Do not edit them; report any error left in them.
+- uuid needs /// <reference path="../types/untypedModules.d.ts" /> (precedent: server/objects/DeviceInfo.ts). Every original require must still be emitted.
+
+Order of work:
+1. First confirm your predicted blockers on the real file with the real check, before typing everything: the nested single include objects at User.js:747-750 and 771-775, and the others you listed. If one has no fix inside the rules as read above, that settles it: restore User completely and report it as SKIPPED with the exact compiler errors. Do not spend the hour on it in that case.
+2. Otherwise convert it fully.
+
+Hard stop 17:36 local time (check with `date +%H:%M:%S`); your report must be sent by then. If User does not pass the check in your own file by 17:32, save your copy outside the repo (your scratch folder, as User.ts.partial), restore User completely (git mv back, git restore, confirm `git status --short -- server/models/User.js server/models/User.ts` prints nothing) and report what is left.
+
+Limits as before: no build, no tests, no commit, no files in the repo other than User, and only `npx tsc -p tsconfig.check.json` for checking the repo (no other compile or transpile of repo files this time, please; I do the compiled-output comparison myself).
+
+Final report: User CONVERTED / SKIPPED (exact errors) / NOT REACHED (what is left); counts of `!`, index signatures, casts and sequelize declarations with line numbers and reasons; errors in other files; bugs found; the last filtered check output; `git status --short -- server/models/`.
+--- type:
+message
+--- recipient:
+a5ab35e18afcd2747
+--- recipient_kind:
+agent
+--- content:
+Main agent here: wave 2 starts now, and your one …
+
+===== 16:30:45 | agent-a46e0bc7727792823.jsonl | SubagentHandback
+--- message:
+# Sub-agent 1 report (BookSeries, BookAuthor, Book, LibraryItem), sent 16:31 NZDT
+
+## Status
+| Model | Result |
+|---|---|
+| `server/models/BookSeries.ts` | CONVERTED |
+| `server/models/BookAuthor.ts` | CONVERTED |
+| `server/models/Book.ts` | CONVERTED |
+| `server/models/LibraryItem.js` | SKIPPED: does not fit the rules as they stand, and too large for the time left. Fully restored, identical to HEAD. |
+
+The last check (16:26:42, after my last edit) shows no errors in my three files and none in other files naming my models. I did not run the build or the tests.
+
+A single-file `ts.transpileModule` of each converted file, written to the scratchpad only (not a tsc run), was diffed against your `baseline-models` copies. Only the require lines differ, plus the three cast comments listed below. Every original require is still emitted.
+
+## Counts per converted model
+| Model | `!` | Index signatures | `as` casts | Registry declarations (B.2) |
+|---|---|---|---|---|
+| BookSeries | 0 | 0 | 0 | 0 |
+| BookAuthor | 0 | 0 | 1 | 0 |
+| Book | 0 | 0 | 2 | 1 (instance side only) |
+
+No `import type` replaces a require in any of the three, so there is nothing to name in the commit message.
+
+### BookSeries.ts
+- `sequence` is `string | null`: the column is nullable and `Book.updateSeriesFromRequest()` stores null.
+- `removeByIds(seriesId: string | null = null, bookId: string | null = null)`, with `where` typed `{ seriesId?: string; bookId?: string }`.
+- init overloads are at lines 36-37, the implementation at line 42.
+
+### BookAuthor.ts
+- **Cast, line 63:** `}) as (BookAuthor & { count: number })[]`. With `raw: true` the rows carry the `COUNT` alias, which Sequelize's `findAll` typing does not know. The comment shows in the compiled file.
+- `getCountsForAuthors` has an explicit return type `Promise<Record<string, number>>`.
+- init overloads are at lines 73-74, the implementation at line 79.
+
+### Book.ts
+- **Registry declaration, line 181** (type at line 23): `declare readonly sequelize: Sequelize & { models: RegisteredModels }` with entries author, bookAuthor, series, bookSeries. Book has no static registry reads, so there is no static declaration.
+- **Cast, line 428:** `structuredClone(af) as AudioTrack` in `getTracklist()`.
+  - This is not an untyped-module boundary, so it stretches rule 5.
+  - The alternative without a cast is `const track: AudioFileObject & Partial<Book.AudioTrackProperties> = structuredClone(af)`. It makes `getTracklist()` return tracks whose title, contentUrl and startOffset are optional for every consumer.
+  - I kept the cast; say if you want the swap.
+- **Cast, line 656:** `await seriesModel.findOrCreateByNameAndLibrary(...) as SeriesExpanded`. The Series model returns a plain Series, and the next line attaches `bookSeries`.
+- **Namespace, line 26:** `declare namespace Book` exports the typedef names as real types, plus a new `FileMetadataObject`. Other agents' files already read them: `Author.ts:8`, `PodcastEpisode.ts:6-7`, `Series.ts:8`.
+- **Nullable fields** that differ from the constructor JSDoc:
+  - The nine string columns (title, subtitle, publishedYear, publishedDate, publisher, description, isbn, asin, language) are `string | null`, because `updateFromRequest()` writes `payload.metadata[key] || null` to all nine. They must share one type for the `this[key] = ...` write to check.
+  - `coverPath` is `string | null` (`BookScanner.js:151` and `LibraryItemController.js:379` set null).
+  - `ebookFile` is `EBookFileObject | null`.
+- **Other type decisions:**
+  - `series` is `SeriesExpanded[]` and `SeriesExpandedProperties.bookSeries` is the BookSeries model, because the code calls `.save()` on it.
+  - `AudioFileObject` gains `exclude: boolean`, which `includedAudioFiles` reads and the JSDoc typedef lacks.
+  - `metaTags` is `ReturnType<AudioMetaTags['toJSON']>`.
+- **No index signature for the dynamic keys.** The key arrays are annotated instead (`MetadataStringKey[]` at line 508, `('narrators' | 'genres')[]` at line 541).
+- **Payload type, line 107:** `BookUpdatePayload` is a union, `{ metadata: ...; tags?: unknown } | { metadata?: undefined; tags?: unknown }`. That lets `if (payload.metadata)` narrow `payload` itself, which also holds inside the `forEach` callbacks.
+- **utils annotation, lines 6-10:** the two helpers are annotated with method signatures taking `string | null`. Their JSDoc says `string`, but `getTitleParts()` handles a missing title. I chose method syntax for its bivariant parameter check and did not test the arrow form.
+- `oldMetadataToJSONExpanded()` uses a draft type (line 110) for its local, so the six added keys are optional in its return type.
+- init overloads are at lines 266-267, the implementation at line 272.
+
+## LibraryItem: why it is skipped
+I prepared a first typing pass outside the repo, put it in the repo for one check (16:24:15 to 16:24:42), then restored it.
+
+1. **Rule D blocker.** `Book` and `Podcast` are required at `LibraryItem.js:8-9` but never used as values, only in JSDoc. TypeScript drops both requires from the output; the scratch transpile confirms it. This needs your decision; I invented no workaround.
+2. **81 compiler errors after the first pass.** Original line numbers:
+   - **96, 152, 243:** `where`, `replacements` and `include` default to null, which Sequelize's typings reject (TS2322, TS2769).
+   - **174:** `include` given as an object where the typings want an array (TS2353).
+   - **302-321:** properties that `libraryFilters` attaches (collapsedSeries, series, rssFeed, numEpisodesIncomplete, mediaItemShare, media.numEpisodes), read from `li` and added to the `toOldJSONMinified()` result (TS2339, 18 errors).
+   - **353:** five arguments to a four-parameter function (TS2554).
+   - **355-356, 632-669, 924-926:** `media` is `Book | Podcast` and the code branches on `mediaType`, which narrows nothing (TS2339, TS2551, TS18046). Each kind-specific read would need a cast.
+   - **385-387, 494, then 395-522:** `timed()` loaders (TS2739, then 22 TS18046). This comes from my probe's `loader` type and is probably fixable.
+   - **568:** `user` null passed to a `User` parameter (TS2345).
+   - **674:** `fsExtra.writeFile` (the known pitfall).
+   - **682-683:** `LibraryFile.toJSON()` is not assignable to `LibraryFileObject`.
+   - **695-696:** numbers assigned to the Date fields `mtime` and `ctime` (TS2322).
+   - **708:** untyped `.catch` parameter (TS7006).
+   - **819-820, 838:** the `afterFind` and `afterDestroy` hooks: reassigned `findResult`, and `instance` typed as a plain Model.
+   - **873:** `this[mixinMethodName](options)` (TS7053).
+   - **943:** optional `episodeId` passed on (TS2345).
+3. Part of the `media` noise comes from Podcast's class index signature (`Podcast.ts:67`, sub-agent 3). It turns Book-only reads on `Book | Podcast` into `unknown`.
+
+## Errors in other files tied to my models
+- `server/models/MediaItemShare.ts(145,92): error TS2345: Argument of type 'null' is not assignable to parameter of type 'BindOrReplacements | undefined'.`
+  - It is the call `libraryItemModel.findOneExpanded({ mediaId }, null, {...})`. The JSDoc at `LibraryItem.js:238` types `replacements` as optional, not nullable.
+  - It stays while LibraryItem is JavaScript. Your second grep does not catch it, because the message does not name LibraryItem.
+- There are no "waiting on <Model>" errors in my files.
+
+## Declarations needed in server/types/
+None.
+
+## Bugs and oddities found, not fixed
+- **Book typedef `EBookFileObject`** (JSDoc, originally `Book.js:15`): `relPath:strFing` is a typo.
+- **Book typedef `AudioFileObject`:** it lacks `exclude`, which `AudioFile.toJSON()` stores and `includedAudioFiles` reads.
+- **`Book.js:441` and `:496`:** `updateAuthorsFromRequest` and `updateSeriesFromRequest` return null for invalid input; their JSDoc promises an object.
+- **`Book.js:517-519` and `:552`:** `bookSeries.sequence` is read without the `?.` guard that lines 253 and 348 use.
+- **`Book.js:392`:** a request with an empty or null title sets `title` to null; nothing validates it.
+- **`LibraryItem.js:353`:** `getMediaItemsInProgress(library, user, include, limit, false)` passes a fifth argument that `libraryFilters.js:56` ignores.
+- **`LibraryItem.js:695-696`:** `mtimeMs` and `ctimeMs` numbers are assigned to fields documented as Date.
+- **`LibraryItem.js:8-9`:** two requires whose bindings are never used.
+
+## CLAUDE.md pattern and B.2
+- **Sequelize pattern:** it worked exactly as written in all three files. `Book.addHook(...)` and `belongsToMany(..., { through: BookSeries })` also check with no extras.
+- **B.2:** it worked on the first check. `this.sequelize.models.author` and the other three resolve to the model classes, and the existing `/** @type */` comments are now true. In the LibraryItem probe, a static `declare static readonly sequelize: Sequelize` removed every TS18048.
+
+## Two things for you
+- **`scan.sh` under-counts casts.** It printed `cast=0` for BookAuthor and Book. The bracket expression `[\)\]A-Za-z0-9_\}'"]` closes at `\]`. With `]` first (`[])A-Za-z0-9_}'"]`) the same line counts 1. The `!` pattern is built the same way, so I expect it to under-count too; I did not test it.
+- **Compiled comments.** The three cast comments appear in the compiled files, at BookAuthor line 55 and Book lines 277 and 482 of the transpiled output.
+
+## Last filtered check output (16:26:42 to 16:27:13)
+```
+== first grep (my files):            (empty)
+== second grep (others naming mine): (empty)
+Debug Failure: 0
+whole program: 1 error
+server/models/MediaItemShare.ts(145,92): error TS2345: Argument of type 'null' is not assignable to parameter of type 'BindOrReplacements | undefined'.
+```
+
+## `git status --short -- server/models/` (16:28)
+```
+RM server/models/ApiKey.js -> server/models/ApiKey.ts
+RM server/models/Author.js -> server/models/Author.ts
+RM server/models/Book.js -> server/models/Book.ts
+RM server/models/BookAuthor.js -> server/models/BookAuthor.ts
+RM server/models/BookSeries.js -> server/models/BookSeries.ts
+RM server/models/CollectionBook.js -> server/models/CollectionBook.ts
+RM server/models/CustomMetadataProvider.js -> server/models/CustomMetadataProvider.ts
+RM server/models/Device.js -> server/models/Device.ts
+RM server/models/Library.js -> server/models/Library.ts
+RM server/models/MediaItemShare.js -> server/models/MediaItemShare.ts
+RM server/models/MediaProgress.js -> server/models/MediaProgress.ts
+RM server/models/PlaybackSession.js -> server/models/PlaybackSession.ts
+RM server/models/PlaylistMediaItem.js -> server/models/PlaylistMediaItem.ts
+RM server/models/Podcast.js -> server/models/Podcast.ts
+RM server/models/PodcastEpisode.js -> server/models/PodcastEpisode.ts
+RM server/models/Series.js -> server/models/Series.ts
+```
+Mine are the Book, BookAuthor and BookSeries lines. At 16:29:58 `git status --short -- server/models/LibraryItem.js server/models/LibraryItem.ts` printed nothing and `git diff --quiet HEAD` confirmed the file equals HEAD. I created nothing else in the repo.
+
+## Files in the scratchpad
+Folder: `C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\a1\`
+- `check-li.txt`: the full 81-error list for LibraryItem. Subtract 55 from its line numbers for original lines 28-717 and 57 for lines from 718.
+- `LibraryItem.probe.ts`: the first-pass source that produced those errors.
+- `check4.txt`: the last check output.
+
+
+===== 16:34:23 | agent-a5ab35e18afcd2747.jsonl | SubagentHandback
+--- message:
+## Sub-agent 2 report (sent 16:35 NZDT)
+
+**Result: 4 CONVERTED, User NOT REACHED. One decision is yours: MediaProgress.ts has two `!` that are outside rule 5's wording (details under model 3).**
+
+Last check (started 16:28:51, after my last edit at 16:27:39): 0 errors in my files, 0 errors in other files naming my models, 0 "waiting on" errors, no Debug Failure. I did not build, test or commit.
+
+### 1. CustomMetadataProvider: CONVERTED
+- `!` 0, index signatures 0, `as` casts 0, registry declarations 0.
+- The typedef became a local `interface ClientCustomMetadataProvider` above the unchanged JSDoc block. No TS file reads it by import, so no namespace.
+- Types that differ from the constructor JSDoc: `authHeaderValue: string | null` (the controller stores null), `extraData: object | null` (never read or written).
+
+### 2. Device: CONVERTED
+- `!` 0, index signatures 0, casts 0, registry declarations 0.
+- `type DeviceInfo = oldDevice` is used for parameter types, because two parameters are themselves named `oldDevice`. The import keeps its value use (`new oldDevice(...)`).
+- `clientName`, `clientVersion`, `ipAddress`, `deviceName`, `deviceVersion` are `string | null` (getFromOld() writes null).
+
+### 3. MediaProgress: CONVERTED, needs your decision
+- `!` 2, casts 1, index signatures 0, registry declarations 0.
+- **Line 248** `progressPayload.progress!` and **line 265** `progressPayload.markAsFinishedPercentComplete!`: optional payload numbers that the `!isNaN()` / `!isNullOrNaN()` test in the same condition already rules out as undefined. Rule 5 names `!` only for a field that starts as null and is set before it is read, so these two do not fit its wording. Without them:
+  - `MediaProgress.ts(248,57): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.`
+  - `MediaProgress.ts(265,74): error TS18048: 'progressPayload.markAsFinishedPercentComplete' is possibly 'undefined'.`
+  - I found no typing that avoids them. Either accept them, or restore the file with the procedure from the task; none of my other three files depends on it.
+- **Line 180** cast: `(user as typeof user & typeof import('./User')).mediaProgressRemoved(instance)`. The registry entry is too vague for User's own static, and it comes from the `sequelize` parameter inside init(), so B.2 does not reach it.
+  - Without the cast: `TS2339: Property 'mediaProgressRemoved' does not exist on type 'ModelCtor<Model<any, any>>'`.
+  - The plain `as typeof import('./User')` failed while User is JavaScript: `TS2352: Conversion of type 'ModelCtor<Model<any, any>>' to type 'typeof User' may be a mistake...`. The intersection form passes now; I did not test the plain form against a TypeScript User.
+- Lines 180, 248 and 265 each carry a trailing comment that shows up in the compiled file.
+- Erased declarations that are not B.2:
+  - line 13 `declare function isNaN(value: unknown): boolean` (BookFinder.ts precedent);
+  - line 42 `declare readonly sequelize: Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> }` (same as PlaylistMediaItem.ts:22).
+- Line 10 reads `import('./User').ProgressUpdatePayload`, which resolves through the JSDoc typedef in User.js. Whoever converts User must keep it resolvable (`declare namespace User { interface ProgressUpdatePayload ... }`).
+- Types that differ from the JSDoc:
+  - `mediaItemType: 'book' | 'podcastEpisode'`;
+  - `finishedAt: Date | string | number | null` (the code assigns `Date.now()` and the payload's string);
+  - `extraData`, `ebookLocation`, `podcastId` are nullable;
+  - `book?`, `podcastEpisode?`, `mediaItem?` are declared because the afterFind hook sets and deletes them.
+
+### 4. ApiKey: CONVERTED
+- `!` 0, index signatures 1, casts 0, registry declarations 0.
+- **Line 14** `[key: string]: unknown` on the `ApiKeyPermissions` data interface: mergePermissionsWithDefault() reads the request's keys and writes them by a dynamic key (lines 143-173).
+- Not counted as a hatch, please check: line 296 `update(values: Record<string, unknown>, options?: InstanceUpdateOptions)` is the parameter type of the instance override. It type-checks against both overloads of Model.update with no cast.
+- Line 210 `new Promise<string | null | undefined>`: @types/jsonwebtoken types the callback token as optional.
+- `permissions`, `description`, `expiresAt`, `lastUsedAt`, `createdByUserId` are nullable; `fromCache?` is declared (set by ApiKeyCache).
+
+### 5. User: NOT REACHED (untouched; status prints nothing for User.js / User.ts)
+The four models were verified at 16:29, which left 17 minutes, under your 20-minute threshold. Blockers from reading it and from probes:
+- **Nested single include objects** (User.js:747-750 and 771-775). Sequelize types a nested `include` as an array only (node_modules/sequelize/types/model.d.ts:705). Probed on the same shape:
+  - as written: `TS2769 No overload matches this call`;
+  - inner object `as Includeable[]`: TS2352;
+  - outer object `as IncludeOptions`: TS2352.
+  So rule 5's single-step cast cannot express it. What did pass is a registry entry with its own finder signature, in erased code:
+  ```ts
+  type NestedInclude = Omit<IncludeOptions, 'include'> & { include?: NestedInclude | NestedInclude[] }
+  type RegisteredModels = { libraryItem: { findByPk(id: string, options: Omit<FindOptions, 'include'> & { include?: NestedInclude | NestedInclude[] }): Promise<import('./LibraryItem') | null> } }
+  ```
+  This replaces Sequelize's signature for that entry with an unchecked one, so it is a pattern decision for you.
+- `mediaProgresses` is not declared on Book.ts or PodcastEpisode.ts, but User.js:762 and 793 read it.
+- Line 678 reads `libraryItem.media.metadata?.explicit`, the old model shape.
+- Expected but not run:
+  - lines 634-635 `delete json.x` on an inferred literal (needs an explicit interface);
+  - line 798 `mediaProgress` loses narrowing inside the arrow;
+  - line 819 assigns a Date to a property inferred as `string | null`;
+  - lines 959-966 use dynamic keys.
+- `findByPk` on the LibraryItem entry gives TS2684 while LibraryItem.js is JavaScript (confirmed in the probe).
+
+### Your questions
+- **Sequelize pattern in CLAUDE.md:** worked as written in all four. CLAUDE.md does not cover these, which I had to add:
+  - instance overrides of update/save/destroy need `InstanceUpdateOptions`, `SaveOptions`, `InstanceDestroyOptions`;
+  - the afterFind callback needs an explicit parameter type `(findResult: X | X[] | null)`, and properties the hook deletes must be declared optional;
+  - a model-specific static on a registry entry inside init() needs a cast.
+- **B.2:** not used in my four files. A probe on MediaProgress.ts with both `declare` lines type-checked:
+  - `this.sequelize.models.book.findByPk('x')` is `Book | null` in a static and in an instance method;
+  - an unlisted entry stays `ModelCtor<Model<any, any>>`;
+  - a JavaScript model's own static is reachable.
+- **`import type` replacing a require:** none. Every original require is still emitted.
+- **Declarations needed in server/types/:** none.
+
+### Bugs found, not fixed
+- CustomMetadataProvider.ts:13-19 vs 117-124: the typedef lists `url`, but toClientJson() returns `mediaType` and no `url`.
+- ApiKey.ts:169: mergePermissionsWithDefault() copies every request key with a boolean value, including unknown keys. Lines 163 and 169 assign the two array permissions twice (harmless).
+- ApiKey: mergePermissionsWithDefault() and getDefaultPermissions() have no caller in server/. ApiKeyController.js:84-91 never sets `permissions` or `description`, so they stay null. `lastUsedAt` (ApiKey.ts:269) is never written.
+- ApiKey.ts:222: generateApiKey() resolves null on error; its JSDoc says `Promise<string>`.
+- MediaProgress.ts:234 and 282 assign a number or string to a field documented as Date. Lines 237, 243 and 244 delete keys from the caller's payload object.
+- Device.ts:101 and 108 copy DeviceInfo `id` / `userId`, which DeviceInfo.ts types as nullable, into fields documented as strings.
+- User.js:
+  - line 812 reads `progressPayload.createdAt`, which is not in the typedef;
+  - the JSDoc at 699-703 names parameters the method does not have;
+  - lines 798 and 825 use `this.mediaProgresses` unguarded although its JSDoc says it is only included when extended.
+
+### What I ran besides the check
+Three node scripts using the TypeScript API, not `tsc`. They wrote nothing in the repo; scripts and output are in my scratchpad.
+- **Emit comparison** (`ts.transpileModule`, single file, HEAD .js against working .ts): for all four files only the require lines differ, plus the three trailing comments in MediaProgress. This is not the project build, so your baseline comparison still stands.
+- **In-memory probes** (modified text substituted for MediaProgress.ts, no emit): the source of the "without them" errors and of the B.2 and nested-include results above.
+
+### Last filtered check output (16:29:14)
+```
+--- mine:
+--- others naming mine:
+--- debug failures: 0
+--- whole program: server/models/MediaItemShare.ts(145,92): error TS2345: Argument of type 'null' is not assignable to parameter of type 'BindOrReplacements | undefined'.
+```
+A scan of my four files for `any`, `@ts-` and `as unknown` returns nothing.
+
+### `git status --short -- server/models/` (16:32:49)
+```
+RM server/models/ApiKey.js -> server/models/ApiKey.ts
+RM server/models/Author.js -> server/models/Author.ts
+RM server/models/Book.js -> server/models/Book.ts
+RM server/models/BookAuthor.js -> server/models/BookAuthor.ts
+RM server/models/BookSeries.js -> server/models/BookSeries.ts
+RM server/models/CollectionBook.js -> server/models/CollectionBook.ts
+RM server/models/CustomMetadataProvider.js -> server/models/CustomMetadataProvider.ts
+RM server/models/Device.js -> server/models/Device.ts
+RM server/models/Feed.js -> server/models/Feed.ts
+RM server/models/Library.js -> server/models/Library.ts
+RM server/models/MediaItemShare.js -> server/models/MediaItemShare.ts
+RM server/models/MediaProgress.js -> server/models/MediaProgress.ts
+RM server/models/PlaybackSession.js -> server/models/PlaybackSession.ts
+RM server/models/PlaylistMediaItem.js -> server/models/PlaylistMediaItem.ts
+RM server/models/Podcast.js -> server/models/Podcast.ts
+RM server/models/PodcastEpisode.js -> server/models/PodcastEpisode.ts
+RM server/models/Series.js -> server/models/Series.ts
+```
+
+### Files
+- D:\SEM-2\574\Project\audiobookshelf-po\server\models\CustomMetadataProvider.ts
+- D:\SEM-2\574\Project\audiobookshelf-po\server\models\Device.ts
+- D:\SEM-2\574\Project\audiobookshelf-po\server\models\MediaProgress.ts
+- D:\SEM-2\574\Project\audiobookshelf-po\server\models\ApiKey.ts
+- D:\SEM-2\574\Project\audiobookshelf-po\server\models\User.js (untouched)
+- Scratchpad, outside the repo: C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\ (emit.js, emit\, whatif.js, b2probe.js, includeprobe.js)
+
+===== 16:56:08 | agent-a5ab35e18afcd2747.jsonl | SubagentHandback
+--- message:
+## Wave 2 report: User is SKIPPED (sent 16:57)
+
+The nested single include objects are confirmed on the real file with the real check, and under your reading of rule 5 they have no fix. User.js is fully restored; nothing of mine is left in the repo.
+
+### The blocker, exact errors (check finished 16:52:45, first-pass User.ts)
+```
+server/models/User.ts(842,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(this: ModelStatic<PodcastEpisode>, identifier: Identifier, options: Omit<NonNullFindOptions<any>, "where">): Promise<...>', gave the following error.
+    Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+  Overload 2 of 2, '(this: ModelStatic<PodcastEpisode>, identifier?: Identifier | undefined, options?: Omit<FindOptions<any>, "where"> | undefined): Promise<...>', gave the following error.
+    Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+server/models/User.ts(866,13): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(this: ModelStatic<Model<any, any>>, identifier: Identifier, options: Omit<NonNullFindOptions<any>, "where">): Promise<...>', gave the following error.
+    Type '{ model: sequelize.ModelCtor<sequelize.Model<any, any>>; attributes: string[]; required: false; include: { model: typeof MediaProgress; where: { userId: string; }; required: false; }; }' is not assignable to type 'Includeable | Includeable[] | undefined'.
+      Types of property 'include' are incompatible.
+        Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+  Overload 2 of 2, '(this: ModelStatic<Model<any, any>>, identifier?: Identifier | undefined, options?: Omit<FindOptions<any>, "where"> | undefined): Promise<...>', gave the following error.
+    (same three lines as overload 1)
+```
+- User.ts 842 is User.js:748 (the nested include at 747-750). User.ts 866 is User.js:772 (the nested include at 771-775). The first-pass file was 94 lines longer at that point.
+- Why there is no fix: both are arguments to Sequelize's `findByPk`. Sequelize types a nested `include` as an array only (node_modules/sequelize/types/model.d.ts:705). A cast on the argument and a hand-written registry signature are the two things you ruled out, and no annotation makes an object literal assignable to an array type.
+
+### The other predicted blockers: all confirmed, each has a fix inside the rules
+The fixes were not applied, so they are not verified.
+
+| User.js line | Error on the real file | Fix inside the rules |
+|---|---|---|
+| 762 | `(856,38) TS2339: Property 'mediaProgresses' does not exist on type 'PodcastEpisode'.` | annotate the const as `PodcastEpisode & { mediaProgresses?: MediaProgress[] }` |
+| 784, 792, 793 | `TS2339: Property 'mediaType' / 'media' does not exist on type 'Model<any, any>'.` (libraryItem entry left vague, as you said) | single-step cast on the returned row |
+| 678 | `(772,85) TS2339: Property 'metadata' does not exist on type 'BookExpanded \| PodcastExpanded'.` | structural parameter annotation |
+| 634, 635 | `TS2790: The operand of a 'delete' operator must be optional.` | explicit interface for `json` |
+| 798 | `(892,7) TS2322: Type '(MediaProgress \| null \| undefined)[]' is not assignable to type 'MediaProgress[]'.` and `(892,74) TS18049: 'mediaProgress' is possibly 'null' or 'undefined'.` | two `!` (assigned on the line above) |
+| 819 | `(913,9) TS2322: Type 'string \| Date' is not assignable to type 'string \| null'.` | annotate the payload object |
+| 959, 965, 966 | `TS7053` (permissionMapping indexed by a string; UserPermissions indexed by a key) | index signature on the permissions data interface; `Record<string, string>` on the static |
+
+Two more that I had not predicted, both fixable by annotation:
+- User.js:536: `(630,22) TS2339: Property 'type' does not exist on type 'Model<any, any>'.` The `beforeDestroy(user)` hook in init() gets a plain Model, so its parameter needs `user: User`.
+- User.js:152, 154, 156: `TS7053 ... can't be used to index type '{}'` on the reduce accumulator in getSampleAbsPermissions(). It needs a type argument on reduce.
+
+First-pass artefacts, not blockers:
+- 46 TS7006 from parameters I had not typed yet.
+- 8 TS2554 "Expected 1 arguments, but got 0" at `save()` calls, from the not yet typed `save(options)` override. They go away with `options?:`, as in ApiKey.ts.
+
+### Errors in other files
+- During the first pass, one: `server/auth/LocalAuthStrategy.ts(184,18): error TS2554: Expected 2 arguments, but got 1.` It came from the not yet typed `update(values, options)` override, the same artefact as above.
+- After the restore: none.
+- User.ts existed in the tree from 16:51:36 to 16:54:07, so a check by another agent in that window would have seen these errors.
+
+### Counts
+- In the repo: nothing.
+- In the first-pass copy:
+  - `!` 0, casts 0.
+  - Index signatures 1: line 75, on the `AbsPermissions` data interface (updatePermissionsFromExternalJSON() reads the claim by key).
+  - Sequelize declarations 2: line 156 (static) and line 157 (instance), both `Sequelize & { models: RegisteredModels }` with entries `podcastEpisode` and `mediaProgress`.
+- Both sequelize declarations type-checked on the real file. There was no error on them and no TS18048 in the five static finders, and `podcastEpisode.findByPk` resolved to `ModelStatic<PodcastEpisode>`.
+- A full conversion would have added the two `!` at line 798, one cast on the returned libraryItem row, and one more index signature on UserPermissions.
+
+### Bugs found, not fixed
+- User.js:678: `libraryItem.media.metadata?.explicit` reads a property the expanded Book and Podcast types do not have, so that half of the explicit check is always undefined. I reported it in wave 1 as an old-model read; the compiler now confirms it.
+- New: the JSDoc at User.js:218 says `Promise<User|{error: string}>`, but line 287 returns null. The `getUserBy...` finders are documented as `Promise<User>` and return null for a missing user (lines 349, 370, 391, 413, 435).
+- Unchanged from wave 1: line 812 reads `progressPayload.createdAt`, which is not in the typedef; the JSDoc at 699-703 names parameters the method does not have; lines 798 and 825 use `this.mediaProgresses` unguarded.
+
+### Last filtered check output (finished 16:54:42, after the restore)
+```
+total output lines: 0
+--- server/models/User.ts:
+--- other files naming User:
+--- debug failures: 0
+```
+The whole program is error-free.
+
+### `git status --short -- server/models/`
+Prints nothing. `git status --short -- server/models/User.js server/models/User.ts` also prints nothing, and there is no diff against HEAD. The whole tree shows only `?? evidence/test-results/PO-S05/`.
+
+### What I ran and kept
+- Only `npx tsc -p tsconfig.check.json`, twice: on the first pass and after the restore. No build, tests, commit or other compile.
+- You did not ask for this in the SKIPPED case: I saved the first-pass copy and the full check output outside the repo, in the scratchpad folder C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\
+  - User.ts.partial (1120 lines: header, namespace for ProgressUpdatePayload and AudioBookmarkObject, field declarations, init overloads)
+  - user-check1.out (full output of the 16:52 check)
+- D:\SEM-2\574\Project\audiobookshelf-po\server\models\User.js is as at HEAD 053a778b.
+
+===== 16:30:49 | agent-aa653c413507b336f.jsonl | SubagentHandback
+--- message:
+## Sub-agent 3 report (sent about 16:32 NZDT)
+
+All 7 models are CONVERTED and type-check in my own files, with one "waiting on LibraryItem" error left. Two things need your decision before you commit:
+
+1. **Author.ts has 3 `!` that rule 5's wording does not literally cover** (lines 116-118). They sit on a `findByPk()` result that the original code dereferences without a null check. I found no assertion-free way to type that method without changing emitted code.
+2. **PlaybackSession.ts has 2 `as` casts at the Sequelize boundary** (lines 100, 159). Sequelize is typed, not untyped, but its option types reject what its runtime accepts.
+
+If you reject either, restore that file with the procedure in the brief. A JS Author will give TS2684 in any TS model that calls an inherited static on `typeof import('./Author')`.
+
+I ran only `npx tsc -p tsconfig.check.json`. I did not build, emit or test. "Compiled JS unchanged apart from the require lines" is my reading of what TypeScript erases, not a measurement, so the baseline comparison is still yours to run.
+
+### Status per model
+
+| Model | Status | `!` | `as` | Index signatures | B.2 declarations |
+|---|---|---|---|---|---|
+| MediaItemShare | CONVERTED (1 waiting-on error) | 0 | 0 | 0 | registry type (9) + static (85); instance `sequelize` (86) |
+| Series | CONVERTED | 0 | 0 | 0 | 0 |
+| Author | CONVERTED | 3 | 0 | 0 | static, no registry type (21) |
+| Library | CONVERTED | 0 | 0 | 0 | static, no registry type (59) |
+| PodcastEpisode | CONVERTED | 0 | 0 | 0 | 0 |
+| PlaybackSession | CONVERTED | 0 | 2 | 0 | static, no registry type (40); instance `sequelize` (41) |
+| Podcast | CONVERTED | 0 | 0 | 3 | 0 |
+
+### Escape hatches, with reasons
+
+**Author.ts** (all in `getAllLibraryItemsForAuthor`)
+- 116 `if (author!.books) {`: `findByPk()` returns `Author | null`; the original dereferences it unchecked.
+- 117 `for (const book of author!.books) {`: same.
+- 118 `const libraryItem = book.libraryItem!`: set by the include. It is optional in my type only because line 120 does `delete book.libraryItem`, which TS2790 allows only on an optional property.
+
+**PlaybackSession.ts**
+- 100 `} as FindOptions)`: `getOldPlaybackSessions(where = null)` passes `where: null` to `findAll`. `FindOptions.where` does not allow null. The shorthand `where,` leaves no narrower place for a cast without changing emitted text.
+- 159 `} as UpsertOptions)`: `{ silent: true }` is passed to `upsert`, and `UpsertOptions` has no `silent` key (excess-property error).
+
+**Podcast.ts**
+- 29 `metadata: { [key: string]: unknown }` and 30 `[key: string]: unknown`, both in the erased `PodcastRequestPayload` interface: `payload.metadata[key]` and `payload[key]` are read and written by dynamic key.
+- 67 class index signature `[key: string]: unknown`: `updateFromRequest()` does `this[newKey] = ...` and `this[key] = ...`. This makes any unknown property on a Podcast instance `unknown` instead of an error, which may change how errors look in LibraryItem.ts for `Book | Podcast` unions.
+
+Not counted above: `Record<string, unknown>` for JSON columns whose JSDoc says `Object` and whose keys the file never reads (MediaItemShare `extraData`, PlaybackSession `mediaMetadata`).
+
+Lines whose trailing comments will show in compiled JS: Author.ts 116, 117, 118 and PlaybackSession.ts 100, 159. Everything else I added sits on erased lines.
+
+### Did the CLAUDE.md pattern and B.2 work?
+- **Sequelize pattern:** yes, as written, in all 7 files.
+- **B.2:** yes, first try, in MediaItemShare. ShareManager.ts has no errors.
+- **`import type` replacing a runtime-undefined require:** none.
+- **Declarations needed in server/types/:** none.
+- **Every original require is still emitted:** each `import x = require()` keeps a value use.
+
+What I did beyond CLAUDE.md, all in erased code:
+- **Plain static `sequelize` declaration.** Where registry entries are only passed on as include models, `declare static readonly sequelize: Sequelize` removes TS18048 without a registry type (Author, Library, PlaybackSession).
+- **`getMediaItem()`.** I copied PlaylistMediaItem.ts: column typed `'book' | 'podcastEpisode'`, mixins declared, the instance `sequelize` typed with a generic `uppercaseFirst`, and the const annotated `'getBook' | 'getPodcastEpisode'`. No cast or index signature (MediaItemShare, PlaybackSession).
+- **afterFind hooks.** The callback parameter is annotated `(findResult: X | X[] | null)`. Sequelize types it as base `Model`, and the body does not check without this. `book?` and `podcastEpisode?` are declared optional so `delete` is legal.
+- **Locals that gain keys later.** Annotated, for example `ReturnType<Author['toOldJSON']> & { numBooks?: number }` (Author 216; PodcastEpisode 121, 246, 292; Podcast 477).
+- **Series `getBooks` mixin (line 20).** Declared with the expanded result type and an `order` type that also accepts `[[literal(...)]]`, which Sequelize's `Order` type rejects.
+- **Library 169.** `this.max<number, Library>('displayOrder')`, type arguments only.
+- **Podcast title helpers.** Annotated with method signatures, as Book.ts does, so they accept `string | null` without a cast.
+- **Typedef namespaces (E).** MediaItemShare (3 types), Library (`LibrarySettingsObject`), PodcastEpisode (`ChapterObject`), Podcast (`PodcastExpandedProperties`, `PodcastExpanded`).
+
+Field types that differ from the constructor JSDoc are each explained on their `declare` line. The larger ones:
+- Podcast: eleven string columns and `coverPath` are `string | null`, matching what Book.ts did; `lastEpisodeCheck` is `Date | number`.
+- MediaItemShare: `expiresAt` is `Date | null`, also in the exported interfaces.
+- Library: `LibrarySettingsObject` has optional keys and two keys the typedef lacks.
+- PodcastEpisode: `publishedAt` stays `Date` and `audioFile` stays non-null, although the code reads them with `?.`. Typing them nullable would force assertions in `Podcast.getLatestEpisodePublishedAt` and `getAudioTrack`.
+
+### Waiting-on errors and errors in other files
+- `server/models/MediaItemShare.ts(145,92): error TS2345: Argument of type 'null' is not assignable to parameter of type 'BindOrReplacements | undefined'.` Waiting on LibraryItem. It disappears only if `LibraryItem.findOneExpanded`'s second parameter accepts null (its runtime default is `null`; the JS JSDoc says `[replacements]`).
+- Errors in other files that name my models: none. The whole program had exactly this one error at the last check.
+- My files read `import('./Book').BookExpanded`, `.BookExpandedWithLibraryItem`, `.AudioFileObject` and `.AudioTrack`. Book.ts currently exports all four.
+
+### Bugs and oddities found, not fixed
+- **Author.ts:116** (Author.js:98): `getAllLibraryItemsForAuthor` throws a TypeError if the author id does not exist.
+- **Library.ts:169** (Library.js:128): `this.max('displayOrder') || 0` applies `|| 0` to a Promise, so it never takes effect. An empty table resolves to null, not 0.
+- **PlaybackSession.ts:158**: `silent: true` is passed to `upsert()`. Sequelize's `upsert` never reads `silent`, so the option does nothing.
+- **Podcast.ts:338** (Podcast.js:282): `updateFromRequest` assigns a Unix-timestamp number to `lastEpisodeCheck`, a DATE column, so it is a number until the row is reloaded.
+- **Podcast.ts:436**: `episode.publishedAt?.valueOf() > latest` compares `undefined > number` when `publishedAt` is null. It is false at runtime, so harmless.
+- **PodcastEpisode.ts:131, 133**: a string `enclosure.length` goes into a BIGINT column and a Unix number into the DATE `publishedAt`.
+- **JSDoc mismatches:**
+  - `MediaItemShare.getMediaItemsLibraryItem` returns null for non-book types.
+  - `Author.getLastFirst` returns null for an empty name.
+  - The `LibrarySettingsObject` typedef lacks `podcastSearchRegion` and `epubsAllowScriptedContent`.
+  - utils `getTitleIgnorePrefix` and `getTitlePrefixAtEnd` say `string` but are called with null.
+
+### Last filtered check output (16:28:08 to 16:28:49, after my last edit)
+```
+=== own files
+server/models/MediaItemShare.ts(145,92): error TS2345: Argument of type 'null' is not assignable to parameter of type 'BindOrReplacements | undefined'.
+=== others naming my models
+=== whole program: error count and files
+1
+      1 server/models/MediaItemShare.ts
+```
+No "Debug Failure" in any run.
+
+### `git status --short -- server/models/` (16:28:49)
+```
+RM server/models/ApiKey.js -> server/models/ApiKey.ts
+RM server/models/Author.js -> server/models/Author.ts
+RM server/models/Book.js -> server/models/Book.ts
+RM server/models/BookAuthor.js -> server/models/BookAuthor.ts
+RM server/models/BookSeries.js -> server/models/BookSeries.ts
+RM server/models/CollectionBook.js -> server/models/CollectionBook.ts
+RM server/models/CustomMetadataProvider.js -> server/models/CustomMetadataProvider.ts
+RM server/models/Device.js -> server/models/Device.ts
+RM server/models/Library.js -> server/models/Library.ts
+RM server/models/MediaItemShare.js -> server/models/MediaItemShare.ts
+RM server/models/MediaProgress.js -> server/models/MediaProgress.ts
+RM server/models/PlaybackSession.js -> server/models/PlaybackSession.ts
+RM server/models/PlaylistMediaItem.js -> server/models/PlaylistMediaItem.ts
+RM server/models/Podcast.js -> server/models/Podcast.ts
+RM server/models/PodcastEpisode.js -> server/models/PodcastEpisode.ts
+RM server/models/Series.js -> server/models/Series.ts
+```
+Mine are Author, Library, MediaItemShare, PlaybackSession, Podcast, PodcastEpisode and Series. I touched nothing else. The renames are staged by `git mv`; I ran no add, commit or stash.
+
+Files, all under `D:\SEM-2\574\Project\audiobookshelf-po\server\models\`:
+- MediaItemShare.ts
+- Series.ts
+- Author.ts
+- Library.ts
+- PodcastEpisode.ts
+- PlaybackSession.ts
+- Podcast.ts
+
+===== 16:28:24 | agent-ac14425a6e4f40abc.jsonl | SubagentHandback
+--- message:
+## Sub-agent 4 report (sent about 16:28)
+
+Two of my six models are converted and pass the check. Three do not fit the rules as written and are fully restored. Feed was not started.
+
+| Model | Result |
+|---|---|
+| CollectionBook | CONVERTED |
+| PlaylistMediaItem | CONVERTED |
+| Collection | SKIPPED: one error with no type-only fix, restored |
+| FeedEpisode | SKIPPED: `Date - Date` arithmetic, restored |
+| Playlist | SKIPPED: non-array nested `include`, restored |
+| Feed | NOT REACHED: untouched |
+
+In all three skips the JavaScript does something that works at runtime but that TypeScript or the Sequelize typings reject. The only ways through are a change to the emitted code or a cast that rule 5 does not cover, so I restored them. Converted copies are saved outside the repo in case you relax a rule:
+`C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\a4\` (`Collection.ts.converted`, `Playlist.ts.converted`, `FeedEpisode.ts.partial`).
+
+## Converted models
+
+### server/models/CollectionBook.ts
+- 0 `!`, 0 index signatures, 0 `as` casts, 0 registry declarations, no `import type` replacing a require.
+- Init overloads are at lines 27-28 and the implementation at line 29. The original init has no JSDoc, so nothing sits between them.
+- `const { book, collection } = sequelize.models` stays vague (B.1).
+
+### server/models/PlaylistMediaItem.ts
+- 0 `!`, 0 index signatures, 0 `as` casts, 0 registry (B.2) declarations, no `import type` replacing a require.
+- **Line 22** is an instance-side `declare readonly sequelize: Sequelize & { uppercaseFirst<T extends string>(str: T): Capitalize<T> }`. It is not a registry declaration; it describes the helper that Database.js:236 adds. Your `scan.sh` counts it as `registryDecl=1`.
+- **Field types that are not a copy of the constructor JSDoc:**
+  - Line 12: `mediaItemType: 'book' | 'podcastEpisode'` (the JSDoc says string).
+  - Lines 17-18: `book?` and `podcastEpisode?`, which the afterFind hook reads and deletes.
+  - Line 19: `playlist: Playlist`, read at Playlist.js:145. No TypeScript file needs it now that Playlist is skipped; delete the line if you prefer.
+  - Lines 20-21: the `getBook` and `getPodcastEpisode` mixins.
+- **`this[mixinMethodName](options)` needed no index signature and no cast.** Line 48 annotates the local as `const mixinMethodName: 'getBook' | 'getPodcastEpisode'`, which makes TypeScript give the template literal a literal type.
+- Line 46: `getMediaItem(options?: BelongsToGetAssociationMixinOptions)`.
+- Line 98: the hook parameter is annotated `(findResult: PlaylistMediaItem | PlaylistMediaItem[] | null)`.
+
+### Both converted files
+- No "waiting on <Model>" errors and no errors in other files that name my models.
+- Compiled output: I transpiled the two files alone through the TypeScript API with node (not tsc, output only in my scratch folder) and diffed against your `baseline-models`. Only the sequelize require line differs, split in two.
+
+## Skipped models
+
+### Collection
+- **Error:** `server/models/Collection.ts(85,7): error TS2322: Type '{ libraryId: string; } | null' is not assignable to type 'WhereOptions<any> | undefined'. Type 'null' is not assignable to type 'WhereOptions<any> | undefined'.`
+- **Source:** Collection.js:51 `where: collectionWhere`, which line 35 initialises to `null`. Sequelize accepts a null `where` at runtime; its typings do not.
+- This was the only error in the file once Book resolved.
+- The saved copy has 1 `!` (line 318, `book.libraryItem!`, needed because the next line deletes the property), 0 casts and 0 index signatures.
+- **Runtime `Sequelize` clash:** I kept the destructuring and wrote `sequelizeModule.Sequelize` in type positions (the init overloads and `declare static readonly sequelize`). That type-checked.
+
+### FeedEpisode
+- **Errors:**
+  - `server/models/FeedEpisode.ts(123,64): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.`
+  - `server/models/FeedEpisode.ts(123,86): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.`
+  - The same pair at `(125,64)` and `(125,86)`.
+- **Source:** FeedEpisode.js:93 and :95, `new Date(b.pubDate) - new Date(a.pubDate)`. No annotation or single-step cast makes a Date a number.
+- Also seen in that run:
+  - `(178,35) TS2339: Property 'format' does not exist on type '{ res: any; }'` (FeedEpisode.js:148, vendored dateAndTime; a boundary cast would cover it).
+  - `(361,29) TS2353` on `customElements.push` (FeedEpisode.js:329; an annotation fixes it).
+- I stopped at the blocker, so the rest of the file is not fully typed. Book was mid-conversion during that run, so the list may be incomplete.
+
+### Playlist
+- **Errors:**
+  - `server/models/Playlist.ts(122,15): error TS2322: Type '{ model: typeof PlaylistMediaItem; include: (...)[]; }' is not assignable to type 'Includeable | Includeable[] | undefined'.` It ends in `Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.`
+  - `server/models/Playlist.ts(170,13): error TS2353: Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.`
+  - `server/models/Playlist.ts(349,15): error TS2322: Type 'ModelCtor<Model<any, any>>' is not assignable to type 'Includeable[] | undefined'.`
+- **Source:** Playlist.js:75, :123 and :300. `node_modules/sequelize/types/model.d.ts:705` types a nested include as `include?: Includeable[]`. Playlist.js passes a single object or model at seven places (lines 74, 76, 122, 127, 131, 133, 300).
+- These were the only errors in the file.
+- The saved copy has 3 `!` (lines 381, 404, 413, all on a `libraryItem` that the code later deletes), 1 B.2 declaration (line 51), 0 casts and 0 index signatures.
+
+### Feed (not compiled; these are predictions from reading it)
+- Feed.js:527 calls `feedEpisodeCreateFunc(feedEpisodeCreateFuncEntity, ...)`, two variables assigned in matching branches. TypeScript cannot correlate them, so I expect TS2345 with no type-only fix.
+- Feed.js:126-127 reads `media.author`, `media.authorName` and `media.podcastType` on the Book/Podcast union.
+- Feed.js:534 calls `destroy` on the FeedEpisode class, which gives TS2684 for as long as FeedEpisode stays JavaScript.
+
+## Your other questions
+- **Declarations needed in server/types/:** none.
+- **Sequelize pattern in CLAUDE.md:** worked as written on all five files I compiled. Two things it does not cover:
+  - `addHook('afterFind', ...)` needs the callback parameter annotated. Sequelize types it from the base `Model`, which rejects `findResult = [findResult]` and the field reads.
+  - The polymorphic mixin call, handled as described under PlaylistMediaItem.
+- **B.2:** worked on Playlist. With `declare static readonly sequelize: Sequelize & { models: RegisteredModels }` and one entry, `this.sequelize.models.playlistMediaItem.findAll()` returned `PlaylistMediaItem[]`, and unnamed entries still resolved. Collection only needed the static declaration without entries, to remove the optionality. Neither file stayed, so no B.2 declaration of mine is in the tree.
+
+## Bugs found, not fixed
+- **Collection.js:99:** `this.books = books` inside the static `getOldCollectionsJsonExpanded` sets a property on the class, not on the collection `c`. The permission-filtered list is never used, so `c.toOldJSONExpanded()` returns all books to a restricted user whenever at least one book is accessible.
+- **Playlist.js:332:** `checkHasMediaItem` without an `episodeId` reads `pmi.mediaItem.libraryItem.id`. This throws for a podcast-episode item, which has no `libraryItem`.
+- **Playlist.js:190:** `playlistMediaItem.update({ order })` is not awaited before the playlist JSON is rebuilt.
+- **Minor:**
+  - FeedEpisode.js:6 imports `secondsToTimestamp` and never uses it.
+  - FeedEpisode.js:136 documents `audioTrack` as `AudioFileObject`, but line 159 reads `startOffset`.
+  - Collection.js:116 documents `Promise<Collection>`, but `findByPk` can resolve null.
+
+## Last filtered check (16:26:20 to 16:26:47, tsc exit 2)
+Both greps printed nothing: no errors in my files and none in other files naming my models. The whole program had one error, in `server/models/MediaItemShare.ts` (not mine).
+
+## `git status --short -- server/models/` at 16:27:29
+```
+RM server/models/ApiKey.js -> server/models/ApiKey.ts
+RM server/models/Author.js -> server/models/Author.ts
+RM server/models/Book.js -> server/models/Book.ts
+RM server/models/BookAuthor.js -> server/models/BookAuthor.ts
+RM server/models/BookSeries.js -> server/models/BookSeries.ts
+RM server/models/CollectionBook.js -> server/models/CollectionBook.ts
+RM server/models/CustomMetadataProvider.js -> server/models/CustomMetadataProvider.ts
+RM server/models/Device.js -> server/models/Device.ts
+RM server/models/Library.js -> server/models/Library.ts
+RM server/models/MediaItemShare.js -> server/models/MediaItemShare.ts
+RM server/models/MediaProgress.js -> server/models/MediaProgress.ts
+RM server/models/PlaybackSession.js -> server/models/PlaybackSession.ts
+RM server/models/PlaylistMediaItem.js -> server/models/PlaylistMediaItem.ts
+RM server/models/Podcast.js -> server/models/Podcast.ts
+RM server/models/PodcastEpisode.js -> server/models/PodcastEpisode.ts
+RM server/models/Series.js -> server/models/Series.ts
+```
+Mine are CollectionBook and PlaylistMediaItem. `git status --short` prints nothing for Collection, FeedEpisode, Playlist and Feed (.js or .ts). I ran no build, test or install, and did not commit, add or stash.
+
+===== 16:35:27 | agent-ac14425a6e4f40abc.jsonl | SubagentHandback
+--- message:
+## Sub-agent 4, wave 1 follow-up: Feed (sent about 16:36)
+
+**Feed: SKIPPED.** I tested the three predicted blockers before typing the whole file. All three are real, and the correlated call has no type-only fix inside the rules, so Feed is restored. `git status --short -- server/models/Feed.js server/models/Feed.ts` prints nothing.
+
+The probe copy is saved outside the repo as `...\scratchpad\a4\Feed.ts.partial`. It type-checked against the .js versions of Collection, FeedEpisode and Playlist.
+
+## Compiler errors (check at 16:32:32, line numbers of the probe, with the Feed.js line)
+
+**1. Correlated call, Feed.js:527. No fix inside the rules.**
+`server/models/Feed.ts(577,62): error TS2345: Argument of type 'LibraryItemExpanded | BookExpandedWithLibraryItem[]' is not assignable to parameter of type 'LibraryItem & LibraryItemExpandedProperties & BookExpandedWithLibraryItem[]'.`
+- The function and its first argument are two variables assigned in matching branches (Feed.js:491-514), and TypeScript cannot pair them.
+- Any honest type for the function variable must accept either entity, and none of the three bound FeedEpisode methods does.
+- The only type-only route I know is to declare the variable through a method signature so its parameters are compared bivariantly. That is an unsoundness trick, not on the banned list; I did not use or test it.
+
+**2. `Series | null`, Feed.js:511. Not predicted, and also has no honest fix.**
+`server/models/Feed.ts(561,65): error TS2345: Argument of type 'Series | null' is not assignable to parameter of type 'Series'. Type 'null' is not assignable to type 'Series'.`
+- Series.ts now types `getExpandedById` as possibly null, and Feed passes the result on unchecked.
+- A `!` here would assert something that is not guaranteed.
+
+**3. Book/Podcast union reads, Feed.js:107 and :126-127.**
+- `server/models/Feed.ts(155,43): error TS2339: Property 'podcastEpisodes' does not exist on type 'BookExpanded | PodcastExpanded'.`
+- `server/models/Feed.ts(174,59): error TS2551: Property 'author' does not exist on type 'BookExpanded | PodcastExpanded'. Did you mean 'authors'?`
+- `server/models/Feed.ts(175,64): error TS2339: Property 'podcastType' does not exist on type 'BookExpanded | PodcastExpanded'.`
+- `media.authorName` on line 126 raised no error.
+- Lines 126-127 can probably be typed by marking `author` and `podcastType` as absent (`?: undefined`) on the book variant. Not tested.
+- Line 107 relies on `libraryItem.mediaType === 'podcast'` narrowing `media`. That needs a discriminated parameter type, which the caller at Feed.js:489 does not satisfy, or a `!` that rule 5 does not cover.
+
+**4. `destroy`, Feed.js:534. Waiting on FeedEpisode, which is itself skipped.**
+`server/models/Feed.ts(584,15): error TS2684: The 'this' context of type 'typeof FeedEpisode' is not assignable to method's 'this' of type 'ModelStatic<FeedEpisode>'.`
+- B.1 does not apply here: the same variable is used for three custom statics (`createFromPodcastEpisodes`, `createFromAudiobookTracks`, `createFromBooks`) and for `destroy`.
+- A type-only fix probably exists: type the entry as the vague Sequelize entry plus a `Pick` of those three statics. Not tested.
+
+**Other errors in the probe, all fixable with an annotation:**
+- TS2339 nine times for `feedObj.preventIndexing`, `ownerName` and `ownerEmail` (Feed.js:135-137, 227-229, 316-318).
+- TS2353 three times on `customElements.push` (Feed.js:580, 592, 597).
+- TS7006 twice at Feed.js:107, a consequence of the first error in item 3.
+
+## What type-checked in the probe
+- The init overloads with the long JSDoc below them, and the optional constructor parameters.
+- The afterFind hook with `(findResult: Feed | Feed[] | null)`.
+- `getEntity` with four declared mixins and an annotated local, with no index signature and no cast.
+- `new RSS(rssData)` from the vendored library.
+- B.2 on both sides with four entries. The custom statics on the .js models resolved (`LibraryItem.getExpandedById`, `Collection.getExpandedById`), and so did `Series.getExpandedById`.
+
+## Counts in the probe copy (nothing of it remains in the tree)
+- 0 `!`, 0 index signatures, 0 `as` casts.
+- 2 B.2 declarations: line 67 (static) and line 68 (instance, which also carries `uppercaseFirst`). The registry type is on line 18.
+
+## Bugs found in Feed.js, not fixed
+- **Feed.js:510-511:** `seriesModel.getExpandedById()` can resolve null and the result goes straight into `getFeedObjForSeries`, which throws on `seriesExpanded.books`. This is before the `try` at line 520. The same unchecked pattern is at :488-489 (library item) and :501-502 (collection); the compiler does not show those two because their JSDoc return types omit null.
+- **Feed.js:305:** `booksWithTracks[0].libraryItem.libraryId` throws when a series has no book with audio tracks.
+- **JSDoc inaccuracies:**
+  - Line 16 types `feedEpisodes` as a single FeedEpisode; it is an array.
+  - `getEpisodePath` (line 625) documents `string` but returns null when nothing matches.
+  - The three `createFeedFor...` methods document `Promise<FeedExpanded>` but return null on error.
+
+## Last filtered check (16:34:02 to 16:34:23, after the restore, tsc exit 2)
+Both greps printed nothing: no errors in my files and none in other files naming my models. The whole program had one error, in `server/models/MediaItemShare.ts` (not mine).
+
+## `git status --short -- server/models/Feed.js server/models/Feed.ts`
+Prints nothing.
+
+My set is otherwise unchanged from my first report: CollectionBook.ts and PlaylistMediaItem.ts are converted, and Collection, FeedEpisode and Playlist are clean .js. I ran no build, test, commit or transpile this time, only the check.
+

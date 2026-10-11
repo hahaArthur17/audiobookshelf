@@ -1,0 +1,129 @@
+# PO-S07 LibraryItem: SKIPPED and fully restored to LibraryItem.js. 2026-10-10 21:31:30
+# Output of: npx tsc -p tsconfig.check.json   (no emit), after a first conversion pass at HEAD 034b2135.
+# The pass had: the import shape of CLAUDE.md, the class fields, all parameter types, the init overloads, and these edits of point 1(b):
+#   import './Book' and import './Podcast' (to keep the two requires that are only used as types),
+#   where / replacements / include left out when null (getLibraryItemsIncrement, findAllExpandedWhere, findOneExpanded),
+#   one nested include given as an array (findAllExpandedWhere).
+# Result: 74 errors, all in server/models/LibraryItem.ts. Groups (line numbers are those of the pass, not of LibraryItem.js):
+#
+# NO FIX WITHIN THE RULES OF THIS RUN (these are the reason for the skip):
+#  A. 265, 273, 317, 325 (4 errors, TS2322): libraryItem.media = await libraryItem.getMedia(...) in getExpandedById() and findOneExpanded().
+#     getMedia() can return null (its first line returns Promise.resolve(null)), and media is not nullable: getCoverPath(), toOldJSONExpanded() and
+#     saveMetadataFile() read this.media with no guard. Needs a ! or a cast on a typed value, or a nullable media plus guards (a behaviour change).
+#  E. 696-733 (14 errors, TS2339/TS2551/TS18046/TS7006): saveMetadataFile() copies the media into a local (const mediaExpanded = this.media || ...) and
+#     then tests this.mediaType === 'book' to choose which fields to read. The test cannot narrow the local, so authors, series and chapters are
+#     unknown (Podcast has an index signature) and the podcast-only fields do not exist on Book. Needs a cast, or a rewrite of the method.
+#  F. 990, 992 (4 errors, TS2571/TS2339/TS7006): getAudioFileWithIno() branches on the getter this.isBook, which narrows nothing, and then reads
+#     this.media.audioFiles or this.media.podcastEpisodes. Same cause as E.
+#
+# SOLVABLE WITH MORE TYPING, NOT DONE BECAUSE OF A, E AND F:
+#  B. 366-385 (18 errors): getByFilterAndSort() reads and copies properties that the filter queries attach to a row (collapsedSeries, series, rssFeed,
+#     numEpisodes, numEpisodesIncomplete, mediaItemShare). Needs optional field declarations and a draft type for the JSON.
+#  C. 417-586 (28 errors): getPersonalizedShelves(). utils/queries/libraryFilters.js is untyped JavaScript whose JSDoc return types are vague, so every
+#     payload is {} or unknown. Needs the used functions described by hand and one boundary cast on the import (allowed: untyped module).
+#     417 is TS2554: getMediaItemsInProgress() is called with 5 arguments and declares 4 (the fifth, false, is ignored at runtime).
+#  D. 632 (1 error): getForAuthor() passes User | null where the JSDoc of libraryFilters says User. Same fix as C.
+#  G. 738-772 (4 errors): fsExtra.writeFile (the boundary cast of CLAUDE.md), the LibraryFile.toJSON() shape, and the error parameter that follows from it.
+#  H. 1009 (1 error): getTrackList() passes an optional episodeId to Podcast.getTracklist(), whose parameter is required in Podcast.ts.
+#
+# ---------------- compiler output ----------------
+server/models/LibraryItem.ts(265,7): error TS2322: Type 'Podcast | Book | null' is not assignable to type 'BookExpanded | PodcastExpanded'.
+  Type 'null' is not assignable to type 'BookExpanded | PodcastExpanded'.
+server/models/LibraryItem.ts(273,7): error TS2322: Type 'Podcast | Book | null' is not assignable to type 'BookExpanded | PodcastExpanded'.
+  Type 'null' is not assignable to type 'BookExpanded | PodcastExpanded'.
+server/models/LibraryItem.ts(317,7): error TS2322: Type 'Podcast | Book | null' is not assignable to type 'BookExpanded | PodcastExpanded'.
+  Type 'null' is not assignable to type 'BookExpanded | PodcastExpanded'.
+server/models/LibraryItem.ts(325,7): error TS2322: Type 'Podcast | Book | null' is not assignable to type 'BookExpanded | PodcastExpanded'.
+  Type 'null' is not assignable to type 'BookExpanded | PodcastExpanded'.
+server/models/LibraryItem.ts(366,16): error TS2339: Property 'collapsedSeries' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(367,26): error TS2339: Property 'collapsedSeries' does not exist on type '{ id: string; ino: string; oldLibraryItemId: string | null; libraryId: string; folderId: string; path: string; relPath: string; isFile: boolean; mtimeMs: number; ctimeMs: number; birthtimeMs: number; ... 7 more ...; size: number; }'.
+server/models/LibraryItem.ts(367,47): error TS2339: Property 'collapsedSeries' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(369,16): error TS2339: Property 'series' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(370,41): error TS2339: Property 'series' does not exist on type '{ title: string | null; titleIgnorePrefix: string | null; subtitle: string | null; authorName: string; authorNameLF: string; narratorName: string; seriesName: string; genres: string[]; ... 8 more ...; abridged: boolean; } | ({ ...; } & { ...; })'.
+  Property 'series' does not exist on type '{ title: string | null; titleIgnorePrefix: string | null; subtitle: string | null; authorName: string; authorNameLF: string; narratorName: string; seriesName: string; genres: string[]; publishedYear: string | null; ... 7 more ...; abridged: boolean; }'.
+server/models/LibraryItem.ts(370,53): error TS2339: Property 'series' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(372,16): error TS2339: Property 'rssFeed' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(373,26): error TS2339: Property 'rssFeed' does not exist on type '{ id: string; ino: string; oldLibraryItemId: string | null; libraryId: string; folderId: string; path: string; relPath: string; isFile: boolean; mtimeMs: number; ctimeMs: number; birthtimeMs: number; ... 7 more ...; size: number; }'.
+server/models/LibraryItem.ts(373,39): error TS2339: Property 'rssFeed' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(375,22): error TS2339: Property 'numEpisodes' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'numEpisodes' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(376,32): error TS2339: Property 'numEpisodes' does not exist on type '{ id: string; metadata: { title: string | null; titleIgnorePrefix: string | null; subtitle: string | null; authorName: string; authorNameLF: string; narratorName: string; seriesName: string; ... 9 more ...; abridged: boolean; }; ... 7 more ...; ebookFormat: string | undefined; } | { ...; }'.
+  Property 'numEpisodes' does not exist on type '{ id: string; metadata: { title: string | null; titleIgnorePrefix: string | null; subtitle: string | null; authorName: string; authorNameLF: string; narratorName: string; seriesName: string; ... 9 more ...; abridged: boolean; }; ... 7 more ...; ebookFormat: string | undefined; }'.
+server/models/LibraryItem.ts(376,55): error TS2339: Property 'numEpisodes' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'numEpisodes' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(381,16): error TS2339: Property 'numEpisodesIncomplete' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(382,26): error TS2339: Property 'numEpisodesIncomplete' does not exist on type '{ id: string; ino: string; oldLibraryItemId: string | null; libraryId: string; folderId: string; path: string; relPath: string; isFile: boolean; mtimeMs: number; ctimeMs: number; birthtimeMs: number; ... 7 more ...; size: number; }'.
+server/models/LibraryItem.ts(382,53): error TS2339: Property 'numEpisodesIncomplete' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(384,16): error TS2339: Property 'mediaItemShare' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(385,26): error TS2339: Property 'mediaItemShare' does not exist on type '{ id: string; ino: string; oldLibraryItemId: string | null; libraryId: string; folderId: string; path: string; relPath: string; isFile: boolean; mtimeMs: number; ctimeMs: number; birthtimeMs: number; ... 7 more ...; size: number; }'.
+server/models/LibraryItem.ts(385,46): error TS2339: Property 'mediaItemShare' does not exist on type 'LibraryItem'.
+server/models/LibraryItem.ts(417,112): error TS2554: Expected 4 arguments, but got 5.
+server/models/LibraryItem.ts(419,93): error TS2339: Property 'ebookFormat' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'ebookFormat' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(419,118): error TS2339: Property 'numTracks' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'numTracks' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(420,89): error TS2339: Property 'numTracks' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'numTracks' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(449,21): error TS2739: Type '{}' is missing the following properties from type 'Promise<unknown>': then, catch, finally, [Symbol.toStringTag]
+server/models/LibraryItem.ts(450,21): error TS2739: Type '{}' is missing the following properties from type 'Promise<unknown>': then, catch, finally, [Symbol.toStringTag]
+server/models/LibraryItem.ts(451,21): error TS2739: Type '{ series: any[]; count: number; }' is missing the following properties from type 'Promise<unknown>': then, catch, finally, [Symbol.toStringTag]
+server/models/LibraryItem.ts(459,11): error TS18046: 'continueSeriesPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(465,21): error TS18046: 'continueSeriesPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(466,18): error TS18046: 'continueSeriesPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(469,30): error TS18046: 'continueSeriesPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(469,78): error TS18046: 'continueSeriesPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(473,11): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(479,21): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(480,18): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(483,30): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(483,74): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(487,11): error TS18046: 'seriesMostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(493,21): error TS18046: 'seriesMostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(494,18): error TS18046: 'seriesMostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(497,30): error TS18046: 'seriesMostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(497,74): error TS18046: 'seriesMostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(558,184): error TS2739: Type '{}' is missing the following properties from type 'Promise<unknown>': then, catch, finally, [Symbol.toStringTag]
+server/models/LibraryItem.ts(576,11): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(582,21): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(583,18): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(586,30): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(586,74): error TS18046: 'mostRecentPayload' is of type 'unknown'.
+server/models/LibraryItem.ts(632,84): error TS2345: Argument of type 'User | null' is not assignable to parameter of type 'User'.
+  Type 'null' is not assignable to type 'User'.
+server/models/LibraryItem.ts(696,43): error TS2339: Property 'map' does not exist on type '{}'.
+server/models/LibraryItem.ts(696,48): error TS7006: Parameter 'c' implicitly has an 'any' type.
+server/models/LibraryItem.ts(699,18): error TS18046: 'mediaExpanded.authors' is of type 'unknown'.
+server/models/LibraryItem.ts(699,45): error TS7006: Parameter 'a' implicitly has an 'any' type.
+server/models/LibraryItem.ts(701,17): error TS18046: 'mediaExpanded.series' is of type 'unknown'.
+server/models/LibraryItem.ts(701,43): error TS7006: Parameter 'se' implicitly has an 'any' type.
+server/models/LibraryItem.ts(721,31): error TS2551: Property 'author' does not exist on type 'BookExpanded | PodcastExpanded'. Did you mean 'authors'?
+  Property 'author' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(723,36): error TS2339: Property 'releaseDate' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'releaseDate' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(725,32): error TS2339: Property 'feedURL' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'feedURL' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(726,33): error TS2339: Property 'imageURL' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'imageURL' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(727,38): error TS2339: Property 'itunesPageURL' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'itunesPageURL' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(728,33): error TS2339: Property 'itunesId' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'itunesId' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(729,39): error TS2339: Property 'itunesArtistId' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'itunesArtistId' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(733,36): error TS2339: Property 'podcastType' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'podcastType' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(738,8): error TS2339: Property 'writeFile' does not exist on type '{ remove: (...args: any[]) => Promise<any> | undefined; removeSync: (path: any) => any; pathExists: (...args: any[]) => any; pathExistsSync: any; move: (...args: any[]) => Promise<any> | undefined; ... 28 more ...; writev: (fd: any, buffers: any, ...args: any[]) => any; }'.
+server/models/LibraryItem.ts(746,13): error TS2322: Type '{ ino: any; metadata: FileMetadataData; isSupplementary: any; addedAt: any; updatedAt: any; fileType: string; }' is not assignable to type 'LibraryFileObject'.
+  The types of 'metadata.filename' are incompatible between these types.
+    Type 'string | null' is not assignable to type 'string'.
+      Type 'null' is not assignable to type 'string'.
+server/models/LibraryItem.ts(747,36): error TS2345: Argument of type 'LibraryFileObject | undefined' is not assignable to parameter of type 'LibraryFileObject'.
+  Type 'undefined' is not assignable to type 'LibraryFileObject'.
+server/models/LibraryItem.ts(772,15): error TS7006: Parameter 'error' implicitly has an 'any' type.
+server/models/LibraryItem.ts(990,14): error TS2571: Object is of type 'unknown'.
+server/models/LibraryItem.ts(990,42): error TS7006: Parameter 'af' implicitly has an 'any' type.
+server/models/LibraryItem.ts(992,25): error TS2339: Property 'podcastEpisodes' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'podcastEpisodes' does not exist on type 'BookExpanded'.
+server/models/LibraryItem.ts(992,47): error TS7006: Parameter 'pe' implicitly has an 'any' type.
+server/models/LibraryItem.ts(1009,45): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.

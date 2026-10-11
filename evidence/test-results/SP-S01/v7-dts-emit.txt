@@ -1,0 +1,8 @@
+typescript 5.9.3 | program files (non node_modules): 251
+AuthorFinder.ts: emitSkipped=false, declaration diagnostics=0
+BookFinder.ts: emitSkipped=false, declaration diagnostics=0
+PodcastFinder.ts: emitSkipped=false, declaration diagnostics=0
+files written: 3
+  <scratchpad>/dts/server/finders/AuthorFinder.d.ts
+  <scratchpad>/dts/server/finders/BookFinder.d.ts
+  <scratchpad>/dts/server/finders/PodcastFinder.d.ts

@@ -1,0 +1,75 @@
+Running in production mode.
+Options: CONFIG_PATH=/sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/config, METADATA_PATH=/sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/metadata, PORT=3412, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-11 02:21:15.066] INFO: === Starting Server ===
+[2026-10-11 02:21:15.067] INFO: [Server] Init v2.37.0
+[2026-10-11 02:21:15.067] INFO: [Server] Node.js Version: v22.23.2
+[2026-10-11 02:21:15.068] INFO: [Server] Platform: linux
+[2026-10-11 02:21:15.068] INFO: [Server] Arch: x64
+[2026-10-11 02:21:15.071] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-11 02:21:15.072] INFO: [Database] absdatabase.sqlite not found at /sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/config/absdatabase.sqlite
+[2026-10-11 02:21:15.073] INFO: [Database] Initializing db at "/sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/config/absdatabase.sqlite"
+[2026-10-11 02:21:15.109] INFO: [Database] Db connection was successful
+[2026-10-11 02:21:15.204] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-11 02:21:16.512] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-11 02:21:16.513] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-11 02:21:16.533] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-11 02:21:16.555] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-11 02:21:16.579] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-11 02:21:16.603] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-11 02:21:16.623] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-11 02:21:16.653] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-11 02:21:16.719] INFO: [Database] running ANALYZE
+[2026-10-11 02:21:16.739] INFO: [Database] ANALYZE completed
+[2026-10-11 02:21:16.739] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-11 02:21:16.739] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-11 02:21:16.765] INFO: [LogManager] Init current daily log filename: 2026-10-11.txt
+[2026-10-11 02:21:16.773] INFO: [BackupManager] 0 Backups Found
+[2026-10-11 02:21:16.774] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-11 02:21:16.799] INFO: Listening on port :3412
+[2026-10-11 02:21:17.361] INFO: Received ping
+[2026-10-11 02:21:17.501] INFO: [Server] Initializing new server
+[2026-10-11 02:21:17.625] INFO: [LocalAuth] User "root" logged in from ip ::ffff:127.0.0.1
+[2026-10-11 02:21:17.738] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-11 02:21:17.754] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-11 02:21:17.755] INFO: [LibraryScanner] Starting (forced) library scan 0d04c01e-aa4e-4065-89af-85df6c2f0885 for Books
+[2026-10-11 02:21:17.763] INFO: [Watcher] "Books" Ready
+[2026-10-11 02:21:18.377] INFO: [LibraryScanner] Library scan "0d04c01e-aa4e-4065-89af-85df6c2f0885" completed in 0:00 | 3 Added | 0 Updated | 0 Missing
+[2026-10-11 02:21:18.403] INFO: [LibraryScan] Scan log saved "/sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/metadata/logs/scans/2026-10-11_0d04c01e-aa4e-4065-89af-85df6c2f0885.txt"
+[2026-10-11 02:21:18.403] INFO: [LibraryController] Scan complete
+[2026-10-11 02:21:19.468] INFO: [MediaProgress] Marking media progress as finished because time remaining (3.034286) is less than 10 seconds (media item 000063f3-007e-43c7-aead-1674c4f77470)
+[2026-10-11 02:21:19.561] INFO: [STREAM] START STREAM - Num Segments: 2
+[2026-10-11 02:21:19.712] INFO: [INFO] FFMPEG transcoding started with command: ffmpeg -seek_timestamp 1 -f concat -safe 0 -i /sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/metadata/streams/63119f51-2a3a-47bc-929a-b75355f1f5f0/files.txt -y -loglevel error -map 0:a -c:a copy -f hls -copyts -avoid_negative_ts make_non_negative -max_delay 5000000 -max_muxing_queue_size 2048 -hls_time 6 -hls_segment_type mpegts -start_number 0 -hls_playlist_type vod -hls_list_size 0 -hls_allow_cache 0 -hls_segment_filename /sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/metadata/streams/63119f51-2a3a-47bc-929a-b75355f1f5f0/output-%d.ts /sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/metadata/streams/63119f51-2a3a-47bc-929a-b75355f1f5f0/final-output.m3u8
+[2026-10-11 02:21:19.712] INFO: 
+[2026-10-11 02:21:19.781] INFO: [FFMPEG] Transcoding ended
+[2026-10-11 02:21:19.782] INFO: [STREAM] 63119f51-2a3a-47bc-929a-b75355f1f5f0 notifying client that stream is ready
+[2026-10-11 02:21:23.618] INFO: Closing Stream 63119f51-2a3a-47bc-929a-b75355f1f5f0
+[2026-10-11 02:21:23.621] INFO: Deleted session data /sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/metadata/streams/63119f51-2a3a-47bc-929a-b75355f1f5f0
+[2026-10-11 02:21:23.644] INFO: [MediaProgress] Marking media progress as finished because time remaining (3.034286) is less than 10 seconds (media item 000063f3-007e-43c7-aead-1674c4f77470)
+[2026-10-11 02:21:23.677] INFO: [RssFeedManager] Creating RSS feed for item 9833e91d-b5fa-4fe1-b4c5-d2c3c3b44de8 "Test Book"
+[2026-10-11 02:21:23.683] INFO: [FeedEpisode] Upserting 1 episodes for feed 41a313bf-cdc1-406f-a689-82e674c0db65 (0 existing)
+[2026-10-11 02:21:23.708] INFO: [RssFeedManager] Opened RSS feed "/feed/f-item"
+[2026-10-11 02:21:23.712] INFO: [Server] Requesting rss feed f-item
+[2026-10-11 02:21:23.736] INFO: [RssFeedManager] Creating RSS feed for collection "My Collection"
+[2026-10-11 02:21:23.740] INFO: [FeedEpisode] Upserting 1 episodes for feed abc3c591-218d-4960-83d3-0e0680f5eacb (0 existing)
+[2026-10-11 02:21:23.768] INFO: [RssFeedManager] Opened RSS feed "/feed/f-col"
+[2026-10-11 02:21:23.772] INFO: [Server] Requesting rss feed f-col
+[2026-10-11 02:21:23.797] INFO: [RssFeedManager] Creating RSS feed for series "Series One"
+[2026-10-11 02:21:23.802] INFO: [FeedEpisode] Upserting 2 episodes for feed b95e9923-9089-4ebb-8823-90f002c96f81 (0 existing)
+[2026-10-11 02:21:23.826] INFO: [RssFeedManager] Opened RSS feed "/feed/f-series"
+[2026-10-11 02:21:23.829] INFO: [Server] Requesting rss feed f-series
+[2026-10-11 02:21:23.873] INFO: [RssFeedManager] Closed RSS feed "/feed/f-item"
+[2026-10-11 02:21:24.008] INFO: [ApiKeyController] Created API key "smoke-key"
+[2026-10-11 02:21:24.094] INFO: [ShareManager] Adding new open share playback session "Test Book"
+[2026-10-11 02:21:24.119] INFO: [Watcher] Removed watcher for "Books"
+[2026-10-11 02:21:24.142] INFO: [Server] Removed 1 collections for library "Books"
+[2026-10-11 02:21:24.146] INFO: [LibraryController] Removing 3 library items in library "Books"
+[2026-10-11 02:21:24.146] INFO: [LibraryController] Removing library item "9833e91d-b5fa-4fe1-b4c5-d2c3c3b44de8" from library "Books"
+[2026-10-11 02:21:24.171] INFO: [ApiRouter] Removed 1 media progress entries for library item "9833e91d-b5fa-4fe1-b4c5-d2c3c3b44de8"
+[2026-10-11 02:21:24.183] INFO: [ApiRouter] Removing item metadata at "/sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/metadata/items/9833e91d-b5fa-4fe1-b4c5-d2c3c3b44de8"
+[2026-10-11 02:21:24.212] INFO: [LibraryController] Removing library item "d774da96-0ab0-47bd-ac54-111b61ee1cce" from library "Books"
+[2026-10-11 02:21:24.258] INFO: [ApiRouter] Removed 1 media progress entries for library item "d774da96-0ab0-47bd-ac54-111b61ee1cce"
+[2026-10-11 02:21:24.298] INFO: [ApiRouter] Playlist "My Playlist" has no more items - removing it
+[2026-10-11 02:21:24.321] INFO: [ApiRouter] Removing item metadata at "/sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/metadata/items/d774da96-0ab0-47bd-ac54-111b61ee1cce"
+[2026-10-11 02:21:24.345] INFO: [LibraryController] Removing library item "8c57911c-9b5c-40ff-b51d-ca889f64e17b" from library "Books"
+[2026-10-11 02:21:24.375] INFO: [ApiRouter] Removing item metadata at "/sessions/rcw-01mvbnxvyjvqjqrycnfaptgf/abs-s09-head/metadata/items/8c57911c-9b5c-40ff-b51d-ca889f64e17b"
+[2026-10-11 02:21:24.421] INFO: [LibraryController] Updated 1 playback sessions to remove library id

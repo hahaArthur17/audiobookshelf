@@ -1,0 +1,13 @@
+diff --git a/evidence/test-results/SP-S01/emit-before/PodcastFinder.js b/dist-server/server/finders/PodcastFinder.js
+index 3a20bcb6..36f7caa7 100644
+--- a/evidence/test-results/SP-S01/emit-before/PodcastFinder.js
++++ b/dist-server/server/finders/PodcastFinder.js
+@@ -1,6 +1,6 @@
+ "use strict";
+-const Logger = require('../Logger');
+-const iTunes = require('../providers/iTunes');
++const Logger = require("../Logger");
++const iTunes = require("../providers/iTunes");
+ class PodcastFinder {
+     constructor() {
+         this.iTunesApi = new iTunes();

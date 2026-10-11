@@ -1,0 +1,10 @@
+# PO-S07 final build. HEAD ed903cc1. 2026-10-10 21:37:48
+# Command: npm run build:server
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+exit code: 0
+
+# Command: npx tsc -p tsconfig.check.json   (no emit, not incremental: checks the whole program from scratch)
+exit code: 0

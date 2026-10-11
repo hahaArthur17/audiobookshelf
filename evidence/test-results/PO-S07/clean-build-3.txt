@@ -1,0 +1,4 @@
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+

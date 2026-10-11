@@ -1,0 +1,63 @@
+# Token and cost check, recovered from the local Claude Code session logs
+
+Date: 2026-10-02 (run after S02, about 23:20)
+Why: the top block of /usage (Total cost, Usage by model) was not saved at the end of S01. This file recovers S01's tokens from the session log
+and checks the method against S02, whose /usage figures were saved.
+
+Method
+- Claude Code keeps one log file per session under the user's .claude\projects folder, named <session id>.jsonl.
+- The script below reads one log, keeps the last usage entry for each message (message id + request id), and adds up the token fields by model.
+- It only reads. It prints no file paths. It does not see Haiku background calls.
+- Session ids: S01 = 03d0fa39-daf5-4873-a4a3-737ef9787d46, S02 = f30c058e-bf4a-4b68-bf62-f1369dd3e161.
+
+Script (PowerShell)
+
+function Sum-Usage([string]$id) {
+  $f = Get-ChildItem "$env:USERPROFILE\.claude\projects" -Recurse -Filter "$id.jsonl" | Select-Object -First 1
+  $seen = @{}
+  foreach ($line in [System.IO.File]::ReadLines($f.FullName)) {
+    if ($line -notlike '*"usage"*') { continue }
+    try { $o = $line | ConvertFrom-Json } catch { continue }
+    $m = $o.message
+    if (-not $m -or -not $m.usage) { continue }
+    $seen["$($m.id)|$($o.requestId)"] = [pscustomobject]@{ model=$m.model; i=[long]$m.usage.input_tokens; o=[long]$m.usage.output_tokens; cr=[long]$m.usage.cache_read_input_tokens; cw=[long]$m.usage.cache_creation_input_tokens }
+  }
+  $seen.Values | Group-Object model | ForEach-Object { [pscustomobject]@{ session=$id.Substring(0,8); model=$_.Name; messages=$_.Count; input=($_.Group|Measure-Object i -Sum).Sum; output=($_.Group|Measure-Object o -Sum).Sum; cache_read=($_.Group|Measure-Object cr -Sum).Sum; cache_write=($_.Group|Measure-Object cw -Sum).Sum } }
+}
+
+Output (as printed in the terminal)
+
+session  model           messages input output cache_read cache_write
+-------  -----           -------- ----- ------ ---------- -----------
+f30c058e claude-opus-5-5       36    72  42624    3823902      124294     (S02)
+03d0fa39 claude-opus-5-5      111   222 320849   36147133      451622     (S01)
+
+Log files seen: 03d0fa39-...jsonl (3,273,210 bytes, last written 06:19:33) and f30c058e-...jsonl (1,005,090 bytes, last written 22:32:20).
+
+Check against the saved /usage of S02 (Opus 5.5 line: 674 input, 42.7k output, 4.1m cache read, 127.2k cache write, $2.69; 36 requests)
+
+            /usage      log          log / /usage
+requests    36          36           same
+input       674         72           0.11 (negligible)
+output      42.7k       42,624       0.998
+cache read  4.1m        3,823,902    0.93
+cache write 127.2k      124,294      0.98
+
+S01 check: the log has 111 messages and /usage showed 111 requests at the end of S01 (prompt cache line).
+
+Prices used (USD per million tokens, Opus 5.5; taken from third-party summaries of Anthropic's price sheet, which agree with each other)
+input 4.00 | output 20.00 | cache read 0.20 | cache write 5-minute 5.00 | cache write 1-hour 8.00
+
+Pricing results
+- S02 displayed tokens, 1-hour cache writes: $2.694. With 5-minute cache writes: $2.313. The displayed cost is $2.69, so the rates and the 1-hour cache are confirmed.
+- S02 log tokens, 1-hour cache writes: $2.612 (displayed $2.69, so the log method is 3% low; ratio 1.0299).
+- S01 log tokens, 1-hour cache writes: $17.26 = output 6.42 + cache read 7.23 + cache write 3.61 + input under 0.01.
+- S01 scaled by the S02 ratio: $17.78. So S01's displayed cost would probably have been about $17.3 to $17.8.
+- Total with the Fable test session ($0.62 displayed) and S02 ($2.69 displayed): $20.57 with S01 as priced from the log, $21.09 with S01 scaled.
+- Token totals (S01 from the log, the others as displayed): output 364,533; cache read 40,386,433; cache write 605,422.
+
+Limits
+- The S01 figures are computed from a log, not displayed by /usage. The method was low by 0.2% (output), 2% (cache write) and 7% (cache read) on S02.
+- Haiku background calls are not in the log (S02: 1.2k input, 17 output, $0.0013 displayed).
+- The prices come from third-party pages. The match with S02's displayed cost is the real check.
+- All dollar figures are API-equivalent estimates for a plan. They are not money paid.

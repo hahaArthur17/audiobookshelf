@@ -1,0 +1,25 @@
+# PO-S07 Author, bug: getAllLibraryItemsForAuthor throws for an unknown author id (Author.js:98)
+# BEFORE the fix. Code at HEAD f2d8a805 plus the new test file only. 2026-10-10 20:39:25
+# Command: npm run build:server, then npx mocha dist-server/test/server/bugfix/Author.getAllLibraryItemsForAuthor.test.js
+
+
+
+  Author.getAllLibraryItemsForAuthor
+[2026-10-10 20:39:44.779] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+    ✔ returns the library items of a known author
+[2026-10-10 20:39:45.011] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+    1) returns an empty array for an unknown author id
+
+
+  1 passing (958ms)
+  1 failing
+
+  1) Author.getAllLibraryItemsForAuthor
+       returns an empty array for an unknown author id:
+     TypeError: Cannot read properties of null (reading 'books')
+      at author.getAllLibraryItemsForAuthor (dist-server\server\models\Author.js:93:20)
+      at async Context.<anonymous> (dist-server\test\server\bugfix\Author.getAllLibraryItemsForAuthor.test.js:45:30)
+
+
+
+exit code: 1

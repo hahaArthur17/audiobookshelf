@@ -1,0 +1,268 @@
+diff --git a/server/models/LibraryFolder.js b/server/models/LibraryFolder.ts
+similarity index 61%
+rename from server/models/LibraryFolder.js
+rename to server/models/LibraryFolder.ts
+index 71d53217..2c99737c 100644
+--- a/server/models/LibraryFolder.js
++++ b/server/models/LibraryFolder.ts
+@@ -1,7 +1,15 @@
+-const { DataTypes, Model } = require('sequelize')
++import sequelizeModule = require('sequelize')
++const { DataTypes, Model } = sequelizeModule
++import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
+ 
+ class LibraryFolder extends Model {
+-  constructor(values, options) {
++  declare id: string
++  declare path: string
++  declare libraryId: string
++  declare createdAt: Date
++  declare updatedAt: Date
++
++  constructor(values?: CreationAttributes<LibraryFolder>, options?: BuildOptions) {
+     super(values, options)
+ 
+     /** @type {UUIDV4} */
+@@ -16,11 +24,13 @@ class LibraryFolder extends Model {
+     this.updatedAt
+   }
+ 
++  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
++  static init(sequelize: Sequelize): void
+   /**
+    * Initialize model
+    * @param {import('../Database').sequelize} sequelize
+    */
+-  static init(sequelize) {
++  static init(sequelize: Sequelize): void {
+     super.init(
+       {
+         id: {
+@@ -56,4 +66,4 @@ class LibraryFolder extends Model {
+   }
+ }
+ 
+-module.exports = LibraryFolder
++export = LibraryFolder
+diff --git a/server/models/Session.js b/server/models/Session.ts
+similarity index 64%
+rename from server/models/Session.js
+rename to server/models/Session.ts
+index 3b85bd46..7715c3f3 100644
+--- a/server/models/Session.js
++++ b/server/models/Session.ts
+@@ -1,7 +1,23 @@
+-const { DataTypes, Model, Op } = require('sequelize')
++import sequelizeModule = require('sequelize')
++const { DataTypes, Model, Op } = sequelizeModule
++import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
++
++type User = import('./User')
+ 
+ class Session extends Model {
+-  constructor(values, options) {
++  declare id: string
++  declare ipAddress: string
++  declare userAgent: string
++  declare createdAt: Date
++  declare updatedAt: Date
++  declare userId: string
++  declare expiresAt: Date
++  declare lastRefreshToken: string | null // init() sets allowNull: true
++  declare lastRefreshTokenExpiresAt: Date | null // init() sets allowNull: true
++  declare user: User
++  declare refreshToken: string // a column in init(), set by createSession(), but not listed in the constructor
++
++  constructor(values?: CreationAttributes<Session>, options?: BuildOptions) {
+     super(values, options)
+ 
+     /** @type {UUIDV4} */
+@@ -29,7 +45,7 @@ class Session extends Model {
+     this.user
+   }
+ 
+-  static async createSession(userId, ipAddress, userAgent, refreshToken, expiresAt) {
++  static async createSession(userId: string, ipAddress: string, userAgent: string, refreshToken: string, expiresAt: Date) {
+     const session = await Session.create({ userId, ipAddress, userAgent, refreshToken, expiresAt })
+     return session
+   }
+@@ -49,11 +65,13 @@ class Session extends Model {
+     return deletedCount
+   }
+ 
++  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
++  static init(sequelize: Sequelize): void
+   /**
+    * Initialize model
+    * @param {import('../Database').sequelize} sequelize
+    */
+-  static init(sequelize) {
++  static init(sequelize: Sequelize): void {
+     super.init(
+       {
+         id: {
+@@ -97,4 +115,4 @@ class Session extends Model {
+   }
+ }
+ 
+-module.exports = Session
++export = Session
+diff --git a/server/models/Setting.js b/server/models/Setting.js
+deleted file mode 100644
+index 1fffa32c..00000000
+--- a/server/models/Setting.js
++++ /dev/null
+@@ -1,64 +0,0 @@
+-const { DataTypes, Model } = require('sequelize')
+-
+-const oldEmailSettings = require('../objects/settings/EmailSettings')
+-const oldServerSettings = require('../objects/settings/ServerSettings')
+-const oldNotificationSettings = require('../objects/settings/NotificationSettings')
+-
+-class Setting extends Model {
+-  constructor(values, options) {
+-    super(values, options)
+-
+-    /** @type {string} */
+-    this.key
+-    /** @type {Object} */
+-    this.value
+-    /** @type {Date} */
+-    this.createdAt
+-    /** @type {Date} */
+-    this.updatedAt
+-  }
+-
+-  static async getOldSettings() {
+-    const settings = (await this.findAll()).map((se) => se.value)
+-
+-    const emailSettingsJson = settings.find((se) => se.id === 'email-settings')
+-    const serverSettingsJson = settings.find((se) => se.id === 'server-settings')
+-    const notificationSettingsJson = settings.find((se) => se.id === 'notification-settings')
+-
+-    return {
+-      settings,
+-      emailSettings: new oldEmailSettings(emailSettingsJson),
+-      serverSettings: new oldServerSettings(serverSettingsJson),
+-      notificationSettings: new oldNotificationSettings(notificationSettingsJson)
+-    }
+-  }
+-
+-  static updateSettingObj(setting) {
+-    return this.upsert({
+-      key: setting.id,
+-      value: setting
+-    })
+-  }
+-
+-  /**
+-   * Initialize model
+-   * @param {import('../Database').sequelize} sequelize
+-   */
+-  static init(sequelize) {
+-    super.init(
+-      {
+-        key: {
+-          type: DataTypes.STRING,
+-          primaryKey: true
+-        },
+-        value: DataTypes.JSON
+-      },
+-      {
+-        sequelize,
+-        modelName: 'setting'
+-      }
+-    )
+-  }
+-}
+-
+-module.exports = Setting
+diff --git a/server/models/Setting.ts b/server/models/Setting.ts
+new file mode 100644
+index 00000000..c169df24
+--- /dev/null
++++ b/server/models/Setting.ts
+@@ -0,0 +1,83 @@
++import sequelizeModule = require('sequelize')
++const { DataTypes, Model } = sequelizeModule
++import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
++
++import oldEmailSettings = require('../objects/settings/EmailSettings')
++import oldServerSettings = require('../objects/settings/ServerSettings')
++import oldNotificationSettings = require('../objects/settings/NotificationSettings')
++
++type EmailSettingsData = NonNullable<ConstructorParameters<typeof oldEmailSettings>[0]>
++type ServerSettingsData = NonNullable<ConstructorParameters<typeof oldServerSettings>[0]>
++type NotificationSettingsData = NonNullable<ConstructorParameters<typeof oldNotificationSettings>[0]>
++
++/** JSON read from the value column: one stored settings object per row, told apart by its id */
++type SettingValue = (EmailSettingsData & { id: 'email-settings' }) | (ServerSettingsData & { id: 'server-settings' }) | (NotificationSettingsData & { id: 'notification-settings' })
++
++/** JSON written to the value column: toJSON() of one of the three settings classes */
++type SettingObject = ReturnType<oldEmailSettings['toJSON']> | ReturnType<oldServerSettings['toJSON']> | ReturnType<oldNotificationSettings['toJSON']>
++
++class Setting extends Model {
++  declare key: string
++  declare value: SettingValue
++  declare createdAt: Date
++  declare updatedAt: Date
++
++  constructor(values?: CreationAttributes<Setting>, options?: BuildOptions) {
++    super(values, options)
++
++    /** @type {string} */
++    this.key
++    /** @type {Object} */
++    this.value
++    /** @type {Date} */
++    this.createdAt
++    /** @type {Date} */
++    this.updatedAt
++  }
++
++  static async getOldSettings() {
++    const settings = (await this.findAll()).map((se) => se.value)
++
++    const emailSettingsJson = settings.find((se) => se.id === 'email-settings')
++    const serverSettingsJson = settings.find((se) => se.id === 'server-settings')
++    const notificationSettingsJson = settings.find((se) => se.id === 'notification-settings')
++
++    return {
++      settings,
++      emailSettings: new oldEmailSettings(emailSettingsJson),
++      serverSettings: new oldServerSettings(serverSettingsJson),
++      notificationSettings: new oldNotificationSettings(notificationSettingsJson)
++    }
++  }
++
++  static updateSettingObj(setting: SettingObject) {
++    return this.upsert({
++      key: setting.id,
++      value: setting
++    })
++  }
++
++  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
++  static init(sequelize: Sequelize): void
++  /**
++   * Initialize model
++   * @param {import('../Database').sequelize} sequelize
++   */
++  static init(sequelize: Sequelize): void {
++    super.init(
++      {
++        key: {
++          type: DataTypes.STRING,
++          primaryKey: true
++        },
++        value: DataTypes.JSON
++      },
++      {
++        sequelize,
++        modelName: 'setting'
++      }
++    )
++  }
++}
++
++export = Setting

@@ -1,0 +1,53 @@
+PO-S09 /usage at the end of the run (pasted by the operator at 15:02 NZDT, 2026-10-11)
+
+Session
+
+   Total cost:            $47.66
+   Total duration (API):  2h 21m 46s
+   Total duration (wall): 1h 49m 32s
+   Total code changes:    1565 lines added, 605 lines removed
+   Usage by model:
+       claude-haiku-5-5:  2.5k input, 21 output, 0 cache read, 0 cache write ($0.0003)
+        claude-opus-5-5:  411.7k input, 863.2k output, 82.6m cache read, 2.2m cache write ($47.66)
+   Prompt cache (main):   100 requests · 98% of input tokens from cache · no misses · warm (1h TTL, last activity 1m 55s ago)
+
+   Current session
+   ███████████████████▌                               39% used
+   Resets 4:39pm (Pacific/Auckland)
+
+   Current week (all models)
+   █████████████████████████████████████              74% used
+   Resets Oct 13, 5:59am (Pacific/Auckland)
+
+   Current week (Fable)
+   █████████████████████████▌                         51% used
+   Resets Oct 13, 5:59am (Pacific/Auckland)
+
+   What's contributing to your limits usage?
+   Approximate, based on local sessions on this machine — does not include other devices or claude.ai
+
+   Last 24h · these are independent characteristics of your usage, not a breakdown
+
+   81% of your usage was at >150k context
+    Longer sessions are more expensive even when cached. /compact mid-task, /clear when switching to new tasks.
+
+   65% of your usage came from subagent-heavy sessions
+    Each subagent runs its own requests. Be deliberate about spawning them — and consider configuring a cheaper model for simpler subagents.
+
+   39% of your usage came from subagents under "general-purpose"
+    If this runs frequently, consider configuring its subagents with a cheaper model or tightening their prompts.
+
+   Subagents               % of usage
+   general-purpose                39%
+
+   d to day · w to week
+
+empty in recently denied permissions
+
+Backup-S09 output (same time):
+session id: 9d365d79-d2df-436f-9cce-424144a1527e
+log files: 11
+log MB: 9.6
+scratchpad files: 619
+
+Start values for comparison (usage-start.txt, 13:16): cost $0.0000, wall 3m 3s, session 10%, week all models 70%, week Fable 51%.

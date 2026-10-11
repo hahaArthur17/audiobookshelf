@@ -1,0 +1,563 @@
+
+> audiobookshelf@2.37.0 test
+> npm run build:server && mocha dist-server/test
+
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+
+
+  OidcAuthStrategy - isValidWebCallbackUrl
+    ✔ accepts a same-origin relative path when router base path is empty
+    ✔ accepts a same-origin absolute https URL
+    ✔ rejects protocol-relative URLs
+    ✔ rejects backslash-prefixed URLs
+    ✔ rejects absolute external URLs
+    ✔ rejects encoded protocol-relative path segments
+    ✔ rejects same-origin URLs outside router base path
+    ✔ rejects empty and malformed callback URLs
+    ✔ uses x-forwarded-proto when determining same-origin https URLs
+
+  TokenManager
+    validateAccessToken
+      ✔ accepts access tokens
+    jwtAuthCheck
+      ✔ rejects refresh tokens for API auth
+      ✔ allows access tokens for active users
+    invalidateJwtSessionsForUser
+      ✔ self password change: keeps current session, deletes others
+      ✔ admin password reset: deletes all target sessions
+
+  LibraryController.downloadMultiple
+    ✔ returns 403 for bulk download of an explicit item
+    ✔ returns 403 for bulk download of a tag-restricted item
+    ✔ returns 403 when bulk download includes both allowed and forbidden items
+    ✔ starts zip download for allowed items only
+
+  LibraryItemController
+    checkRemoveAuthorsAndSeries
+      ✔ should remove authors and series with no books on library item delete
+      ✔ should remove authors and series with no books on library item batch delete
+      ✔ should remove authors and series with no books on library item update media
+    batch item access control
+      ✔ batchGet returns 403 for a library item the user cannot access
+      ✔ batchGet returns items when the user can access them
+      ✔ batchUpdate returns 403 for a library item the user cannot access
+[2026-10-02 04:47:12.432] WARN: [LibraryItemController] User "limited" attempted to batch update without permission
+      ✔ batchUpdate returns 403 when the user lacks canUpdate
+      ✔ batchDelete returns 403 for a library item the user cannot access
+
+  UserController - delete
+    ✔ rejects deleting the root user by UUID
+
+  TitleCandidates
+    cleanAuthor non-empty
+      no adds
+        ✔ returns no candidates
+      single add
+        ✔ adds candidate
+        ✔ adds lowercased candidate
+        ✔ adds candidate, removing redundant spaces
+        ✔ adds candidate, removing author
+        ✔ does not add empty candidate after removing author
+        ✔ adds candidate, removing subtitle
+        ✔ adds candidate, not stripping subtitle for bare colon in title
+        ✔ adds candidate, not stripping subtitle for colon between words without space
+        ✔ adds candidate + variant, removing "by ..."
+        ✔ adds candidate + variant, removing "by ..." when title has bare colon
+        ✔ adds candidate + variant, removing bitrate
+        ✔ adds candidate + variant, removing edition 1
+        ✔ adds candidate + variant, removing edition 2
+        ✔ adds candidate + variant, removing fie type
+        ✔ adds candidate + variant, removing "a novel"
+        ✔ adds candidate + variant, removing "abridged"
+        ✔ adds candidate + variant, removing "unabridged"
+        ✔ adds candidate + variant, removing preceding/trailing numbers
+        ✔ does not add empty candidate
+        ✔ does not add spaces-only candidate
+        ✔ does not add empty variant
+      multiple adds
+        ✔ demotes digits-only candidates
+        ✔ promotes transformed variants
+        ✔ orders by position
+        ✔ dedupes candidates
+    cleanAuthor empty
+      single add
+        ✔ adds a candidate
+
+  AuthorCandidates
+    cleanAuthor is null
+      no adds
+        ✔ returns empty author candidate
+      single add
+        ✔ adds recognized candidate
+        ✔ does not add unrecognized candidate
+        ✔ adds recognized author if candidate is a superstring
+        ✔ adds candidate if it is a substring of recognized author
+        ✔ adds recognized author if edit distance from candidate is small
+        ✔ does not add candidate if edit distance from any recognized author is large
+        ✔ adds normalized recognized candidate (contains redundant spaces)
+        ✔ adds normalized recognized candidate (et al removed)
+        ✔ adds normalized recognized candidate (normalized initials)
+      multi add
+        ✔ adds recognized author candidates
+        ✔ dedupes author candidates
+    cleanAuthor is a recognized author
+      no adds
+        ✔ adds cleanAuthor as candidate
+      single add
+        ✔ adds recognized candidate
+        ✔ does not add candidate if it is a dupe of cleanAuthor
+    cleanAuthor is an unrecognized author
+      no adds
+        ✔ adds cleanAuthor as candidate
+      single add
+        ✔ adds recognized candidate and removes cleanAuthor
+        ✔ does not add unrecognized candidate
+    cleanAuthor is unrecognized and dirty
+      no adds
+        ✔ adds aggressively cleaned cleanAuthor
+        ✔ adds cleanAuthor if aggresively cleaned cleanAuthor is empty
+      single add
+        ✔ adds recognized candidate and removes cleanAuthor
+
+  search
+    search title is empty
+      ✔ returns empty result
+    search title is a recognized title and search author is a recognized author
+      ✔ returns non-empty result (no fuzzy searches)
+    search title contains recognized title and search author is a recognized author
+      ✔ search('title -', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title - author', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('author - title', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title- author', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title -author', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title author', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('author - title (unabridged)', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('author - title (subtitle) - mp3', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title {narrator} - series-01 64kbps 10:00:00', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('author - title (2006) narrated by narrator [unabridged]', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('title - author 2022 mp3', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('01 title', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('2022_title_HQ', 'author') returns non-empty result (with 1 fuzzy search)
+      ✔ search('s-01 - title (narrator) 64kbps 10:00:00', 'author') returns non-empty result (with 2 fuzzy searches)
+      ✔ search('author - series 01 - title', 'author') returns non-empty result (with 2 fuzzy searches)
+      ✔ search('title-author', 'author') returns an empty result
+      ✔ search('title junk', 'author') returns an empty result
+      maxFuzzySearches = 0
+        ✔ search('title - author', 'author') returns an empty result (with no fuzzy searches)
+      maxFuzzySearches = 1
+        ✔ search('s-01 - title (narrator) 64kbps 10:00:00', 'author') returns an empty result (1 fuzzy search)
+        ✔ search('author - series 01 - title', 'author') returns an empty result (1 fuzzy search)
+    search title contains recognized title and search author is empty
+      ✔ search('title - author', '') returns a non-empty result (1 fuzzy search)
+      ✔ search('author - title', '') returns a non-empty result (1 fuzzy search)
+      ✔ search('title', '') returns an empty result
+      ✔ search('title - unrecognized', '') returns an empty result
+      ✔ search('unrecognized - title', '') returns an empty result
+    search title contains recognized title and search author is an unrecognized author
+      ✔ search('title - unrecognized', 'unrecognized') returns a non-empty result (1 fuzzy search)
+      ✔ search('unrecognized - title', 'unrecognized') returns a non-empty result (1 fuzzy search)
+      ✔ search('title', 'unrecognized') returns a non-empty result (no fuzzy search)
+    search provider results have duration
+      ✔ returns results sorted by library item duration diff
+      ✔ returns unsorted results if library item is null
+      ✔ returns unsorted results if library item duration is undefined
+      ✔ returns unsorted results if library item media is undefined
+      ✔ should return a result last if it has no duration
+    matchConfidence score
+      for audible provider
+        ✔ should be 1.0 for perfect duration, title, and author match
+        ✔ should correctly score a large duration mismatch
+        ✔ should correctly score a medium duration mismatch
+        ✔ should correctly score a minor duration mismatch
+        ✔ should correctly score a tiny duration mismatch
+        ✔ should use default duration score if libraryItem duration is missing
+        ✔ should use default duration score if book duration is missing
+        ✔ should correctly score a partial title match
+        ✔ should correctly score a partial author match (comma-separated)
+        ✔ should give authorScore 0 if query has author but book does not
+        ✔ should give authorScore 1.0 if query has no author
+        ✔ handles book author string that is only commas correctly (score 0)
+        ✔ should return 1.0 for ASIN results
+        ✔ should return 1.0 when author matches one of the book authors
+        ✔ should return 1.0 when author query and multiple book authors are the same
+        ✔ should correctly score against a book with a subtitle when the query has a subtitle
+        ✔ should correctly score against a book with a subtitle when the query does not have a subtitle
+        after fuzzy searches
+          ✔ should return 1.0 for a title candidate match
+          ✔ should return 1.0 for an author candidate match
+      for non-audible provider (e.g., google)
+        ✔ should have not have matchConfidence
+
+  Logger
+    logging methods
+      ✔ should have a method for each log level defined in the static block
+      ✔ should call console.trace for trace logging
+      ✔ should call console.debug for debug logging
+      ✔ should call console.info for info logging
+      ✔ should call console.warn for warn logging
+      ✔ should call console.error for error logging
+      ✔ should call console.error for fatal logging
+      ✔ should call console.log for note logging
+    #log
+      ✔ should log to console and file if level is high enough
+      ✔ should not log if log level is too low
+      ✔ should emit log to all connected sockets with appropriate log level
+      ✔ should log fatal messages to console and file regardless of log level
+      ✔ should log note messages to console and file regardless of log level
+      ✔ should log util.inspect(arg) for non-string objects
+    socket listeners
+      ✔ should add and remove socket listeners
+    setLogLevel
+      ✔ should change the log level and log the new level
+
+  ApiCacheManager
+    middleware
+      ✔ should send cached data if available
+      ✔ should cache and send response if data is not cached
+      ✔ should cache personalized response with 30 minutes TTL
+    clear on mediaProgress
+      ✔ should remove recent-episodes cache entries
+
+  BinaryManager
+    init
+      ✔ should not install binaries if they are already found
+      ✔ should install missing binaries
+      ✔ exit if binaries are not found after installation
+      ✔ should not exit if binaries are not found but not required
+    findRequiredBinaries
+      ✔ should put found paths in the correct environment variables
+      ✔ should add missing binaries to result
+    install
+      ✔ should not install binaries if no binaries are passed
+      ✔ should install binaries in main install path if has access
+      ✔ should install binaries in alt install path if has no access to main
+
+  Binary
+    find
+      ✔ should return the defaultPath if it exists and is a good binary
+      ✔ should return the whichPath if it exists and is a good binary
+      ✔ should return the mainInstallPath if it exists and is a good binary
+      ✔ should return the altInstallPath if it exists and is a good binary
+      ✔ should return null if no good binary is found
+    isGood
+      ✔ should return false if binaryPath is falsy
+      ✔ should return false if binaryPath does not exist
+[2026-10-02 04:47:12.883] ERROR: [Binary] Failed to check version of /path/to/binary Error: Failed to execute command
+    at Context.<anonymous> (D:\SEM-2\574\Project\audiobookshelf\dist-server\test\server\managers\BinaryManager.test.js:294:30)
+    at callFn (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:366:21)
+    at Runnable.run (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:354:5)
+    at Runner.runTest (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:666:10)
+    at D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:789:12
+    at next (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:581:14)
+    at D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:591:7
+    at next (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:474:14)
+    at cbHookRun (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:539:7)
+    at done (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:310:5)
+    at callFn (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:389:7)
+    at Runnable.run (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:354:5)
+    at next (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:498:10)
+    at Immediate.<anonymous> (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:559:5)
+    at process.processImmediate (node:internal/timers:574:21)
+      ✔ should return false if failed to check version of binary
+      ✔ should return false if version is not found
+      ✔ should return false if version is found but does not match a good version
+      ✔ should return true if version is found and matches a good version
+      ✔ should check library version file
+      ✔ should return false if library version file does not exist
+      ✔ should return false if library version does not match a valid version
+    getFileName
+      ✔ should return the executable file name with .exe extension on Windows
+      ✔ should return the executable file name without extension on linux
+      ✔ should return the library file name with .dll extension on Windows
+      ✔ should return the library file name with .so extension on linux
+      ✔ should return the file name without extension for other types
+    download
+      ✔ should call downloadBinary with the correct parameters
+      ✔ should write a version file for libraries
+
+  MigrationManager
+    init
+      ✔ should initialize the MigrationManager
+      ✔ should throw error if serverVersion is not provided
+    runMigrations
+      ✔ should run up migrations successfully
+      ✔ should run down migrations successfully
+      ✔ should log that migrations will be skipped if database is new
+      ✔ should log that no migrations are needed if serverVersion equals databaseVersion
+      ✔ should handle migration failure and restore the original database
+    fetchVersionsFromDatabase
+      ✔ should fetch versions from the migrationsMeta table
+      ✔ should create the migrationsMeta table if it does not exist and fetch versions from it
+      ✔ should create the migrationsMeta with databaseVersion=serverVersion if database is new
+[2026-10-02 04:47:13.064] WARN: [MigrationManager] migrationsMeta table already exists. Dropping it...
+      ✔ should re-create the migrationsMeta table if it existed and database is new (Database force=true)
+      ✔ should throw an error if the database query fails
+    updateMaxVersion
+      ✔ should update the maxVersion in the database
+    extractVersionFromTag
+      ✔ should return null if tag is not provided
+      ✔ should return null if tag does not match the version format
+      ✔ should extract the version from the tag
+    copyMigrationsToConfigDir
+      ✔ should copy migrations to the config directory
+      ✔ should throw an error if copying the migrations fails
+    findMigrationsToRun
+      ✔ should return migrations to run when direction is "up"
+      ✔ should return migrations to run when direction is "down"
+      ✔ should return empty array when no migrations to run up
+      ✔ should return empty array when no migrations to run down
+      ✔ should return down migrations to run when direction is "down" and up migration was not executed
+      ✔ should return empty array when direction is "down" and server version is higher than database version
+      ✔ should return empty array when direction is "up" and server version is lower than database version
+      ✔ should return up migrations to run when server version is between migrations
+      ✔ should return down migrations to run when server version is between migrations
+    initUmzug
+      ✔ should initialize the umzug instance with migrations in the proper order
+
+  migration_example
+    up
+      ✔ should create example_table
+    down
+      ✔ should drop example_table
+
+  migration-v2.15.0-series-column-unique
+    up
+      ✔ upgrade with no duplicate series
+      ✔ upgrade with duplicate series and no sequence
+      ✔ upgrade with same series name in different libraries
+      ✔ upgrade with one book in two of the same series, both sequence are null
+      ✔ upgrade with one book in two of the same series, one sequence is null
+      ✔ upgrade with one book in two of the same series, both sequence are not null
+    down
+      ✔ should not have unique constraint on series name and libraryId
+
+  migration-v2.17.3-fk-constraints
+    up
+      ✔ should fix table foreign key constraints (41ms)
+      ✔ should keep correct table foreign key constraints
+
+  Migration v2.17.4-use-subfolder-for-oidc-redirect-uris
+    up
+      ✔ should add authOpenIDSubfolderForRedirectURLs if OIDC is enabled
+      ✔ should not add authOpenIDSubfolderForRedirectURLs if OIDC is not enabled
+      ✔ should throw an error if server settings cannot be parsed
+      ✔ should throw an error if server settings are not found
+    down
+      ✔ should remove authOpenIDSubfolderForRedirectURLs if it exists
+      ✔ should not remove authOpenIDSubfolderForRedirectURLs if it does not exist
+
+  Migration v2.17.4-use-subfolder-for-oidc-redirect-uris
+    up
+      ✔ should remove serverAddress from URLs in Feeds and FeedEpisodes tables
+      ✔ should handle null URLs in Feeds and FeedEpisodes tables
+      ✔ should handle null serverAddress in Feeds table
+    down
+      ✔ should add serverAddress back to URLs in Feeds and FeedEpisodes tables
+      ✔ should handle null URLs in Feeds and FeedEpisodes tables
+      ✔ should handle null serverAddress in Feeds table
+
+  Migration v2.17.6-share-add-isDownloadable
+    up
+      ✔ should add the isDownloadable column to mediaItemShares table
+    down
+      ✔ should remove the isDownloadable column from mediaItemShares table
+
+  Migration v2.19.1-copy-title-to-library-items
+    up
+      ✔ should copy title and titleIgnorePrefix to libraryItems
+      ✔ should add index on title to libraryItems
+      ✔ should add trigger to books.title to update libraryItems.title
+      ✔ should add index on titleIgnorePrefix to libraryItems
+      ✔ should add trigger to books.titleIgnorePrefix to update libraryItems.titleIgnorePrefix
+      ✔ should add index on createdAt to libraryItems
+    down
+      ✔ should remove title and titleIgnorePrefix from libraryItems
+      ✔ should remove title trigger from books
+      ✔ should remove titleIgnorePrefix trigger from books
+      ✔ should remove index on titleIgnorePrefix from libraryItems
+      ✔ should remove index on title from libraryItems
+      ✔ should remove index on createdAt from libraryItems
+
+  Migration v2.19.4-improve-podcast-queries
+    up
+      ✔ should add numEpisodes column to podcasts
+      ✔ should add podcastId column to mediaProgresses
+      ✔ should copy title and titleIgnorePrefix from podcasts to libraryItems
+      ✔ should add trigger to update title in libraryItems
+      ✔ should add trigger to update titleIgnorePrefix in libraryItems
+      ✔ should be idempotent
+    down
+      ✔ should remove numEpisodes column from podcasts
+      ✔ should remove podcastId column from mediaProgresses
+      ✔ should remove trigger to update title in libraryItems
+      ✔ should remove trigger to update titleIgnorePrefix in libraryItems
+      ✔ should be idempotent
+
+  Migration v2.20.0-improve-author-sort-queries
+    up
+      ✔ should add the authorNamesFirstLast and authorNamesLastFirst columns to the libraryItems table
+      ✔ should populate the authorNamesFirstLast and authorNamesLastFirst columns with the author names for each libraryItem
+      ✔ should create triggers to update the authorNamesFirstLast and authorNamesLastFirst columns when the corresponding bookAuthors and authors records are updated
+      ✔ should create indexes on the authorNamesFirstLast and authorNamesLastFirst columns
+      ✔ should trigger after update on authors
+      ✔ should trigger after insert on bookAuthors
+      ✔ should trigger after delete on bookAuthors
+      ✔ should add an index on publishedAt to the podcastEpisodes table
+      ✔ should be idempotent
+    down
+      ✔ should remove the authorNamesFirstLast and authorNamesLastFirst columns from the libraryItems table
+      ✔ should remove the triggers from the libraryItems table
+      ✔ should remove the indexes from the libraryItems table
+      ✔ should remove the index on publishedAt from the podcastEpisodes table
+      ✔ should be idempotent
+
+  old JSON serialization
+    Book
+      ✔ toOldJSONExpanded is a strict superset of toOldJSONMinified
+    Podcast
+      ✔ toOldJSONExpanded is a strict superset of toOldJSONMinified
+    LibraryItem
+      ✔ book library item expanded is a strict superset of minified
+      ✔ podcast library item expanded is a strict superset of minified
+
+  TrackProgressMonitor
+    ✔ should initialize correctly
+    ✔ should update the progress
+    ✔ should update the progress multiple times on the same track
+    ✔ should update the progress multiple times on different tracks
+    ✔ should finish all tracks
+
+  Audible
+    cleanSeriesSequence
+      ✔ should return an empty string if sequence is falsy
+      ✔ should return the sequence as is if it does not contain a number
+      ✔ should return the sequence as is if contains just a number
+      ✔ should return the sequence as is if contains just a number with decimals
+      ✔ should extract and return the first number from the sequence
+      ✔ should extract and return the number with decimals from the sequence
+      ✔ should extract and return the number even if it has no leading zero
+    cleanResult
+      ✔ should set explicit to true when isAdult is true
+      ✔ should set explicit to false when isAdult is false
+      ✔ should set explicit to false when isAdult is not present
+
+  generateFFMetadata
+    ✔ should generate ffmetadata content with chapters
+    ✔ should generate ffmetadata content without chapters
+    ✔ should handle chapters with no title
+    ✔ should handle metadata escaping special characters (=, ;, #,  and a newline)
+
+  addCoverAndMetadataToFile
+    ✔ should add cover image and metadata to audio file
+    ✔ should handle missing cover image
+[2026-10-02 04:47:14.888] ERROR: Error adding cover image and metadata: Error: FFmpeg error
+    at EventEmitter.<anonymous> (D:\SEM-2\574\Project\audiobookshelf\dist-server\test\server\utils\ffmpegHelpers.test.js:143:38)
+    at Object.invoke (D:\SEM-2\574\Project\audiobookshelf\node_modules\sinon\lib\sinon\behavior.js:177:32)
+    at EventEmitter.functionStub (D:\SEM-2\574\Project\audiobookshelf\node_modules\sinon\lib\sinon\stub.js:44:43)
+    at functionStub.invoke (D:\SEM-2\574\Project\audiobookshelf\node_modules\sinon\lib\sinon\proxy-invoke.js:53:47)
+    at EventEmitter.functionStub [as run] (D:\SEM-2\574\Project\audiobookshelf\node_modules\sinon\lib\sinon\proxy.js:265:26)
+    at D:\SEM-2\574\Project\audiobookshelf\dist-server\server\utils\ffmpegHelpers.js:363:16
+    at new Promise (<anonymous>)
+    at addCoverAndMetadataToFile (D:\SEM-2\574\Project\audiobookshelf\dist-server\server\utils\ffmpegHelpers.js:284:12)
+    at Context.<anonymous> (D:\SEM-2\574\Project\audiobookshelf\dist-server\test\server\utils\ffmpegHelpers.test.js:147:19)
+    at callFn (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:366:21)
+    at Runnable.run (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:354:5)
+    at Runner.runTest (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:666:10)
+    at D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:789:12
+    at next (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:581:14)
+    at D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:591:7
+    at next (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:474:14)
+    at cbHookRun (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:539:7)
+    at done (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:310:5)
+    at callFn (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:389:7)
+    at Runnable.run (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runnable.js:354:5)
+    at next (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:498:10)
+    at Immediate._onImmediate (D:\SEM-2\574\Project\audiobookshelf\node_modules\mocha\lib\runner.js:559:5)
+    at process.processImmediate (node:internal/timers:574:21)
+[2026-10-02 04:47:14.889] ERROR: ffmpeg stdout: undefined
+[2026-10-02 04:47:14.889] ERROR: ffmpeg stderr: undefined
+    ✔ should handle error during ffmpeg execution
+    ✔ should handle m4b embedding
+
+  fileUtils
+    ✔ shouldIgnoreFile
+    recurseFiles
+      ✔ should return filtered file list
+
+  parseNameString
+    parse
+      ✔ returns null if nameString is empty
+      ✔ parses single name in First Last format
+      ✔ parses single name in Last, First format
+      ✔ parses multiple names separated by &
+      ✔ parses multiple names separated by "and"
+      ✔ parses multiple names separated by comma and "and"
+      ✔ parses multiple names separated by semicolon
+      ✔ parses multiple names in Last, First format
+      ✔ parses multiple names with single word name
+      ✔ parses multiple names with single word name listed first (semicolon separator)
+      ✔ handles names with suffixes
+      ✔ handles compound last names
+      ✔ handles Chinese/Japanese/Korean names
+      ✔ removes duplicate names
+      ✔ filters out empty names
+    nameToLastFirst
+      ✔ converts First Last to Last, First format
+      ✔ returns last name only when no first name
+      ✔ handles names with middle names
+
+  parseNfoMetadata
+    ✔ returns null if nfoText is empty
+    ✔ parses title
+    ✔ parses title with subtitle
+    ✔ does not split title on bare colon without space
+    ✔ does not split title on colon between words without space
+    ✔ parses authors
+    ✔ parses multiple authors
+    ✔ parses narrators
+    ✔ parses multiple narrators
+    ✔ parses series name
+    ✔ parses genre
+    ✔ parses multiple genres
+    ✔ parses tags
+    ✔ parses year from various date fields
+    ✔ parses position in series
+    ✔ parses abridged flag
+    ✔ parses publisher
+    ✔ parses ASIN
+    ✔ parses language
+    ✔ parses description
+    ✔ no value
+    ✔ no year value
+
+  parseOpfMetadata - test series
+    ✔ test one series
+    ✔ test more then 1 series - in correct order
+    ✔ test messed order of series content and index
+    ✔ test different values of series content and index
+    ✔ test empty series content
+    ✔ test series and index using an xml namespace
+    ✔ test series and series index not directly underneath
+    ✔ test author is parsed from refines meta
+
+  requestUtils
+    ✔ isRequestSecure uses req.secure
+    ✔ isRequestSecure uses x-forwarded-proto
+    ✔ getRequestProtocol returns https or http
+    ✔ getRequestOrigin builds origin from protocol and host
+
+  scanUtils
+    ✔ should properly group files into potential book library items
+
+  stringifySequelizeQuery
+    ✔ should stringify a sequelize query containing an op
+    ✔ should stringify a sequelize query containing a literal
+    ✔ should stringify a sequelize query containing a class
+    ✔ should ignore non-class functions
+
+
+  356 passing (5s)
+

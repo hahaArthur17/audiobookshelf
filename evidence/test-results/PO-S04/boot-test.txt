@@ -1,0 +1,13 @@
+PASS  commit tested  96f5fc41, node v24.21.0
+PASS  boot 1 (fresh config) is running  pid 41320
+PASS  login returns an access token (creates a Session row)  
+PASS  sessions list after 1 login  total=1, expected 1
+PASS  library with a folder created and listed  folders=1, expected 1
+PASS  setting changed (default was false)  scannerFindCovers=True
+PASS  boot 2 (existing config) is running  pid 16900
+PASS  after restart: setting still true  scannerFindCovers=True
+PASS  after restart: first session kept, second added  total=2, expected 2
+PASS  after restart: library folder kept  folders=1, expected 1
+PASS  model line shows setting, libraryFolder, session  boots with the line=2, with all three=2
+PASS  no WARN, ERROR or FATAL lines in the server logs  lines=0
+PASS  stderr is empty  bytes=0

@@ -1,0 +1,94 @@
+server/auth/LocalAuthStrategy.ts(184,18): error TS2554: Expected 2 arguments, but got 1.
+server/models/User.ts(87,11): error TS7006: Parameter 'id' implicitly has an 'any' type.
+server/models/User.ts(92,14): error TS7006: Parameter 'email' implicitly has an 'any' type.
+server/models/User.ts(97,17): error TS7006: Parameter 'username' implicitly has an 'any' type.
+server/models/User.ts(102,14): error TS7006: Parameter 'oldUserId' implicitly has an 'any' type.
+server/models/User.ts(107,18): error TS7006: Parameter 'sub' implicitly has an 'any' type.
+server/models/User.ts(112,7): error TS7006: Parameter 'user' implicitly has an 'any' type.
+server/models/User.ts(117,10): error TS7006: Parameter 'userId' implicitly has an 'any' type.
+server/models/User.ts(121,19): error TS7006: Parameter 'user' implicitly has an 'any' type.
+server/models/User.ts(244,9): error TS7053: Element implicitly has an 'any' type because expression of type '"allowedLibraries"' can't be used to index type '{}'.
+  Property 'allowedLibraries' does not exist on type '{}'.
+server/models/User.ts(246,9): error TS7053: Element implicitly has an 'any' type because expression of type '"allowedTags"' can't be used to index type '{}'.
+  Property 'allowedTags' does not exist on type '{}'.
+server/models/User.ts(248,9): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+server/models/User.ts(261,43): error TS7006: Parameter 'type' implicitly has an 'any' type.
+server/models/User.ts(284,31): error TS7006: Parameter 'username' implicitly has an 'any' type.
+server/models/User.ts(284,41): error TS7006: Parameter 'pash' implicitly has an 'any' type.
+server/models/User.ts(284,47): error TS7006: Parameter 'auth' implicitly has an 'any' type.
+server/models/User.ts(312,43): error TS7006: Parameter 'userinfo' implicitly has an 'any' type.
+server/models/User.ts(392,16): error TS2554: Expected 1 arguments, but got 0.
+server/models/User.ts(403,45): error TS7006: Parameter 'userinfo' implicitly has an 'any' type.
+server/models/User.ts(440,34): error TS7006: Parameter 'username' implicitly has an 'any' type.
+server/models/User.ts(461,31): error TS7006: Parameter 'email' implicitly has an 'any' type.
+server/models/User.ts(482,28): error TS7006: Parameter 'userId' implicitly has an 'any' type.
+server/models/User.ts(504,35): error TS7006: Parameter 'userId' implicitly has an 'any' type.
+server/models/User.ts(526,35): error TS7006: Parameter 'sub' implicitly has an 'any' type.
+server/models/User.ts(576,44): error TS7006: Parameter 'username' implicitly has an 'any' type.
+server/models/User.ts(585,31): error TS7006: Parameter 'mediaProgress' implicitly has an 'any' type.
+server/models/User.ts(630,22): error TS2339: Property 'type' does not exist on type 'Model<any, any>'.
+server/models/User.ts(678,19): error TS7006: Parameter 'sessions' implicitly has an 'any' type.
+server/models/User.ts(679,37): error TS7006: Parameter 's' implicitly has an 'any' type.
+server/models/User.ts(728,14): error TS2790: The operand of a 'delete' operator must be optional.
+server/models/User.ts(729,14): error TS2790: The operand of a 'delete' operator must be optional.
+server/models/User.ts(740,25): error TS7006: Parameter 'libraryId' implicitly has an 'any' type.
+server/models/User.ts(752,37): error TS7006: Parameter 'tags' implicitly has an 'any' type.
+server/models/User.ts(757,26): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+server/models/User.ts(772,85): error TS2339: Property 'metadata' does not exist on type 'BookExpanded | PodcastExpanded'.
+  Property 'metadata' does not exist on type 'BookExpanded'.
+server/models/User.ts(785,23): error TS7006: Parameter 'libraryIds' implicitly has an 'any' type.
+server/models/User.ts(787,29): error TS7006: Parameter 'lid' implicitly has an 'any' type.
+server/models/User.ts(797,20): error TS7006: Parameter 'mediaItemId' implicitly has an 'any' type.
+server/models/User.ts(810,23): error TS7006: Parameter 'libraryItemId' implicitly has an 'any' type.
+server/models/User.ts(842,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(this: ModelStatic<PodcastEpisode>, identifier: Identifier, options: Omit<NonNullFindOptions<any>, "where">): Promise<...>', gave the following error.
+    Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+  Overload 2 of 2, '(this: ModelStatic<PodcastEpisode>, identifier?: Identifier | undefined, options?: Omit<FindOptions<any>, "where"> | undefined): Promise<...>', gave the following error.
+    Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+server/models/User.ts(856,38): error TS2339: Property 'mediaProgresses' does not exist on type 'PodcastEpisode'.
+server/models/User.ts(866,13): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(this: ModelStatic<Model<any, any>>, identifier: Identifier, options: Omit<NonNullFindOptions<any>, "where">): Promise<...>', gave the following error.
+    Type '{ model: sequelize.ModelCtor<sequelize.Model<any, any>>; attributes: string[]; required: false; include: { model: typeof MediaProgress; where: { userId: string; }; required: false; }; }' is not assignable to type 'Includeable | Includeable[] | undefined'.
+      Types of property 'include' are incompatible.
+        Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+  Overload 2 of 2, '(this: ModelStatic<Model<any, any>>, identifier?: Identifier | undefined, options?: Omit<FindOptions<any>, "where"> | undefined): Promise<...>', gave the following error.
+    Type '{ model: sequelize.ModelCtor<sequelize.Model<any, any>>; attributes: string[]; required: false; include: { model: typeof MediaProgress; where: { userId: string; }; required: false; }; }' is not assignable to type 'Includeable | Includeable[] | undefined'.
+      Types of property 'include' are incompatible.
+        Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+server/models/User.ts(878,30): error TS2339: Property 'mediaType' does not exist on type 'Model<any, any>'.
+server/models/User.ts(886,33): error TS2339: Property 'media' does not exist on type 'Model<any, any>'.
+server/models/User.ts(887,35): error TS2339: Property 'media' does not exist on type 'Model<any, any>'.
+server/models/User.ts(892,7): error TS2322: Type '(MediaProgress | null | undefined)[]' is not assignable to type 'MediaProgress[]'.
+  Type 'MediaProgress | null | undefined' is not assignable to type 'MediaProgress'.
+    Type 'undefined' is not assignable to type 'MediaProgress'.
+server/models/User.ts(892,74): error TS18049: 'mediaProgress' is possibly 'null' or 'undefined'.
+server/models/User.ts(913,9): error TS2322: Type 'string | Date' is not assignable to type 'string | null'.
+  Type 'Date' is not assignable to type 'string'.
+server/models/User.ts(935,16): error TS7006: Parameter 'libraryItemId' implicitly has an 'any' type.
+server/models/User.ts(935,31): error TS7006: Parameter 'time' implicitly has an 'any' type.
+server/models/User.ts(947,24): error TS7006: Parameter 'libraryItemId' implicitly has an 'any' type.
+server/models/User.ts(947,39): error TS7006: Parameter 'time' implicitly has an 'any' type.
+server/models/User.ts(947,45): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/models/User.ts(954,20): error TS2554: Expected 1 arguments, but got 0.
+server/models/User.ts(967,16): error TS2554: Expected 1 arguments, but got 0.
+server/models/User.ts(979,24): error TS7006: Parameter 'libraryItemId' implicitly has an 'any' type.
+server/models/User.ts(979,39): error TS7006: Parameter 'time' implicitly has an 'any' type.
+server/models/User.ts(979,45): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/models/User.ts(987,16): error TS2554: Expected 1 arguments, but got 0.
+server/models/User.ts(998,24): error TS7006: Parameter 'libraryItemId' implicitly has an 'any' type.
+server/models/User.ts(998,39): error TS7006: Parameter 'time' implicitly has an 'any' type.
+server/models/User.ts(1005,16): error TS2554: Expected 1 arguments, but got 0.
+server/models/User.ts(1014,46): error TS7006: Parameter 'seriesId' implicitly has an 'any' type.
+server/models/User.ts(1021,16): error TS2554: Expected 1 arguments, but got 0.
+server/models/User.ts(1030,51): error TS7006: Parameter 'seriesId' implicitly has an 'any' type.
+server/models/User.ts(1037,16): error TS2554: Expected 1 arguments, but got 0.
+server/models/User.ts(1053,27): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ canDownload: string; canUpload: string; canDelete: string; canUpdate: string; canAccessExplicitContent: string; canAccessAllLibraries: string; canAccessAllTags: string; canCreateEReader: string; tagsAreDenylist: string; allowedLibraries: string; allowedTags: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ canDownload: string; canUpload: string; canDelete: string; canUpdate: string; canAccessExplicitContent: string; canAccessAllLibraries: string; canAccessAllTags: string; canCreateEReader: string; tagsAreDenylist: string; allowedLibraries: string; allowedTags: string; }'.
+server/models/User.ts(1059,13): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'UserPermissions'.
+server/models/User.ts(1060,11): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'UserPermissions'.
+server/models/User.ts(1098,18): error TS2554: Expected 1 arguments, but got 0.
+server/models/User.ts(1104,16): error TS7006: Parameter 'values' implicitly has an 'any' type.
+server/models/User.ts(1104,24): error TS7006: Parameter 'options' implicitly has an 'any' type.
+server/models/User.ts(1109,14): error TS7006: Parameter 'options' implicitly has an 'any' type.
+server/models/User.ts(1114,17): error TS7006: Parameter 'options' implicitly has an 'any' type.

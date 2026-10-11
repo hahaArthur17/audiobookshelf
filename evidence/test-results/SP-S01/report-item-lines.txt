@@ -1,0 +1,81 @@
+# .ts line of every inventory item (C1-C13, N1-N5, D1-D2, K1, U1-U3), and the matching original .js line at 5968b516.
+$ grep -n 'declare function isNaN' server/finders/*.ts
+server/finders/AuthorFinder.ts:10:declare function isNaN(value: unknown): boolean
+server/finders/BookFinder.ts:20:declare function isNaN(value: unknown): boolean
+$ grep -n -B1 'declare function isNaN' server/finders/*.ts | grep '//'
+server/finders/AuthorFinder.ts-9-// lib.d.ts types isNaN(number), but the built-in coerces every value and these option fields can be undefined. Widens the type for this file only; emits no code.
+server/finders/BookFinder.ts-19-// lib.d.ts types isNaN(number), but the built-in coerces every value and these option fields can be undefined. Widens the type for this file only; emits no code.
+$ grep -n 'SP-S01 bug #1' server/finders/*.ts
+server/finders/BookFinder.ts:459:  // isbn also accepts BookSearchOptions because findCovers() passes its options object in this slot (SP-S01 bug #1)
+$ grep -n -A1 'SP-S01 bug #1' server/finders/BookFinder.ts
+459:  // isbn also accepts BookSearchOptions because findCovers() passes its options object in this slot (SP-S01 bug #1)
+460-  async search(libraryItem: MatchLibraryItem | null, provider: string, title: string, author?: string | null, isbn?: string | BookSearchOptions | null, asin?: string | null, options: BookSearchOptions = {}): Promise<BookSearchResult[]> {
+$ grep -n 'MetadataPath' server/finders/*.ts
+server/finders/AuthorFinder.ts:12:// file-local: Node's typings have no MetadataPath on global (set in Server.js:68). Emits no code.
+server/finders/AuthorFinder.ts:13:declare const global: typeof globalThis & { MetadataPath: string }
+server/finders/AuthorFinder.ts:67:    const authorDir = Path.join(global.MetadataPath, 'authors')
+$ grep -n -B1 'declare const global' server/finders/AuthorFinder.ts
+12-// file-local: Node's typings have no MetadataPath on global (set in Server.js:68). Emits no code.
+13:declare const global: typeof globalThis & { MetadataPath: string }
+$ grep -n 'err: Error' server/finders/*.ts
+server/finders/AuthorFinder.ts:82:    }).catch((err: Error) => {
+$ grep -n 'declare global' server/finders/*.ts
+exit=1
+$ grep -n -A6 'levenshteinDistance, levenshteinSimilarity' server/finders/BookFinder.ts
+11:const { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN }: {
+12-  levenshteinDistance: (str1: string, str2: string, caseSensitive?: boolean) => number
+13-  levenshteinSimilarity: (str1: string, str2: string, caseSensitive?: boolean) => number
+14-  escapeRegExp: (str: string) => string
+15-  isValidASIN: (str: string) => boolean
+16-} = utils
+17-import htmlSanitizer = require('../utils/htmlSanitizer')
+
+# Original .js lines at 5968b516 cited by spec §6 (casts C1-C13, rewrites N1-N5, isNaN calls, U2)
+$ git show 5968b516:server/finders/BookFinder.js | sed -n '32p;80p;89p;96p;110p;121p;134p;151p;191p;207p;270p;376p;377p;378p' (with line numbers)
+32:     var book = await this.openLibrary.isbnLookup(isbn)
+80:         } else if (b.titleDistance > maxTitleDistance) {
+89:           } else if (b.authorDistance > maxAuthorDistance) {
+96:         if (b.totalPossibleDistance < 5 && b.totalDistance > 0) return false
+110:     var books = await this.openLibrary.searchTitle(title, this.#providerResponseTimeout)
+121:       return a.totalDistance - b.totalDistance
+134:     var books = await this.googleBooks.search(title, author, this.#providerResponseTimeout)
+151:     var books = await this.fantLab.search(title, author, this.#providerResponseTimeout)
+191:     const books = await this.audible.search(title, author, asin, region, this.#providerResponseTimeout)
+207:       const books = await this.customProviderAdapter.search(title, author, isbn, providerSlug, 'book', this.#providerResponseTimeout)
+270:         const includesOnlyDigitsDiff = onlyDigits.test(a) - onlyDigits.test(b)
+376:     const maxTitleDistance = !isNaN(options.titleDistance) ? Number(options.titleDistance) : 4
+377:     const maxAuthorDistance = !isNaN(options.authorDistance) ? Number(options.authorDistance) : 4
+378:     const maxFuzzySearches = !isNaN(options.maxFuzzySearches) ? Number(options.maxFuzzySearches) : 5
+$ git show 5968b516:server/finders/AuthorFinder.js | awk 'NR==27||NR==29||NR==59'
+27:     const maxLevenshtein = !isNaN(options.maxLevenshtein) ? Number(options.maxLevenshtein) : 3
+29:     const author = await this.audnexus.findAuthorByName(name, region, maxLevenshtein)
+59:     }).catch((err) => {
+$ git show 5968b516:server/finders/PodcastFinder.js | awk 'NR==18'
+18:     const results = await this.iTunesApi.searchPodcasts(term, options)
+
+# Current .ts lines for the same statements
+$ awk on BookFinder.ts lines 107,155,164,171,185,196,209,226,266,282,351,462,463,464
+107:     var book = await this.openLibrary.isbnLookup(isbn) as OpenLibraryIsbnLookupResult
+155:         } else if (Number(b.titleDistance) > maxTitleDistance) {
+164:           } else if (Number(b.authorDistance) > maxAuthorDistance) {
+171:         if (Number(b.totalPossibleDistance) < 5 && Number(b.totalDistance) > 0) return false
+185:     var books = await this.openLibrary.searchTitle(title, this.#providerResponseTimeout) as BookProviderResponse<OpenLibraryBookResult>
+196:       return Number(a.totalDistance) - Number(b.totalDistance)
+209:     var books = await this.googleBooks.search(title, author as string, this.#providerResponseTimeout) as BookProviderResponse<BookSearchResult>
+226:     var books = await this.fantLab.search(title, author as string, this.#providerResponseTimeout) as BookProviderResponse<BookSearchResult>
+266:     const books = await this.audible.search(title, author as string, asin as string, region as string, this.#providerResponseTimeout)
+282:       const books = await this.customProviderAdapter.search(title, author as string, isbn as string, providerSlug, 'book', this.#providerResponseTimeout)
+351:         const includesOnlyDigitsDiff = Number(onlyDigits.test(a)) - Number(onlyDigits.test(b))
+462:     const maxTitleDistance = !isNaN(options.titleDistance) ? Number(options.titleDistance) : 4
+463:     const maxAuthorDistance = !isNaN(options.authorDistance) ? Number(options.authorDistance) : 4
+464:     const maxFuzzySearches = !isNaN(options.maxFuzzySearches) ? Number(options.maxFuzzySearches) : 5
+$ grep -n 'catch((err' server/finders/AuthorFinder.ts
+82:    }).catch((err: Error) => {
+
+# Task 3 ruling: inner arrow calculateTitleScore parameters annotated
+$ grep -n 'calculateTitleScore' server/finders/BookFinder.ts
+591:    const calculateTitleScore = (titleQuery: string, book: BookSearchResult, keepSubtitle = false) => {
+601:    const titleScore = calculateTitleScore(actualTitleQuery, book, titleQueryHasSubtitle)
+$ git show 5968b516:server/finders/BookFinder.js | grep -n 'calculateTitleScore'
+505:    const calculateTitleScore = (titleQuery, book, keepSubtitle = false) => {
+515:    const titleScore = calculateTitleScore(actualTitleQuery, book, titleQueryHasSubtitle)

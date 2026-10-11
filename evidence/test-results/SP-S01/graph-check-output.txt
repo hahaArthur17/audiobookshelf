@@ -1,0 +1,3 @@
+non-node_modules files in the V7 program: 251
+crashing archiver files in the program: 1
+  server/libs/archiver/buffer-crc32/index.js

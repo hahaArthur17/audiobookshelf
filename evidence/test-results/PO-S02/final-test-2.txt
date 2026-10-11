@@ -1,0 +1,563 @@
+
+> audiobookshelf@2.37.0 test
+> npm run build:server && mocha dist-server/test
+
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+
+
+  OidcAuthStrategy - isValidWebCallbackUrl
+    Γ£ö accepts a same-origin relative path when router base path is empty
+    Γ£ö accepts a same-origin absolute https URL
+    Γ£ö rejects protocol-relative URLs
+    Γ£ö rejects backslash-prefixed URLs
+    Γ£ö rejects absolute external URLs
+    Γ£ö rejects encoded protocol-relative path segments
+    Γ£ö rejects same-origin URLs outside router base path
+    Γ£ö rejects empty and malformed callback URLs
+    Γ£ö uses x-forwarded-proto when determining same-origin https URLs
+
+  TokenManager
+    validateAccessToken
+      Γ£ö accepts access tokens
+    jwtAuthCheck
+      Γ£ö rejects refresh tokens for API auth
+      Γ£ö allows access tokens for active users
+    invalidateJwtSessionsForUser
+      Γ£ö self password change: keeps current session, deletes others
+      Γ£ö admin password reset: deletes all target sessions
+
+  LibraryController.downloadMultiple
+    Γ£ö returns 403 for bulk download of an explicit item
+    Γ£ö returns 403 for bulk download of a tag-restricted item
+    Γ£ö returns 403 when bulk download includes both allowed and forbidden items
+    Γ£ö starts zip download for allowed items only
+
+  LibraryItemController
+    checkRemoveAuthorsAndSeries
+      Γ£ö should remove authors and series with no books on library item delete (38ms)
+      Γ£ö should remove authors and series with no books on library item batch delete
+      Γ£ö should remove authors and series with no books on library item update media
+    batch item access control
+      Γ£ö batchGet returns 403 for a library item the user cannot access
+      Γ£ö batchGet returns items when the user can access them
+      Γ£ö batchUpdate returns 403 for a library item the user cannot access
+[2026-10-03 05:02:38.574] WARN: [LibraryItemController] User "limited" attempted to batch update without permission
+      Γ£ö batchUpdate returns 403 when the user lacks canUpdate
+      Γ£ö batchDelete returns 403 for a library item the user cannot access
+
+  UserController - delete
+    Γ£ö rejects deleting the root user by UUID
+
+  TitleCandidates
+    cleanAuthor non-empty
+      no adds
+        Γ£ö returns no candidates
+      single add
+        Γ£ö adds candidate
+        Γ£ö adds lowercased candidate
+        Γ£ö adds candidate, removing redundant spaces
+        Γ£ö adds candidate, removing author
+        Γ£ö does not add empty candidate after removing author
+        Γ£ö adds candidate, removing subtitle
+        Γ£ö adds candidate, not stripping subtitle for bare colon in title
+        Γ£ö adds candidate, not stripping subtitle for colon between words without space
+        Γ£ö adds candidate + variant, removing "by ..."
+        Γ£ö adds candidate + variant, removing "by ..." when title has bare colon
+        Γ£ö adds candidate + variant, removing bitrate
+        Γ£ö adds candidate + variant, removing edition 1
+        Γ£ö adds candidate + variant, removing edition 2
+        Γ£ö adds candidate + variant, removing fie type
+        Γ£ö adds candidate + variant, removing "a novel"
+        Γ£ö adds candidate + variant, removing "abridged"
+        Γ£ö adds candidate + variant, removing "unabridged"
+        Γ£ö adds candidate + variant, removing preceding/trailing numbers
+        Γ£ö does not add empty candidate
+        Γ£ö does not add spaces-only candidate
+        Γ£ö does not add empty variant
+      multiple adds
+        Γ£ö demotes digits-only candidates
+        Γ£ö promotes transformed variants
+        Γ£ö orders by position
+        Γ£ö dedupes candidates
+    cleanAuthor empty
+      single add
+        Γ£ö adds a candidate
+
+  AuthorCandidates
+    cleanAuthor is null
+      no adds
+        Γ£ö returns empty author candidate
+      single add
+        Γ£ö adds recognized candidate
+        Γ£ö does not add unrecognized candidate
+        Γ£ö adds recognized author if candidate is a superstring
+        Γ£ö adds candidate if it is a substring of recognized author
+        Γ£ö adds recognized author if edit distance from candidate is small
+        Γ£ö does not add candidate if edit distance from any recognized author is large
+        Γ£ö adds normalized recognized candidate (contains redundant spaces)
+        Γ£ö adds normalized recognized candidate (et al removed)
+        Γ£ö adds normalized recognized candidate (normalized initials)
+      multi add
+        Γ£ö adds recognized author candidates
+        Γ£ö dedupes author candidates
+    cleanAuthor is a recognized author
+      no adds
+        Γ£ö adds cleanAuthor as candidate
+      single add
+        Γ£ö adds recognized candidate
+        Γ£ö does not add candidate if it is a dupe of cleanAuthor
+    cleanAuthor is an unrecognized author
+      no adds
+        Γ£ö adds cleanAuthor as candidate
+      single add
+        Γ£ö adds recognized candidate and removes cleanAuthor
+        Γ£ö does not add unrecognized candidate
+    cleanAuthor is unrecognized and dirty
+      no adds
+        Γ£ö adds aggressively cleaned cleanAuthor
+        Γ£ö adds cleanAuthor if aggresively cleaned cleanAuthor is empty
+      single add
+        Γ£ö adds recognized candidate and removes cleanAuthor
+
+  search
+    search title is empty
+      Γ£ö returns empty result
+    search title is a recognized title and search author is a recognized author
+      Γ£ö returns non-empty result (no fuzzy searches)
+    search title contains recognized title and search author is a recognized author
+      Γ£ö search('title -', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('title - author', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('author - title', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('title- author', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('title -author', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('title author', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('author - title (unabridged)', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('author - title (subtitle) - mp3', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('title {narrator} - series-01 64kbps 10:00:00', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('author - title (2006) narrated by narrator [unabridged]', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('title - author 2022 mp3', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('01 title', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('2022_title_HQ', 'author') returns non-empty result (with 1 fuzzy search)
+      Γ£ö search('s-01 - title (narrator) 64kbps 10:00:00', 'author') returns non-empty result (with 2 fuzzy searches)
+      Γ£ö search('author - series 01 - title', 'author') returns non-empty result (with 2 fuzzy searches)
+      Γ£ö search('title-author', 'author') returns an empty result
+      Γ£ö search('title junk', 'author') returns an empty result
+      maxFuzzySearches = 0
+        Γ£ö search('title - author', 'author') returns an empty result (with no fuzzy searches)
+      maxFuzzySearches = 1
+        Γ£ö search('s-01 - title (narrator) 64kbps 10:00:00', 'author') returns an empty result (1 fuzzy search)
+        Γ£ö search('author - series 01 - title', 'author') returns an empty result (1 fuzzy search)
+    search title contains recognized title and search author is empty
+      Γ£ö search('title - author', '') returns a non-empty result (1 fuzzy search)
+      Γ£ö search('author - title', '') returns a non-empty result (1 fuzzy search)
+      Γ£ö search('title', '') returns an empty result
+      Γ£ö search('title - unrecognized', '') returns an empty result
+      Γ£ö search('unrecognized - title', '') returns an empty result
+    search title contains recognized title and search author is an unrecognized author
+      Γ£ö search('title - unrecognized', 'unrecognized') returns a non-empty result (1 fuzzy search)
+      Γ£ö search('unrecognized - title', 'unrecognized') returns a non-empty result (1 fuzzy search)
+      Γ£ö search('title', 'unrecognized') returns a non-empty result (no fuzzy search)
+    search provider results have duration
+      Γ£ö returns results sorted by library item duration diff
+      Γ£ö returns unsorted results if library item is null
+      Γ£ö returns unsorted results if library item duration is undefined
+      Γ£ö returns unsorted results if library item media is undefined
+      Γ£ö should return a result last if it has no duration
+    matchConfidence score
+      for audible provider
+        Γ£ö should be 1.0 for perfect duration, title, and author match
+        Γ£ö should correctly score a large duration mismatch
+        Γ£ö should correctly score a medium duration mismatch
+        Γ£ö should correctly score a minor duration mismatch
+        Γ£ö should correctly score a tiny duration mismatch
+        Γ£ö should use default duration score if libraryItem duration is missing
+        Γ£ö should use default duration score if book duration is missing
+        Γ£ö should correctly score a partial title match
+        Γ£ö should correctly score a partial author match (comma-separated)
+        Γ£ö should give authorScore 0 if query has author but book does not
+        Γ£ö should give authorScore 1.0 if query has no author
+        Γ£ö handles book author string that is only commas correctly (score 0)
+        Γ£ö should return 1.0 for ASIN results
+        Γ£ö should return 1.0 when author matches one of the book authors
+        Γ£ö should return 1.0 when author query and multiple book authors are the same
+        Γ£ö should correctly score against a book with a subtitle when the query has a subtitle
+        Γ£ö should correctly score against a book with a subtitle when the query does not have a subtitle
+        after fuzzy searches
+          Γ£ö should return 1.0 for a title candidate match
+          Γ£ö should return 1.0 for an author candidate match
+      for non-audible provider (e.g., google)
+        Γ£ö should have not have matchConfidence
+
+  Logger
+    logging methods
+      Γ£ö should have a method for each log level defined in the static block
+      Γ£ö should call console.trace for trace logging
+      Γ£ö should call console.debug for debug logging
+      Γ£ö should call console.info for info logging
+      Γ£ö should call console.warn for warn logging
+      Γ£ö should call console.error for error logging
+      Γ£ö should call console.error for fatal logging
+      Γ£ö should call console.log for note logging
+    #log
+      Γ£ö should log to console and file if level is high enough
+      Γ£ö should not log if log level is too low
+      Γ£ö should emit log to all connected sockets with appropriate log level
+      Γ£ö should log fatal messages to console and file regardless of log level
+      Γ£ö should log note messages to console and file regardless of log level
+      Γ£ö should log util.inspect(arg) for non-string objects
+    socket listeners
+      Γ£ö should add and remove socket listeners
+    setLogLevel
+      Γ£ö should change the log level and log the new level
+
+  ApiCacheManager
+    middleware
+      Γ£ö should send cached data if available
+      Γ£ö should cache and send response if data is not cached
+      Γ£ö should cache personalized response with 30 minutes TTL
+    clear on mediaProgress
+      Γ£ö should remove recent-episodes cache entries
+
+  BinaryManager
+    init
+      Γ£ö should not install binaries if they are already found
+      Γ£ö should install missing binaries
+      Γ£ö exit if binaries are not found after installation
+      Γ£ö should not exit if binaries are not found but not required
+    findRequiredBinaries
+      Γ£ö should put found paths in the correct environment variables
+      Γ£ö should add missing binaries to result
+    install
+      Γ£ö should not install binaries if no binaries are passed
+      Γ£ö should install binaries in main install path if has access
+      Γ£ö should install binaries in alt install path if has no access to main
+
+  Binary
+    find
+      Γ£ö should return the defaultPath if it exists and is a good binary
+      Γ£ö should return the whichPath if it exists and is a good binary
+      Γ£ö should return the mainInstallPath if it exists and is a good binary
+      Γ£ö should return the altInstallPath if it exists and is a good binary
+      Γ£ö should return null if no good binary is found
+    isGood
+      Γ£ö should return false if binaryPath is falsy
+      Γ£ö should return false if binaryPath does not exist
+[2026-10-03 05:02:38.998] ERROR: [Binary] Failed to check version of /path/to/binary Error: Failed to execute command
+    at Context.<anonymous> (D:\SEM-2\574\Project\audiobookshelf-po\dist-server\test\server\managers\BinaryManager.test.js:294:30)
+    at callFn (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:366:21)
+    at Runnable.run (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:354:5)
+    at Runner.runTest (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:666:10)
+    at D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:789:12
+    at next (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:581:14)
+    at D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:591:7
+    at next (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:474:14)
+    at cbHookRun (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:539:7)
+    at done (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:310:5)
+    at callFn (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:389:7)
+    at Runnable.run (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:354:5)
+    at next (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:498:10)
+    at Immediate.<anonymous> (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:559:5)
+    at process.processImmediate (node:internal/timers:574:21)
+      Γ£ö should return false if failed to check version of binary
+      Γ£ö should return false if version is not found
+      Γ£ö should return false if version is found but does not match a good version
+      Γ£ö should return true if version is found and matches a good version
+      Γ£ö should check library version file
+      Γ£ö should return false if library version file does not exist
+      Γ£ö should return false if library version does not match a valid version
+    getFileName
+      Γ£ö should return the executable file name with .exe extension on Windows
+      Γ£ö should return the executable file name without extension on linux
+      Γ£ö should return the library file name with .dll extension on Windows
+      Γ£ö should return the library file name with .so extension on linux
+      Γ£ö should return the file name without extension for other types
+    download
+      Γ£ö should call downloadBinary with the correct parameters
+      Γ£ö should write a version file for libraries
+
+  MigrationManager
+    init
+      Γ£ö should initialize the MigrationManager
+      Γ£ö should throw error if serverVersion is not provided
+    runMigrations
+      Γ£ö should run up migrations successfully
+      Γ£ö should run down migrations successfully
+      Γ£ö should log that migrations will be skipped if database is new
+      Γ£ö should log that no migrations are needed if serverVersion equals databaseVersion
+      Γ£ö should handle migration failure and restore the original database
+    fetchVersionsFromDatabase
+      Γ£ö should fetch versions from the migrationsMeta table
+      Γ£ö should create the migrationsMeta table if it does not exist and fetch versions from it
+      Γ£ö should create the migrationsMeta with databaseVersion=serverVersion if database is new
+[2026-10-03 05:02:39.169] WARN: [MigrationManager] migrationsMeta table already exists. Dropping it...
+      Γ£ö should re-create the migrationsMeta table if it existed and database is new (Database force=true)
+      Γ£ö should throw an error if the database query fails
+    updateMaxVersion
+      Γ£ö should update the maxVersion in the database
+    extractVersionFromTag
+      Γ£ö should return null if tag is not provided
+      Γ£ö should return null if tag does not match the version format
+      Γ£ö should extract the version from the tag
+    copyMigrationsToConfigDir
+      Γ£ö should copy migrations to the config directory
+      Γ£ö should throw an error if copying the migrations fails
+    findMigrationsToRun
+      Γ£ö should return migrations to run when direction is "up"
+      Γ£ö should return migrations to run when direction is "down"
+      Γ£ö should return empty array when no migrations to run up
+      Γ£ö should return empty array when no migrations to run down
+      Γ£ö should return down migrations to run when direction is "down" and up migration was not executed
+      Γ£ö should return empty array when direction is "down" and server version is higher than database version
+      Γ£ö should return empty array when direction is "up" and server version is lower than database version
+      Γ£ö should return up migrations to run when server version is between migrations
+      Γ£ö should return down migrations to run when server version is between migrations
+    initUmzug
+      Γ£ö should initialize the umzug instance with migrations in the proper order
+
+  migration_example
+    up
+      Γ£ö should create example_table
+    down
+      Γ£ö should drop example_table
+
+  migration-v2.15.0-series-column-unique
+    up
+      Γ£ö upgrade with no duplicate series
+      Γ£ö upgrade with duplicate series and no sequence
+      Γ£ö upgrade with same series name in different libraries
+      Γ£ö upgrade with one book in two of the same series, both sequence are null
+      Γ£ö upgrade with one book in two of the same series, one sequence is null
+      Γ£ö upgrade with one book in two of the same series, both sequence are not null
+    down
+      Γ£ö should not have unique constraint on series name and libraryId
+
+  migration-v2.17.3-fk-constraints
+    up
+      Γ£ö should fix table foreign key constraints (46ms)
+      Γ£ö should keep correct table foreign key constraints
+
+  Migration v2.17.4-use-subfolder-for-oidc-redirect-uris
+    up
+      Γ£ö should add authOpenIDSubfolderForRedirectURLs if OIDC is enabled
+      Γ£ö should not add authOpenIDSubfolderForRedirectURLs if OIDC is not enabled
+      Γ£ö should throw an error if server settings cannot be parsed
+      Γ£ö should throw an error if server settings are not found
+    down
+      Γ£ö should remove authOpenIDSubfolderForRedirectURLs if it exists
+      Γ£ö should not remove authOpenIDSubfolderForRedirectURLs if it does not exist
+
+  Migration v2.17.4-use-subfolder-for-oidc-redirect-uris
+    up
+      Γ£ö should remove serverAddress from URLs in Feeds and FeedEpisodes tables
+      Γ£ö should handle null URLs in Feeds and FeedEpisodes tables
+      Γ£ö should handle null serverAddress in Feeds table
+    down
+      Γ£ö should add serverAddress back to URLs in Feeds and FeedEpisodes tables
+      Γ£ö should handle null URLs in Feeds and FeedEpisodes tables
+      Γ£ö should handle null serverAddress in Feeds table
+
+  Migration v2.17.6-share-add-isDownloadable
+    up
+      Γ£ö should add the isDownloadable column to mediaItemShares table
+    down
+      Γ£ö should remove the isDownloadable column from mediaItemShares table
+
+  Migration v2.19.1-copy-title-to-library-items
+    up
+      Γ£ö should copy title and titleIgnorePrefix to libraryItems
+      Γ£ö should add index on title to libraryItems
+      Γ£ö should add trigger to books.title to update libraryItems.title
+      Γ£ö should add index on titleIgnorePrefix to libraryItems
+      Γ£ö should add trigger to books.titleIgnorePrefix to update libraryItems.titleIgnorePrefix
+      Γ£ö should add index on createdAt to libraryItems
+    down
+      Γ£ö should remove title and titleIgnorePrefix from libraryItems
+      Γ£ö should remove title trigger from books
+      Γ£ö should remove titleIgnorePrefix trigger from books
+      Γ£ö should remove index on titleIgnorePrefix from libraryItems
+      Γ£ö should remove index on title from libraryItems
+      Γ£ö should remove index on createdAt from libraryItems
+
+  Migration v2.19.4-improve-podcast-queries
+    up
+      Γ£ö should add numEpisodes column to podcasts
+      Γ£ö should add podcastId column to mediaProgresses
+      Γ£ö should copy title and titleIgnorePrefix from podcasts to libraryItems
+      Γ£ö should add trigger to update title in libraryItems
+      Γ£ö should add trigger to update titleIgnorePrefix in libraryItems
+      Γ£ö should be idempotent
+    down
+      Γ£ö should remove numEpisodes column from podcasts
+      Γ£ö should remove podcastId column from mediaProgresses
+      Γ£ö should remove trigger to update title in libraryItems
+      Γ£ö should remove trigger to update titleIgnorePrefix in libraryItems
+      Γ£ö should be idempotent (43ms)
+
+  Migration v2.20.0-improve-author-sort-queries
+    up
+      Γ£ö should add the authorNamesFirstLast and authorNamesLastFirst columns to the libraryItems table (49ms)
+      Γ£ö should populate the authorNamesFirstLast and authorNamesLastFirst columns with the author names for each libraryItem
+      Γ£ö should create triggers to update the authorNamesFirstLast and authorNamesLastFirst columns when the corresponding bookAuthors and authors records are updated
+      Γ£ö should create indexes on the authorNamesFirstLast and authorNamesLastFirst columns
+      Γ£ö should trigger after update on authors
+      Γ£ö should trigger after insert on bookAuthors
+      Γ£ö should trigger after delete on bookAuthors
+      Γ£ö should add an index on publishedAt to the podcastEpisodes table
+      Γ£ö should be idempotent
+    down
+      Γ£ö should remove the authorNamesFirstLast and authorNamesLastFirst columns from the libraryItems table
+      Γ£ö should remove the triggers from the libraryItems table
+      Γ£ö should remove the indexes from the libraryItems table
+      Γ£ö should remove the index on publishedAt from the podcastEpisodes table
+      Γ£ö should be idempotent
+
+  old JSON serialization
+    Book
+      Γ£ö toOldJSONExpanded is a strict superset of toOldJSONMinified
+    Podcast
+      Γ£ö toOldJSONExpanded is a strict superset of toOldJSONMinified
+    LibraryItem
+      Γ£ö book library item expanded is a strict superset of minified
+      Γ£ö podcast library item expanded is a strict superset of minified
+
+  TrackProgressMonitor
+    Γ£ö should initialize correctly
+    Γ£ö should update the progress
+    Γ£ö should update the progress multiple times on the same track
+    Γ£ö should update the progress multiple times on different tracks
+    Γ£ö should finish all tracks
+
+  Audible
+    cleanSeriesSequence
+      Γ£ö should return an empty string if sequence is falsy
+      Γ£ö should return the sequence as is if it does not contain a number
+      Γ£ö should return the sequence as is if contains just a number
+      Γ£ö should return the sequence as is if contains just a number with decimals
+      Γ£ö should extract and return the first number from the sequence
+      Γ£ö should extract and return the number with decimals from the sequence
+      Γ£ö should extract and return the number even if it has no leading zero
+    cleanResult
+      Γ£ö should set explicit to true when isAdult is true
+      Γ£ö should set explicit to false when isAdult is false
+      Γ£ö should set explicit to false when isAdult is not present
+
+  generateFFMetadata
+    Γ£ö should generate ffmetadata content with chapters
+    Γ£ö should generate ffmetadata content without chapters
+    Γ£ö should handle chapters with no title
+    Γ£ö should handle metadata escaping special characters (=, ;, #,  and a newline)
+
+  addCoverAndMetadataToFile
+    Γ£ö should add cover image and metadata to audio file
+    Γ£ö should handle missing cover image
+[2026-10-03 05:02:41.164] ERROR: Error adding cover image and metadata: Error: FFmpeg error
+    at EventEmitter.<anonymous> (D:\SEM-2\574\Project\audiobookshelf-po\dist-server\test\server\utils\ffmpegHelpers.test.js:143:38)
+    at Object.invoke (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\sinon\lib\sinon\behavior.js:177:32)
+    at EventEmitter.functionStub (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\sinon\lib\sinon\stub.js:44:43)
+    at functionStub.invoke (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\sinon\lib\sinon\proxy-invoke.js:53:47)
+    at EventEmitter.functionStub [as run] (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\sinon\lib\sinon\proxy.js:265:26)
+    at D:\SEM-2\574\Project\audiobookshelf-po\dist-server\server\utils\ffmpegHelpers.js:363:16
+    at new Promise (<anonymous>)
+    at addCoverAndMetadataToFile (D:\SEM-2\574\Project\audiobookshelf-po\dist-server\server\utils\ffmpegHelpers.js:284:12)
+    at Context.<anonymous> (D:\SEM-2\574\Project\audiobookshelf-po\dist-server\test\server\utils\ffmpegHelpers.test.js:147:19)
+    at callFn (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:366:21)
+    at Runnable.run (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:354:5)
+    at Runner.runTest (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:666:10)
+    at D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:789:12
+    at next (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:581:14)
+    at D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:591:7
+    at next (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:474:14)
+    at cbHookRun (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:539:7)
+    at done (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:310:5)
+    at callFn (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:389:7)
+    at Runnable.run (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runnable.js:354:5)
+    at next (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:498:10)
+    at Immediate._onImmediate (D:\SEM-2\574\Project\audiobookshelf-po\node_modules\mocha\lib\runner.js:559:5)
+    at process.processImmediate (node:internal/timers:574:21)
+[2026-10-03 05:02:41.165] ERROR: ffmpeg stdout: undefined
+[2026-10-03 05:02:41.165] ERROR: ffmpeg stderr: undefined
+    Γ£ö should handle error during ffmpeg execution
+    Γ£ö should handle m4b embedding
+
+  fileUtils
+    Γ£ö shouldIgnoreFile
+    recurseFiles
+      Γ£ö should return filtered file list
+
+  parseNameString
+    parse
+      Γ£ö returns null if nameString is empty
+      Γ£ö parses single name in First Last format
+      Γ£ö parses single name in Last, First format
+      Γ£ö parses multiple names separated by &
+      Γ£ö parses multiple names separated by "and"
+      Γ£ö parses multiple names separated by comma and "and"
+      Γ£ö parses multiple names separated by semicolon
+      Γ£ö parses multiple names in Last, First format
+      Γ£ö parses multiple names with single word name
+      Γ£ö parses multiple names with single word name listed first (semicolon separator)
+      Γ£ö handles names with suffixes
+      Γ£ö handles compound last names
+      Γ£ö handles Chinese/Japanese/Korean names
+      Γ£ö removes duplicate names
+      Γ£ö filters out empty names
+    nameToLastFirst
+      Γ£ö converts First Last to Last, First format
+      Γ£ö returns last name only when no first name
+      Γ£ö handles names with middle names
+
+  parseNfoMetadata
+    Γ£ö returns null if nfoText is empty
+    Γ£ö parses title
+    Γ£ö parses title with subtitle
+    Γ£ö does not split title on bare colon without space
+    Γ£ö does not split title on colon between words without space
+    Γ£ö parses authors
+    Γ£ö parses multiple authors
+    Γ£ö parses narrators
+    Γ£ö parses multiple narrators
+    Γ£ö parses series name
+    Γ£ö parses genre
+    Γ£ö parses multiple genres
+    Γ£ö parses tags
+    Γ£ö parses year from various date fields
+    Γ£ö parses position in series
+    Γ£ö parses abridged flag
+    Γ£ö parses publisher
+    Γ£ö parses ASIN
+    Γ£ö parses language
+    Γ£ö parses description
+    Γ£ö no value
+    Γ£ö no year value
+
+  parseOpfMetadata - test series
+    Γ£ö test one series
+    Γ£ö test more then 1 series - in correct order
+    Γ£ö test messed order of series content and index
+    Γ£ö test different values of series content and index
+    Γ£ö test empty series content
+    Γ£ö test series and index using an xml namespace
+    Γ£ö test series and series index not directly underneath
+    Γ£ö test author is parsed from refines meta
+
+  requestUtils
+    Γ£ö isRequestSecure uses req.secure
+    Γ£ö isRequestSecure uses x-forwarded-proto
+    Γ£ö getRequestProtocol returns https or http
+    Γ£ö getRequestOrigin builds origin from protocol and host
+
+  scanUtils
+    Γ£ö should properly group files into potential book library items
+
+  stringifySequelizeQuery
+    Γ£ö should stringify a sequelize query containing an op
+    Γ£ö should stringify a sequelize query containing a literal
+    Γ£ö should stringify a sequelize query containing a class
+    Γ£ö should ignore non-class functions
+
+
+  356 passing (5s)
+

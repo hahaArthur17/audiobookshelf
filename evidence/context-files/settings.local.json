@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(npm run build:server)",
+      "Bash(npm test)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git mv *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git merge *)",
+      "Bash(git rebase *)",
+      "Bash(git reset --hard *)",
+      "Bash(npm install *)",
+      "Bash(npm i *)",
+      "Edit(test/**)"
+    ]
+  }
+}

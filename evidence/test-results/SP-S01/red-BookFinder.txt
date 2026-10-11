@@ -1,0 +1,164 @@
+server/finders/BookFinder.ts(17,10): error TS2339: Property 'openLibrary' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(18,10): error TS2339: Property 'googleBooks' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(19,10): error TS2339: Property 'audible' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(20,10): error TS2339: Property 'iTunesApi' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(21,10): error TS2339: Property 'audnexus' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(22,10): error TS2339: Property 'fantLab' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(23,10): error TS2339: Property 'audiobookCovers' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(24,10): error TS2339: Property 'customProviderAdapter' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(26,10): error TS2339: Property 'providers' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(28,10): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(31,20): error TS7006: Parameter 'isbn' implicitly has an 'any' type.
+server/finders/BookFinder.ts(32,27): error TS2339: Property 'openLibrary' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(39,23): error TS7006: Parameter 'books' implicitly has an 'any' type.
+server/finders/BookFinder.ts(39,30): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(39,37): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(39,45): error TS7006: Parameter 'maxTitleDistance' implicitly has an 'any' type.
+server/finders/BookFinder.ts(39,63): error TS7006: Parameter 'maxAuthorDistance' implicitly has an 'any' type.
+server/finders/BookFinder.ts(43,13): error TS7006: Parameter 'b' implicitly has an 'any' type.
+server/finders/BookFinder.ts(76,16): error TS7006: Parameter 'b' implicitly has an 'any' type.
+server/finders/BookFinder.ts(79,20): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(81,20): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(88,22): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(90,22): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(109,27): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(109,34): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(109,42): error TS7006: Parameter 'maxTitleDistance' implicitly has an 'any' type.
+server/finders/BookFinder.ts(109,60): error TS7006: Parameter 'maxAuthorDistance' implicitly has an 'any' type.
+server/finders/BookFinder.ts(110,28): error TS2339: Property 'openLibrary' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(111,14): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(118,16): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(120,25): error TS7006: Parameter 'a' implicitly has an 'any' type.
+server/finders/BookFinder.ts(120,28): error TS7006: Parameter 'b' implicitly has an 'any' type.
+server/finders/BookFinder.ts(133,31): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(133,38): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(134,28): error TS2339: Property 'googleBooks' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(135,14): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(150,27): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(150,34): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(151,28): error TS2339: Property 'fantLab' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(152,14): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(166,35): error TS7006: Parameter 'search' implicitly has an 'any' type.
+server/finders/BookFinder.ts(167,31): error TS2339: Property 'audiobookCovers' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(168,14): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(177,36): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(178,17): error TS2339: Property 'iTunesApi' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(189,27): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(189,34): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(189,42): error TS7006: Parameter 'asin' implicitly has an 'any' type.
+server/finders/BookFinder.ts(189,48): error TS7006: Parameter 'provider' implicitly has an 'any' type.
+server/finders/BookFinder.ts(191,30): error TS2339: Property 'audible' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(192,14): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(205,34): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(205,41): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(205,49): error TS7006: Parameter 'isbn' implicitly has an 'any' type.
+server/finders/BookFinder.ts(205,55): error TS7006: Parameter 'providerSlug' implicitly has an 'any' type.
+server/finders/BookFinder.ts(207,32): error TS2339: Property 'customProviderAdapter' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(208,16): error TS2339: Property 'verbose' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(217,17): error TS7006: Parameter 'cleanAuthor' implicitly has an 'any' type.
+server/finders/BookFinder.ts(218,12): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(219,12): error TS2339: Property 'cleanAuthor' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(220,12): error TS2339: Property 'priorities' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(221,12): error TS2339: Property 'positions' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(222,12): error TS2339: Property 'currentPosition' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(225,9): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(242,12): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(243,12): error TS2339: Property 'priorities' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(244,12): error TS2339: Property 'positions' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(244,41): error TS2339: Property 'currentPosition' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(252,16): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(253,16): error TS2339: Property 'priorities' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(254,16): error TS2339: Property 'positions' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(254,44): error TS2339: Property 'currentPosition' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(256,14): error TS2339: Property 'priorities' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(258,12): error TS2339: Property 'currentPosition' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(262,19): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(266,33): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(270,40): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+server/finders/BookFinder.ts(270,61): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+server/finders/BookFinder.ts(273,35): error TS2339: Property 'priorities' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(273,56): error TS2339: Property 'priorities' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(276,35): error TS2339: Property 'positions' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(276,55): error TS2339: Property 'positions' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(284,12): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(285,19): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(288,28): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(289,17): error TS2339: Property 'cleanAuthor' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(290,67): error TS2339: Property 'cleanAuthor' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(301,17): error TS7006: Parameter 'cleanAuthor' implicitly has an 'any' type.
+server/finders/BookFinder.ts(301,30): error TS7006: Parameter 'audnexus' implicitly has an 'any' type.
+server/finders/BookFinder.ts(302,12): error TS2339: Property 'audnexus' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(303,12): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(304,12): error TS2339: Property 'cleanAuthor' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(305,29): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(308,20): error TS7006: Parameter 'name' implicitly has an 'any' type.
+server/finders/BookFinder.ts(309,19): error TS2339: Property 'audnexus' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(309,67): error TS7006: Parameter 'asins' implicitly has an 'any' type.
+server/finders/BookFinder.ts(322,9): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(325,12): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(329,19): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(333,16): error TS2339: Property 'cleanAuthor' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(334,45): error TS2339: Property 'cleanAuthor' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(335,71): error TS2339: Property 'cleanAuthor' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(343,36): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(349,46): error TS2339: Property 'cleanAuthor' does not exist on type '(Anonymous class)'.
+server/finders/BookFinder.ts(357,12): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(358,19): error TS2551: Property 'candidates' does not exist on type '(Anonymous class)'. Did you mean 'getCandidates'?
+server/finders/BookFinder.ts(374,16): error TS7006: Parameter 'libraryItem' implicitly has an 'any' type.
+server/finders/BookFinder.ts(374,29): error TS7006: Parameter 'provider' implicitly has an 'any' type.
+server/finders/BookFinder.ts(374,39): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(374,46): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(374,54): error TS7006: Parameter 'isbn' implicitly has an 'any' type.
+server/finders/BookFinder.ts(374,60): error TS7006: Parameter 'asin' implicitly has an 'any' type.
+server/finders/BookFinder.ts(375,9): error TS7034: Variable 'books' implicitly has type 'any[]' in some locations where its type cannot be determined.
+server/finders/BookFinder.ts(376,45): error TS2339: Property 'titleDistance' does not exist on type '{}'.
+server/finders/BookFinder.ts(376,77): error TS2339: Property 'titleDistance' does not exist on type '{}'.
+server/finders/BookFinder.ts(377,46): error TS2339: Property 'authorDistance' does not exist on type '{}'.
+server/finders/BookFinder.ts(377,79): error TS2339: Property 'authorDistance' does not exist on type '{}'.
+server/finders/BookFinder.ts(378,45): error TS2339: Property 'maxFuzzySearches' does not exist on type '{}'.
+server/finders/BookFinder.ts(378,80): error TS2339: Property 'maxFuzzySearches' does not exist on type '{}'.
+server/finders/BookFinder.ts(386,24): error TS7005: Variable 'books' implicitly has an 'any[]' type.
+server/finders/BookFinder.ts(407,80): error TS2339: Property 'audnexus' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(415,7): error TS2740: Type 'unknown[]' is missing the following properties from type '(Anonymous class)': validateAuthor, add, size, agressivelyCleanAuthor, and 2 more.
+server/finders/BookFinder.ts(416,50): error TS2488: Type '(Anonymous class)' must have a '[Symbol.iterator]()' method that returns an iterator.
+server/finders/BookFinder.ts(419,9): error TS2739: Type 'any[]' is missing the following properties from type '(Anonymous class)': add, size, getCandidates, delete, #removeAuthorFromTitle
+server/finders/BookFinder.ts(420,38): error TS2488: Type '(Anonymous class)' must have a '[Symbol.iterator]()' method that returns an iterator.
+server/finders/BookFinder.ts(435,22): error TS7006: Parameter 'book' implicitly has an 'any' type.
+server/finders/BookFinder.ts(441,21): error TS7006: Parameter 'a' implicitly has an 'any' type.
+server/finders/BookFinder.ts(441,24): error TS7006: Parameter 'b' implicitly has an 'any' type.
+server/finders/BookFinder.ts(462,28): error TS7006: Parameter 'book' implicitly has an 'any' type.
+server/finders/BookFinder.ts(462,34): error TS7006: Parameter 'libraryItemDurationMinutes' implicitly has an 'any' type.
+server/finders/BookFinder.ts(462,62): error TS7006: Parameter 'actualTitleQuery' implicitly has an 'any' type.
+server/finders/BookFinder.ts(462,80): error TS7006: Parameter 'actualAuthorQuery' implicitly has an 'any' type.
+server/finders/BookFinder.ts(462,99): error TS7006: Parameter 'isTitleAsin' implicitly has an 'any' type.
+server/finders/BookFinder.ts(505,34): error TS7006: Parameter 'titleQuery' implicitly has an 'any' type.
+server/finders/BookFinder.ts(505,46): error TS7006: Parameter 'book' implicitly has an 'any' type.
+server/finders/BookFinder.ts(526,64): error TS7006: Parameter 'name' implicitly has an 'any' type.
+server/finders/BookFinder.ts(528,62): error TS7006: Parameter 'p' implicitly has an 'any' type.
+server/finders/BookFinder.ts(538,43): error TS7006: Parameter 'part' implicitly has an 'any' type.
+server/finders/BookFinder.ts(578,19): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(578,26): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(578,34): error TS7006: Parameter 'provider' implicitly has an 'any' type.
+server/finders/BookFinder.ts(578,44): error TS7006: Parameter 'asin' implicitly has an 'any' type.
+server/finders/BookFinder.ts(578,50): error TS7006: Parameter 'maxTitleDistance' implicitly has an 'any' type.
+server/finders/BookFinder.ts(578,68): error TS7006: Parameter 'maxAuthorDistance' implicitly has an 'any' type.
+server/finders/BookFinder.ts(599,20): error TS7006: Parameter 'book' implicitly has an 'any' type.
+server/finders/BookFinder.ts(608,20): error TS7006: Parameter 'provider' implicitly has an 'any' type.
+server/finders/BookFinder.ts(608,30): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(608,37): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(612,41): error TS2339: Property 'providers' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(613,44): error TS2554: Expected 6-7 arguments, but got 5.
+server/finders/BookFinder.ts(621,44): error TS2554: Expected 6-7 arguments, but got 5.
+server/finders/BookFinder.ts(626,34): error TS2554: Expected 6-7 arguments, but got 5.
+server/finders/BookFinder.ts(630,11): error TS7034: Variable 'covers' implicitly has type 'any[]' in some locations where its type cannot be determined.
+server/finders/BookFinder.ts(631,28): error TS7006: Parameter 'result' implicitly has an 'any' type.
+server/finders/BookFinder.ts(639,24): error TS7005: Variable 'covers' implicitly has an 'any[]' type.
+server/finders/BookFinder.ts(642,16): error TS7006: Parameter 'asin' implicitly has an 'any' type.
+server/finders/BookFinder.ts(642,22): error TS7006: Parameter 'region' implicitly has an 'any' type.
+server/finders/BookFinder.ts(643,17): error TS2339: Property 'audnexus' does not exist on type 'BookFinder'.
+server/finders/BookFinder.ts(648,22): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(651,24): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(660,31): error TS7006: Parameter 'str' implicitly has an 'any' type.
+server/finders/BookFinder.ts(669,32): error TS7006: Parameter 'title' implicitly has an 'any' type.
+server/finders/BookFinder.ts(686,33): error TS7006: Parameter 'author' implicitly has an 'any' type.
+server/finders/BookFinder.ts(700,31): error TS7006: Parameter 'str' implicitly has an 'any' type.

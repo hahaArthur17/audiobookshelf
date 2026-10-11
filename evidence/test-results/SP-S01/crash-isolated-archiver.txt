@@ -1,0 +1,19 @@
+# tsc 5.9.3 declaration-emit crash in vendored archiver files, in isolation (1-file programs, no finders).
+# Command per file: node <scratchpad>/dts-probe-isolated.js <file> <scratchpad>/dts-iso  (no-op writer: nothing written)
+program files (non node_modules): 1 | any finder in program: false
+CRASH: server/libs/archiver/buffer-crc32/index.js -> Debug Failure. False expression.
+program files (non node_modules): 2 | any finder in program: false
+CRASH: server/libs/archiver/archiverUtils/stringDecoder/index.js -> Debug Failure. False expression.
+
+# --- probe script source ---
+// Program containing ONLY the given file (plus what it imports); declaration emit to a no-op writer.
+const ts = require('D:/SEM-2/574/Project/audiobookshelf/node_modules/typescript')
+const root = 'D:/SEM-2/574/Project/audiobookshelf'
+const cfg = ts.readConfigFile(root + '/tsconfig.server.json', ts.sys.readFile)
+const parsed = ts.parseJsonConfigFileContent(cfg.config, ts.sys, root)
+const options = { ...parsed.options, incremental: false, tsBuildInfoFile: undefined, noEmit: false, declaration: true, emitDeclarationOnly: true, noEmitOnError: false, outDir: process.argv[3] }
+const file = root + '/' + process.argv[2]
+const program = ts.createProgram([file], options)
+const inProgram = program.getSourceFiles().map((s) => s.fileName).filter((f) => !f.includes('/node_modules/'))
+console.log('program files (non node_modules):', inProgram.length, '| any finder in program:', inProgram.some((f) => f.includes('/finders/')))
+try { program.emit(program.getSourceFile(file), () => {}, undefined, true); console.log('no crash:', process.argv[2]) } catch (e) { console.log('CRASH:', process.argv[2], '->', String(e.message).split('\n')[0]) }

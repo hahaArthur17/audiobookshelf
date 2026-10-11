@@ -1,0 +1,33 @@
+# PO-S07 Playlist, bug: update({ order }) is not awaited in removeMediaItemsFromPlaylists (Playlist.js:190)
+# BEFORE the fix. Code at HEAD 1b801241 plus the new test file only. 2026-10-10 21:03:24
+# Command: npm run build:server, then npx mocha dist-server/test/server/bugfix/Playlist.removeMediaItemsFromPlaylists.test.js
+# Log lines "DEBUG: [LibraryItems...Filters] ..." are filtered out of this file.
+
+
+
+  Playlist.removeMediaItemsFromPlaylists
+    ✔ removes the media item and renumbers the remaining items (43ms)
+    1) waits until the new order of each remaining item is saved before it reports the playlist
+
+
+  1 passing (875ms)
+  1 failing
+
+  1) Playlist.removeMediaItemsFromPlaylists
+       waits until the new order of each remaining item is saved before it reports the playlist:
+
+      AssertionError: expected [ 'playlist_updated' ] to deeply equal [ 'order saved', 'order saved', …(1) ]
+      + expected - actual
+
+       [
+      -  "playlist_updated"
+         "order saved"
+         "order saved"
+      +  "playlist_updated"
+       ]
+      
+      at Context.<anonymous> (dist-server\test\server\bugfix\Playlist.removeMediaItemsFromPlaylists.test.js:66:36)
+
+
+
+exit code: 1

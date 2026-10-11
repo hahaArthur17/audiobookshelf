@@ -1,0 +1,17 @@
+# PO-S07 Collection, bug: this.books = books inside the static getOldCollectionsJsonExpanded() (Collection.js:99)
+# AFTER the fix (c.books = books). 2026-10-10 20:53:39
+# Command: npm test (build, then all tests), then npx mocha dist-server/test/server/bugfix/Collection.getOldCollectionsJsonExpanded.test.js
+# Log lines "DEBUG: [LibraryItemsBookFilters] ..." are filtered out of this file.
+# npm test summary:  361 passing (7s);
+
+
+
+  Collection.getOldCollectionsJsonExpanded
+    ✔ returns every book of the collection to a user who can access explicit content
+    ✔ leaves out the books that the user is not allowed to access
+    ✔ does not store the filtered books on the Collection class
+
+
+  3 passing (1s)
+
+exit code: 0

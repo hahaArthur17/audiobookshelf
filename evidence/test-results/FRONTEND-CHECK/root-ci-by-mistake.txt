@@ -1,0 +1,16 @@
+npm warn deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+
+added 592 packages, and audited 593 packages in 27s
+
+75 packages are looking for funding
+  run `npm fund` for details
+
+58 vulnerabilities (10 low, 11 moderate, 33 high, 4 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.

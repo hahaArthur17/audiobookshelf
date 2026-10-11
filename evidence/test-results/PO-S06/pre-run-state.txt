@@ -1,0 +1,7 @@
+PO-S06 pre-run state, 2026-10-10 23:11:40
+user-level settings, values: model=opus ; effortLevel=xhigh ; outputStyle=Explanatory ; enableWorkflows=True ; modelSettings={"claude-opus-5-5":{"effortLevel":"xhigh"}}
+parent folders checked for CLAUDE.md and settings files, found: 0
+run folder HEAD: c8fc528 baseline
+run folder status (empty = clean): 
+settings hash (first 8): E53A63EC
+checkpoint function loaded: True

@@ -1,0 +1,20 @@
+diff --git a/evidence/test-results/SP-S01/emit-before/AuthorFinder.js b/dist-server/server/finders/AuthorFinder.js
+index 6b41c76d..257790ea 100644
+--- a/evidence/test-results/SP-S01/emit-before/AuthorFinder.js
++++ b/dist-server/server/finders/AuthorFinder.js
+@@ -1,9 +1,10 @@
+ "use strict";
+-const fs = require('../libs/fsExtra');
+-const Logger = require('../Logger');
+-const Path = require('path');
+-const Audnexus = require('../providers/Audnexus');
+-const { downloadImageFile } = require('../utils/fileUtils');
++const fs = require("../libs/fsExtra");
++const Logger = require("../Logger");
++const Path = require("path");
++const Audnexus = require("../providers/Audnexus");
++const fileUtils = require("../utils/fileUtils");
++const { downloadImageFile } = fileUtils;
+ class AuthorFinder {
+     constructor() {
+         this.audnexus = new Audnexus();

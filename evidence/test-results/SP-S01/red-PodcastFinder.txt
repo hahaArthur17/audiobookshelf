@@ -1,0 +1,7 @@
+server/finders/PodcastFinder.ts(6,10): error TS2339: Property 'iTunesApi' does not exist on type 'PodcastFinder'.
+server/finders/PodcastFinder.ts(15,16): error TS7006: Parameter 'term' implicitly has an 'any' type.
+server/finders/PodcastFinder.ts(18,32): error TS2339: Property 'iTunesApi' does not exist on type 'PodcastFinder'.
+server/finders/PodcastFinder.ts(27,20): error TS7006: Parameter 'term' implicitly has an 'any' type.
+server/finders/PodcastFinder.ts(30,32): error TS2339: Property 'iTunesApi' does not exist on type 'PodcastFinder'.
+server/finders/PodcastFinder.ts(32,25): error TS7006: Parameter 'r' implicitly has an 'any' type.
+server/finders/PodcastFinder.ts(32,48): error TS7006: Parameter 'r' implicitly has an 'any' type.

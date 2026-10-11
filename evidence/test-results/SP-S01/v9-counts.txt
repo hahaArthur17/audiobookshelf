@@ -1,0 +1,56 @@
+# V9 (spec §10). Lines = spec/plan command output; occurrences = grep -o, one per match.
+$ grep -nw 'as' server/finders/*.ts
+server/finders/AuthorFinder.ts:52:    const author = await this.audnexus.findAuthorByName(name, region as string, maxLevenshtein)
+server/finders/BookFinder.ts:107:    var book = await this.openLibrary.isbnLookup(isbn) as OpenLibraryIsbnLookupResult
+server/finders/BookFinder.ts:185:    var books = await this.openLibrary.searchTitle(title, this.#providerResponseTimeout) as BookProviderResponse<OpenLibraryBookResult>
+server/finders/BookFinder.ts:209:    var books = await this.googleBooks.search(title, author as string, this.#providerResponseTimeout) as BookProviderResponse<BookSearchResult>
+server/finders/BookFinder.ts:226:    var books = await this.fantLab.search(title, author as string, this.#providerResponseTimeout) as BookProviderResponse<BookSearchResult>
+server/finders/BookFinder.ts:266:    const books = await this.audible.search(title, author as string, asin as string, region as string, this.#providerResponseTimeout)
+server/finders/BookFinder.ts:282:      const books = await this.customProviderAdapter.search(title, author as string, isbn as string, providerSlug, 'book', this.#providerResponseTimeout)
+server/finders/PodcastFinder.ts:26:    const results = await this.iTunesApi.searchPodcasts(term, options as { country: string })
+exit=0
+$ grep -nw 'as' server/finders/*.ts | wc -l
+8
+$ grep -ow 'as' server/finders/*.ts | wc -l
+13
+$ grep -ow 'as' server/finders/*.ts | sort | uniq -c
+      1 server/finders/AuthorFinder.ts:as
+     11 server/finders/BookFinder.ts:as
+      1 server/finders/PodcastFinder.ts:as
+
+$ grep -n 'Number(' server/finders/*.ts
+server/finders/AuthorFinder.ts:50:    const maxLevenshtein = !isNaN(options.maxLevenshtein) ? Number(options.maxLevenshtein) : 3
+server/finders/BookFinder.ts:155:        } else if (Number(b.titleDistance) > maxTitleDistance) {
+server/finders/BookFinder.ts:164:          } else if (Number(b.authorDistance) > maxAuthorDistance) {
+server/finders/BookFinder.ts:171:        if (Number(b.totalPossibleDistance) < 5 && Number(b.totalDistance) > 0) return false
+server/finders/BookFinder.ts:196:      return Number(a.totalDistance) - Number(b.totalDistance)
+server/finders/BookFinder.ts:351:        const includesOnlyDigitsDiff = Number(onlyDigits.test(a)) - Number(onlyDigits.test(b))
+server/finders/BookFinder.ts:462:    const maxTitleDistance = !isNaN(options.titleDistance) ? Number(options.titleDistance) : 4
+server/finders/BookFinder.ts:463:    const maxAuthorDistance = !isNaN(options.authorDistance) ? Number(options.authorDistance) : 4
+server/finders/BookFinder.ts:464:    const maxFuzzySearches = !isNaN(options.maxFuzzySearches) ? Number(options.maxFuzzySearches) : 5
+exit=0
+$ grep -n 'Number(' server/finders/*.ts | wc -l
+9
+$ grep -o 'Number(' server/finders/*.ts | wc -l
+12
+$ grep -o 'Number(' server/finders/*.ts | sort | uniq -c
+      1 server/finders/AuthorFinder.ts:Number(
+     11 server/finders/BookFinder.ts:Number(
+
+# Baseline: the same Number( count on the pre-SP-S01 .js files at 5968b516
+$ git show 5968b516:server/finders/AuthorFinder.js | grep -n 'Number('
+27:    const maxLevenshtein = !isNaN(options.maxLevenshtein) ? Number(options.maxLevenshtein) : 3
+exit=0
+$ git show 5968b516:server/finders/BookFinder.js | grep -n 'Number('
+376:    const maxTitleDistance = !isNaN(options.titleDistance) ? Number(options.titleDistance) : 4
+377:    const maxAuthorDistance = !isNaN(options.authorDistance) ? Number(options.authorDistance) : 4
+378:    const maxFuzzySearches = !isNaN(options.maxFuzzySearches) ? Number(options.maxFuzzySearches) : 5
+exit=0
+$ git show 5968b516:server/finders/PodcastFinder.js | grep -n 'Number('
+exit=1
+$ git show 5968b516:server/finders/{AuthorFinder,BookFinder,PodcastFinder}.js | grep -o 'Number(' | wc -l
+4
+# Baseline: the word 'as' in the pre-SP-S01 .js files at 5968b516
+$ git show 5968b516:server/finders/{AuthorFinder,BookFinder,PodcastFinder}.js | grep -cw 'as'
+0
+exit=1

@@ -1,0 +1,290 @@
+[13:34:51] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+I'll start by orienting: the three model files, the build configuration, and the committed PO-S04 plan (to check this pasted prompt against the copy in the repo).
+
+[13:55:34] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+Now the no-emit check, which shows real errors without touching `dist-server`.
+
+[13:57:24] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+Rebuilding with the corrected placement, and in parallel running a scratch probe (outside the repo, no emit) that checks what a TypeScript *caller* sees for each shape of the pattern.
+
+[13:58:53] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+356 passing, exit 0. Reviewing the diff and the previous commit-message style before committing.
+
+[14:01:20] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+Model 1 is committed (3f3963d2). Model 2: `LibraryFolder`, using the pattern as corrected — two overloads placed above the `init` JSDoc.
+
+[14:02:01] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+Clean. Build, baseline diff, then tests.
+
+[14:02:48] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+Worked first time: the only compiled difference is the split `require`. Committing model 2.
+
+[14:04:00] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+Model 2 is committed (3f6a5fd8). Model 3: `Session` — the one with `Op`, static query helpers, and an association with a foreign-key option.
+
+[14:06:20] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+Committing the third model now, then a final sweep (banned tokens, scope of changed files) before the report.
+
+[14:09:27] 2d937ae2-1250-4078-888b-80d673301105.jsonl main
+All three models are converted and committed, each with a passing build and 356 passing tests. The uncallable overload does the job, but CLAUDE.md's description of it needs two corrections and one addition.
+
+## Per model
+
+| Model | Converted | Commit | `!` | Index signatures | Casts | Compiled file vs your baseline |
+|---|---|---|---|---|---|---|
+| Setting | yes | 3f3963d2 | 0 | 0 | 0 | +5 / −4 lines, all `require` lines |
+| LibraryFolder | yes | 3f6a5fd8 | 0 | 0 | 0 | +2 / −1, the `require` line |
+| Session | yes | 96f5fc41 | 0 | 0 | 0 | +2 / −1, the `require` line |
+
+Nothing was restored, so there are no compiler errors for an unconverted file. `server/types/` was not needed, and no file outside the three models changed. Across the whole `dist-server`, only these three compiled files differ from the baseline.
+
+The `init` shape is identical in all three:
+
+```ts
+  static init(this: never, ...args: never[]): never // uncallable: keeps the static side assignable to Model.init, which this method replaces
+  static init(sequelize: Sequelize): void
+  /**
+   * Initialize model
+   * @param {import('../Database').sequelize} sequelize
+   */
+  static init(sequelize: Sequelize): void {
+```
+
+## Did the pattern work as written?
+
+The overload line itself works exactly as written: it removes TS2417 with no cast, including for `hasMany`, `belongsTo`, `create`, `destroy` and `upsert`. Three things around it had to change:
+
+1. **The JSDoc placement in CLAUDE.md is reversed.** I built `Setting` with the JSDoc above the overloads first, and the compiled file lost the 4-line `init` comment. The overloads must go above the JSDoc so the comment stays on the implementation. The PO-S02 notes have it the right way round.
+2. **The real signature must be repeated as a second overload.** Read literally (one uncallable overload directly above the method), the implementation signature is hidden and a TypeScript caller gets `TS2684: The 'this' context of type 'typeof X' is not assignable to method's 'this' of type 'never'`. The build hides this today because `Database.js` is unchecked JavaScript.
+3. **The constructor parameters must be optional**, which CLAUDE.md does not mention. I used `constructor(values?: CreationAttributes<X>, options?: BuildOptions)`. With required parameters, `this.findAll()` fails with `TS2684 … Type 'typeof X' is not assignable to type 'new () => X'`.
+
+Points 2 and 3 come from scratch probes outside the repo, not from the build. The import shape used in all three is:
+
+```ts
+import sequelizeModule = require('sequelize')
+const { DataTypes, Model } = sequelizeModule
+import type { BuildOptions, CreationAttributes, Sequelize } from 'sequelize'
+```
+
+## Judgment calls you may want to overrule
+
+- **`Setting.value`** (JSDoc: `Object`) is a union of the three stored settings shapes, each with a literal `id`. This lets `find((se) => se.id === 'email-settings')` narrow on its own, so the boundary cast the PO-S03 commit predicted was not needed. It relies on TypeScript 5.5 or later (5.9.3 is installed).
+- **Session field types** differ from the constructor JSDoc in three places:
+  - `lastRefreshToken` and `lastRefreshTokenExpiresAt` allow `null`, because `init()` sets `allowNull: true`.
+  - `refreshToken` is declared although the constructor does not list it.
+- **The alias is `sequelizeModule`**, so the `sequelize` parameter of `init` does not shadow it (same idea as `axiosModule`).
+- **The Setting commit shows as delete + add** in git. Similarity is 42%, under git's 50% default, because a 1.6 KB file gained 1.3 KB of types. `git mv` was used, and `git show -M40%` shows the rename.
+
+## Findings
+
+The prompt named no bug log and limited edits to the three files, so these are only here:
+
+- **Session JSDoc:** it names `import('./User').User`, which does not exist; `User.js` exports the class itself.
+- **`createSession` inputs:** `TokenManager.js` passes `getClientIp(req)` (can return null) and `req.headers['user-agent']` (can be undefined). Both columns are nullable, so nothing fails at runtime. I typed the parameters `string`, as the field JSDoc says, so expect two errors there when TokenManager is converted. Widen the types then instead of asserting.
+
+## Not checked
+
+- The server was never started.
+- I did not build from an empty `dist-server`; the non-incremental no-emit check passed after each model.
+- Counts: first-party `.ts` went from 41 to 44. In-scope `.js` went down by 3; I count 125 → 122 with your exclusions, against your 126 at the start, so our counting differs by one file.
+
+The three test outputs and the three probe files are in the session scratchpad, if you want them for `evidence/test-results/PO-S04/`:
+`C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\2d937ae2-1250-4078-888b-80d673301105\scratchpad`
+
+`★ Insight ─────────────────────────────────────`
+- **Why zero casts was possible:** Sequelize's `ModelStatic<M>` is `NonConstructor<typeof Model> & { new(): M }`. That is exactly two requirements — a static side assignable to `Model`'s, and a constructor callable with no arguments. The overload satisfies the first and the optional constructor parameters the second, which is why every association and query call then type-checks untouched.
+- **Unchecked JavaScript callers hide type holes.** Finding 2 was invisible to the build because the only caller of `init` is `Database.js`. In a leaf-first migration, checking a converted file from a TypeScript caller's point of view catches what the build cannot yet see.
+`─────────────────────────────────────────────────`
+
+[16:10:59] a0a40682-69e7-4c99-baaf-5047a9625006.jsonl main
+Nothing more to do until the sub-agents report. Status at 16:11:
+
+| | |
+|---|---|
+| **Start** | 15:57 NZDT |
+| **Wave 1 stop** | 16:46 (sub-agents told to stop starting new models at 16:38) |
+| **Wave 2 stop** | 17:36 |
+| **Cap** | 17:56 |
+| **Renamed so far** | BookAuthor, BookSeries, CollectionBook, PlaylistMediaItem, CustomMetadataProvider, Device |
+
+Ready for integration:
+- **Baseline:** a snapshot of the 25 compiled model files, taken before any change, plus a script that reports every compiled line that differs and isn't a `require` line.
+- **Scan:** a script that counts `!`, index signatures, casts and registry declarations per file and flags banned tokens, so I can check the sub-agents' own counts.
+- **Fallback timer:** set for just after the stop time, in case a sub-agent overruns.
+
+I'll integrate as soon as the four reports are in.
+
+[16:16:05] agent-ac14425a6e4f40abc.jsonl sub-agent ac14425a6e4f40abc
+Running the check on Collection and FeedEpisode in the background while I start on Playlist.
+
+[16:30:51] a0a40682-69e7-4c99-baaf-5047a9625006.jsonl main
+Sub-agent 4 reported early (16:28), and since wave 1 still had 17 minutes, I sent it back to its last model, Feed, with a 16:44 stop.
+
+**Set 4 so far**
+
+| Model | Result |
+|---|---|
+| CollectionBook | converted, no `!`, casts or index signatures |
+| PlaylistMediaItem | converted, no `!`, casts or index signatures |
+| Collection | skipped: `where: null` is rejected by Sequelize's typings (TS2322) and no annotation fixes it |
+| FeedEpisode | skipped: `new Date(b) - new Date(a)` (TS2362/TS2363) |
+| Playlist | skipped: a nested `include` passed as a single object where the typings want an array |
+| Feed | in progress |
+
+All three skipped files are fully restored. I read the two converted files and they are type-only.
+
+`★ Insight ─────────────────────────────────────`
+- **All three skips are the same kind of problem.** The JavaScript works at runtime, but only a change to emitted code or a cast outside rule 5 would satisfy the compiler. Rule 5 covers a cast where an *untyped* module *returns* something too vague, not where a *typed* library's *parameter* is narrower than what it accepts.
+- **A polymorphic mixin call typed without an index signature.** `this[mixinMethodName](options)` type-checks because the local is annotated `'getBook' | 'getPodcastEpisode'` and `uppercaseFirst` is declared as returning `Capitalize<T>`, so the template literal gets a literal type.
+`─────────────────────────────────────────────────`
+
+Waiting on sub-agents 1, 2 and 3, and on Feed.
+
+[16:50:32] a0a40682-69e7-4c99-baaf-5047a9625006.jsonl main
+Wave 1 is integrated and committed, and wave 2 is running.
+
+**Wave 1 result (16:46): 14 of 22 models converted and committed**
+
+| Set | Commit | Converted | Skipped | Not reached |
+|---|---|---|---|---|
+| 1 | `053a778b` | BookSeries, BookAuthor, Book | LibraryItem | none |
+| 2 | `4186309f` | CustomMetadataProvider, Device, MediaProgress, ApiKey | none | User |
+| 3 | `a99079ee` | MediaItemShare, Series, Library, PodcastEpisode, Podcast | Author, PlaybackSession | none |
+| 4 | `12ae05dc` | CollectionBook, PlaylistMediaItem | Collection, FeedEpisode, Playlist, Feed | none |
+
+- **Build and tests:** `npm run build:server` passes with no `error TS` and no `Debug Failure`, and `npm test` shows 356 passing, on the whole tree before the commits.
+- **Compiled output:** 464 files in both trees. Only the 14 converted models and `.tsbuildinfo` differ from your `po-s05-baseline`. Every model requires the same modules in the same order; the only other differences are four comment-only lines (one in `BookAuthor.js`, three in `MediaProgress.js`) from the rule-5 comments.
+- **Comments:** every comment line of the 14 original `.js` files is still present in its `.ts` file.
+- **What I changed at integration:**
+  - Restored Author and PlaybackSession, which sub-agent 3 had converted with assertions outside rule 5. Their converted copies are kept outside the repo.
+  - Removed two non-boundary casts from Book by annotating instead.
+  - Fixed MediaItemShare's one error against the still-JavaScript LibraryItem.
+
+`★ Insight ─────────────────────────────────────`
+- **Type-only is checkable here.** Each `import x = require()` compiles back to `const x = require()`, and `declare` fields, overloads, namespaces and type aliases emit nothing, so the baseline diff can show that runtime code is unchanged.
+- **LibraryItem's skip is the instructive one.** It requires `./Book` and `./Podcast` but uses them only in JSDoc. TypeScript drops an `import x = require()` that is used only as a type, so converting the file would silently remove two module loads and change the load order.
+- **One reported bug I verified:** in `Collection.js:99`, `this.books = books` sits inside a static method, so the permission-filtered list lands on the class and `toOldJSONExpanded()` still reads the unfiltered `c.books`. Not fixed, per rule 1.
+`─────────────────────────────────────────────────`
+
+**Wave 2 (started 16:47, stop 17:36):** User is the only model not reached, so I resumed sub-agent 2 on it alone. Its own earlier probes suggest User hits the same nested-`include` problem as Playlist, so I told it to confirm that on the real file first and report a skip quickly if so.
+
+[17:03:30] a0a40682-69e7-4c99-baaf-5047a9625006.jsonl main
+## PO-S05 result
+
+**14 of the 22 models are converted and committed, 8 are skipped, and none is left unreached.** The build passes and 356 tests pass. I finished at 17:02, 65 minutes after the 15:57 start.
+
+### Per set
+
+| Set | Commit | Converted | Skipped | Not reached |
+|---|---|---|---|---|
+| 1 | `053a778b` | BookSeries, BookAuthor, Book | LibraryItem | none |
+| 2 | `4186309f` | CustomMetadataProvider, Device, MediaProgress, ApiKey | User (wave 2) | none |
+| 3 | `a99079ee` | MediaItemShare, Series, Library, PodcastEpisode, Podcast | Author, PlaybackSession | none |
+| 4 | `12ae05dc` | CollectionBook, PlaylistMediaItem | Collection, FeedEpisode, Playlist, Feed | none |
+
+Every skipped file is fully restored; the tree has no diff against HEAD.
+
+### Why each model was skipped
+
+| Model | What the JavaScript does | Compiler error |
+|---|---|---|
+| Collection | passes `where: null` to `findAll` (Collection.js:51) | TS2322 |
+| PlaybackSession | passes `where: null` to `findAll`, and `{ silent: true }` to `upsert` | TS2322, TS2353 |
+| Playlist | gives a nested `include` as one object, not an array (Playlist.js:75, 123, 300) | TS2322, TS2353 |
+| User | the same nested `include`, in two `findByPk` calls (User.js:748, 772) | TS2769 twice |
+| Author | reads `.books` on a `findByPk()` result with no null check (Author.js:98–99) | TS18047 twice |
+| FeedEpisode | subtracts two `Date` objects (FeedEpisode.js:93, 95) | TS2362, TS2363 |
+| Feed | picks a function and its argument in matching branches (Feed.js:527); passes a `Series \| null` on unchecked (Feed.js:511) | TS2345 twice |
+| LibraryItem | requires `./Book` and `./Podcast` but uses them only in JSDoc, so the compiled file would lose both requires; also null defaults for `where`, `replacements` and `include` | 81 errors after a first pass |
+
+- **Common cause:** in each case the code works at runtime, and the only ways through are a change to emitted code or an assertion that rule 5 does not list.
+- **Author and PlaybackSession were my decision.** Sub-agent 3 had converted both with assertions and asked me to rule. I restored them and then captured the errors above, which are their only errors.
+- **What a rule change would unblock:** allowing a cast of an argument would convert Collection and PlaybackSession from the copies already saved. It would not help Playlist or User: a single-step cast cannot express the nested `include` (TS2352 in sub-agent 2's probe).
+
+### Assertions added (14 converted models)
+
+| Kind | Count | Where |
+|---|---|---|
+| `!` | 2 | MediaProgress.ts:248, 265 |
+| Index signatures | 4 | ApiKey.ts:14; Podcast.ts:29, 30, 67 |
+| Casts | 2 | BookAuthor.ts:63; MediaProgress.ts:180 |
+
+- **Also added, outside those three kinds:** 6 `declare … sequelize` lines in 5 files (Book, Library, MediaItemShare, MediaProgress, PlaylistMediaItem). They are unchecked declarations, like the column `declare`s, and cover 11 use sites (8 reads of `sequelize.models.x`, 3 calls of `uppercaseFirst`) that would otherwise each need a `!` or a cast.
+- **Large models:** Book converted with none of the three, Podcast with 3 index signatures; LibraryItem, User and Feed are skipped.
+
+### Did the Sequelize pattern in CLAUDE.md work as written?
+
+Yes. The two `init` overloads with the JSDoc below them, the optional constructor parameters, the `declare` fields and the three-line import shape worked unchanged in all 14 models and in every probe of the skipped ones. I changed nothing in the pattern, but it does not cover these cases, which came up repeatedly:
+
+1. **Reads of other models through `sequelize.models.x`.** Sequelize types the static `Model.sequelize` as optional and each entry as `ModelCtor<Model<any, any>>`. We declared it once per class in erased code: `declare static readonly sequelize: Sequelize & { models: RegisteredModels }`. Inside `init()` the entries come from the parameter, so that is where MediaProgress needed its cast.
+2. **A model that is still JavaScript** cannot be a typed entry for inherited statics (TS2684). Leave the entry vague, or describe the one static used by hand (MediaItemShare does this for `LibraryItem.findOneExpanded`).
+3. **`afterFind` hooks** need the callback parameter annotated (`X | X[] | null`), and the properties the hook deletes must be optional.
+4. **`this[mixinMethodName](options)`** needs no index signature if the column is a literal union, the mixins are declared and the local is annotated.
+5. **Typedef names** read as `import('./X').Name` need a type-only namespace merged with the class (5 models).
+6. **A require used only as a type is dropped by TypeScript** (LibraryItem.js:8–9). This needs a rule from you.
+
+### How I applied rule 5
+
+The sub-agents read rule 5 differently, so I applied one reading to all sets, based on commits you already accepted. Two parts stretch its wording, and you may want to rule on them:
+
+- **The two casts are on values Sequelize returns** (raw rows, a registry entry). Sequelize is a typed module, and rule 5 says "untyped module". Precedent: `ShareManager.ts:109`.
+- **The two `!` follow a guard** (`!isNaN(...)` in the same condition), not "a field that starts as null and is set before it is read". Precedent: `LogManager.ts:106`.
+
+Read strictly, BookAuthor and MediaProgress would also be skips, leaving 12.
+
+I also edited three files myself at integration:
+- **Book.ts:** removed two casts that were not at a module boundary. `getTracklist()` now returns tracks whose `title`, `contentUrl` and `startOffset` are optional.
+- **Series.ts:** declared `bookSeries` so that Book needs no cast.
+- **MediaItemShare.ts:** the hand-written entry from point 2 above.
+
+### Final build and test
+
+- **Build:** `npm run build:server` passes with no `error TS` and no `Debug Failure`. This was an incremental build; I did not run a clean build from an empty `dist-server`.
+- **Tests:** `npm test` shows 356 passing.
+- **No-emit check:** 0 errors.
+- **Compiled output against `po-s05-baseline`:** 464 files on both sides; only the 14 models and `.tsbuildinfo` differ. Each model requires the same modules in the same order. Apart from `require` lines, the only differences are 4 comment lines (1 in `BookAuthor.js`, 3 in `MediaProgress.js`) from the rule-5 comments.
+- **Scope:** 14 files changed, all renames, all in `server/models`. The protected paths and `server/types/` are untouched, there are no banned tokens, and every original comment line is kept.
+
+### Process notes
+
+- **My brief added the registry declaration**, which CLAUDE.md does not have. I verified it in a probe outside the repo.
+- **All four sub-agents reported before the 16:46 stop** (16:28 to 16:37). Sub-agent 4 finished first, so I sent it back to Feed inside wave 1; it skipped Feed at 16:36.
+- **Wave 2 was one sub-agent**, on User, from 16:47 to 16:57.
+- **Sub-agents 1, 2 and 4 went beyond the allowed check.** Each ran single-file transpiles through the TypeScript API, outside the repo, to compare compiled output. It was not the project build and nothing was written in the repo.
+- **The four commits follow one build and test run on the whole tree.** I did not build each commit on its own.
+
+### Bugs found, not fixed
+
+I verified the first one myself; the rest are as the sub-agents reported them.
+
+- **Collection.js:99:** `this.books = books` is inside a static method, so the permission-filtered list lands on the class. `toOldJSONExpanded()` still reads the unfiltered `c.books`, so a restricted user sees every book of a collection once one book is accessible.
+- **Author.js:98:** `getAllLibraryItemsForAuthor` throws for an unknown author id.
+- **Feed.js:511 (also 489, 502):** a `getExpandedById()` result is used with no null check.
+- **Feed.js:305:** throws when a series has no book with audio tracks.
+- **Playlist.js:332:** `checkHasMediaItem` without an `episodeId` throws for a podcast-episode item.
+- **Playlist.js:190:** `update({ order })` is not awaited.
+- **Library.js:128:** `this.max('displayOrder') || 0` applies `|| 0` to a Promise, so an empty table gives null.
+- **User.js:678:** `libraryItem.media.metadata?.explicit` reads the old model shape, so that half of the explicit check is always undefined.
+- **PlaybackSession (`createFromOld`):** `silent: true` is passed to `upsert()`, which ignores it.
+- **Numbers or strings assigned to DATE fields:** Podcast.js:282, LibraryItem.js:695–696, and in `MediaProgress.applyProgressUpdate` and `PodcastEpisode`.
+- **Book.js:517–519, 552:** `bookSeries.sequence` is read without the `?.` guard used elsewhere.
+- **ApiKey:** `mergePermissionsWithDefault()` copies unknown boolean keys, and `generateApiKey()` resolves null on error.
+- **JSDoc mismatches:** about a dozen, for example the typo `strFing` in Book's `EBookFileObject` typedef and return types that omit null.
+
+### Unfinished copies
+
+The converted or partial copies of the skipped models are outside the repo, in the session scratch folder. It is a temp folder, so copy it if you want to keep them:
+
+`C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\a0a40682-69e7-4c99-baaf-5047a9625006\scratchpad\`
+
+- `held\`: Author and PlaybackSession, complete (they passed the check with their assertions).
+- `a4\`: Collection and Playlist, complete except for the blocking errors; FeedEpisode and Feed, partial.
+- `User.ts.partial` and `a1\LibraryItem.probe.ts`: first passes.
+- `skip-errors-author-playbacksession.txt`: the four errors behind my two integration skips.
+
+`★ Insight ─────────────────────────────────────`
+- **Most skips share one root.** Sequelize's typings are stricter than its runtime: they reject `where: null` and a nested `include` given as one object, both of which work. Rule 5 only covers a module *returning* something too vague, so every such call became a skip.
+- **A declaration per class did the work of an assertion per use.** Six erased `declare` lines covered 11 use sites and left the compiled files identical, which is why only 4 comment lines show up in the baseline diff.
+- **"Type-only" needs the require list checked, not just the code.** LibraryItem would have compiled with two requires silently removed, and a line-by-line diff that ignores `require` lines would not have caught that.
+`─────────────────────────────────────────────────`
+

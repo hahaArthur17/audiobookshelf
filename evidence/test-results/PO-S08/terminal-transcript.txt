@@ -1,0 +1,526 @@
+Convert the 22 remaining JavaScript controllers in server/controllers/ to TypeScript, following CLAUDE.md, especially the new section "Controllers and Express". CacheController.ts is already converted and is a worked example. Models, finders, managers and the other converted folders also show the style. You are the main agent.
+
+  Check the time with the date command when you start. Then start three sub-agents in the same step, so they run at the same time. Each owns one set of controllers and touches nothing outside it:
+  - Sub-agent 1: ApiKey, Backup, CustomMetadataProvider, Email, FileSystem, Notification, RSSFeed, Stats, Tools.
+  - Sub-agent 2: Me, User, Session, Share.
+  - Sub-agent 3: Search, Series, Author, Collection, Playlist.
+    Rules for the sub-agents: they only edit files and use git mv, in their own set. If git mv fails with an index.lock error, they wait a few seconds and retry. They do not run npm run build:server or npm test, do not commit, and do not create or edit files in server/types/ (they report the declarations they need to you). They must not edit server/routers/ApiRouter.js or any converted file; a problem there goes into their report. They may run npx tsc -p tsconfig.check.json and filter its output to their own files. They start with the smallest files. If a file does not fit the rules in CLAUDE.md, they restore it completely (git mv back and git restore, so that no half-converted file stays) and report the reason and the compiler errors. Each sub-agent keeps a bug log of real bugs it notices (file, line, one sentence) and reports it. Bugs are not fixed.
+
+  Work in two waves. Give the sub-agents a clock time to stop: 60 minutes after your start for the first wave. When they have reported, integrate: run npm run build:server and npm test, fix cross-file errors or restore the offending file, and commit each set separately with the prefix [PO-S08], using explicit paths so that renames staged by other agents are not swept in. Then start two more sub-agents on the controllers that were not yet started, with a stop time 120 minutes after your start:
+  - Sub-agent 4: Library, Misc.
+  - Sub-agent 5: LibraryItem, Podcast.
+    They follow the same rules. Integrate their work in the same way. Finish within 150 minutes of your start. Only you edit server/types/, run the build and the tests, and commit.
+
+  Do not convert any other folder in this run. Do not ask me questions unless you are blocked.
+
+  When you stop, report for each set: the controllers converted, the controllers skipped with the reason, and the controllers not reached. Also report: how many ! assertions, index signatures and casts you added (split the casts into the three allowances of the controllers section and any other); how many this: ApiRouter parameters were added; the bug log of all sub-agents; whether CLAUDE.md worked as written and what it did not cover; and the final build and test result.
+
+  Read 1 file, ran 2 shell commands
+
+Start time is 04:33:33, so wave 1 ends at 05:33, wave 2 at 06:33, with the run completing by 07:03. I've confirmed the plan accounts for the shared git index (requiring wait-and-retry on git mv), the no-emit tsconfig.check.json allowing parallel checks, and per-agent filtering of compiler output to avoid cross-contamination from other agents' in-progress files.
+
+● 3 background agents launched (↓ to manage)
+Convert small controllers (set 1)
+Convert user controllers (set 2)
+Convert library-entity controllers (set 3)
+
+  Read 1 file, ran 3 shell commands
+
+Wave-1 sub-agents are still running, so while I wait I'm setting up integration: confirming the tsc build with noEmitOnError, tests from dist-server/, and using the compiled baseline in po-s08-baseline/ to check each converted controller for behavior changes.
+
+  Made 2 scratchpad edits +115, ran 6 shell commands
+
+While waiting on the wave-1 sub-agents (two files renamed so far), I'm building integration checks: a per-commit build-and-test dry run and a scanner for casts, !, index signatures, and banned tokens on added lines.
+
+  Made 5 scratchpad edits +180 -16, ran 1 shell command
+
+● Background command "Dry-run the per-commit build and test check on the start commit, outside the repo" completed (exit code 0)
+
+  Ran 2 shell commands
+
+Wave 1's progressing well—five files renamed and spot-checks confirm they follow CLAUDE.md, while the baseline dry run passed clean (0 errors, 375 tests, 72s), so each commit can be verified independently. I'm now setting a safety timer for the 05:33 stop time.
+
+  Ran 4 shell commands
+
+★ Insight ─────────────────────────────────────
+- npm test here is tsc followed by mocha dist-server/test: the tests run against the compiled output, so a TypeScript error anywhere (with noEmitOnError) blocks every test, not just the ones for that file. That is why one half-finished controller from another agent would make an in-repo build useless during the wave.
+- To get around that, I export a commit with git archive | tar -x into the scratchpad, copy in only one set's .ts files, and link node_modules with a junction. That reproduces exactly the tree a commit of that set would have, so each set can be proven to build and pass 375 tests on its own before I commit it.
+- The compiled baseline in po-s08-baseline/ gives a strong behaviour check: both sides are tsc output, so after dropping require lines and comments, a type-only conversion must produce zero differing code lines.
+  ─────────────────────────────────────────────────
+
+The three wave-1 sub-agents are still working (stop time 05:33); a trial of the overlay check is running in the background. I'll integrate as soon as they report.
+
+✻ Brewed for 9m 48s · done 4:42 AM
+
+● Background command "Trial run of the overlay check with one finished controller, outside the repo" completed (exit code 0)
+
+  Ran 1 shell command
+
+The overlay check works end to end: StatsController.ts alone on top of the start commit builds with 0 errors, passes 375 tests, and shows 0 differing code lines against the compiled baseline (only the require lines differ, as expected).
+
+Wave 1 status at 04:43: six controllers renamed across sub-agents 1 and 3; sub-agent 2 is still reading its four large files. Waiting for the reports; the safety timer fires just after 05:33.
+
+› Message from @general-purpose (ctrl+o to expand)
+
+  Ran 1 shell command
+
+● Agent "Convert small controllers (set 1)" finished · 28m 57s
+
+  Ran 5 shell commands
+
+Set-1 controllers (9/9) are converted and clean per sub-agent 1's report and my diff review — build passed with 0 errors, tests now running. Sub-agents 2 and 3 are still in progress.
+
+  Ran 1 shell command
+
+● Background command "Build and test set 1 alone on top of the start commit, outside the repo" completed (exit code 0)
+
+  Made 1 scratchpad edit +7 -5
+
+Set 1 is verified as a standalone commit: on top of the start commit it builds with 0 errors, passes 375 tests, and its nine compiled files match the baseline except for the require lines and added comments.
+
+★ Insight ─────────────────────────────────────
+- The two "code" lines the comparison flagged (const uuidv4 = uuid.v4 and const { validateUrl } = utils) are the CommonJS import shape from CLAUDE.md, not behaviour changes: import x = require() cannot destructure, so a destructured require becomes an import plus a const. Same values, one extra module-level binding.
+- Sub-agent 1 surfaced a pattern that will matter for wave 2: LibraryItem.js is still JavaScript and replaces Model.init with its own init(sequelize), so TypeScript rejects the class as the this of every inherited Sequelize static (findOne, findByPk, count…). The converted models avoid this with the uncallable-overload trick; a JS model cannot, so each call site needs one commented boundary cast to a small local type.
+  ─────────────────────────────────────────────────
+
+Waiting for sub-agents 2 and 3 (stop time 05:33) before the in-repo build, tests and the three commits.
+
+✻ Brewed for 2m 40s · done 5:07 AM
+
+› Message from @general-purpose (ctrl+o to expand)
+
+  Ran 1 shell command
+
+● Agent "Convert library-entity controllers (set 3)" finished · 33m 43s
+
+  Ran 1 shell command
+
+› Message from @general-purpose (ctrl+o to expand)
+
+● Agent "Convert user controllers (set 2)" finished · 35m 56s
+
+  Ran 1 shell command
+
+● Update(server\types\untypedModules.d.ts)
+Added 3 lines
+
+declare module 'uuid' {
+  export function v4(): string
+  // Used by server/controllers/ShareController.ts to check the share session cookie.
+  export function validate(uuid: string): boolean
+  export function version(uuid: string): number
+}
+
+// Used by server/managers/EmailManager.ts. from/to allow null because EmailSettings.fromAddress starts as null.
+
+  Ran 3 shell commands
+
+● Background command "Run the full no-emit type check on the whole server" completed (exit code 0)
+
+Wave 1 has fully reported (05:11). I'm integrating: reviewing diffs against the strict reading of rule 5, and the full type check just finished — reading it now.
+
+  Ran 4 shell commands
+
+● Update(server\controllers\AuthorController.ts)
+Added 1 line, removed 1 line
+
+    // Used on author landing page to include library items and items grouped in series
+    if (include.includes('items')) {
+      const libraryItems = (await Database.libraryItemModel.getForAuthor(req.author, req.user)) as BookLibraryItem[] // boundary: LibraryItem.js (JS) types media as Book
+| Podcast; getForAuthor() returns book items only
+      const libraryItems = await Database.libraryItemModel.getForAuthor(req.author, req.user) as BookLibraryItem[] // boundary: LibraryItem.js (JS) types media as Book |
+Podcast; getForAuthor() returns book items only
+
+      if (include.includes('series')) {
+        const seriesMap: { [key: string]: SeriesWithItems } = {} // index signature: filled by a dynamic key (series.id)
+
+● Update(server\controllers\AuthorController.ts)
+Added 3 lines, removed 3 lines
+    if (existingAuthor) {
+      Logger.info(`[AuthorController] Merging author "${req.author.name}" with "${existingAuthor.name}"`)
+      const bookAuthorsToCreate: { bookId: string; authorId: string }[] = []
+      const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id)) as BookLibraryItemWithAuthorList[] // boundary: LibraryItem.js (
+JS) types media as Book | Podcast; these are book items
+      const allItemsWithAuthor = await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id) as BookLibraryItemWithAuthorList[] // boundary: LibraryItem.js (JS
+) types media as Book | Podcast; these are book items
+
+      const libraryItems: LibraryItem[] = []
+      allItemsWithAuthor.forEach((libraryItem) => {
+
+    if (hasUpdated) {
+      let numBooksForAuthor = 0
+      if (authorNameUpdate) {
+        const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id)) as BookLibraryItemWithAuthorList[] // boundary: see the same c
+all above
+        const allItemsWithAuthor = await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id) as BookLibraryItemWithAuthorList[] // boundary: see the same cal
+l above
+
+        numBooksForAuthor = allItemsWithAuthor.length
+        const libraryItems = []
+
+    }
+
+    // Load library items so that metadata file can be updated
+    const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id)) as BookLibraryItemWithAuthorList[] // boundary: see the same call
+in update()
+    const allItemsWithAuthor = await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id) as BookLibraryItemWithAuthorList[] // boundary: see the same call in
+ update()
+    allItemsWithAuthor.forEach((libraryItem) => {
+      libraryItem.media.authors = libraryItem.media.authors.filter((au) => au.id !== req.author.id)
+    })
+
+  Ran 1 shell command
+
+Wave 1 integration is clean: build passes with 0 errors, 375 tests pass, and all 13 converted controllers compile identically to the baseline. I'll commit the three sets separately now, then launch wave 2.
+
+  Ran 2 shell commands
+
+● 2 background agents launched (↓ to manage)
+Convert Misc and Library controllers (set 4)
+Convert Podcast and LibraryItem controllers (set 5)
+
+  Ran 1 shell command
+
+● Stop Task
+until [ "$(date +%s)" -ge 1791650050 ]; do sleep 15; done; echo "wave-1 stop time (05:33) has passed: $(date)"; cd "D:/SEM-2/574/Project/audiobookshelf-po" && g… · stopped
+
+  Made 1 scratchpad edit +117, ran 1 shell command
+
+Status at 05:24. Wave 1 is integrated and committed; wave 2 (sub-agents 4 and 5) has been running since 05:21 with a 06:33 stop time.
+
+┌─────┬──────────┬────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────┐
+│ Set │  Commit  │                                       Converted                                        │  Skipped (restored)  │
+├─────┼──────────┼────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────┤
+│ 1   │ c4c94aa3 │ Backup, CustomMetadataProvider, Email, FileSystem, Notification, RSSFeed, Stats, Tools │ ApiKey               │
+├─────┼──────────┼────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────┤
+│ 2   │ bcb90db8 │ Me, Share                                                                              │ Session, User        │
+├─────┼──────────┼────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────┤
+│ 3   │ 0ed63ce5 │ Series, Search, Author                                                                 │ Collection, Playlist │
+└─────┴──────────┴────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────┘
+
+In the repo: npm run build:server 0 errors, npm test 375 passing, and the 13 compiled controllers match the baseline apart from require lines and comments. Each commit is being rebuilt and retested on its own in the background.
+
+★ Insight ─────────────────────────────────────
+- The five skips share one cause: the JavaScript relied on things the types correctly refuse — a .find() result read without a guard, a Sequelize mixin the converted model never declared, where: null. A type-only rule set cannot convert those without either a guard (behaviour change) or a cast on a typed module (which rule 5 forbids), so restoring them is the designed outcome, not a failure of the agents.
+- I restored ApiKeyController even though it compiled: its two casts corrected a converted file's type (ApiKey.ts lacks getUser), and Allowance 3 only covers a too-narrow parameter. Earlier notes show rule 5 is read strictly here, so I applied one test to every cast: is the type being corrected defined by an untyped JavaScript module, or is it one of the three allowances?
+- For wave 2 I turned those findings into a "triage before you polish" instruction, so the agents classify every compiler error first and do not spend half an hour on a 1,500-line file that one unguarded lookup already rules out.
+  ─────────────────────────────────────────────────
+
+● Background command "Build and test each of the three wave-1 commits on its own, outside the repo" completed (exit code 0)
+
+  Ran 1 shell command
+
+All three wave-1 commits are confirmed independently: each one, exported with git archive and built outside the repo, gives 0 errors and 375 passing.
+
+┌────────────────┬──────────┬─────────────┐
+│     Commit     │  Build   │    Tests    │
+├────────────────┼──────────┼─────────────┤
+│ c4c94aa3 set 1 │ 0 errors │ 375 passing │
+├────────────────┼──────────┼─────────────┤
+│ bcb90db8 set 2 │ 0 errors │ 375 passing │
+├────────────────┼──────────┼─────────────┤
+│ 0ed63ce5 set 3 │ 0 errors │ 375 passing │
+└────────────────┴──────────┴─────────────┘
+
+Wave 2 is running (sub-agent 4: Misc, Library; sub-agent 5: Podcast, LibraryItem). Stop time 06:33; a timer wakes me just after it if a report is still missing.
+
+› Message from @general-purpose (ctrl+o to expand)
+Resuming agent abc0d50
+Message queued for delivery to a94f8b1f199f54e43 at its next tool round.
+
+● Agent "Convert Misc and Library controllers (set 4)" finished · 18m 28s
+
+  Made 1 scratchpad edit +39, ran 1 shell command
+
+Sub-agent 4 reported at 05:39 that neither Misc nor Library fits. I ruled on one point and sent it back to work:
+
+- MiscController's only blocker was library.libraryFolders possibly undefined. That is an association field that starts unset and that findByIdWithFolders() always loads before the read, which is exactly rule 5's ! case. My wave-2 brief had worded this too broadly ("an optional array"), so CLAUDE.md wins; sub-agent 4 is now converting Misc, and sub-agent 5 has the same ruling for the identical line in PodcastController.
+- LibraryController stays skipped. It calls the getLibraryFolders() mixin on a local instance (not declared in the converted Library.ts) and passes a nested include as an object that Sequelize's typings reject.
+
+★ Insight ─────────────────────────────────────
+- The distinction I'm applying to !: does code that always runs before the read set the field? An eager-loaded association passes that test; a .find() result or a findByPk row does not, because nothing guarantees it at that point except the programmer's belief.
+- Sequelize associations are the recurring wall. declare libraryFolders?: … and absent getX() mixins in the converted models are correct-but-incomplete types, and they can only be completed in server/models/, which this run may not touch.
+  ─────────────────────────────────────────────────
+
+Waiting for sub-agent 4 (Misc) and sub-agent 5 (Podcast, LibraryItem); stop time 06:33.
+
+› Message from @general-purpose (ctrl+o to expand)
+
+  Ran 2 shell commands
+
+● Agent "Convert Misc and Library controllers (set 4)" finished · 9m 34s
+
+  Ran 1 shell command
+
+MiscController is converted and type-clean after the ruling (05:50). I reviewed its diff: imports, request types, 17 signatures, one ! on the eager-loaded libraryFolders, three commented casts (one Allowance 3 into htmlSanitizer.ts, two on the JavaScript helper getTitleIgnorePrefix), and nothing else. Its standalone build-and-test is running outside the repo.
+
+Sub-agent 5 is still working on PodcastController (in progress) and LibraryItemController; stop time 06:33.
+
+✻ Worked for 1m 19s · done 5:52 AM
+
+● Background command "Build and test MiscController alone on top of the wave-1 commits, outside the repo" completed (exit code 0)
+
+  Ran 1 shell command
+
+MiscController passes on its own: on top of the wave-1 commits it builds with 0 errors, 375 passing, and its 550 compiled code lines are identical to the baseline (only require lines and five added comments differ).
+
+Set 4 will be committed (MiscController only; LibraryController skipped) together with the in-repo build and test once sub-agent 5 has settled PodcastController and LibraryItemController.
+
+› Message from @general-purpose (ctrl+o to expand)
+
+  Ran 1 shell command
+
+● Agent "Convert Podcast and LibraryItem controllers (set 5)" finished · 34m 31s
+
+  Ran 1 shell command
+
+● Stop Task
+until [ "$(date +%s)" -ge 1791653650 ]; do sleep 15; done; echo "wave-2 stop time (06:33) has passed: $(date)"; cd "D:/SEM-2/574/Project/audiobookshelf-po" && g… · stopped
+
+  Searched for 1 pattern
+
+● Update(server\controllers\MiscController.ts)
+Added 2 lines, removed 2 lines
+type RequestWithUser<Body = unknown> = Request<MiscParams, unknown, Body, MiscQuery> & RequestUserObject
+// An uploaded file as express-fileupload puts it on the request: only the members that handleUpload() uses
+type UploadedFile = { name: string; mv: (path: string) => Promise<void> }
+// files is optional here because handleUpload() itself checks that it is set
+type RequestWithFiles<Body = unknown> = RequestWithUser<Body> & { files?: { [key: string]: UploadedFile } } // index signature: the client chooses the field names, and ha
+ndleUpload() reads the files with Object.values
+// files is set by the upload middleware, so it is a required property in the handler type; handleUpload() also checks it at runtime
+type RequestWithFiles<Body = unknown> = RequestWithUser<Body> & { files: { [key: string]: UploadedFile } } // index signature: the client chooses the field names, and han
+dleUpload() reads the files with Object.values
+// Body of POST /api/upload. handleUpload() checks at runtime that the values are non-empty strings, and sets author and series to null when they are not
+type UploadBody = { title?: string; author?: string | null; series?: string | null; folder?: string; library?: string }
+type SettingsUpdate = { [key: string]: unknown } // index signature: updateServerSettings() reads req.body and fills filteredUpdate by a dynamic key
+
+  Ran 1 shell command
+
+All five sub-agents from wave 2 have reported, with set 4 committed as c19fac00. I'll now commit a small fix in MiscController (typing req.files as required per CLAUDE.md) before running the final checks.
+
+  Ran 4 shell commands
+
+● Background command "Build and test the last two commits on their own, outside the repo" completed (exit code 0)
+
+  Ran 1 shell command
+
+PO-S08 report
+
+14 of the 22 controllers are converted, 8 were restored because they do not fit the rules, and none was left unreached. Final state at d89acaf7: npm run build:server 0 errors, npm test 375 passing, working tree clean. The run took 89 minutes (04:33:33 to 06:02; limit 150).
+
+Per set
+
+┌─────┬────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────┬─────────────┐
+│ Set │                                       Converted                                        │  Skipped (restored)  │ Not reached │
+├─────┼────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────┼─────────────┤
+│ 1   │ Backup, CustomMetadataProvider, Email, FileSystem, Notification, RSSFeed, Stats, Tools │ ApiKey               │ none        │
+├─────┼────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────┼─────────────┤
+│ 2   │ Me, Share                                                                              │ Session, User        │ none        │
+├─────┼────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────┼─────────────┤
+│ 3   │ Series, Search, Author                                                                 │ Collection, Playlist │ none        │
+├─────┼────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────┼─────────────┤
+│ 4   │ Misc                                                                                   │ Library              │ none        │
+├─────┼────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────┼─────────────┤
+│ 5   │ none                                                                                   │ LibraryItem, Podcast │ none        │
+└─────┴────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────┴─────────────┘
+
+Why each was skipped (the decisive compiler errors):
+
+- ApiKey: the sub-agent converted it with 0 errors, and I restored it. It needs two casts for the getUser() mixin that the converted ApiKey.ts does not declare (TS2339); no allowance covers a missing member of a converted file.
+- Session: Sequelize's typings reject where: null (TS2769, original line 69), and user.username is read on a user that can be null (TS18047, line 316).
+- User: 33 errors. Among them are Database.getPlaybackSessions(where = null) inferred as null-only (TS2345), a nested include given as an object (TS2353), unguarded .join on optional permission arrays (TS18048) and a number assigned to the Date field lastSeen (TS2322).
+- Collection: 32 errors. A .find() result is read unguarded (TS18048), getOldJsonExpanded() is called 8 times without its required user (TS2554), and the getCollectionBooks mixin is undeclared (TS2339, 5 places).
+- Playlist: 33 errors. Four .find() lookups are read unguarded (TS18048, 9 places), a required argument is missing (TS2554), and changed()?.length is read on false | string[] (TS2339).
+- Library: 122 errors. The getLibraryFolders() mixin is undeclared (TS2551, once on a local instance), a nested include is rejected (TS2353, 3 places), and fields of converted models are optional or unknown (TS18048, TS18046).
+- LibraryItem: 126 errors. Three groups of .find() results are read unguarded (TS18048, 26 places), and a wrong type is assigned to Book.ebookFile (TS2322).
+- Podcast: one blocker left. The result of getFileTimestampsWithIno() can really be false and is read unguarded (TS2339, 4 places). Only a cast on an accurate type would compile, so I did not allow it.
+
+What was added
+
+┌────────────────────────────┬───────┬────────────────────────────────────────────────┐
+│            Item            │ Count │                     Where                      │
+├────────────────────────────┼───────┼────────────────────────────────────────────────┤
+│ Non-null assertions (!)    │ 3     │ Notification 111, Author 107, Misc 100         │
+├────────────────────────────┼───────┼────────────────────────────────────────────────┤
+│ Index signatures           │ 10    │ Misc 4, Author 3, Series 2, Search 1           │
+├────────────────────────────┼───────┼────────────────────────────────────────────────┤
+│ Casts, Allowance 1         │ 1     │ Search 122                                     │
+├────────────────────────────┼───────┼────────────────────────────────────────────────┤
+│ Casts, Allowance 2         │ 5     │ Search                                         │
+├────────────────────────────┼───────┼────────────────────────────────────────────────┤
+│ Casts, Allowance 3         │ 5     │ Search 102, Author 143, Me 470 (two), Misc 745 │
+├────────────────────────────┼───────┼────────────────────────────────────────────────┤
+│ Casts, other               │ 15    │ all on untyped JavaScript modules, see below   │
+├────────────────────────────┼───────┼────────────────────────────────────────────────┤
+│ this: ApiRouter parameters │ 21    │ Backup 7, Tools 4, Me 4, Misc 4, Email 2       │
+└────────────────────────────┴───────┴────────────────────────────────────────────────┘
+
+The 15 other casts, by cause:
+- 7 narrow the media union or a typedef of LibraryItem.js (Author 77, 162, 222, 271; Email 131; Me 521; Share 102).
+- 4 are on an argument passed to a JavaScript callee whose JSDoc parameter is too narrow (Author 448, Share 133, Misc 238 and 260).
+- 2 are for inherited Sequelize statics of the still-JavaScript LibraryItem model (FileSystem 160, Share 270).
+- 1 is for libs/fsExtra (Backup 129).
+- 1 is for a wrong JSDoc return type in AbMergeManager.js (Tools 85).
+
+Also added: one this: PublicRouter (Share), a file-local declare function isNaN(value: unknown) in Me and Share, and four annotated destructured imports. Banned tokens: 0.
+
+Decisions I took (you can reverse them)
+
+1. Rule 5 read strictly, as the PO-S07 notes describe it. A cast is accepted only where the type it corrects comes from an untyped JavaScript module, or under Allowances 1 to 3. That is why ApiKey was restored although it compiled.
+2. ! allowed on library.libraryFolders (Misc 100). It is an association field that findByIdWithFolders() always sets before the read. My wave-2 brief had excluded "an optional array", which was stricter than CLAUDE.md; I corrected it at 05:41 and sub-agent 4 then converted Misc. This cost that agent about ten minutes.
+3. Four casts on arguments to JavaScript callees accepted, although rule 5 literally says "returns".
+4. I edited server/types/untypedModules.d.ts (3 lines: uuid.validate and uuid.version for Share). Your prompt allows this; the PO-S08 scope line in CLAUDE.md says no file outside server/controllers/.
+5. Two small edits of my own in converted files: (await x) as T became await x as T in Author (4 lines, removes parentheses from the compiled file), and req.files became a required property in Misc (commit d89acaf7).
+
+Sub-agents 2 and 3 each used sed -i once, against the brief, on a file they later restored completely; nothing of it remains.
+
+Bug log (all sub-agents)
+
+63 entries. Line numbers are those of the original .js files. All were found by reading the code; none was executed or confirmed by a test, and none was fixed.
+
+- ApiKey
+  - 179–189 (possible): delete has no root check, unlike create and update.
+  - 139: the log message in update says "cannot be created".
+- Author
+  - 100: update() accepts null as name and stores it.
+  - 138: merging two authors pushes the existing author twice when a book already has both.
+  - 315: the log prints imagePath where the name is meant.
+- Backup
+  - 71: req.files.file is read without a guard on req.files.
+- Collection
+  - 384: removeBatch answers 500 where addBatch answers 400.
+  - 152: description is stored without the type check that create() has.
+  - 48, 170, 320, 382: books is never checked with Array.isArray.
+  - 199, 215, 257, 302, 305, 364, 367, 420 (possible): getOldJsonExpanded() is called without the user, so the responses are not filtered by the user's restrictions.
+  - 2: Sequelize is required but unused.
+- CustomMetadataProvider
+  - 45–54 (possible): the raw url is stored, not the validated one.
+- Email
+  - 135 (possible): a non-admin gets 404 where other controllers answer 403.
+- FileSystem
+  - 30–34: ?path=a&path=b gives an array and Path.isAbsolute throws.
+- Library
+  - 915: the log interpolates req.user and prints [object Object].
+  - 380–389: update() does not validate folder entries.
+  - 1163, 1211, 628, 630: libraryFilters.decode() can return null and is used unchecked.
+  - 133–137 (lower confidence): client folder objects are passed unfiltered into create.
+- LibraryItem
+  - 72, 115, 563: a query string is compared with the number 1 using ==.
+  - 669–679: batchUpdate reads mediaPayload fields without checking that the entry has one.
+  - 231, 283: updated in the response can be the URL string instead of a boolean.
+  - 500–501, 670–672, 1036–1038: .find() results are used without a guard.
+  - 742–743: batchGet answers 403 for an invalid payload.
+  - 1186–1194: the stored ebook file does not match EBookFileObject.
+- Me
+  - 298–304: an object with a length property reaches for...of and throws.
+  - 486: a negative limit drops items from the end.
+  - 160–161, 203–204: page and itemsPerPage are not validated (same entry as User 437–438).
+  - 644–645: the JSDoc says plain Request (documentation only).
+- Misc
+  - 92–93: two uploaded files with the same field name give an array, and Path.join then throws.
+  - 667–721: updateAuthSettings also loops over the read-only authOpenIDSamplePermissions key.
+- Notification
+  - 106–107: updateNotification ignores the :id in the URL and uses req.body.id.
+  - 79–84: createNotification answers 200 when the payload is rejected, and a body without urls throws.
+- Playlist
+  - 431: addBatch throws when episodeId is not an episode of the item.
+  - 44–45: create() lacks the array checks that addBatch has.
+  - 113–123, 555–565: work continues in the try after commit(), so a later throw calls rollback() on a finished transaction.
+- Podcast
+  - 100, 112, 120–122: the stat result can be false, so the item is created with ino undefined and zero timestamps.
+  - 155–171: the pushed cover file has fileType and no isSupplementary.
+  - 295: ?limit= (empty) gives 0 instead of the default 3.
+  - 351: findEpisode answers 500 for a missing title.
+  - 392: copied log message.
+  - 378: isAutoDownload is omitted (a JSDoc inaccuracy).
+- RSSFeed
+  - 157: passes req.body where the sibling handlers pass reqBody (inconsistency only).
+- Search
+  - 116: query.podcast === 1 can never be true.
+  - 44: the JSDoc documents a parameter that does not exist.
+  - 94: findBooks loads any item by id without an access check.
+- Series
+  - 83: update() does not check for a duplicate name, and save() has no try/catch.
+- Session
+  - 316: user.username is read on a deleted user's session.
+  - 36–39: an invalid user query returns every user's sessions.
+- Share
+  - 69–72, 103, 122: an invalid session cookie is cleared, then reused and set again.
+  - 396–398, 46: removeMediaItemShare() is not awaited, and the row is deleted twice.
+  - 266–272: after a failed zip stream, res.status(500) is called on a response whose headers are sent.
+  - 327, 360: the slug is tested trimmed but stored untrimmed.
+  - 38: "1e3" passes isNaN and becomes 1.
+- Stats
+  - 53: the log prints NaN, not the raw year.
+- Tools
+  - 70: cancelEncode() is not awaited.
+  - 31, 36, 41, 46, 161: log messages name the wrong controller.
+  - 113: libraryItemIds is not checked to be an array.
+- User
+  - 347, 424: user_updated is emitted to the acting admin, not the changed user.
+  - 130, 255: a null from hashPassword() is stored unchecked.
+  - 294, 298: .join on optional permission arrays.
+  - 325: a number is assigned to lastSeen.
+  - 320–321: isActive is compared as boolean but stored raw.
+  - 41–42: .sort is called on a possible false.
+
+Did CLAUDE.md work as written?
+
+Yes for the 14 converted controllers. The import shape, the request types and generics, the erased this: ApiRouter, the three allowances, the widening annotations and the declare const global pattern all applied as described. The "Debug Failure" crash did not occur.
+
+It did not cover what blocked the other 8:
+
+1. Unguarded lookups and nullable values: .find() results, a user that can be null, a helper that can return false. No allowance exists, and a guard is a behaviour change. This blocked Collection, Playlist, LibraryItem, Session and Podcast.
+2. Sequelize associations on converted models: undeclared mixins (getUser, getCollectionBooks, getLibraryFolders), association fields declared optional, and associations missing on index-signature models. None can be fixed inside server/controllers/. This blocked ApiKey, Collection and Library.
+3. Calls that omit an argument a converted method now requires (TS2554); a cast cannot supply an argument.
+4. Sequelize's own typings narrower than the runtime: where: null, a nested include as an object, changed()?.length.
+5. LibraryItem.js still being JavaScript: every inherited static needs a boundary cast per call site. This worked, but the section does not mention it.
+6. JavaScript callees with a too-narrow parameter:
+   - Rule 5 says "returns", so an argument cast is not literally covered.
+   - "Annotate the destructured import once" is rejected by the compiler in that case (TS2322).
+   - A = null default is inferred as null-only.
+
+Smaller gaps:
+- Handlers bound by PublicRouter need this: PublicRouter.
+- "Generics once per controller" does not fit controllers with several bodies.
+- "Query values are strings" is false in LibraryController, whose middleware rewrites limit and page as numbers.
+- Allowance 2 names .message only.
+- isNaN on a string needs a file-local declaration.
+- The grep in the check command hides the lines under a multi-line error.
+
+Final build and test
+
+┌──────────┬──────────────────────────────────────┬──────────┬─────────────┐
+│  Commit  │               Content                │  Build   │    Tests    │
+├──────────┼──────────────────────────────────────┼──────────┼─────────────┤
+│ c4c94aa3 │ set 1 (8 controllers)                │ 0 errors │ 375 passing │
+├──────────┼──────────────────────────────────────┼──────────┼─────────────┤
+│ bcb90db8 │ set 2 (Me, Share, uuid declarations) │ 0 errors │ 375 passing │
+├──────────┼──────────────────────────────────────┼──────────┼─────────────┤
+│ 0ed63ce5 │ set 3 (Series, Search, Author)       │ 0 errors │ 375 passing │
+├──────────┼──────────────────────────────────────┼──────────┼─────────────┤
+│ c19fac00 │ set 4 (Misc)                         │ 0 errors │ 375 passing │
+├──────────┼──────────────────────────────────────┼──────────┼─────────────┤
+│ d89acaf7 │ Misc: req.files required             │ 0 errors │ 375 passing │
+└──────────┴──────────────────────────────────────┴──────────┴─────────────┘
+
+Each commit was also built and tested on its own from a git archive export outside the repo. Against po-s08-baseline, the 14 converted controllers show 0 differing code lines once require lines and comments are set aside, and the 8 skipped ones are identical. Set 5 has no commit.
+
+★ Insight ─────────────────────────────────────
+- The split between converted and skipped follows one line: where the JavaScript only lacked descriptions (request shapes, this, loosely typed JS helpers), type-only conversion worked. Where it relied on something the types correctly refuse, it could not, and those spots are mostly the same lines that fill the bug log.
+- Three of the eight skips (ApiKey, Collection, Library) trace back to association members missing from already converted models, so a few declare lines in server/models/ would unblock more than any new cast allowance.
+- Podcast shows why the strict reading matters: it was one cast from compiling, and that cast would have hidden the one place where a failed stat creates a library item with no inode.
+  ─────────────────────────────────────────────────
+
+The sub-agents' first-pass files, error lists and near-miss variants (ApiKey, Session, Podcast) are in the session scratchpad under the prefixes a1- to a5- and rejected/. That folder is temporary, so copy what you want into evidence/. I can also publish this report as a shareable page if you want one.
+
+✻ Crunched for 1h 31m 8s · done 6:04 AM
+
+※ recap: The PO-S08 run converting the 22 server controllers to TypeScript is finished: 14 converted and committed, 8 restored as not fitting the rules, build clean with 375 tests passing. Next, copy the scratchpad evidence into evidence/ before it is cleared. (disable recaps in /config)
+Referenced file server\controllers\MiscController.ts
+Read C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\6e0ca4b8-675c-4688-bcf2-09dd5cccaab0\scratchpad\main-wave2-data.md (46 lines)
+Referenced file C:\Users\<user>\AppData\Local\Temp\claude\D--SEM-2-574-Project-audiobookshelf-po\6e0ca4b8-675c-4688-bcf2-09dd5cccaab0\scratchpad\main-wave1-data.md
+Referenced file server\controllers\AuthorController.ts
+Read server\types\untypedModules.d.ts (28 lines)
+
+● Compacted while idle, before the prompt cache expired

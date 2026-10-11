@@ -1,0 +1,38 @@
+[PO-S05] models: BookSeries, BookAuthor, Book: migrate to TypeScript
+
+3 files (sub-agent 1, wave 1). The base class is untouched.
+0 non-null assertions, 0 index signatures, 1 cast, 0 removed requires.
+- Cast, BookAuthor.ts:63, with a comment: the result of findAll({ raw: true, ... })
+  as (BookAuthor & { count: number })[]. With raw: true the rows carry the COUNT
+  alias, which the findAll typing of Sequelize leaves out (precedent:
+  ShareManager.ts:109).
+- Book declares the registry once instead of asserting at each of its four reads:
+    declare readonly sequelize: Sequelize & { models: RegisteredModels }
+  with the entries author, bookAuthor, series and bookSeries.
+- Book exports its typedef names (AudioFileObject, AudioTrack, ChapterObject,
+  EBookFileObject, SeriesExpanded, BookExpanded, BookExpandedWithLibraryItem) from a
+  type-only namespace merged with the class, so import('./Book').Name still resolves.
+- No index signature for the dynamic keys in updateFromRequest(): the key arrays are
+  annotated (MetadataStringKey[] and ('narrators' | 'genres')[]) and the nine string
+  columns share the type string | null.
+- Two casts of the sub-agent were removed by the main agent at integration, because
+  neither is at a module boundary. getTracklist() types its local as the audio file
+  with the three track keys optional, so they are optional in its return type too.
+  updateSeriesFromRequest() needs no cast now that Series declares bookSeries.
+- The two title helpers from ../utils are annotated once, with string | null
+  parameters.
+- Field types that differ from the constructor JSDoc are explained on their declare
+  lines.
+Skipped, restored to .js:
+- LibraryItem: the requires of ./Book and ./Podcast (LibraryItem.js:8-9) are used
+  only in JSDoc, so TypeScript would drop them from the compiled file and change the
+  load order. Also where, replacements and include default to null, which the
+  Sequelize typings reject, and media is Book | Podcast with branches on mediaType
+  that narrow nothing. 81 errors after a first pass.
+
+Compiled files equal the baseline except for the require lines and, in
+BookAuthor.js, the comment on the cast line.
+
+Build passes, 356 passing (run on the whole tree after all four sub-agents).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

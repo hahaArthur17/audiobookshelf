@@ -1,0 +1,48 @@
+branch: Aung-Min-Myat/po-s01 | HEAD: 053a778b
+--- commits since the stage base
+053a778b 16:46:05 [PO-S05] models: BookSeries, BookAuthor, Book: migrate to TypeScript
+4186309f 16:46:04 [PO-S05] models: CustomMetadataProvider, Device, MediaProgress, ApiKey: migrate to TypeScript
+a99079ee 16:46:03 [PO-S05] models: MediaItemShare, Series, Library, PodcastEpisode, Podcast: migrate to TypeScript
+12ae05dc 16:43:52 [PO-S05] models: CollectionBook, PlaylistMediaItem: migrate to TypeScript
+--- files changed since the stage base
+R067	server/models/ApiKey.js	server/models/ApiKey.ts
+R073	server/models/Book.js	server/models/Book.ts
+R066	server/models/BookAuthor.js	server/models/BookAuthor.ts
+R064	server/models/BookSeries.js	server/models/BookSeries.ts
+R065	server/models/CollectionBook.js	server/models/CollectionBook.ts
+R060	server/models/CustomMetadataProvider.js	server/models/CustomMetadataProvider.ts
+R072	server/models/Device.js	server/models/Device.ts
+R068	server/models/Library.js	server/models/Library.ts
+R053	server/models/MediaItemShare.js	server/models/MediaItemShare.ts
+R068	server/models/MediaProgress.js	server/models/MediaProgress.ts
+R054	server/models/PlaylistMediaItem.js	server/models/PlaylistMediaItem.ts
+R079	server/models/Podcast.js	server/models/Podcast.ts
+R064	server/models/PodcastEpisode.js	server/models/PodcastEpisode.ts
+R063	server/models/Series.js	server/models/Series.ts
+--- changed files outside server/models (expect none)
+--- protected paths changed (expect none)
+--- working tree (expect only the untracked evidence folder)
+?? evidence/test-results/PO-S05/
+--- server/models now: 17 .ts files, 8 .js files
+--- TypeScript files changed: 14
+--- banned tokens, comments included (expect 0): 0
+--- the word 'any' in code, comments excluded (expect 0): 0
+--- counts in the new files (the agent reported: ! 2, index signatures 4, casts 2, declare sequelize 6)
+! assertions: 2 | index signatures: 4 | casts: 5 | declare sequelize lines: 2
+--- ! hits (first 40)
+MediaProgress.ts:248: this.extraData.progress = Math.min(1, Math.max(0, progressPayload.progress!)) // not undefined: the !isNaN() test in the condition above is false for undefined
+MediaProgress.ts:265: if (!isNullOrNaN(progressPayload.markAsFinishedPercentComplete) && progressPayload.markAsFinishedPercentComplete! > 0) { // not undefined: isNullOrNaN() is true for undefined
+--- index signature hits (first 40)
+ApiKey.ts:14: [key: string]: unknown // mergePermissionsWithDefault() reads the request's permissions and writes the merged ones by a dynamic key
+Podcast.ts:29: metadata: { [key: string]: unknown } // read and written by a dynamic key (stringKeys.forEach)
+Podcast.ts:30: [key: string]: unknown // read by a dynamic key (numberKeys.forEach)
+Podcast.ts:67: [key: string]: unknown // updateFromRequest() reads and assigns columns by a dynamic key (this[newKey], this[key])
+--- cast hits (first 40)
+BookAuthor.ts:63: }) as (BookAuthor & { count: number })[] // boundary cast: with raw: true the rows also carry the COUNT alias, which Sequelize's findAll typing leaves out
+MediaProgress.ts:180: (user as typeof user & typeof import('./User')).mediaProgressRemoved(instance) // the registry types its entries as plain models; mediaProgressRemoved() is User's own static
+MediaProgress.ts:269: Logger.info(`[MediaProgress] Marking media progress as finished because progress (${this.progress}) is greater than ${markAsFinishedPercentComplete} (media item ${this.mediaItemId})`)
+MediaProgress.ts:275: Logger.info(`[MediaProgress] Marking media progress as finished because time remaining (${timeRemaining}) is less than ${markAsFinishedTimeRemaining} seconds (media item ${this.mediaItemId})`)
+Series.ts:184: order: [[literal('CAST(`bookSeries.sequence` AS FLOAT) ASC NULLS LAST')]]
+--- declare sequelize hits (first 40)
+Library.ts:59: declare static readonly sequelize: Sequelize // set by init() before any query runs (optional in Sequelize's typings)
+MediaItemShare.ts:87: declare static readonly sequelize: Sequelize & { models: RegisteredModels } // set by init() before any query runs; names the registry entry this file reads

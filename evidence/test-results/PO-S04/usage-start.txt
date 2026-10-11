@@ -1,0 +1,30 @@
+NOTE (written after the run): this is the /usage panel as it was pasted into the advisor chat at 13:25 (Pacific/Auckland), about 9 minutes before the prompt was pasted at 13:34:30. It was taken in the fresh session before the prompt. The clipboard capture at the start failed three times, so the original file was lost. The progress bars and the advice text under each line are left out. The numbers are copied as shown.
+
+Session
+
+   Total cost:            $0.0000
+   Total duration (API):  0s
+   Total duration (wall): 15s
+   Total code changes:    0 lines added, 0 lines removed
+   Usage:                 0 input, 0 output, 0 cache read, 0 cache write
+
+   Current session
+   23% used
+   Resets 5:30pm (Pacific/Auckland)
+
+   Current week (all models)
+   45% used
+   Resets Oct 13, 6am (Pacific/Auckland)
+
+   Current week (Fable)
+   51% used
+   Resets Oct 13, 5:59am (Pacific/Auckland)
+
+   What's contributing to your limits usage?
+   Approximate, based on local sessions on this machine - does not include other devices or claude.ai
+   Last 24h - these are independent characteristics of your usage, not a breakdown
+
+   100% of your usage came from subagent-heavy sessions
+   95% of your usage was at >150k context
+   19% of your usage came from subagents under "general-purpose"
+   36% of your usage came from the MCP server "Claude Browser"

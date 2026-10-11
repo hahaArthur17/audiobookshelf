@@ -1,0 +1,25 @@
+
+> audiobookshelf@2.37.0 test
+> npm run build:server && mocha dist-server/test
+
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:123168
+      throw e;
+      ^
+
+Error: Debug Failure. False expression.
+    at first (D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:599:9)
+    at getSpecifierForModuleSymbol (D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:52990:21)
+    at serializeAsAlias (D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:54682:34)
+    at serializeSymbolWorker (D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:54038:11)
+    at serializeSymbol (D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:53899:11)
+    at D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:53878:13
+    at Map.forEach (<anonymous>)
+    at visitSymbolTable (D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:53877:67)
+    at symbolTableToDeclarationStatements (D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:53698:7)
+    at D:\SEM-2\574\Project\audiobookshelf\node_modules\typescript\lib\_tsc.js:50981:22
+
+Node.js v24.21.0

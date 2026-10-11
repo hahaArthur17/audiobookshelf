@@ -1,0 +1,9 @@
+- Date and stopwatch start time: 2026-10-03. I started the stopwatch when I pasted the prompt, but did not record the clock time. It was between about 02:15 and 02:19 (derived: my 19-minute checkpoint showed 2 commits, so it fell between the 2nd commit at 02:33:52 and the 3rd at 02:38:13, and the 1st commit came at 02:19:08). Run base commit: 9f4ff460.
+- Superpowers disabled in /plugin: yes, I checked before pasting the prompt. Restarted afterwards: not recorded. No Superpowers skill appears in the transcript I copied.
+- /model shows (model and effort): not recorded. The usage block shows claude-opus-5-5.
+- /permissions shows: not recorded. Expected 7 allow rules, 20 deny rules, accept edits on.
+- Weekly /usage bar at the start: 33%, session bar 1% (usage-start.txt).
+- /usage at the start: saved in usage-start.txt. It already shows a cost of 0.3951 dollars and 5 requests, so it was not a fresh session: it is the session of my pre-run checks.
+- Same session: the end /usage (wall 1h 28m 28s, 67 requests) includes those pre-run requests, so the run happened in the same Claude session as the pre-run checks. The agent had already read CLAUDE.md and the settings in that session.
+- Saved GitHub logins still 0: yes, count 0 (checked before the run; time not recorded).
+- Baseline compiled copy still present: 426 files (checked before the run; time not recorded).

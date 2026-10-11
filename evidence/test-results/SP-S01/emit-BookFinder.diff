@@ -1,0 +1,97 @@
+diff --git a/evidence/test-results/SP-S01/emit-before/BookFinder.js b/dist-server/server/finders/BookFinder.js
+index 3fceace3..b8f6e057 100644
+--- a/evidence/test-results/SP-S01/emit-before/BookFinder.js
++++ b/dist-server/server/finders/BookFinder.js
+@@ -1,15 +1,16 @@
+ "use strict";
+-const OpenLibrary = require('../providers/OpenLibrary');
+-const GoogleBooks = require('../providers/GoogleBooks');
+-const Audible = require('../providers/Audible');
+-const iTunes = require('../providers/iTunes');
+-const Audnexus = require('../providers/Audnexus');
+-const FantLab = require('../providers/FantLab');
+-const AudiobookCovers = require('../providers/AudiobookCovers');
+-const CustomProviderAdapter = require('../providers/CustomProviderAdapter');
+-const Logger = require('../Logger');
+-const { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN } = require('../utils/index');
+-const htmlSanitizer = require('../utils/htmlSanitizer');
++const OpenLibrary = require("../providers/OpenLibrary");
++const GoogleBooks = require("../providers/GoogleBooks");
++const Audible = require("../providers/Audible");
++const iTunes = require("../providers/iTunes");
++const Audnexus = require("../providers/Audnexus");
++const FantLab = require("../providers/FantLab");
++const AudiobookCovers = require("../providers/AudiobookCovers");
++const CustomProviderAdapter = require("../providers/CustomProviderAdapter");
++const Logger = require("../Logger");
++const utils = require("../utils/index");
++const { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN } = utils;
++const htmlSanitizer = require("../utils/htmlSanitizer");
+ class BookFinder {
+     #providerResponseTimeout = 10000;
+     constructor() {
+@@ -72,7 +73,7 @@ class BookFinder {
+                 if (this.verbose)
+                     Logger.debug(`Exact title was included in "${b.title}", Search: "${b.includesTitle}"`);
+             }
+-            else if (b.titleDistance > maxTitleDistance) {
++            else if (Number(b.titleDistance) > maxTitleDistance) {
+                 if (this.verbose)
+                     Logger.debug(`Filtering out search result title distance = ${b.titleDistance}: "${b.cleanedTitle}"/"${searchTitle}"`);
+                 return false;
+@@ -83,14 +84,14 @@ class BookFinder {
+                     if (this.verbose)
+                         Logger.debug(`Exact author was included in "${b.author}", Search: "${b.includesAuthor}"`);
+                 }
+-                else if (b.authorDistance > maxAuthorDistance) {
++                else if (Number(b.authorDistance) > maxAuthorDistance) {
+                     if (this.verbose)
+                         Logger.debug(`Filtering out search result "${b.author}", author distance = ${b.authorDistance}: "${b.author}"/"${author}"`);
+                     return false;
+                 }
+             }
+             // If book total search length < 5 and was not exact match, then filter out
+-            if (b.totalPossibleDistance < 5 && b.totalDistance > 0)
++            if (Number(b.totalPossibleDistance) < 5 && Number(b.totalDistance) > 0)
+                 return false;
+             return true;
+         });
+@@ -117,7 +118,7 @@ class BookFinder {
+                 Logger.debug(`Search has ${books.length} matches, but no close title matches`);
+         }
+         booksFiltered.sort((a, b) => {
+-            return a.totalDistance - b.totalDistance;
++            return Number(a.totalDistance) - Number(b.totalDistance);
+         });
+         return booksFiltered;
+     }
+@@ -258,7 +259,7 @@ class BookFinder {
+             candidates.sort((a, b) => {
+                 // Candidates that include only digits are also likely low quality
+                 const onlyDigits = /^\d+$/;
+-                const includesOnlyDigitsDiff = onlyDigits.test(a) - onlyDigits.test(b);
++                const includesOnlyDigitsDiff = Number(onlyDigits.test(a)) - Number(onlyDigits.test(b));
+                 if (includesOnlyDigitsDiff)
+                     return includesOnlyDigitsDiff;
+                 // transformed candidates receive higher priority
+@@ -363,6 +364,7 @@ class BookFinder {
+      * @param {{titleDistance:number, authorDistance:number, maxFuzzySearches:number}} options
+      * @returns {Promise<Object[]>}
+      */
++    // isbn also accepts BookSearchOptions because findCovers() passes its options object in this slot (SP-S01 bug #1)
+     async search(libraryItem, provider, title, author, isbn, asin, options = {}) {
+         let books = [];
+         const maxTitleDistance = !isNaN(options.titleDistance) ? Number(options.titleDistance) : 4;
+@@ -631,7 +633,6 @@ class BookFinder {
+         return this.audnexus.getChaptersByASIN(asin, region);
+     }
+ }
+-module.exports = new BookFinder();
+ function hasSubtitle(title) {
+     return title.includes(': ') || title.includes(' - ');
+ }
+@@ -683,3 +684,4 @@ function cleanAuthorForCompares(author) {
+ function stripRedundantSpaces(str) {
+     return str.replace(/\s+/g, ' ').trim();
+ }
++module.exports = new BookFinder();

@@ -1,0 +1,16 @@
+# PO-S07 Playlist, bug: update({ order }) is not awaited in removeMediaItemsFromPlaylists (Playlist.js:190)
+# AFTER the fix (await playlistMediaItem.update({ order })). 2026-10-10 21:04:05
+# Command: npm test (build, then all tests), then npx mocha dist-server/test/server/bugfix/Playlist.removeMediaItemsFromPlaylists.test.js
+# Log lines "DEBUG: [LibraryItems...Filters] ..." are filtered out of this file.
+# npm test summary:  366 passing (8s);
+
+
+
+  Playlist.removeMediaItemsFromPlaylists
+    ✔ removes the media item and renumbers the remaining items (42ms)
+    ✔ waits until the new order of each remaining item is saved before it reports the playlist (146ms)
+
+
+  2 passing (982ms)
+
+exit code: 0

@@ -1,0 +1,5 @@
+server/models/Author.ts(116,9): error TS18047: 'author' is possibly 'null'.
+server/models/Author.ts(117,26): error TS18047: 'author' is possibly 'null'.
+server/models/PlaybackSession.ts(94,7): error TS2322: Type 'WhereOptions | null' is not assignable to type 'WhereOptions<any> | undefined'.
+  Type 'null' is not assignable to type 'WhereOptions<any> | undefined'.
+server/models/PlaybackSession.ts(158,7): error TS2353: Object literal may only specify known properties, and 'silent' does not exist in type 'UpsertOptions<any>'.

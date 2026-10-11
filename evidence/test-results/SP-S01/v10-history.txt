@@ -1,0 +1,148 @@
+# V10 (spec §10): history must reach back to the original .js commits.
+$ git log --follow --oneline -- server/finders/AuthorFinder.ts
+83c1a0ab [SP-S01] AuthorFinder: migrate to TypeScript (type-only)
+acf75abd Update:Match author use closest name match by levenshtein distance #2624
+c98fac30 Update:Validate image URI content-type before writing image file
+656c81a1 Update:Remove image path input from author modal, add API endpoints for uploading and removing author image
+f02992dd Remove the setting of file permissions #2057
+1dd1fe89 Update match all books to load items from DB, remove library items loading to memory on init
+e271e898 Author API requests to use region from library provider
+d0af1c3c Remove fs-extra dependency
+35ab4cb2 Update photo url input to photo path/url to be consistent with item covers
+f78d287b Update:Matching authors uses the ASIN if set #572, Fix:Purge author image cache when updating author
+2103edfc Update:Max levenshtein distance for matching author names to 3 #572
+c60807f9 Removing remaining legacy objects, remove njodb error for fileExists
+dad12537 New data model authors routes
+2a30cc42 New api routes, updating web client pages, audiobooks to libraryItem migration
+43f48b65 Add:Podcast iTunes search api and iTunes provider
+aa50cc2d Change:Main dir paths moved to global vars, server settings stored in globals vars
+ad8670ae Add:Support volumes with decimal #196, Change:Time remaining adjusted for current playback rate, Change:Series bookshelf shows shelf label with series name, Fix:Search bookshelf UI, Add:Show current chapter under audio track, Change: Highlight colors for chapters modal
+66a49036 Fix:Relative file path for single book scans, Change:Route names & refactor api
+53088015 Add: author object, author search api, author images #187
+exit=0
+$ git log --follow --oneline -- server/finders/BookFinder.ts
+ff0c14d0 [SP-S01] BookFinder: migrate to TypeScript (type-only)
+c15cb48d Improved subtitle parsing to account for bare colon in title
+a5d2c1bd Fix Upload Lookup
+961d066b Wrong branch.
+372c9a53 Increasing the timeout for bookfinder - some metadata providers heavily throttle the requests, original 10s is not enough.
+3f6162f5 CodeQL fix: limit parameter sizes
+888190a6 Fix codeQL failures
+20de2ea3 Add "Best" option to book cover search
+dbb5ee79 Revert removal of audiobookcovers provider
+26f949b9 Remove audiobookcovers from provider list
+a164c17d Reduce provider timout to 10 secs, Shorten error message
+a894ceb9 Match confidence calculation for audible results
+28618532 Support rich text book descriptions
+d5ce7b49 Migrate to new library item in scanner
+80685afa Add a try-catch block around custom provider search
+6fa49e0a Fix:Add timeout to provider matching default to 30s #3000
+96153376 Fix custom metadata provider crash
+94d1732b Added isbn to CustomProviderAdapter
+4e3e7b10 Update:Custom metadata provider adapter sends mediaType as a query param
+0cf2f888 Add custom metadata provider controller, update model, move to item metadata utils
+8027c4a0 Added support for custom metadata providers
+b580a23e BookFinder formatting update
+0282a052 Sort audible match results by duration difference
+281de48e Fix "et al" cleanup
+8ac0ce39 Remove "et al[.]" in author cleanup
+80458e24 "[un]abridged" in title candidate generation
+5aeb6ade Merge branch 'caching' of https://github.com/mikiher/audiobookshelf into caching
+49e45157 Add stripRedudantSpaces
+819c524f Pass audnexus to AuthorCandidates constructor directly
+89055f86 Remove unnecessary includesAuthorDiff from sorting
+5a3d4504 Refactor diff declarations in title candidate sorting
+047e7a72 Make position an internal property of titleCandidates
+ee3d3808 Refactor removing author from title candidate
+8f5a6b7c Move utility functions to module scope
+9616d996 Fix:Crash when matching with author names ending in ??? by escaping regex strings #2265
+f8f555b4 Remove some unused code in AuthorCandidates.add
+f44b7ed1 [enhancement] If no valid authors, use clean author field
+b0b7a0a6 [enhancement] Reduce spurious matches in validateAuthor
+bf9f3895 [enhancement] Treat underscores as title part separators
+f3555a12 [enhancement] Handle initials in author normalization
+b2acdadc [enhancement] Added a couple title transformers
+9eff471a [enhancement] AuthorCandidates, author validation
+89795864 [enhancement] Improve candidate sorting
+752bfffb [enhamcement] Only add title candidate before and after all transforms
+10f5bc8c [cleanup] Make original title/author check with more readable
+5d7c197c [fix] Add back toLowerCase to cleanAuthor/Title (required by other uses)
+a3a8937b Fix:Crash when searching for cover without an author #2174
+46b0b3a6 [cleanup] Refactor candidates logic to separate class
+1d3ad381 [cleanup] refactor OpenLib sort into getOpenLibResult
+61c48602 Add jsdocs to BookFinder search functions
+67bbe215 Make quick-match more conservative
+ac746f19 Fuzzy Matching V1
+1dd1fe89 Update match all books to load items from DB, remove library items loading to memory on init
+32bdae31 Add:All providers option for searching covers #1774
+84839bea Cleanup audiobookcovers.com addition
+f9ed412e Add AudiobookCovers.com metadata provider
+cf927f61 Add FantLab.ru Book Finder
+ce4e48cb Add:Region support for audible chapter lookup
+3900db14 Add:Multi-region audible & audnexus support #731
+6fc70b86 Remove LibGen provider and package
+67396c16 formatting update
+b0684b6f Await the responses from googlebooks and itunes
+661778c0 Await the response from audible for book search by ASIN
+d31ec055 check if cleantitle and cleanauthor are different
+485888b2 list includes syntax
+27fef509 retry search with clean title author
+d1526483 Updated matching with latest changes, Added override toggle for quickmatch, added asin and isbn to quickmatch query, updated audible provider to use audnexus
+cc1181b3 Add:Chapter editor, lookup chapters via audnexus, chapters table on audiobook landing page #435
+a907c88f Add:iTunes search api metadata provider #381
+43f48b65 Add:Podcast iTunes search api and iTunes provider
+c5465ad8 Add:Select cover search provider, Add:Persist selected provider, Change:API routes for searching
+2b3688b1 Update async function, update debug log
+ae804682 Added support for audible metadata
+ad4dad1c Add: experimental match tab with google books search #59, Add: isbn field for books #59
+d9d34e87 Support multi library 1.4.0
+93c78a67 Fix listener for audiobook updates in edit modal, add remove cover button
+1dc01615 Fix listener for audiobook updates in edit modal, add remove cover button
+e230cb47 Clean and parse author name from directory, sort by author last name, scan for covers
+51357195 Clean and parse author name from directory, sort by author last name, scan for covers
+30700c1e Update book finder and cover matching - includes LibGen provider
+7d4e2e3d Update book finder and cover matching - includes LibGen provider
+a0c60a93 Init
+6930e69b Init
+exit=0
+$ git log --follow --oneline -- server/finders/PodcastFinder.ts
+8cf42a71 [SP-S01] PodcastFinder: migrate to TypeScript (type-only)
+e684a8dc Update JSDocs & auto-formatting of PodcastFinder
+180c328e Update jsdocs for search podcasts
+1dd1fe89 Update match all books to load items from DB, remove library items loading to memory on init
+3f6ed6db Add Podcast match tab and find covers
+c6eb1096 Add:Podcast search page
+43f48b65 Add:Podcast iTunes search api and iTunes provider
+exit=0
+
+# Summary: commit count, SP-S01 commits, and oldest commit per file
+$ git log --follow --oneline -- server/finders/AuthorFinder.ts | wc -l
+19
+$ git log --follow --oneline -- server/finders/AuthorFinder.ts | grep -c '\[SP-S01\]'
+1
+$ git log --follow --format='%h %ad %s' --date=short -- server/finders/AuthorFinder.ts | tail -1
+53088015 2021-11-17 Add: author object, author search api, author images #187
+$ git log --follow --name-status --format='%h' -1 -- server/finders/AuthorFinder.ts
+83c1a0ab
+
+R052	server/finders/AuthorFinder.js	server/finders/AuthorFinder.ts
+$ git log --follow --oneline -- server/finders/BookFinder.ts | wc -l
+83
+$ git log --follow --oneline -- server/finders/BookFinder.ts | grep -c '\[SP-S01\]'
+1
+$ git log --follow --format='%h %ad %s' --date=short -- server/finders/BookFinder.ts | tail -1
+6930e69b 2021-08-17 Init
+$ git log --follow --name-status --format='%h' -1 -- server/finders/BookFinder.ts
+ff0c14d0
+
+R074	server/finders/BookFinder.js	server/finders/BookFinder.ts
+$ git log --follow --oneline -- server/finders/PodcastFinder.ts | wc -l
+7
+$ git log --follow --oneline -- server/finders/PodcastFinder.ts | grep -c '\[SP-S01\]'
+1
+$ git log --follow --format='%h %ad %s' --date=short -- server/finders/PodcastFinder.ts | tail -1
+43f48b65 2022-03-06 Add:Podcast iTunes search api and iTunes provider
+$ git log --follow --name-status --format='%h' -1 -- server/finders/PodcastFinder.ts
+8cf42a71
+
+R063	server/finders/PodcastFinder.js	server/finders/PodcastFinder.ts

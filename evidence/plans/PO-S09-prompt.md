@@ -1,0 +1,20 @@
+Finish the JavaScript to TypeScript migration of server/controllers/, following CLAUDE.md, especially the sections "Controllers and Express" and "Declarations for the layer below". Eight controllers are still JavaScript: ApiKey, Session, User, Collection, Playlist, Library, LibraryItem and Podcast. An earlier run restored them because the layer below the controllers (models, helpers) lacks declarations, so this run works in two phases. You are the main agent.
+
+Start: check the time with the date command. Run npm run build:server and npm test. Then copy dist-server into your scratchpad directory, in a folder named po-s09-baseline, so that you can compare compiled output later. Keep your probe results and any other scratch files in your scratchpad directory, not in the repository.
+
+Phase A, alone, no sub-agents, stop 45 minutes after your start.
+1. Probe. For each of the eight controllers, git mv it to .ts, run npx tsc -p tsconfig.check.json, save the errors for that controller in your scratchpad, and restore the file completely (git mv back and git restore) so that the tree is as it was.
+2. Group the errors by cause. Fix the causes that are missing declarations: declare lines for association mixins and fields in server/models/*.ts, declarations in server/types/, and one annotation on a destructured import of an untyped helper. Do not change any runtime line, method signature or return type. Try the model LibraryItem.js once, for at most 20 minutes; if it does not fit the rules, restore it completely.
+3. Gate. After each step, npm run build:server must pass, npm test must show 375 passing, and the compiled output in dist-server must have no code differences from your copy (comments and require lines aside). Commit each passing step with the prefix [PO-S09] and explicit paths. If the gate fails, undo the last change.
+
+Phase B, after Phase A. Start four sub-agents in the same step, each with two controllers:
+- Sub-agent 1: ApiKey, Session.
+- Sub-agent 2: User, Collection.
+- Sub-agent 3: Playlist, Library.
+- Sub-agent 4: LibraryItem, Podcast.
+Rules for the sub-agents: they only edit files and use git mv, in their own controllers. If git mv fails with an index.lock error, they wait a few seconds and retry. They do not run npm run build:server or npm test, do not commit, and do not edit server/models/ or server/types/ (they report the declarations they need to you). They must not edit server/routers/ApiRouter.js or any converted file. They may run npx tsc -p tsconfig.check.json and filter its output to their own files. If a controller does not fit the rules in CLAUDE.md, they restore it completely and report the reason and the compiler errors. Each sub-agent keeps a bug log of real bugs it notices (file, line, one sentence) and reports it. Bugs are not fixed. Their stop time is 100 minutes after your start.
+When they have reported, integrate: add the declarations they asked for (Phase A rules), run the build, the tests and the compiled-output comparison, and commit each controller separately with the prefix [PO-S09], using explicit paths. If a controller breaks the build, restore it. Finish within 120 minutes of your start. Only you edit server/models/ and server/types/, run the build and the tests, and commit.
+
+Do not convert or change anything else. Do not ask me questions unless you are blocked.
+
+When you stop, report. Phase A: the errors found by cause (counts), the declarations added per file, whether the compiled output stayed identical, and whether LibraryItem.js converted. Phase B: for each sub-agent, the controllers converted and the controllers skipped with the reason. Then: how many ! assertions you added (split into: field set before it is read, association always loaded, lookup guaranteed by earlier code), how many index signatures and casts (split the casts into the three allowances of the controllers section and any other), how many this: ApiRouter parameters; the bug log of all sub-agents; whether CLAUDE.md worked as written and what it did not cover; and the final build and test result.

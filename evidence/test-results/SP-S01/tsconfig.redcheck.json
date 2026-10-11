@@ -1,0 +1,4 @@
+{
+  "extends": "D:/SEM-2/574/Project/audiobookshelf/tsconfig.server.json",
+  "compilerOptions": { "incremental": false, "tsBuildInfoFile": null, "noEmit": true }
+}

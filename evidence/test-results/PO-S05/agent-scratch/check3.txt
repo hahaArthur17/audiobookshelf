@@ -1,0 +1,17 @@
+server/models/Collection.ts(85,7): error TS2322: Type '{ libraryId: string; } | null' is not assignable to type 'WhereOptions<any> | undefined'.
+  Type 'null' is not assignable to type 'WhereOptions<any> | undefined'.
+server/models/MediaItemShare.ts(145,92): error TS2345: Argument of type 'null' is not assignable to parameter of type 'BindOrReplacements | undefined'.
+server/models/Playlist.ts(122,15): error TS2322: Type '{ model: typeof PlaylistMediaItem; include: ({ model: sequelizeModule.ModelCtor<sequelizeModule.Model<any, any>>; include: ({ model: sequelizeModule.ModelCtor<...>; } | { ...; })[]; } | { ...; })[]; }' is not assignable to type 'Includeable | Includeable[] | undefined'.
+  Types of property 'include' are incompatible.
+    Type '({ model: ModelCtor<Model<any, any>>; include: ({ model: ModelCtor<Model<any, any>>; } | { model: ModelCtor<Model<any, any>>; through: { ...; }; })[]; } | { ...; })[]' is not assignable to type 'Includeable[]'.
+      Type '{ model: sequelizeModule.ModelCtor<sequelizeModule.Model<any, any>>; include: { model: sequelizeModule.ModelCtor<sequelizeModule.Model<any, any>>; include: sequelizeModule.ModelCtor<...>; }; }' is not assignable to type 'Includeable'.
+        Types of property 'include' are incompatible.
+          Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+server/models/Playlist.ts(170,13): error TS2353: Object literal may only specify known properties, and 'model' does not exist in type 'Includeable[]'.
+server/models/Playlist.ts(349,15): error TS2322: Type 'ModelCtor<Model<any, any>>' is not assignable to type 'Includeable[] | undefined'.
+server/models/Podcast.ts(5,7): error TS2322: Type 'typeof import("D:/SEM-2/574/Project/audiobookshelf-po/server/utils/index")' is not assignable to type '{ getTitlePrefixAtEnd: (title: string) => string; getTitleIgnorePrefix: (title: string | null) => string; }'.
+  Types of property 'getTitleIgnorePrefix' are incompatible.
+    Type '(title: string) => string' is not assignable to type '(title: string | null) => string'.
+      Types of parameters 'title' and 'title' are incompatible.
+        Type 'string | null' is not assignable to type 'string'.
+          Type 'null' is not assignable to type 'string'.

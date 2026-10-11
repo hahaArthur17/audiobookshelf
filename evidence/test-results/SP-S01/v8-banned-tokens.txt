@@ -1,0 +1,36 @@
+$ grep -nE '\bany\b|@ts-ignore|@ts-nocheck|@ts-expect-error|as unknown as' server/finders/*.ts
+server/finders/BookFinder.ts:765:  cleaned = cleaned.replace(/\s+/g, ' ').trim() // Clean up any resulting multiple spaces
+exit=0
+$ ls server/finders/
+AuthorFinder.ts
+BookFinder.ts
+PodcastFinder.ts
+
+# Byte-for-byte comparison of the one V8 match (user ruling, Option 1)
+# <scratchpad> = the Claude Code session scratchpad directory, outside the repo.
+$ sed -n '765p' server/finders/BookFinder.ts > <scratchpad>/v8/ts-765.txt
+$ git show 5968b516:server/finders/BookFinder.js | sed -n '679p' > <scratchpad>/v8/js-679.txt
+$ cd <scratchpad>/v8
+$ cmp ts-765.txt js-679.txt
+exit=0
+$ wc -c ts-765.txt js-679.txt
+ 90 ts-765.txt
+ 90 js-679.txt
+180 total
+$ sha256sum ts-765.txt js-679.txt
+5a1cafa7bf9c0f8b693e53a7e64139ed4e2e1e57a6eab4aab2656d859706173e *ts-765.txt
+5a1cafa7bf9c0f8b693e53a7e64139ed4e2e1e57a6eab4aab2656d859706173e *js-679.txt
+$ od -An -c ts-765.txt
+           c   l   e   a   n   e   d       =       c   l   e   a
+   n   e   d   .   r   e   p   l   a   c   e   (   /   \   s   +
+   /   g   ,       '       '   )   .   t   r   i   m   (   )    
+   /   /       C   l   e   a   n       u   p       a   n   y    
+   r   e   s   u   l   t   i   n   g       m   u   l   t   i   p
+   l   e       s   p   a   c   e   s  \n
+$ od -An -c js-679.txt
+           c   l   e   a   n   e   d       =       c   l   e   a
+   n   e   d   .   r   e   p   l   a   c   e   (   /   \   s   +
+   /   g   ,       '       '   )   .   t   r   i   m   (   )    
+   /   /       C   l   e   a   n       u   p       a   n   y    
+   r   e   s   u   l   t   i   n   g       m   u   l   t   i   p
+   l   e       s   p   a   c   e   s  \n

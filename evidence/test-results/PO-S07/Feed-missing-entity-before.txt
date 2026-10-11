@@ -1,0 +1,44 @@
+# PO-S07 Feed, bug: updateFeedForEntity uses a getExpandedById() result with no null check (Feed.js:489, 502 and 511)
+# BEFORE the fix. Code at HEAD 3377dfc7 plus the new test file only. 2026-10-10 21:08:26
+# Command: npm run build:server, then npx mocha dist-server/test/server/bugfix/Feed.updateFeedForEntity.test.js
+# Log lines "DEBUG: [LibraryItems...Filters] ..." are filtered out of this file.
+
+
+
+  Feed.updateFeedForEntity
+[2026-10-10 21:08:32.942] INFO: [FeedEpisode] Upserting 1 episodes for feed e79f7df4-8ee7-45a6-b088-d2522f560db2 (0 existing)
+[2026-10-10 21:08:32.954] INFO: [FeedEpisode] Upserting 1 episodes for feed e79f7df4-8ee7-45a6-b088-d2522f560db2 (1 existing)
+    ✔ updates the feed of an existing series (39ms)
+[2026-10-10 21:08:33.324] ERROR: [LibraryItem] Library item not found with id "00000000-0000-0000-0000-000000000000"
+    1) returns null when the library item of the feed no longer exists
+    2) returns null when the collection of the feed no longer exists
+    3) returns null when the series of the feed no longer exists
+
+
+  1 passing (1s)
+  3 failing
+
+  1) Feed.updateFeedForEntity
+       returns null when the library item of the feed no longer exists:
+     TypeError: Cannot read properties of null (reading 'media')
+      at feed.getFeedObjForLibraryItem (dist-server\server\models\Feed.js:91:35)
+      at Feed.updateFeedForEntity (dist-server\server\models\Feed.js:438:28)
+      at async Context.<anonymous> (dist-server\test\server\bugfix\Feed.updateFeedForEntity.test.js:70:16)
+
+  2) Feed.updateFeedForEntity
+       returns null when the collection of the feed no longer exists:
+     TypeError: Cannot read properties of null (reading 'books')
+      at feed.getFeedObjForCollection (dist-server\server\models\Feed.js:171:52)
+      at Feed.updateFeedForEntity (dist-server\server\models\Feed.js:451:38)
+      at async Context.<anonymous> (dist-server\test\server\bugfix\Feed.updateFeedForEntity.test.js:74:16)
+
+  3) Feed.updateFeedForEntity
+       returns null when the series of the feed no longer exists:
+     TypeError: Cannot read properties of null (reading 'books')
+      at feed.getFeedObjForSeries (dist-server\server\models\Feed.js:250:48)
+      at Feed.updateFeedForEntity (dist-server\server\models\Feed.js:460:38)
+      at async Context.<anonymous> (dist-server\test\server\bugfix\Feed.updateFeedForEntity.test.js:78:16)
+
+
+
+exit code: 3

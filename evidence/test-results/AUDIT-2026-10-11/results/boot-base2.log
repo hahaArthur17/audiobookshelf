@@ -1,0 +1,75 @@
+Running in production mode.
+Options: CONFIG_PATH=/vm/abs-base2/config, METADATA_PATH=/vm/abs-base2/metadata, PORT=3412, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 13:49:00.818] INFO: === Starting Server ===
+[2026-10-10 13:49:00.820] INFO: [Server] Init v2.37.0
+[2026-10-10 13:49:00.820] INFO: [Server] Node.js Version: v22.23.2
+[2026-10-10 13:49:00.821] INFO: [Server] Platform: linux
+[2026-10-10 13:49:00.821] INFO: [Server] Arch: x64
+[2026-10-10 13:49:00.824] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 13:49:00.826] INFO: [Database] absdatabase.sqlite not found at /vm/abs-base2/config/absdatabase.sqlite
+[2026-10-10 13:49:00.827] INFO: [Database] Initializing db at "/vm/abs-base2/config/absdatabase.sqlite"
+[2026-10-10 13:49:00.866] INFO: [Database] Db connection was successful
+[2026-10-10 13:49:00.944] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 13:49:06.160] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 13:49:06.162] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 13:49:06.182] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 13:49:06.204] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 13:49:06.234] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 13:49:06.266] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 13:49:06.288] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 13:49:06.314] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 13:49:06.391] INFO: [Database] running ANALYZE
+[2026-10-10 13:49:06.413] INFO: [Database] ANALYZE completed
+[2026-10-10 13:49:06.414] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 13:49:06.414] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 13:49:06.440] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 13:49:06.450] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 13:49:06.451] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 13:49:06.478] INFO: Listening on port :3412
+[2026-10-10 13:49:07.169] INFO: Received ping
+[2026-10-10 13:49:07.305] INFO: [Server] Initializing new server
+[2026-10-10 13:49:07.432] INFO: [LocalAuth] User "root" logged in from ip ::ffff:127.0.0.1
+[2026-10-10 13:49:07.555] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 13:49:07.570] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 13:49:07.571] INFO: [LibraryScanner] Starting (forced) library scan 28a62d9e-e7a2-4d81-a8d1-8709f4f11b0f for Books
+[2026-10-10 13:49:07.583] INFO: [Watcher] "Books" Ready
+[2026-10-10 13:49:08.202] INFO: [LibraryScanner] Library scan "28a62d9e-e7a2-4d81-a8d1-8709f4f11b0f" completed in 0:00 | 3 Added | 0 Updated | 0 Missing
+[2026-10-10 13:49:08.226] INFO: [LibraryScan] Scan log saved "/vm/abs-base2/metadata/logs/scans/2026-10-10_28a62d9e-e7a2-4d81-a8d1-8709f4f11b0f.txt"
+[2026-10-10 13:49:08.227] INFO: [LibraryController] Scan complete
+[2026-10-10 13:49:09.319] INFO: [MediaProgress] Marking media progress as finished because time remaining (3.034286) is less than 10 seconds (media item 0961203c-afc1-4d96-97f9-77a0a3e06424)
+[2026-10-10 13:49:09.411] INFO: [STREAM] START STREAM - Num Segments: 2
+[2026-10-10 13:49:09.560] INFO: [INFO] FFMPEG transcoding started with command: ffmpeg -seek_timestamp 1 -f concat -safe 0 -i /vm/abs-base2/metadata/streams/ce404b95-dba8-4d6b-ba12-2a1e878f6704/files.txt -y -loglevel error -map 0:a -c:a copy -f hls -copyts -avoid_negative_ts make_non_negative -max_delay 5000000 -max_muxing_queue_size 2048 -hls_time 6 -hls_segment_type mpegts -start_number 0 -hls_playlist_type vod -hls_list_size 0 -hls_allow_cache 0 -hls_segment_filename /vm/abs-base2/metadata/streams/ce404b95-dba8-4d6b-ba12-2a1e878f6704/output-%d.ts /vm/abs-base2/metadata/streams/ce404b95-dba8-4d6b-ba12-2a1e878f6704/final-output.m3u8
+[2026-10-10 13:49:09.561] INFO: 
+[2026-10-10 13:49:09.630] INFO: [FFMPEG] Transcoding ended
+[2026-10-10 13:49:09.630] INFO: [STREAM] ce404b95-dba8-4d6b-ba12-2a1e878f6704 notifying client that stream is ready
+[2026-10-10 13:49:13.465] INFO: Closing Stream ce404b95-dba8-4d6b-ba12-2a1e878f6704
+[2026-10-10 13:49:13.468] INFO: Deleted session data /vm/abs-base2/metadata/streams/ce404b95-dba8-4d6b-ba12-2a1e878f6704
+[2026-10-10 13:49:13.491] INFO: [MediaProgress] Marking media progress as finished because time remaining (3.034286) is less than 10 seconds (media item 0961203c-afc1-4d96-97f9-77a0a3e06424)
+[2026-10-10 13:49:13.527] INFO: [RssFeedManager] Creating RSS feed for item f35e4fc5-9265-4657-b9e5-649b3658f7f9 "Test Book"
+[2026-10-10 13:49:13.532] INFO: [FeedEpisode] Upserting 1 episodes for feed d1a16777-9ed2-413d-adbd-34c3aa640e2c (0 existing)
+[2026-10-10 13:49:13.556] INFO: [RssFeedManager] Opened RSS feed "/feed/f-item"
+[2026-10-10 13:49:13.561] INFO: [Server] Requesting rss feed f-item
+[2026-10-10 13:49:13.588] INFO: [RssFeedManager] Creating RSS feed for collection "My Collection"
+[2026-10-10 13:49:13.592] INFO: [FeedEpisode] Upserting 1 episodes for feed fedf4d54-5d40-46cd-8a9c-57d58f710446 (0 existing)
+[2026-10-10 13:49:13.619] INFO: [RssFeedManager] Opened RSS feed "/feed/f-col"
+[2026-10-10 13:49:13.623] INFO: [Server] Requesting rss feed f-col
+[2026-10-10 13:49:13.645] INFO: [RssFeedManager] Creating RSS feed for series "Series One"
+[2026-10-10 13:49:13.650] INFO: [FeedEpisode] Upserting 2 episodes for feed ce4bb62c-0e79-4b90-ac92-93c7460a2ccc (0 existing)
+[2026-10-10 13:49:13.673] INFO: [RssFeedManager] Opened RSS feed "/feed/f-series"
+[2026-10-10 13:49:13.677] INFO: [Server] Requesting rss feed f-series
+[2026-10-10 13:49:13.719] INFO: [RssFeedManager] Closed RSS feed "/feed/f-item"
+[2026-10-10 13:49:13.854] INFO: [ApiKeyController] Created API key "smoke-key"
+[2026-10-10 13:49:13.928] INFO: [ShareManager] Adding new open share playback session "Test Book"
+[2026-10-10 13:49:13.954] INFO: [Watcher] Removed watcher for "Books"
+[2026-10-10 13:49:13.977] INFO: [Server] Removed 1 collections for library "Books"
+[2026-10-10 13:49:13.982] INFO: [LibraryController] Removing 3 library items in library "Books"
+[2026-10-10 13:49:13.982] INFO: [LibraryController] Removing library item "a8e713f3-ce32-45d1-b62f-dbcaee14ddc3" from library "Books"
+[2026-10-10 13:49:14.004] INFO: [ApiRouter] Removed 1 media progress entries for library item "a8e713f3-ce32-45d1-b62f-dbcaee14ddc3"
+[2026-10-10 13:49:14.059] INFO: [ApiRouter] Playlist "My Playlist" has no more items - removing it
+[2026-10-10 13:49:14.101] INFO: [ApiRouter] Removing item metadata at "/vm/abs-base2/metadata/items/a8e713f3-ce32-45d1-b62f-dbcaee14ddc3"
+[2026-10-10 13:49:14.218] INFO: [LibraryController] Removing library item "f35e4fc5-9265-4657-b9e5-649b3658f7f9" from library "Books"
+[2026-10-10 13:49:14.337] INFO: [ApiRouter] Removed 1 media progress entries for library item "f35e4fc5-9265-4657-b9e5-649b3658f7f9"
+[2026-10-10 13:49:14.348] INFO: [ApiRouter] Removing item metadata at "/vm/abs-base2/metadata/items/f35e4fc5-9265-4657-b9e5-649b3658f7f9"
+[2026-10-10 13:49:14.409] INFO: [LibraryController] Removing library item "2d52ab15-e209-4b8c-b305-4b3910a70240" from library "Books"
+[2026-10-10 13:49:14.477] INFO: [ApiRouter] Removing item metadata at "/vm/abs-base2/metadata/items/2d52ab15-e209-4b8c-b305-4b3910a70240"
+[2026-10-10 13:49:14.585] INFO: [LibraryController] Updated 1 playback sessions to remove library id

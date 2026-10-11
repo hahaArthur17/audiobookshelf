@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(npm run build:server)",
+      "Bash(npm test)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git mv *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git merge *)",
+      "Bash(git rebase *)",
+      "Bash(git reset --hard *)",
+      "Bash(npm install *)",
+      "Bash(npm i *)",
+      "Edit(test/**)",
+      "Bash(git remote *)",
+      "Write(test/**)",
+      "Edit(tsconfig.server.json)",
+      "Write(tsconfig.server.json)",
+      "Edit(package.json)",
+      "Write(package.json)",
+      "Edit(package-lock.json)",
+      "Write(package-lock.json)",
+      "Edit(server/libs/**)",
+      "Write(server/libs/**)",
+      "Bash(git reset *)",
+      "Bash(git clean *)"
+    ]
+  }
+}

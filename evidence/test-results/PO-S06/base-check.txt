@@ -1,0 +1,44 @@
+PO-S06 base check, 2026-10-10 22:47:55
+== Main repo ==
+branch: Aung-Min-Myat/po-s01   HEAD: f82fbc72 [PO-S07] evidence: eight-model run with bug fixes, results and measurements
+working tree (empty = clean): ?? evidence/test-results/PO-S06/
+== Base commit c9f5fe99 ==
+type: commit
+c9f5fe99375d642d5d2d69c4d7222e0d134aa672 2026-10-03 01:37:06 +1300 [PO-S01] context file, prompt, notes template and baseline
+parent of the first PO-S01 conversion commit (cd9e93b8) is the base: False
+== Files converted by PO-S01 (11) ==
+  104 lines   101 non-blank  server/utils/parsers/parseNfoMetadata.js
+   88 lines    78 non-blank  server/objects/TrackProgressMonitor.js
+  133 lines   121 non-blank  server/objects/Task.js
+  346 lines   326 non-blank  server/utils/parsers/parseFullName.js
+  121 lines   112 non-blank  server/providers/OpenLibrary.js
+   36 lines    32 non-blank  server/utils/longTimeout.js
+   25 lines    20 non-blank  server/utils/stringifySequelizeQuery.js
+   47 lines    43 non-blank  server/objects/files/AudioTrack.js
+   35 lines    32 non-blank  server/utils/generators/hlsPlaylistGenerator.js
+    9 lines     8 non-blank  server/utils/globals.js
+   28 lines    23 non-blank  server/utils/parsers/parseUserAgent.js
+total: 972 lines, 896 non-blank
+== Leaf files that PO-S01 declined (3) ==
+  133 lines   119 non-blank  server/objects/Notification.js
+  254 lines   239 non-blank  server/objects/metadata/AudioMetaTags.js
+  157 lines   134 non-blank  server/utils/areEquivalent.js
+total: 544 lines, 492 non-blank
+== What guides the agent at the base ==
+CLAUDE.md: 38 lines
+tracked files under evidence/: 67
+tracked files under .claude/: 0
+mentions of PO-S0 or CLAUDE.md elsewhere in the base tree (expect none):
+
+== Source tree at the base ==
+server/: 4 .ts files, 423 .js files
+server/finders: server/finders/AuthorFinder.ts, server/finders/BookFinder.ts, server/finders/PodcastFinder.ts
+test files: 35
+package.json : exists at base = True ; differs between base and HEAD = True
+package-lock.json : exists at base = True ; differs between base and HEAD = True
+tsconfig.server.json : exists at base = True ; differs between base and HEAD = False
+tsconfig.check.json : exists at base = False ; differs between base and HEAD = True
+== Machine ==
+node v24.21.0 ; npm 11.19.0 ; git version 2.53.0.windows.1
+free space on D: 302 GB
+target folder D:\SEM-2\574\Project\po-s06 already exists: False

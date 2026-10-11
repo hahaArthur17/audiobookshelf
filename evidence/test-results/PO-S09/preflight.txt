@@ -1,0 +1,13 @@
+PO-S09 preflight (run by the user with Prep-S09)
+date: 2026-10-11 13:11
+HEAD: 77cb01d1 [PO-S09] setup: CLAUDE.md for the layer-first run
+node: v24.21.0, tsc: Version 5.9.3
+evidence folder visible: True
+git status after hiding evidence:
+error TS lines in the build: 0
+error TS lines in npm test: 0
+test lines:   375 passing (10s)
+baseline files copied: 471
+permissions: mode acceptEdits, allow 17, deny 20
+Note added by Claude: Prep-S09 printed a warning that 44 evidence files (those added from the Linux side after the last Windows git refresh) were left in place despite the sparse patterns. git status showed no change in them. Hide-S09 (status refresh, then git sparse-checkout reapply) was needed to hide them.
+After Hide-S09 (user, 13:19): evidence folder visible: False. Auto mode on (user's report).

@@ -1,0 +1,4 @@
+AuthorFinder own:audnexus proto:constructor,findAuthorByASIN,findAuthorByName,saveAuthorImage
+PodcastFinder own:iTunesApi proto:constructor,findCovers,search
+BookFinder own:audible,audiobookCovers,audnexus,customProviderAdapter,fantLab,googleBooks,iTunesApi,openLibrary,providers,verbose proto:calculateMatchConfidence,constructor,filterSearchResults,findByISBN,findChapters,findCovers,getAudibleResults,getAudiobookCoversResults,getCustomProviderResults,getFantLabResults,getGoogleBooksResults,getOpenLibResults,getiTunesAudiobooksResults,runSearch,search
+BookFinder statics:AuthorCandidates,TitleCandidates,length,name,prototype

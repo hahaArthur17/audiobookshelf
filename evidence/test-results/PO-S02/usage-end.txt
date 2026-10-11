@@ -1,0 +1,41 @@
+Session
+
+Total cost:            $4.35
+Total duration (API):  14m 11s
+Total duration (wall): 59m 0s
+Total code changes:    227 lines added, 74 lines removed
+Usage by model:
+    claude-haiku-4-5:  1.2k input, 12 output, 0 cache read, 0 cache write ($0.0013)
+     claude-opus-5-5:  720 input, 88.8k output, 7.0m cache read, 146.2k cache write ($4.35)
+Prompt cache (main):   59 requests · 98% of input tokens from cache · no misses · warm (1h TTL, last activity 1m 51s ago)
+
+Current session
+████████▌                                          17% used
+Resets 7am (Pacific/Auckland)
+
+Current week (all models)
+█████████████████                                  34% used
+Resets Oct 6, 6am (Pacific/Auckland)
+
+Current week (Fable)
+██████                                             12% used
+Resets Oct 6, 6am (Pacific/Auckland)
+
+What's contributing to your limits usage?
+Approximate, based on local sessions on this machine — does not include other devices or claude.ai
+
+Last 24h · these are independent characteristics of your usage, not a breakdown
+
+60% of your usage was at >150k context
+ Longer sessions are more expensive even when cached. /compact mid-task, /clear when switching to new tasks.
+
+Skills                  % of usage
+/superpowers:verification-b…    2%
+
+Plugins                 % of usage
+superpowers                     2%
+
+d to day · w to week
+
+Usage credits
+Usage credits are off · /usage-credits to turn them on
