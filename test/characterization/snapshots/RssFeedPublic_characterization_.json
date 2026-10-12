@@ -1,0 +1,978 @@
+{
+  "RssFeedPublic (characterization) > GET /feed/:slug > 404s for an unknown slug and after the feed is closed > closed feed": {
+    "status": 404,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "body": "Not Found"
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug > 404s for an unknown slug and after the feed is closed > unknown slug": {
+    "status": 404,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "body": "Not Found"
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug > does not rewrite an up to date feed on request": {
+    "bothOk": true,
+    "feedRowUntouched": true
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug > serves a collection feed > collection": {
+    "status": 200,
+    "headers": {
+      "content-type": "text/xml; charset=utf-8"
+    },
+    "xml": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:googleplay=\"http://www.google.com/schemas/play-podcasts/1.0\">",
+      "<channel>",
+      "<title>",
+      "<![CDATA[Favourites]]>",
+      "</title>",
+      "<description>",
+      "<![CDATA[my picks]]>",
+      "</description>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "<image>",
+      "<url>https://abs.example.test/feed/feed-collection/cover.png</url>",
+      "<title>Favourites</title>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "</image>",
+      "<generator>Audiobookshelf</generator>",
+      "<lastBuildDate>[date]</lastBuildDate>",
+      "<atom:link href=\"https://abs.example.test/feed/feed-collection\" rel=\"self\" type=\"application/rss+xml\"/>",
+      "<language>en</language>",
+      "<author>Ann Author, Bob Writer</author>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:type>serial</itunes:type>",
+      "<itunes:image href=\"https://abs.example.test/feed/feed-collection/cover.png\"/>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "<itunes:summary>",
+      "<![CDATA[my picks]]>",
+      "</itunes:summary>",
+      "<itunes:owner>",
+      "<itunes:name>Ann Author, Bob Writer</itunes:name>",
+      "</itunes:owner>",
+      "",
+      "<item>",
+      "<title>",
+      "<![CDATA[part1]]>",
+      "</title>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-collection/item/<episode Book Jpg/part1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-collection/item/<episode Book Jpg/part1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>60</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part1]]>",
+      "</title>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-collection/item/<episode Book Png/part1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-collection/item/<episode Book Png/part1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>60</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part2]]>",
+      "</title>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-collection/item/<episode Book Jpg/part2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-collection/item/<episode Book Jpg/part2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part2]]>",
+      "</title>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-collection/item/<episode Book Png/part2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-collection/item/<episode Book Png/part2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "",
+      "</channel>",
+      "</rss>"
+    ]
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug > serves a podcast feed with its episodes > podcast": {
+    "status": 200,
+    "headers": {
+      "content-type": "text/xml; charset=utf-8"
+    },
+    "xml": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:googleplay=\"http://www.google.com/schemas/play-podcasts/1.0\">",
+      "<channel>",
+      "<title>",
+      "<![CDATA[Pod]]>",
+      "</title>",
+      "<description>",
+      "<![CDATA[Pod]]>",
+      "</description>",
+      "<link>https://abs.example.test/item/<pod>",
+      "</link>",
+      "<image>",
+      "<url>https://abs.example.test/Logo.png</url>",
+      "<title>Pod</title>",
+      "<link>https://abs.example.test/item/<pod>",
+      "</link>",
+      "</image>",
+      "<generator>Audiobookshelf</generator>",
+      "<lastBuildDate>[date]</lastBuildDate>",
+      "<atom:link href=\"https://abs.example.test/feed/feed-pod\" rel=\"self\" type=\"application/rss+xml\"/>",
+      "<language>en</language>",
+      "<author>Pat</author>",
+      "<itunes:author>Pat</itunes:author>",
+      "<itunes:type>serial</itunes:type>",
+      "<itunes:image href=\"https://abs.example.test/Logo.png\"/>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "<itunes:owner>",
+      "<itunes:name>Pat</itunes:name>",
+      "</itunes:owner>",
+      "<itunes:block>yes</itunes:block>",
+      "<googleplay:block>yes</googleplay:block>",
+      "",
+      "<item>",
+      "<title>",
+      "<![CDATA[Ep 1]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<pod>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-pod/item/<episode Pod/ep1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Pat]]>",
+      "</dc:creator>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-pod/item/<episode Pod/ep1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Pat</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[Ep 2]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<pod>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-pod/item/<episode Pod/ep2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Pat]]>",
+      "</dc:creator>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-pod/item/<episode Pod/ep2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Pat</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "",
+      "</channel>",
+      "</rss>"
+    ]
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug > serves a series feed > series": {
+    "status": 200,
+    "headers": {
+      "content-type": "text/xml; charset=utf-8"
+    },
+    "xml": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:googleplay=\"http://www.google.com/schemas/play-podcasts/1.0\">",
+      "<channel>",
+      "<title>",
+      "<![CDATA[Saga]]>",
+      "</title>",
+      "<description>",
+      "<![CDATA[Saga]]>",
+      "</description>",
+      "<link>https://abs.example.test/library/<uuid-7>/series/<series>",
+      "</link>",
+      "<image>",
+      "<url>https://abs.example.test/feed/feed-series/cover.png</url>",
+      "<title>Saga</title>",
+      "<link>https://abs.example.test/library/<uuid-7>/series/<series>",
+      "</link>",
+      "</image>",
+      "<generator>Audiobookshelf</generator>",
+      "<lastBuildDate>[date]</lastBuildDate>",
+      "<atom:link href=\"https://abs.example.test/feed/feed-series\" rel=\"self\" type=\"application/rss+xml\"/>",
+      "<language>en</language>",
+      "<author>Ann Author, Bob Writer</author>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:type>serial</itunes:type>",
+      "<itunes:image href=\"https://abs.example.test/feed/feed-series/cover.png\"/>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "<itunes:owner>",
+      "<itunes:name>Series Owner</itunes:name>",
+      "</itunes:owner>",
+      "<itunes:block>yes</itunes:block>",
+      "<googleplay:block>yes</googleplay:block>",
+      "",
+      "<item>",
+      "<title>",
+      "<![CDATA[part1]]>",
+      "</title>",
+      "<link>https://abs.example.test/library/<uuid-7>/series/<series>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-series/item/<episode Book Jpg/part1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-series/item/<episode Book Jpg/part1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>60</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part1]]>",
+      "</title>",
+      "<link>https://abs.example.test/library/<uuid-7>/series/<series>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-series/item/<episode Book Png/part1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-series/item/<episode Book Png/part1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>60</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part2]]>",
+      "</title>",
+      "<link>https://abs.example.test/library/<uuid-7>/series/<series>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-series/item/<episode Book Jpg/part2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-series/item/<episode Book Jpg/part2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part2]]>",
+      "</title>",
+      "<link>https://abs.example.test/library/<uuid-7>/series/<series>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-series/item/<episode Book Png/part2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-series/item/<episode Book Png/part2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "",
+      "</channel>",
+      "</rss>"
+    ]
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug > serves real xml for a book item feed > book": {
+    "status": 200,
+    "headers": {
+      "content-type": "text/xml; charset=utf-8"
+    },
+    "xml": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:googleplay=\"http://www.google.com/schemas/play-podcasts/1.0\">",
+      "<channel>",
+      "<title>",
+      "<![CDATA[Book Png]]>",
+      "</title>",
+      "<description>",
+      "<![CDATA[Book Png]]>",
+      "</description>",
+      "<link>https://abs.example.test/item/<item-png>",
+      "</link>",
+      "<image>",
+      "<url>https://abs.example.test/feed/feed-book/cover.png</url>",
+      "<title>Book Png</title>",
+      "<link>https://abs.example.test/item/<item-png>",
+      "</link>",
+      "</image>",
+      "<generator>Audiobookshelf</generator>",
+      "<lastBuildDate>[date]</lastBuildDate>",
+      "<atom:link href=\"https://abs.example.test/feed/feed-book\" rel=\"self\" type=\"application/rss+xml\"/>",
+      "<language>en</language>",
+      "<author>Ann Author</author>",
+      "<itunes:author>Ann Author</itunes:author>",
+      "<itunes:type>serial</itunes:type>",
+      "<itunes:image href=\"https://abs.example.test/feed/feed-book/cover.png\"/>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "<itunes:owner>",
+      "<itunes:name>Ann</itunes:name>",
+      "<itunes:email>ann@example.test</itunes:email>",
+      "</itunes:owner>",
+      "",
+      "<item>",
+      "<title>",
+      "<![CDATA[part1]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<item-png>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-book/item/<episode Book Png/part1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-book/item/<episode Book Png/part1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author</itunes:author>",
+      "<itunes:duration>60</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part2]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<item-png>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-book/item/<episode Book Png/part2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-book/item/<episode Book Png/part2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "",
+      "</channel>",
+      "</rss>"
+    ]
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/cover* > 404s without a cover, for an unknown slug and when the cover file is gone": {
+    "noCover": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      }
+    },
+    "unknownSlug": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      }
+    },
+    "fileGone": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      }
+    },
+    "plainFeedImageUrl": "/Logo.png"
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/cover* > derives the mime type from the stored cover path, not from the requested path": {
+    "asPng": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/jpg"
+      }
+    },
+    "noExtension": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/jpg"
+      }
+    }
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/cover* > serves a .jpg cover with its mime type": {
+    "status": 200,
+    "headers": {
+      "content-type": "image/jpg",
+      "content-length": null
+    }
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/cover* > serves a .png cover with its mime type": {
+    "status": 200,
+    "headers": {
+      "content-type": "image/png",
+      "content-length": null
+    }
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/cover* > serves the cover of a collection and a series (first book with a cover)": {
+    "collection": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/png"
+      }
+    },
+    "series": {
+      "status": 200,
+      "headers": {
+        "content-type": "image/png"
+      }
+    },
+    "collectionCoverFile": "cover.png",
+    "seriesCoverFile": "cover.png"
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/item/:episodeId/* > 404s for an unknown slug, an unknown episode, an episode of another feed and a missing trailing segment": {
+    "unknownSlug": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "body": "Not Found"
+    },
+    "unknownEpisode": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "body": "Not Found"
+    },
+    "episodeOfOtherFeed": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "body": "Not Found"
+    },
+    "noTrailingSegment": {
+      "status": 404,
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /feed/feed-book/item/<book-episode></pre>\n</body>\n</html>\n"
+    }
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/item/:episodeId/* > 404s when the audio file is gone from disk": {
+    "status": 404,
+    "headers": {
+      "content-type": "text/html; charset=utf-8"
+    },
+    "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Error: ENOENT: no such file or directory, stat &#39;<tmp>/books/Book Png/part1.mp3&#39;</pre>\n</body>\n</html>\n"
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/item/:episodeId/* > ignores the trailing file name and serves a collection and a series episode > any file name": {
+    "collection": {
+      "status": 200,
+      "headers": {
+        "content-type": "audio/mpeg",
+        "content-disposition": null,
+        "content-length": "15",
+        "accept-ranges": "bytes",
+        "cache-control": "public, max-age=0",
+        "etag": "<etag>"
+      },
+      "body": "audio part2.mp3"
+    },
+    "series": {
+      "status": 200,
+      "headers": {
+        "content-type": "audio/mpeg",
+        "content-disposition": null,
+        "content-length": "15",
+        "accept-ranges": "bytes",
+        "cache-control": "public, max-age=0",
+        "etag": "<etag>"
+      },
+      "body": "audio part1.mp3"
+    }
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/item/:episodeId/* > serves the audio file of a book feed episode > both tracks": {
+    "part1.mp3": {
+      "status": 200,
+      "headers": {
+        "content-type": "audio/mpeg",
+        "content-disposition": null,
+        "content-length": "15",
+        "accept-ranges": "bytes",
+        "cache-control": "public, max-age=0",
+        "etag": "<etag>"
+      },
+      "body": "audio part1.mp3"
+    },
+    "part2.mp3": {
+      "status": 200,
+      "headers": {
+        "content-type": "audio/mpeg",
+        "content-disposition": null,
+        "content-length": "15",
+        "accept-ranges": "bytes",
+        "cache-control": "public, max-age=0",
+        "etag": "<etag>"
+      },
+      "body": "audio part2.mp3"
+    }
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/item/:episodeId/* > serves the audio file of a podcast episode > episode 2": {
+    "status": 200,
+    "headers": {
+      "content-type": "audio/mpeg",
+      "content-disposition": null,
+      "content-length": "15",
+      "accept-ranges": "bytes",
+      "cache-control": "public, max-age=0",
+      "etag": "<etag>"
+    },
+    "body": "episode ep2.mp3"
+  },
+  "RssFeedPublic (characterization) > GET /feed/:slug/item/:episodeId/* > sets the audio mime type from the file extension (m4b)": {
+    "item": {
+      "status": 200,
+      "headers": {
+        "content-type": "audio/mp4",
+        "content-disposition": null,
+        "content-length": "14",
+        "accept-ranges": "bytes",
+        "cache-control": "public, max-age=0",
+        "etag": "<etag>"
+      },
+      "body": "audio book.m4b"
+    },
+    "enclosureTypeInFeed": "<enclosure url=<url> length=\"14\" type=\"audio/mpeg\""
+  },
+  "RssFeedPublic (characterization) > RssFeedManager.init() > keeps every feed when all entities exist, and does nothing without feeds": [
+    {
+      "slug": "feed-book",
+      "entityType": "libraryItem",
+      "title": "Book Png"
+    },
+    {
+      "slug": "feed-collection",
+      "entityType": "collection",
+      "title": "Favourites"
+    }
+  ],
+  "RssFeedPublic (characterization) > RssFeedManager.init() > removes feeds whose entity no longer exists and keeps valid ones > after init": {
+    "result": null,
+    "rows": [
+      {
+        "slug": "feed-book",
+        "entityType": "libraryItem",
+        "title": "Book Png"
+      },
+      {
+        "slug": "feed-collection",
+        "entityType": "collection",
+        "title": "Favourites"
+      },
+      {
+        "slug": "feed-pod",
+        "entityType": "libraryItem",
+        "title": "Pod"
+      },
+      {
+        "slug": "feed-series",
+        "entityType": "series",
+        "title": "Saga"
+      }
+    ]
+  },
+  "RssFeedPublic (characterization) > RssFeedManager.init() > removes feeds whose entity no longer exists and keeps valid ones > before init": [
+    {
+      "slug": "dangling-collection",
+      "entityType": "collection",
+      "title": "dangling-collection"
+    },
+    {
+      "slug": "dangling-item",
+      "entityType": "libraryItem",
+      "title": "dangling-item"
+    },
+    {
+      "slug": "dangling-series",
+      "entityType": "series",
+      "title": "dangling-series"
+    },
+    {
+      "slug": "feed-book",
+      "entityType": "libraryItem",
+      "title": "Book Png"
+    },
+    {
+      "slug": "feed-collection",
+      "entityType": "collection",
+      "title": "Favourites"
+    },
+    {
+      "slug": "feed-gone-item",
+      "entityType": "libraryItem",
+      "title": "Book Plain"
+    },
+    {
+      "slug": "feed-pod",
+      "entityType": "libraryItem",
+      "title": "Pod"
+    },
+    {
+      "slug": "feed-series",
+      "entityType": "series",
+      "title": "Saga"
+    }
+  ],
+  "RssFeedPublic (characterization) > RssFeedManager.init() > removes feeds whose entity no longer exists and keeps valid ones > served after init": {
+    "removed": 404,
+    "kept": 200
+  },
+  "RssFeedPublic (characterization) > stale feed rebuild (checkFeedRequiresUpdate) > rebuilds a book item feed when only the library item changed": {
+    "entityUpdatedAtAdvanced": true
+  },
+  "RssFeedPublic (characterization) > stale feed rebuild (checkFeedRequiresUpdate) > rebuilds a book item feed when the book changed after the feed was opened > after change": {
+    "status": 200,
+    "headers": {
+      "content-type": "text/xml; charset=utf-8"
+    },
+    "xml": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:googleplay=\"http://www.google.com/schemas/play-podcasts/1.0\">",
+      "<channel>",
+      "<title>",
+      "<![CDATA[Renamed Book]]>",
+      "</title>",
+      "<description>",
+      "<![CDATA[Renamed Book]]>",
+      "</description>",
+      "<link>https://abs.example.test/item/<item-jpg>",
+      "</link>",
+      "<image>",
+      "<url>https://abs.example.test/feed/feed-book/cover.jpg</url>",
+      "<title>Renamed Book</title>",
+      "<link>https://abs.example.test/item/<item-jpg>",
+      "</link>",
+      "</image>",
+      "<generator>Audiobookshelf</generator>",
+      "<lastBuildDate>[date]</lastBuildDate>",
+      "<atom:link href=\"https://abs.example.test/feed/feed-book\" rel=\"self\" type=\"application/rss+xml\"/>",
+      "<language>en</language>",
+      "<author>Bob Writer</author>",
+      "<itunes:author>Bob Writer</itunes:author>",
+      "<itunes:type>serial</itunes:type>",
+      "<itunes:image href=\"https://abs.example.test/feed/feed-book/cover.jpg\"/>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "<itunes:owner>",
+      "<itunes:name>Bob Writer</itunes:name>",
+      "</itunes:owner>",
+      "<itunes:block>yes</itunes:block>",
+      "<googleplay:block>yes</googleplay:block>",
+      "",
+      "<item>",
+      "<title>",
+      "<![CDATA[part1]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<item-jpg>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-book/item/<episode Book Jpg/part1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-book/item/<episode Book Jpg/part1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Bob Writer</itunes:author>",
+      "<itunes:duration>60</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part2]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<item-jpg>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-book/item/<episode Book Jpg/part2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-book/item/<episode Book Jpg/part2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Bob Writer</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "",
+      "</channel>",
+      "</rss>"
+    ]
+  },
+  "RssFeedPublic (characterization) > stale feed rebuild (checkFeedRequiresUpdate) > rebuilds a book item feed when the book changed after the feed was opened > before change": {
+    "status": 200,
+    "headers": {
+      "content-type": "text/xml; charset=utf-8"
+    },
+    "xml": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:googleplay=\"http://www.google.com/schemas/play-podcasts/1.0\">",
+      "<channel>",
+      "<title>",
+      "<![CDATA[Book Jpg]]>",
+      "</title>",
+      "<description>",
+      "<![CDATA[Book Jpg]]>",
+      "</description>",
+      "<link>https://abs.example.test/item/<item-jpg>",
+      "</link>",
+      "<image>",
+      "<url>https://abs.example.test/feed/feed-book/cover.jpg</url>",
+      "<title>Book Jpg</title>",
+      "<link>https://abs.example.test/item/<item-jpg>",
+      "</link>",
+      "</image>",
+      "<generator>Audiobookshelf</generator>",
+      "<lastBuildDate>[date]</lastBuildDate>",
+      "<atom:link href=\"https://abs.example.test/feed/feed-book\" rel=\"self\" type=\"application/rss+xml\"/>",
+      "<language>en</language>",
+      "<author>Bob Writer</author>",
+      "<itunes:author>Bob Writer</itunes:author>",
+      "<itunes:type>serial</itunes:type>",
+      "<itunes:image href=\"https://abs.example.test/feed/feed-book/cover.jpg\"/>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "<itunes:owner>",
+      "<itunes:name>Bob Writer</itunes:name>",
+      "</itunes:owner>",
+      "<itunes:block>yes</itunes:block>",
+      "<googleplay:block>yes</googleplay:block>",
+      "",
+      "<item>",
+      "<title>",
+      "<![CDATA[part1]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<item-jpg>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-book/item/<episode Book Jpg/part1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-book/item/<episode Book Jpg/part1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Bob Writer</itunes:author>",
+      "<itunes:duration>60</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part2]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<item-jpg>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-book/item/<episode Book Jpg/part2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-book/item/<episode Book Jpg/part2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Bob Writer</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "",
+      "</channel>",
+      "</rss>"
+    ]
+  },
+  "RssFeedPublic (characterization) > stale feed rebuild (checkFeedRequiresUpdate) > rebuilds a book item feed when the book changed after the feed was opened > stored feed row follows the rebuild": {
+    "title": "Renamed Book"
+  },
+  "RssFeedPublic (characterization) > stale feed rebuild (checkFeedRequiresUpdate) > rebuilds a collection feed when a book changed and when the number of tracks changed > book changed": {
+    "entityUpdatedAtAdvanced": true
+  },
+  "RssFeedPublic (characterization) > stale feed rebuild (checkFeedRequiresUpdate) > rebuilds a collection feed when a book changed and when the number of tracks changed > episode rows after rebuild": {
+    "episodeRows": 3
+  },
+  "RssFeedPublic (characterization) > stale feed rebuild (checkFeedRequiresUpdate) > rebuilds a collection feed when a book changed and when the number of tracks changed > track excluded": {
+    "status": 200,
+    "headers": {
+      "content-type": "text/xml; charset=utf-8"
+    },
+    "xml": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:googleplay=\"http://www.google.com/schemas/play-podcasts/1.0\">",
+      "<channel>",
+      "<title>",
+      "<![CDATA[Favourites]]>",
+      "</title>",
+      "<description>",
+      "<![CDATA[my picks]]>",
+      "</description>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "<image>",
+      "<url>https://abs.example.test/feed/feed-collection/cover.png</url>",
+      "<title>Favourites</title>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "</image>",
+      "<generator>Audiobookshelf</generator>",
+      "<lastBuildDate>[date]</lastBuildDate>",
+      "<atom:link href=\"https://abs.example.test/feed/feed-collection\" rel=\"self\" type=\"application/rss+xml\"/>",
+      "<language>en</language>",
+      "<author>Ann Author, Bob Writer</author>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:type>serial</itunes:type>",
+      "<itunes:image href=\"https://abs.example.test/feed/feed-collection/cover.png\"/>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "<itunes:summary>",
+      "<![CDATA[my picks]]>",
+      "</itunes:summary>",
+      "<itunes:owner>",
+      "<itunes:name>Ann Author, Bob Writer</itunes:name>",
+      "</itunes:owner>",
+      "<itunes:block>yes</itunes:block>",
+      "<googleplay:block>yes</googleplay:block>",
+      "",
+      "<item>",
+      "<title>",
+      "<![CDATA[Book Png]]>",
+      "</title>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-collection/item/<episode Book Png/part1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-collection/item/<episode Book Png/part1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>60</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part1]]>",
+      "</title>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-collection/item/<episode Book Jpg/part1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-collection/item/<episode Book Jpg/part1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>60</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[part2]]>",
+      "</title>",
+      "<link>https://abs.example.test/collection/<collection>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-collection/item/<episode Book Jpg/part2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Ann Author, Bob Writer]]>",
+      "</dc:creator>",
+      "<pubDate>[date]</pubDate>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-collection/item/<episode Book Jpg/part2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Ann Author, Bob Writer</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "",
+      "</channel>",
+      "</rss>"
+    ]
+  },
+  "RssFeedPublic (characterization) > stale feed rebuild (checkFeedRequiresUpdate) > rebuilds a podcast feed when an episode changed > after episode change": {
+    "status": 200,
+    "headers": {
+      "content-type": "text/xml; charset=utf-8"
+    },
+    "xml": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:googleplay=\"http://www.google.com/schemas/play-podcasts/1.0\">",
+      "<channel>",
+      "<title>",
+      "<![CDATA[Pod]]>",
+      "</title>",
+      "<description>",
+      "<![CDATA[Pod]]>",
+      "</description>",
+      "<link>https://abs.example.test/item/<pod>",
+      "</link>",
+      "<image>",
+      "<url>https://abs.example.test/Logo.png</url>",
+      "<title>Pod</title>",
+      "<link>https://abs.example.test/item/<pod>",
+      "</link>",
+      "</image>",
+      "<generator>Audiobookshelf</generator>",
+      "<lastBuildDate>[date]</lastBuildDate>",
+      "<atom:link href=\"https://abs.example.test/feed/feed-pod\" rel=\"self\" type=\"application/rss+xml\"/>",
+      "<language>en</language>",
+      "<author>Pat</author>",
+      "<itunes:author>Pat</itunes:author>",
+      "<itunes:type>serial</itunes:type>",
+      "<itunes:image href=\"https://abs.example.test/Logo.png\"/>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "<itunes:owner>",
+      "<itunes:name>Pat</itunes:name>",
+      "</itunes:owner>",
+      "<itunes:block>yes</itunes:block>",
+      "<googleplay:block>yes</googleplay:block>",
+      "",
+      "<item>",
+      "<title>",
+      "<![CDATA[Ep 1 renamed]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<pod>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-pod/item/<episode Pod/ep1.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Pat]]>",
+      "</dc:creator>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-pod/item/<episode Pod/ep1.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Pat</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "<item>",
+      "<title>",
+      "<![CDATA[Ep 2]]>",
+      "</title>",
+      "<link>https://abs.example.test/item/<pod>",
+      "</link>",
+      "<guid isPermaLink=\"false\">https://abs.example.test/feed/feed-pod/item/<episode Pod/ep2.mp3>/media.mp3</guid>",
+      "<dc:creator>",
+      "<![CDATA[Pat]]>",
+      "</dc:creator>",
+      "<enclosure url=\"https://abs.example.test/feed/feed-pod/item/<episode Pod/ep2.mp3>/media.mp3\" length=\"15\" type=\"audio/mpeg\"/>",
+      "<itunes:author>Pat</itunes:author>",
+      "<itunes:duration>30</itunes:duration>",
+      "<itunes:explicit>false</itunes:explicit>",
+      "</item>",
+      "",
+      "</channel>",
+      "</rss>"
+    ]
+  },
+  "RssFeedPublic (characterization) > stale feed rebuild (checkFeedRequiresUpdate) > rebuilds a series feed when a book changed": {
+    "entityUpdatedAtAdvanced": true
+  }
+}
