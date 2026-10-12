@@ -20565,6 +20565,247 @@
     },
     "emitted": []
   },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > direct plays a book whose tracks are all one supported type, transcodes when that type is missing > plain, mp3 supported": {
+    "status": 200,
+    "playMethod": 0,
+    "audioTracks": [
+      {
+        "contentUrl": "/api/items/<plain>/file/120",
+        "mimeType": "audio/mpeg",
+        "title": "a.mp3",
+        "duration": 60
+      },
+      {
+        "contentUrl": "/api/items/<plain>/file/121",
+        "mimeType": "audio/mpeg",
+        "title": "b.mp3",
+        "duration": 60
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > direct plays a book whose tracks are all one supported type, transcodes when that type is missing > plain, mp3 unsupported": {
+    "status": 200,
+    "playMethod": 2,
+    "audioTracks": [
+      {
+        "contentUrl": "/hls/<uuid-20>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "title": "Plain Tracks",
+        "duration": 120
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > direct plays only when EVERY included track mime type is supported > mixed, empty list": {
+    "status": 200,
+    "playMethod": 2,
+    "audioTracks": [
+      {
+        "contentUrl": "/hls/<uuid-23>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "title": "Mixed Tracks",
+        "duration": 180
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > direct plays only when EVERY included track mime type is supported > mixed, m4a only": {
+    "status": 200,
+    "playMethod": 2,
+    "audioTracks": [
+      {
+        "contentUrl": "/hls/<uuid-21>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "title": "Mixed Tracks",
+        "duration": 180
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > direct plays only when EVERY included track mime type is supported > mixed, mp3 and m4a": {
+    "status": 200,
+    "playMethod": 0,
+    "audioTracks": [
+      {
+        "contentUrl": "/api/items/<mixed>/file/120",
+        "mimeType": "audio/mpeg",
+        "title": "one.mp3",
+        "duration": 60
+      },
+      {
+        "contentUrl": "/api/items/<mixed>/file/121",
+        "mimeType": "audio/mp4",
+        "title": "two.m4a",
+        "duration": 60
+      },
+      {
+        "contentUrl": "/api/items/<mixed>/file/122",
+        "mimeType": "audio/mpeg",
+        "title": "three.mp3",
+        "duration": 60
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > direct plays only when EVERY included track mime type is supported > mixed, mp3 only": {
+    "status": 200,
+    "playMethod": 2,
+    "audioTracks": [
+      {
+        "contentUrl": "/hls/<uuid-20>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "title": "Mixed Tracks",
+        "duration": 180
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > direct plays only when EVERY included track mime type is supported > mixed, none match": {
+    "status": 200,
+    "playMethod": 2,
+    "audioTracks": [
+      {
+        "contentUrl": "/hls/<uuid-22>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "title": "Mixed Tracks",
+        "duration": 180
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > direct plays only when EVERY included track mime type is supported > play methods": {
+    "mp3 only (m4a track unsupported)": 2,
+    "m4a only (mp3 tracks unsupported)": 2,
+    "mp3 and m4a": 0,
+    "unrelated types": 2,
+    "empty list": 2
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > forceDirectPlay and forceTranscode override the mime type check > both flags: forceDirectPlay wins": {
+    "status": 200,
+    "playMethod": 0,
+    "audioTracks": [
+      {
+        "contentUrl": "/api/items/<mixed>/file/120",
+        "mimeType": "audio/mpeg",
+        "title": "one.mp3",
+        "duration": 60
+      },
+      {
+        "contentUrl": "/api/items/<mixed>/file/121",
+        "mimeType": "audio/mp4",
+        "title": "two.m4a",
+        "duration": 60
+      },
+      {
+        "contentUrl": "/api/items/<mixed>/file/122",
+        "mimeType": "audio/mpeg",
+        "title": "three.mp3",
+        "duration": 60
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > forceDirectPlay and forceTranscode override the mime type check > forceDirectPlay with partial support": {
+    "status": 200,
+    "playMethod": 0,
+    "audioTracks": [
+      {
+        "contentUrl": "/api/items/<mixed>/file/120",
+        "mimeType": "audio/mpeg",
+        "title": "one.mp3",
+        "duration": 60
+      },
+      {
+        "contentUrl": "/api/items/<mixed>/file/121",
+        "mimeType": "audio/mp4",
+        "title": "two.m4a",
+        "duration": 60
+      },
+      {
+        "contentUrl": "/api/items/<mixed>/file/122",
+        "mimeType": "audio/mpeg",
+        "title": "three.mp3",
+        "duration": 60
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > forceDirectPlay and forceTranscode override the mime type check > forceDirectPlay without supportedMimeTypes": {
+    "status": 200,
+    "playMethod": 0,
+    "audioTracks": [
+      {
+        "contentUrl": "/api/items/<mixed>/file/120",
+        "mimeType": "audio/mpeg",
+        "title": "one.mp3",
+        "duration": 60
+      },
+      {
+        "contentUrl": "/api/items/<mixed>/file/121",
+        "mimeType": "audio/mp4",
+        "title": "two.m4a",
+        "duration": 60
+      },
+      {
+        "contentUrl": "/api/items/<mixed>/file/122",
+        "mimeType": "audio/mpeg",
+        "title": "three.mp3",
+        "duration": 60
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > forceDirectPlay and forceTranscode override the mime type check > forceTranscode with full support": {
+    "status": 200,
+    "playMethod": 2,
+    "audioTracks": [
+      {
+        "contentUrl": "/hls/<uuid-20>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "title": "Mixed Tracks",
+        "duration": 180
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > ignores excluded audio files when deciding > excluded flac ignored": {
+    "status": 200,
+    "playMethod": 0,
+    "audioTracks": [
+      {
+        "contentUrl": "/api/items/<excluded>/file/140",
+        "mimeType": "audio/mpeg",
+        "title": "x.mp3",
+        "duration": 60
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > ignores excluded audio files when deciding > only the excluded type supported": {
+    "status": 200,
+    "playMethod": 2,
+    "audioTracks": [
+      {
+        "contentUrl": "/hls/<uuid-20>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "title": "Excluded Track",
+        "duration": 60
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > transcodes when supportedMimeTypes is missing or not an array > plain, no supportedMimeTypes": {
+    "status": 200,
+    "playMethod": 2,
+    "audioTracks": [
+      {
+        "contentUrl": "/hls/<uuid-20>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "title": "Plain Tracks",
+        "duration": 120
+      }
+    ]
+  },
+  "LibraryItemController (characterization) > POST /api/items/:id/play direct play decision (real PlaybackSessionManager) > transcodes when supportedMimeTypes is missing or not an array > plain, string instead of array": {
+    "status": 200,
+    "playMethod": 2,
+    "audioTracks": [
+      {
+        "contentUrl": "/hls/<uuid-21>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "title": "Plain Tracks",
+        "duration": 120
+      }
+    ]
+  },
   "LibraryItemController (characterization) > POST /api/items/:id/scan > refuses single file items with a 500": {
     "res": {
       "status": 500,

@@ -1,8 +1,10 @@
 const { expect } = require('chai')
+const fs = require('fs')
+const path = require('path')
 const { startApi } = require('./helpers/harness')
 const { matchSnapshot } = require('./helpers/snapshot')
 const { createLibrary, createBook } = require('./helpers/seed-library')
-const { fixedId, enableCookies, setupTokens, createUser, audioBookExtra, createPodcast, createProgress, createAuthSession, createPlaybackSession } = require('./helpers/seed-users-extra')
+const { fixedId, enableCookies, setupTokens, createUser, audioBookExtra, createPodcast, createProgress, createAuthSession, createPlaybackSession, setRow } = require('./helpers/seed-users-extra')
 const Database = require('../../server/Database')
 
 describe('MeController (characterization)', () => {
@@ -581,6 +583,93 @@ describe('MeController (characterization)', () => {
       snap(this, await get('/api/me/stats/year/2024', 'admin'), 'admin 2024')
       snap(this, await get('/api/me/stats/year/2023', 'user'), 'user 2023 without data')
       snap(this, await get('/api/me/stats/year/2024', 'guest'), 'guest 2024 without data')
+    })
+  })
+
+  // The 2024 fixture above has 2 authors, 1 genre and no covers, so the limits in userStats.getStatsForYear never bite. Year 2025 has
+  // no data for `user` in the shared beforeEach, so this large fixture is the only thing in that year.
+  describe('GET /api/me/stats/year/:year limits (large fixture)', () => {
+    const YEAR = 2025
+    // author -> number of books (one 100 second session per book), so the listening time per author is distinct: 1000, 800, 600, 400, 200
+    const AUTHORS = [
+      ['Alpha Author', 10, ['Fantasy', 'Audiobook']],
+      ['Bravo Author', 8, ['Mystery', 'Audio Book']],
+      ['Charlie Author', 6, ['Sci-Fi', 'AUDIOBOOKS']],
+      ['Delta Author', 4, ['Horror', 'Audio Book']],
+      ['Echo Author', 2, ['Romance', 'Audiobook Classics']]
+    ]
+    let seeded
+
+    async function seedLargeYear() {
+      const coverDir = path.join(api.tmp, 'covers')
+      fs.mkdirSync(coverDir, { recursive: true })
+      const books = [] // { title, author, genres, withCover }
+      let n = 0
+      for (const [author, count, genres] of AUTHORS) {
+        for (let i = 0; i < count; i++) books.push({ title: `Large ${String(n++).padStart(2, '0')}`, author, genres })
+      }
+      const created = []
+      for (const b of books) {
+        const coverPath = path.join(coverDir, `${b.title}.png`)
+        fs.writeFileSync(coverPath, 'png')
+        created.push({ ...b, ...(await createBook(lf, { title: b.title, authors: [b.author], extra: audioBookExtra({ duration: 1000, genres: b.genres }) })), coverPath })
+      }
+      // 26+ unfinished books with a cover on disk are candidates for booksWithCovers: 30 books, 3 of them finished below -> 27 candidates
+      for (const c of created) await setRow(Database.bookModel, c.book.id, { coverPath: c.coverPath })
+      // a book whose cover file is missing from disk and one without a cover: they listen but never show up in booksWithCovers
+      const noFile = await createBook(lf, { title: 'No Cover File', authors: ['Echo Author'], extra: audioBookExtra({ duration: 1000, genres: ['Romance'] }) })
+      await setRow(Database.bookModel, noFile.book.id, { coverPath: path.join(coverDir, 'missing.png') })
+      const noCover = await createBook(lf, { title: 'No Cover', authors: ['Echo Author'], extra: audioBookExtra({ duration: 1000, genres: ['Romance'] }) })
+
+      // sessions in the middle of a month (any timezone gives the same month): 15 books in April, 9 in August, 6 in December
+      const month = (i) => (i < 15 ? '04' : i < 24 ? '08' : '12')
+      const ctx = (c) => ({ user: users.user, library: lf.library, ...c })
+      for (const [i, c] of created.entries()) await createPlaybackSession(ctx(c), { at: `${YEAR}-${month(i)}-15T12:00:00Z`, timeListening: 100, authors: [c.author], narrators: ['Nora'], genres: c.genres })
+      await createPlaybackSession(ctx(noFile), { at: `${YEAR}-04-16T12:00:00Z`, timeListening: 10, authors: ['Echo Author'], genres: ['Romance'] })
+      await createPlaybackSession(ctx(noCover), { at: `${YEAR}-04-17T12:00:00Z`, timeListening: 10, authors: ['Echo Author'], genres: ['Romance'] })
+      // the first and the last instant of the year count (1 second each, on Alpha's first book), the instants just outside do not (7777 s of 'Outsider')
+      const first = created[0]
+      await createPlaybackSession(ctx(first), { at: `${YEAR}-01-01T00:00:00.000Z`, timeListening: 1, authors: ['Alpha Author'], genres: ['Fantasy'] })
+      await createPlaybackSession(ctx(first), { at: `${YEAR}-12-31T23:59:59.999Z`, timeListening: 1, authors: ['Alpha Author'], genres: ['Fantasy'] })
+      await createPlaybackSession(ctx(first), { at: `${YEAR - 1}-12-31T23:59:59.999Z`, timeListening: 7777, authors: ['Outsider'], genres: ['Outside Genre'] })
+      await createPlaybackSession(ctx(first), { at: `${YEAR + 1}-01-01T00:00:00.000Z`, timeListening: 7777, authors: ['Outsider'], genres: ['Outside Genre'] })
+
+      // three books finished inside the year (distinct durations), one just before and one just after (not counted)
+      const finish = (c, duration, finishedAt) => createProgress(users.user, { libraryItem: c.libraryItem, mediaItemId: c.book.id, duration, currentTime: duration, isFinished: true, finishedAt, updatedAt: finishedAt })
+      await finish(created[10], 3000, `${YEAR}-01-01T00:00:00.000Z`)
+      await finish(created[20], 5000, `${YEAR}-06-15T12:00:00.000Z`)
+      await finish(created[29], 4000, `${YEAR}-12-31T23:59:59.999Z`)
+      await finish(created[1], 9000, `${YEAR - 1}-12-31T23:59:59.999Z`)
+      await finish(created[2], 9500, `${YEAR + 1}-01-01T00:00:00.000Z`)
+      return { created, finished: [created[10], created[20], created[29]] }
+    }
+
+    beforeEach(async function () {
+      seeded = await seedLargeYear()
+    })
+
+    // booksWithCovers / finishedBooksWithCovers hold ids of whichever sessions the (random ordered) query returned first; assert on counts and membership instead
+    const view = (body) => {
+      const titleOf = new Map(seeded.created.map((c) => [c.libraryItem.id, c.book.title]))
+      const finishedIds = new Set(seeded.finished.map((c) => c.libraryItem.id))
+      const covers = body.booksWithCovers
+      return {
+        ...body,
+        booksWithCovers: { count: covers.length, distinct: new Set(covers).size, allSeededBooks: covers.every((id) => titleOf.has(id)), noneFinished: covers.every((id) => !finishedIds.has(id)) },
+        finishedBooksWithCovers: body.finishedBooksWithCovers.map((id) => titleOf.get(id)).sort() // random query order: sort by title
+      }
+    }
+
+    it('limits booksWithCovers to 25, topAuthors to 3, drops audiobook genres and keeps only the year', async function () {
+      const res = await get(`/api/me/stats/year/${YEAR}`, 'user')
+      expect(res.status).to.equal(200)
+      expect(res.body.booksWithCovers).to.have.length(25)
+      expect(res.body.topAuthors.map((a) => a.name)).to.deep.equal(['Alpha Author', 'Bravo Author', 'Charlie Author'])
+      matchSnapshot(this, { status: res.status, body: view(res.body) }, { label: 'user large year' })
+    })
+
+    it('other users and other years see none of it', async function () {
+      matchSnapshot(this, { admin: (await get(`/api/me/stats/year/${YEAR}`, 'admin')).body, previous: (await get(`/api/me/stats/year/${YEAR - 1}`, 'user')).body.totalListeningSessions }, { label: 'admin and previous year' })
     })
   })
 

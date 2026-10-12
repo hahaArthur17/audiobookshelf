@@ -8,6 +8,8 @@ const { createFileBook, createFilePodcast, waitFor } = require('./helpers/seed-i
 const Database = require('../../server/Database')
 const CacheManager = require('../../server/managers/CacheManager')
 const CoverManager = require('../../server/managers/CoverManager')
+const PlaybackSessionManager = require('../../server/managers/PlaybackSessionManager')
+const Stream = require('../../server/objects/Stream')
 const Scanner = require('../../server/scanner/Scanner')
 const LibraryItemScanner = require('../../server/scanner/LibraryItemScanner')
 const AudioFileScanner = require('../../server/scanner/AudioFileScanner')
@@ -514,6 +516,91 @@ describe('LibraryItemController (characterization)', () => {
       snap(this, await req('POST', `/api/items/${items.podcast.id}/play/nope`, 'user', {}), 'unknown episode')
       snap(this, await req('POST', `/api/items/${items.book.id}/play/${items.episodes[0].id}`, 'user', {}), 'book is not a podcast')
       snap(this, await api.request('POST', `/api/items/${items.podcast.id}/play/${items.episodes[1].id}`), 'anonymous')
+    })
+  })
+
+  // The describe above fakes the playback manager. Here the REAL PlaybackSessionManager.startSession runs, so the direct play / transcode
+  // decision (options.forceDirectPlay || (!options.forceTranscode && Book.checkCanDirectPlay(supportedMimeTypes))) is the real one.
+  // Only Stream.prototype.start (the ffmpeg spawn) is stubbed; the playlist is still generated into the temp dir.
+  describe('POST /api/items/:id/play direct play decision (real PlaybackSessionManager)', () => {
+    let manager, mixed, plain, withExcluded
+
+    /** book with the given audio files; mimeType is overwritten afterwards because the seed helper writes audio/mpeg for every file */
+    async function bookWithMimeTypes(title, tracks) {
+      const created = await createFileBook(libs.books, { title, audio: tracks.map((t, i) => ({ filename: t.filename, ino: `${title.length}${i}`, exclude: t.exclude })) })
+      const audioFiles = created.book.audioFiles.map((af, i) => ({ ...af, mimeType: tracks[i].mimeType }))
+      await created.book.update({ audioFiles })
+      return created.libraryItem
+    }
+
+    beforeEach(async function () {
+      manager = new PlaybackSessionManager()
+      api.apiRouter.playbackSessionManager = manager
+      sinon.stub(Stream.prototype, 'start').callsFake(async function () {})
+      mixed = await bookWithMimeTypes('Mixed Tracks', [
+        { filename: 'one.mp3', mimeType: 'audio/mpeg' },
+        { filename: 'two.m4a', mimeType: 'audio/mp4' },
+        { filename: 'three.mp3', mimeType: 'audio/mpeg' }
+      ])
+      plain = await bookWithMimeTypes('Plain Tracks', [
+        { filename: 'a.mp3', mimeType: 'audio/mpeg' },
+        { filename: 'b.mp3', mimeType: 'audio/mpeg' }
+      ])
+      withExcluded = await bookWithMimeTypes('Excluded Track', [
+        { filename: 'x.mp3', mimeType: 'audio/mpeg' },
+        { filename: 'y.flac', mimeType: 'audio/flac', exclude: true }
+      ])
+      this.ids.set(mixed.id, '<mixed>').set(plain.id, '<plain>').set(withExcluded.id, '<excluded>')
+    })
+
+    afterEach(async function () {
+      for (const s of manager.sessions) if (s.stream) await s.stream.close()
+    })
+
+    /** play the item and reduce the session to what the decision changes: playMethod and the tracks handed to the client */
+    async function play(ctx, item, body, label) {
+      const res = await req('POST', `/api/items/${item.id}/play`, 'user', { mediaPlayer: 'test-player', deviceInfo: { clientVersion: '1.0.0' }, ...body })
+      if (res.status !== 200) throw new Error(`play ${label} answered ${res.status}`)
+      const view = { status: res.status, playMethod: res.body.playMethod, audioTracks: res.body.audioTracks.map((t) => ({ contentUrl: t.contentUrl, mimeType: t.mimeType, title: t.title, duration: t.duration })) }
+      // a second session for the same user/device is closed by startSession; forget the old one so each case starts clean
+      for (const s of manager.sessions.splice(0)) if (s.stream) await s.stream.close()
+      api.emitted.splice(0)
+      matchSnapshot(ctx, view, { label, ids: ctx.ids, tmpDirs: [api.tmp] })
+      return view
+    }
+
+    it('direct plays only when EVERY included track mime type is supported', async function () {
+      const results = {
+        'mp3 only (m4a track unsupported)': await play(this, mixed, { supportedMimeTypes: ['audio/mpeg'] }, 'mixed, mp3 only'),
+        'm4a only (mp3 tracks unsupported)': await play(this, mixed, { supportedMimeTypes: ['audio/mp4'] }, 'mixed, m4a only'),
+        'mp3 and m4a': await play(this, mixed, { supportedMimeTypes: ['audio/mpeg', 'audio/mp4'] }, 'mixed, mp3 and m4a'),
+        'unrelated types': await play(this, mixed, { supportedMimeTypes: ['audio/ogg'] }, 'mixed, none match'),
+        'empty list': await play(this, mixed, { supportedMimeTypes: [] }, 'mixed, empty list')
+      }
+      const methods = Object.fromEntries(Object.entries(results).map(([k, v]) => [k, v.playMethod]))
+      matchSnapshot(this, methods, { label: 'play methods', ids: this.ids })
+    })
+
+    it('direct plays a book whose tracks are all one supported type, transcodes when that type is missing', async function () {
+      await play(this, plain, { supportedMimeTypes: ['audio/mpeg'] }, 'plain, mp3 supported')
+      await play(this, plain, { supportedMimeTypes: ['audio/mp4'] }, 'plain, mp3 unsupported')
+    })
+
+    it('transcodes when supportedMimeTypes is missing or not an array', async function () {
+      await play(this, plain, {}, 'plain, no supportedMimeTypes')
+      await play(this, plain, { supportedMimeTypes: 'audio/mpeg' }, 'plain, string instead of array')
+    })
+
+    it('ignores excluded audio files when deciding', async function () {
+      await play(this, withExcluded, { supportedMimeTypes: ['audio/mpeg'] }, 'excluded flac ignored')
+      await play(this, withExcluded, { supportedMimeTypes: ['audio/flac'] }, 'only the excluded type supported')
+    })
+
+    it('forceDirectPlay and forceTranscode override the mime type check', async function () {
+      await play(this, mixed, { supportedMimeTypes: ['audio/mpeg'], forceDirectPlay: true }, 'forceDirectPlay with partial support')
+      await play(this, mixed, { forceDirectPlay: true }, 'forceDirectPlay without supportedMimeTypes')
+      await play(this, mixed, { supportedMimeTypes: ['audio/mpeg', 'audio/mp4'], forceTranscode: true }, 'forceTranscode with full support')
+      await play(this, mixed, { supportedMimeTypes: ['audio/mpeg', 'audio/mp4'], forceTranscode: true, forceDirectPlay: true }, 'both flags: forceDirectPlay wins')
     })
   })
 

@@ -5234,6 +5234,88 @@
     },
     "emitted": []
   },
+  "MeController (characterization) > GET /api/me/stats/year/:year limits (large fixture) > limits booksWithCovers to 25, topAuthors to 3, drops audiobook genres and keeps only the year > user large year": {
+    "status": 200,
+    "body": {
+      "totalListeningSessions": 34,
+      "totalListeningTime": 3022,
+      "totalBookListeningTime": 3022,
+      "totalPodcastListeningTime": 0,
+      "topAuthors": [
+        {
+          "name": "Alpha Author",
+          "time": 1002
+        },
+        {
+          "name": "Bravo Author",
+          "time": 800
+        },
+        {
+          "name": "Charlie Author",
+          "time": 600
+        }
+      ],
+      "topGenres": [
+        {
+          "genre": "Fantasy",
+          "time": 1002
+        },
+        {
+          "genre": "Mystery",
+          "time": 800
+        },
+        {
+          "genre": "Sci-Fi",
+          "time": 600
+        }
+      ],
+      "mostListenedNarrator": {
+        "time": 3000,
+        "name": "Nora"
+      },
+      "mostListenedMonth": {
+        "month": 3,
+        "time": 1520
+      },
+      "numBooksFinished": 3,
+      "numBooksListened": 32,
+      "longestAudiobookFinished": {
+        "id": "<uuid-1>",
+        "title": "Large 20",
+        "duration": 5000,
+        "finishedAt": "<iso-date>"
+      },
+      "booksWithCovers": {
+        "count": 25,
+        "distinct": 25,
+        "allSeededBooks": true,
+        "noneFinished": true
+      },
+      "finishedBooksWithCovers": [
+        "Large 10",
+        "Large 20",
+        "Large 29"
+      ]
+    }
+  },
+  "MeController (characterization) > GET /api/me/stats/year/:year limits (large fixture) > other users and other years see none of it > admin and previous year": {
+    "admin": {
+      "totalListeningSessions": 0,
+      "totalListeningTime": 0,
+      "totalBookListeningTime": 0,
+      "totalPodcastListeningTime": 0,
+      "topAuthors": [],
+      "topGenres": [],
+      "mostListenedNarrator": null,
+      "mostListenedMonth": null,
+      "numBooksFinished": 0,
+      "numBooksListened": 0,
+      "longestAudiobookFinished": null,
+      "booksWithCovers": [],
+      "finishedBooksWithCovers": []
+    },
+    "previous": 5
+  },
   "MeController (characterization) > PATCH /api/me/password > changes the password and invalidates all login sessions > change": {
     "res": {
       "status": 200,
