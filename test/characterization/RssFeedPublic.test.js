@@ -132,10 +132,18 @@ describe('RssFeedPublic (characterization)', () => {
   })
 
   describe('stale feed rebuild (checkFeedRequiresUpdate)', () => {
+  // The stale check compares updatedAt values and the harness hands out strictly increasing timestamps that can run ahead of the
+  // wall clock, so a plain Model.update (which stamps "now") is not reliably newer than the feed. Stamp changed rows one minute ahead.
+  const touch = (table, where, replacements) => {
+    const updatedAt = new Date(Date.now() + 60 * 1000).toISOString().replace('T', ' ').replace('Z', ' +00:00')
+    return Database.sequelize.query(`UPDATE ${table} SET updatedAt = :updatedAt WHERE ${where}`, { replacements: { updatedAt, ...replacements } })
+  }
+
     it('rebuilds a book item feed when the book changed after the feed was opened', async function () {
       await open('item', itemJpg.libraryItem.id, body('feed-book'))
       snapFeed(this, 'before change', await get('/feed/feed-book', ['content-type']), await idsFor('feed-book', [[itemJpg.libraryItem.id, '<item-jpg>']]))
       await Database.bookModel.update({ title: 'Renamed Book' }, { where: { id: itemJpg.book.id } })
+      await touch('books', 'id = :id', { id: itemJpg.book.id })
       const res = await get('/feed/feed-book', ['content-type'])
       snapFeed(this, 'after change', res, await idsFor('feed-book', [[itemJpg.libraryItem.id, '<item-jpg>']]))
       matchSnapshot(this, { title: (await Database.feedModel.findOne({ where: { slug: 'feed-book' } })).title }, { label: 'stored feed row follows the rebuild' })
@@ -150,6 +158,7 @@ describe('RssFeedPublic (characterization)', () => {
     it('rebuilds a podcast feed when an episode changed', async function () {
       await open('item', pod.libraryItem.id, body('feed-pod'))
       await Database.podcastEpisodeModel.update({ title: 'Ep 1 renamed' }, { where: { podcastId: pod.podcast.id, index: 1 } })
+      await touch('podcastEpisodes', 'podcastId = :id AND `index` = 1', { id: pod.podcast.id })
       const res = await get('/feed/feed-pod', ['content-type'])
       snapFeed(this, 'after episode change', res, await idsFor('feed-pod', [[pod.libraryItem.id, '<pod>']]))
     })
@@ -157,6 +166,7 @@ describe('RssFeedPublic (characterization)', () => {
       await open('collection', collection.id, body('feed-collection'))
       const stale = await entityUpdatedAt('feed-collection')
       await Database.bookModel.update({ title: 'Renamed Jpg' }, { where: { id: itemJpg.book.id } })
+      await touch('books', 'id = :id', { id: itemJpg.book.id })
       await get('/feed/feed-collection')
       matchSnapshot(this, { entityUpdatedAtAdvanced: (await entityUpdatedAt('feed-collection')) > stale }, { label: 'book changed' })
       // one audio file excluded -> fewer tracks than feed episodes
@@ -174,6 +184,7 @@ describe('RssFeedPublic (characterization)', () => {
       await open('series', series.id, body('feed-series'))
       const stale = await entityUpdatedAt('feed-series')
       await Database.bookModel.update({ title: 'Renamed Jpg' }, { where: { id: itemJpg.book.id } })
+      await touch('books', 'id = :id', { id: itemJpg.book.id })
       await get('/feed/feed-series')
       matchSnapshot(this, { entityUpdatedAtAdvanced: (await entityUpdatedAt('feed-series')) > stale })
     })
