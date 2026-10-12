@@ -1,3 +1,4 @@
+const { expect } = require('chai')
 const { startApi } = require('./helpers/harness')
 const { matchSnapshot } = require('./helpers/snapshot')
 const Database = require('../../server/Database')
@@ -155,5 +156,59 @@ describe('CollectionController (characterization)', () => {
         snap(this, await api.request('GET', `/api/libraries/${lf.library.id}/collections`, { as: username }), 'library collections')
       })
     }
+  })
+  // Library access (GET /api/collections drops collections of libraries the user cannot access) and the stored collectionBook `order`
+  describe('library access and book order', () => {
+    const mkRestricted = async (username, libraryIds) => {
+      const permissions = Database.userModel.getDefaultPermissionsForUserType('user')
+      const row = await Database.userModel.create({ username, pash: 'hash', token: `token-${username}`, type: 'user', isActive: true, permissions, bookmarks: [], extraData: { seriesHideFromContinueListening: [] } })
+      // instance update: the static update leaves the cached user stale
+      await row.update({ permissions: { ...row.permissions, accessAllLibraries: false, librariesAccessible: libraryIds } })
+    }
+    const orderRows = async (collectionId) => {
+      const rows = await Database.collectionBookModel.findAll({ where: { collectionId }, order: [['order', 'ASC'], ['id', 'ASC']] })
+      return rows.map((r) => ({ item: ['A', 'B', 'C', 'Elsewhere'][items.findIndex((i) => i.mediaId === r.bookId)], order: r.order }))
+    }
+    const names = (res) => res.body.collections.map((c) => c.name).sort()
+
+    it('lists only collections of accessible libraries', async function () {
+      await mkRestricted('restricted', [lf.library.id])
+      await mkRestricted('otherOnly', [other.library.id])
+      const a = await createCollection('admin', { name: 'In Books' })
+      const b = await createCollection('admin', { libraryId: other.library.id, name: 'In Other', books: [items[3].id] })
+      expect(a.status).to.equal(200)
+      expect(b.status).to.equal(200)
+      const lists = {}
+      for (const as of ['admin', 'user', 'restricted', 'otherOnly']) {
+        const res = await api.request('GET', '/api/collections', { as })
+        expect(res.status).to.equal(200)
+        lists[as] = names(res)
+      }
+      expect(lists.admin).to.deep.equal(['In Books', 'In Other'])
+      expect(lists.user).to.deep.equal(['In Books', 'In Other'])
+      expect(lists.restricted).to.deep.equal(['In Books'])
+      expect(lists.otherOnly).to.deep.equal(['In Other'])
+      matchSnapshot(this, lists)
+    })
+    it('stores 1-based order on create and rewrites it on batch add, remove and reorder', async function () {
+      const created = await createCollection('admin', { books: [items[2].id, items[0].id, items[1].id] })
+      expect(created.status).to.equal(200)
+      const id = created.body.id
+      const steps = { created: await orderRows(id) }
+      let res = await api.request('POST', `/api/collections/${id}/batch/add`, { as: 'admin', json: { books: [items[0].id] } })
+      steps.batchAddExisting = { status: res.status, rows: await orderRows(id) }
+      res = await api.request('POST', `/api/collections/${id}/batch/remove`, { as: 'admin', json: { books: [items[0].id] } })
+      steps.batchRemoveMiddle = { status: res.status, rows: await orderRows(id) }
+      res = await api.request('POST', `/api/collections/${id}/batch/add`, { as: 'admin', json: { books: [items[0].id] } })
+      steps.batchAddBack = { status: res.status, rows: await orderRows(id) }
+      res = await api.request('POST', `/api/collections/${id}/book`, { as: 'admin', json: { id: items[2].id } })
+      steps.singleAddExisting = { status: res.status, rows: await orderRows(id) }
+      res = await api.request('PATCH', `/api/collections/${id}`, { as: 'admin', json: { books: [items[1].id, items[0].id, items[2].id] } })
+      steps.reorder = { status: res.status, rows: await orderRows(id) }
+      res = await api.request('DELETE', `/api/collections/${id}/book/${items[1].id}`, { as: 'admin' })
+      steps.singleRemoveFirst = { status: res.status, rows: await orderRows(id) }
+      expect(steps.created).to.deep.equal([{ item: 'C', order: 1 }, { item: 'A', order: 2 }, { item: 'B', order: 3 }])
+      matchSnapshot(this, steps)
+    })
   })
 })

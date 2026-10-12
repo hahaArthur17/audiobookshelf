@@ -9641,5 +9641,68 @@
       "body": "Not Found"
     },
     "emitted": []
+  },
+  "PodcastController (characterization) > stored podcast columns > DELETE episode updates Podcast.numEpisodes": {
+    "before": {
+      "numEpisodes": 3,
+      "lastEpisodeCheck": null,
+      "episodes": 3
+    },
+    "afterFirstDelete": {
+      "status": 200,
+      "numEpisodes": 2,
+      "lastEpisodeCheck": null,
+      "episodes": 2
+    },
+    "afterHardDelete": {
+      "status": 200,
+      "numEpisodes": 1,
+      "lastEpisodeCheck": null,
+      "episodes": 1
+    },
+    "deleteAgain": {
+      "status": 404,
+      "numEpisodes": 1,
+      "lastEpisodeCheck": null,
+      "episodes": 1
+    }
+  },
+  "PodcastController (characterization) > stored podcast columns > PATCH media stores a numeric lastEpisodeCheck and ignores other types": {
+    "before": {
+      "numEpisodes": 3,
+      "lastEpisodeCheck": null
+    },
+    "numeric": {
+      "status": 200,
+      "updated": true,
+      "numEpisodes": 3,
+      "lastEpisodeCheck": 1577872800000
+    },
+    "sameValue": {
+      "status": 200,
+      "numEpisodes": 3,
+      "lastEpisodeCheck": 1577872800000
+    },
+    "numericString": {
+      "status": 200,
+      "numEpisodes": 3,
+      "lastEpisodeCheck": 1577872800000
+    },
+    "nonNumeric": {
+      "status": 200,
+      "numEpisodes": 3,
+      "lastEpisodeCheck": 1577872800000
+    },
+    "nullValue": {
+      "status": 200,
+      "numEpisodes": 3,
+      "lastEpisodeCheck": 1577872800000
+    },
+    "numericAgain": {
+      "status": 200,
+      "updated": true,
+      "numEpisodes": 3,
+      "lastEpisodeCheck": 1600000000000
+    }
   }
 }

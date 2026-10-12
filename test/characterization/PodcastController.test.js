@@ -1,3 +1,4 @@
+const { expect } = require('chai')
 const fs = require('fs')
 const path = require('path')
 const { startApi } = require('./helpers/harness')
@@ -368,6 +369,46 @@ describe('PodcastController (characterization)', () => {
       snap(this, await del(ep(1), '?hard=1'), 'hard delete', { filesLeft: fs.readdirSync(pod.itemPath).sort() })
       snap(this, await del(ep(2), '?hard=0'), 'hard=0 keeps the file', { filesLeft: fs.readdirSync(pod.itemPath).sort() })
       snap(this, await api.request('GET', `/api/items/${pod.libraryItem.id}`, { as: 'admin' }), 'item afterwards')
+    })
+  })
+  // Stored podcast columns (the responses recompute some values, so the row is read back)
+  describe('stored podcast columns', () => {
+    const row = async () => {
+      const r = await Database.podcastModel.findByPk(pod.podcast.id)
+      return { numEpisodes: r.numEpisodes, lastEpisodeCheck: r.lastEpisodeCheck ? r.lastEpisodeCheck.getTime() : null }
+    }
+    const episodeRows = () => Database.podcastEpisodeModel.count({ where: { podcastId: pod.podcast.id } })
+
+    it('DELETE episode updates Podcast.numEpisodes', async function () {
+      const steps = { before: { ...(await row()), episodes: await episodeRows() } }
+      let res = await api.request('DELETE', `/api/podcasts/${pod.libraryItem.id}/episode/${ep(0)}`, { as: 'root' })
+      expect(res.status).to.equal(200)
+      steps.afterFirstDelete = { status: res.status, ...(await row()), episodes: await episodeRows() }
+      res = await api.request('DELETE', `/api/podcasts/${pod.libraryItem.id}/episode/${ep(1)}?hard=1`, { as: 'root' })
+      expect(res.status).to.equal(200)
+      steps.afterHardDelete = { status: res.status, ...(await row()), episodes: await episodeRows() }
+      res = await api.request('DELETE', `/api/podcasts/${pod.libraryItem.id}/episode/${ep(0)}`, { as: 'root' })
+      steps.deleteAgain = { status: res.status, ...(await row()), episodes: await episodeRows() }
+      matchSnapshot(this, steps)
+    })
+    it('PATCH media stores a numeric lastEpisodeCheck and ignores other types', async function () {
+      const patch = (json) => api.request('PATCH', `/api/items/${pod.libraryItem.id}/media`, { as: 'admin', json })
+      const steps = { before: await row() }
+      let res = await patch({ lastEpisodeCheck: 1577872800000 })
+      expect(res.status).to.equal(200)
+      steps.numeric = { status: res.status, updated: res.body.updated, ...(await row()) }
+      res = await patch({ lastEpisodeCheck: 1577872800000 })
+      steps.sameValue = { status: res.status, updated: res.body.updated, ...(await row()) }
+      res = await patch({ lastEpisodeCheck: '1600000000000' })
+      steps.numericString = { status: res.status, updated: res.body.updated, ...(await row()) }
+      res = await patch({ lastEpisodeCheck: 'yesterday' })
+      steps.nonNumeric = { status: res.status, updated: res.body.updated, ...(await row()) }
+      res = await patch({ lastEpisodeCheck: null })
+      steps.nullValue = { status: res.status, updated: res.body.updated, ...(await row()) }
+      res = await patch({ lastEpisodeCheck: 1600000000000 })
+      steps.numericAgain = { status: res.status, updated: res.body.updated, ...(await row()) }
+      expect(steps.numeric.lastEpisodeCheck).to.equal(1577872800000)
+      matchSnapshot(this, steps)
     })
   })
 })

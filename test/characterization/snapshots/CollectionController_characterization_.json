@@ -647,6 +647,132 @@
       }
     ]
   },
+  "CollectionController (characterization) > library access and book order > lists only collections of accessible libraries": {
+    "admin": [
+      "In Books",
+      "In Other"
+    ],
+    "user": [
+      "In Books",
+      "In Other"
+    ],
+    "restricted": [
+      "In Books"
+    ],
+    "otherOnly": [
+      "In Other"
+    ]
+  },
+  "CollectionController (characterization) > library access and book order > stores 1-based order on create and rewrites it on batch add, remove and reorder": {
+    "created": [
+      {
+        "item": "C",
+        "order": 1
+      },
+      {
+        "item": "A",
+        "order": 2
+      },
+      {
+        "item": "B",
+        "order": 3
+      }
+    ],
+    "batchAddExisting": {
+      "status": 200,
+      "rows": [
+        {
+          "item": "C",
+          "order": 1
+        },
+        {
+          "item": "A",
+          "order": 2
+        },
+        {
+          "item": "B",
+          "order": 3
+        }
+      ]
+    },
+    "batchRemoveMiddle": {
+      "status": 200,
+      "rows": [
+        {
+          "item": "C",
+          "order": 1
+        },
+        {
+          "item": "B",
+          "order": 2
+        }
+      ]
+    },
+    "batchAddBack": {
+      "status": 200,
+      "rows": [
+        {
+          "item": "C",
+          "order": 1
+        },
+        {
+          "item": "B",
+          "order": 2
+        },
+        {
+          "item": "A",
+          "order": 3
+        }
+      ]
+    },
+    "singleAddExisting": {
+      "status": 400,
+      "rows": [
+        {
+          "item": "C",
+          "order": 1
+        },
+        {
+          "item": "B",
+          "order": 2
+        },
+        {
+          "item": "A",
+          "order": 3
+        }
+      ]
+    },
+    "reorder": {
+      "status": 200,
+      "rows": [
+        {
+          "item": "B",
+          "order": 1
+        },
+        {
+          "item": "A",
+          "order": 2
+        },
+        {
+          "item": "C",
+          "order": 3
+        }
+      ]
+    },
+    "singleRemoveFirst": {
+      "status": 200,
+      "rows": [
+        {
+          "item": "A",
+          "order": 1
+        },
+        {
+          "item": "C",
+          "order": 2
+        }
+      ]
+    }
+  },
   "CollectionController (characterization) > modify routes > adds and removes batches > batch add": {
     "res": {
       "status": 200,
