@@ -3363,6 +3363,1071 @@
     },
     "emitted": []
   },
+  "SessionController (characterization) > device and media type mapping (podcast episode and device rows) > maps a stored session in GET /api/session/:id (open session) > book session with android device": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<book-session>",
+        "userId": "<uuid-8>",
+        "libraryId": "<uuid-9>",
+        "libraryItemId": "<uuid-10>",
+        "bookId": "<uuid-12>",
+        "episodeId": null,
+        "mediaType": "book",
+        "mediaMetadata": {
+          "title": "Book On Android",
+          "authors": [],
+          "narrators": [],
+          "genres": []
+        },
+        "chapters": [],
+        "displayTitle": "Book On Android",
+        "displayAuthor": "",
+        "coverPath": null,
+        "duration": 3600,
+        "playMethod": 0,
+        "mediaPlayer": "test-player",
+        "deviceInfo": {
+          "id": "<dev-android>",
+          "userId": "<uuid-8>",
+          "deviceId": "android-dev",
+          "ipAddress": "10.0.0.3",
+          "browserName": "Chrome",
+          "osName": "Android",
+          "osVersion": "14",
+          "clientVersion": "0.10.0",
+          "manufacturer": "Google",
+          "model": "Pixel 6",
+          "sdkVersion": "34",
+          "clientName": "Abs Android",
+          "deviceName": "Google Pixel 6"
+        },
+        "serverVersion": "2.0.0-test",
+        "date": "2024-04-01",
+        "dayOfWeek": "Friday",
+        "timeListening": 15,
+        "startTime": 0,
+        "currentTime": 60,
+        "startedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "audioTracks": [],
+        "libraryItem": {
+          "id": "<uuid-10>",
+          "ino": null,
+          "oldLibraryItemId": null,
+          "libraryId": "<uuid-9>",
+          "folderId": "<uuid-11>",
+          "path": "/test/books/Listened Book",
+          "relPath": "Listened Book",
+          "isFile": null,
+          "addedAt": "<timestamp>",
+          "updatedAt": "<timestamp>",
+          "isMissing": false,
+          "isInvalid": false,
+          "mediaType": "book",
+          "media": {
+            "id": "<uuid-12>",
+            "metadata": {
+              "title": "Listened Book",
+              "subtitle": null,
+              "authors": [
+                {
+                  "id": "<uuid-13>",
+                  "name": "Ann Author"
+                }
+              ],
+              "narrators": [],
+              "series": [],
+              "genres": [],
+              "publishedYear": null,
+              "publishedDate": null,
+              "publisher": null,
+              "description": null,
+              "isbn": null,
+              "asin": null,
+              "language": null,
+              "explicit": false,
+              "abridged": null,
+              "titleIgnorePrefix": "Listened Book",
+              "authorName": "Ann Author",
+              "authorNameLF": "Author, Ann",
+              "narratorName": "",
+              "seriesName": "",
+              "descriptionPlain": null
+            },
+            "coverPath": null,
+            "tags": [],
+            "numTracks": 1,
+            "numAudioFiles": 1,
+            "numChapters": 0,
+            "duration": 3600,
+            "size": 1000,
+            "libraryItemId": "<uuid-10>",
+            "audioFiles": [
+              {
+                "index": 1,
+                "ino": "a.mp3",
+                "metadata": {
+                  "filename": "a.mp3",
+                  "ext": ".mp3",
+                  "path": "/x/a.mp3",
+                  "relPath": "a.mp3",
+                  "size": 1000,
+                  "mtimeMs": 1,
+                  "ctimeMs": 1,
+                  "birthtimeMs": 1
+                },
+                "addedAt": 1,
+                "updatedAt": 1,
+                "trackNumFromMeta": null,
+                "discNumFromMeta": null,
+                "trackNumFromFilename": null,
+                "discNumFromFilename": null,
+                "manuallyVerified": false,
+                "format": "MP3",
+                "duration": 3600,
+                "bitRate": 64000,
+                "language": null,
+                "codec": "mp3",
+                "timeBase": "1/14112000",
+                "channels": 2,
+                "channelLayout": "stereo",
+                "chapters": [],
+                "embeddedCoverArt": null,
+                "metaTags": {},
+                "mimeType": "audio/mpeg"
+              }
+            ],
+            "chapters": [],
+            "ebookFile": null,
+            "tracks": [
+              {
+                "index": 1,
+                "ino": "a.mp3",
+                "metadata": {
+                  "filename": "a.mp3",
+                  "ext": ".mp3",
+                  "path": "/x/a.mp3",
+                  "relPath": "a.mp3",
+                  "size": 1000,
+                  "mtimeMs": 1,
+                  "ctimeMs": 1,
+                  "birthtimeMs": 1
+                },
+                "addedAt": 1,
+                "updatedAt": 1,
+                "trackNumFromMeta": null,
+                "discNumFromMeta": null,
+                "trackNumFromFilename": null,
+                "discNumFromFilename": null,
+                "manuallyVerified": false,
+                "format": "MP3",
+                "duration": 3600,
+                "bitRate": 64000,
+                "language": null,
+                "codec": "mp3",
+                "timeBase": "1/14112000",
+                "channels": 2,
+                "channelLayout": "stereo",
+                "chapters": [],
+                "embeddedCoverArt": null,
+                "metaTags": {},
+                "mimeType": "audio/mpeg",
+                "title": "a.mp3",
+                "startOffset": 0,
+                "contentUrl": "/api/items/<uuid-10>/file/a.mp3"
+              }
+            ]
+          },
+          "numFiles": 0,
+          "size": null,
+          "scanVersion": null,
+          "libraryFiles": []
+        }
+      }
+    },
+    "emitted": []
+  },
+  "SessionController (characterization) > device and media type mapping (podcast episode and device rows) > maps a stored session in GET /api/session/:id (open session) > book session with ios device": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<ios-session>",
+        "userId": "<uuid-8>",
+        "libraryId": "<uuid-9>",
+        "libraryItemId": "<uuid-10>",
+        "bookId": "<uuid-12>",
+        "episodeId": null,
+        "mediaType": "book",
+        "mediaMetadata": {
+          "title": "Book On iOS",
+          "authors": [],
+          "narrators": [],
+          "genres": []
+        },
+        "chapters": [],
+        "displayTitle": "Book On iOS",
+        "displayAuthor": "",
+        "coverPath": null,
+        "duration": 3600,
+        "playMethod": 0,
+        "mediaPlayer": "test-player",
+        "deviceInfo": {
+          "id": "<dev-ios>",
+          "userId": "<uuid-8>",
+          "deviceId": "ios-dev",
+          "ipAddress": "10.0.0.4",
+          "browserVersion": "17.2",
+          "osName": "iOS",
+          "osVersion": "17.2",
+          "clientVersion": "0.9.0",
+          "manufacturer": "Apple",
+          "model": "iPhone14,7",
+          "sdkVersion": "",
+          "clientName": "Abs iOS",
+          "deviceName": "Apple iPhone 14"
+        },
+        "serverVersion": "2.0.0-test",
+        "date": "2024-04-03",
+        "dayOfWeek": "Friday",
+        "timeListening": 5,
+        "startTime": 0,
+        "currentTime": 60,
+        "startedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "audioTracks": [],
+        "libraryItem": {
+          "id": "<uuid-10>",
+          "ino": null,
+          "oldLibraryItemId": null,
+          "libraryId": "<uuid-9>",
+          "folderId": "<uuid-11>",
+          "path": "/test/books/Listened Book",
+          "relPath": "Listened Book",
+          "isFile": null,
+          "addedAt": "<timestamp>",
+          "updatedAt": "<timestamp>",
+          "isMissing": false,
+          "isInvalid": false,
+          "mediaType": "book",
+          "media": {
+            "id": "<uuid-12>",
+            "metadata": {
+              "title": "Listened Book",
+              "subtitle": null,
+              "authors": [
+                {
+                  "id": "<uuid-13>",
+                  "name": "Ann Author"
+                }
+              ],
+              "narrators": [],
+              "series": [],
+              "genres": [],
+              "publishedYear": null,
+              "publishedDate": null,
+              "publisher": null,
+              "description": null,
+              "isbn": null,
+              "asin": null,
+              "language": null,
+              "explicit": false,
+              "abridged": null,
+              "titleIgnorePrefix": "Listened Book",
+              "authorName": "Ann Author",
+              "authorNameLF": "Author, Ann",
+              "narratorName": "",
+              "seriesName": "",
+              "descriptionPlain": null
+            },
+            "coverPath": null,
+            "tags": [],
+            "numTracks": 1,
+            "numAudioFiles": 1,
+            "numChapters": 0,
+            "duration": 3600,
+            "size": 1000,
+            "libraryItemId": "<uuid-10>",
+            "audioFiles": [
+              {
+                "index": 1,
+                "ino": "a.mp3",
+                "metadata": {
+                  "filename": "a.mp3",
+                  "ext": ".mp3",
+                  "path": "/x/a.mp3",
+                  "relPath": "a.mp3",
+                  "size": 1000,
+                  "mtimeMs": 1,
+                  "ctimeMs": 1,
+                  "birthtimeMs": 1
+                },
+                "addedAt": 1,
+                "updatedAt": 1,
+                "trackNumFromMeta": null,
+                "discNumFromMeta": null,
+                "trackNumFromFilename": null,
+                "discNumFromFilename": null,
+                "manuallyVerified": false,
+                "format": "MP3",
+                "duration": 3600,
+                "bitRate": 64000,
+                "language": null,
+                "codec": "mp3",
+                "timeBase": "1/14112000",
+                "channels": 2,
+                "channelLayout": "stereo",
+                "chapters": [],
+                "embeddedCoverArt": null,
+                "metaTags": {},
+                "mimeType": "audio/mpeg"
+              }
+            ],
+            "chapters": [],
+            "ebookFile": null,
+            "tracks": [
+              {
+                "index": 1,
+                "ino": "a.mp3",
+                "metadata": {
+                  "filename": "a.mp3",
+                  "ext": ".mp3",
+                  "path": "/x/a.mp3",
+                  "relPath": "a.mp3",
+                  "size": 1000,
+                  "mtimeMs": 1,
+                  "ctimeMs": 1,
+                  "birthtimeMs": 1
+                },
+                "addedAt": 1,
+                "updatedAt": 1,
+                "trackNumFromMeta": null,
+                "discNumFromMeta": null,
+                "trackNumFromFilename": null,
+                "discNumFromFilename": null,
+                "manuallyVerified": false,
+                "format": "MP3",
+                "duration": 3600,
+                "bitRate": 64000,
+                "language": null,
+                "codec": "mp3",
+                "timeBase": "1/14112000",
+                "channels": 2,
+                "channelLayout": "stereo",
+                "chapters": [],
+                "embeddedCoverArt": null,
+                "metaTags": {},
+                "mimeType": "audio/mpeg",
+                "title": "a.mp3",
+                "startOffset": 0,
+                "contentUrl": "/api/items/<uuid-10>/file/a.mp3"
+              }
+            ]
+          },
+          "numFiles": 0,
+          "size": null,
+          "scanVersion": null,
+          "libraryFiles": []
+        }
+      }
+    },
+    "emitted": []
+  },
+  "SessionController (characterization) > device and media type mapping (podcast episode and device rows) > maps a stored session in GET /api/session/:id (open session) > podcast episode session with web device": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "id": "<episode-session>",
+        "userId": "<uuid-8>",
+        "libraryId": "<uuid-9>",
+        "libraryItemId": "<uuid-10>",
+        "bookId": null,
+        "episodeId": "<episode>",
+        "mediaType": "podcast",
+        "mediaMetadata": {
+          "title": "Pod"
+        },
+        "chapters": [],
+        "displayTitle": "Episode One",
+        "displayAuthor": "The Host",
+        "coverPath": "/c.jpg",
+        "duration": 1800,
+        "playMethod": 0,
+        "mediaPlayer": "html5",
+        "deviceInfo": {
+          "id": "<dev-web>",
+          "userId": "<uuid-8>",
+          "deviceId": "web-dev",
+          "ipAddress": "10.0.0.2",
+          "browserName": "Firefox",
+          "browserVersion": "128.0",
+          "osName": "Linux",
+          "osVersion": "6.1",
+          "clientVersion": "2.37.0",
+          "manufacturer": "",
+          "model": "",
+          "sdkVersion": "",
+          "clientName": "Abs Web",
+          "deviceName": "Linux Firefox"
+        },
+        "serverVersion": "2.37.0",
+        "date": "2024-04-02",
+        "dayOfWeek": "Tuesday",
+        "timeListening": 45,
+        "startTime": 5,
+        "currentTime": 50,
+        "startedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "audioTracks": [],
+        "libraryItem": {
+          "id": "<uuid-10>",
+          "ino": null,
+          "oldLibraryItemId": null,
+          "libraryId": "<uuid-9>",
+          "folderId": "<uuid-11>",
+          "path": "/test/books/Listened Book",
+          "relPath": "Listened Book",
+          "isFile": null,
+          "addedAt": "<timestamp>",
+          "updatedAt": "<timestamp>",
+          "isMissing": false,
+          "isInvalid": false,
+          "mediaType": "book",
+          "media": {
+            "id": "<uuid-12>",
+            "metadata": {
+              "title": "Listened Book",
+              "subtitle": null,
+              "authors": [
+                {
+                  "id": "<uuid-13>",
+                  "name": "Ann Author"
+                }
+              ],
+              "narrators": [],
+              "series": [],
+              "genres": [],
+              "publishedYear": null,
+              "publishedDate": null,
+              "publisher": null,
+              "description": null,
+              "isbn": null,
+              "asin": null,
+              "language": null,
+              "explicit": false,
+              "abridged": null,
+              "titleIgnorePrefix": "Listened Book",
+              "authorName": "Ann Author",
+              "authorNameLF": "Author, Ann",
+              "narratorName": "",
+              "seriesName": "",
+              "descriptionPlain": null
+            },
+            "coverPath": null,
+            "tags": [],
+            "numTracks": 1,
+            "numAudioFiles": 1,
+            "numChapters": 0,
+            "duration": 3600,
+            "size": 1000,
+            "libraryItemId": "<uuid-10>",
+            "audioFiles": [
+              {
+                "index": 1,
+                "ino": "a.mp3",
+                "metadata": {
+                  "filename": "a.mp3",
+                  "ext": ".mp3",
+                  "path": "/x/a.mp3",
+                  "relPath": "a.mp3",
+                  "size": 1000,
+                  "mtimeMs": 1,
+                  "ctimeMs": 1,
+                  "birthtimeMs": 1
+                },
+                "addedAt": 1,
+                "updatedAt": 1,
+                "trackNumFromMeta": null,
+                "discNumFromMeta": null,
+                "trackNumFromFilename": null,
+                "discNumFromFilename": null,
+                "manuallyVerified": false,
+                "format": "MP3",
+                "duration": 3600,
+                "bitRate": 64000,
+                "language": null,
+                "codec": "mp3",
+                "timeBase": "1/14112000",
+                "channels": 2,
+                "channelLayout": "stereo",
+                "chapters": [],
+                "embeddedCoverArt": null,
+                "metaTags": {},
+                "mimeType": "audio/mpeg"
+              }
+            ],
+            "chapters": [],
+            "ebookFile": null,
+            "tracks": [
+              {
+                "index": 1,
+                "ino": "a.mp3",
+                "metadata": {
+                  "filename": "a.mp3",
+                  "ext": ".mp3",
+                  "path": "/x/a.mp3",
+                  "relPath": "a.mp3",
+                  "size": 1000,
+                  "mtimeMs": 1,
+                  "ctimeMs": 1,
+                  "birthtimeMs": 1
+                },
+                "addedAt": 1,
+                "updatedAt": 1,
+                "trackNumFromMeta": null,
+                "discNumFromMeta": null,
+                "trackNumFromFilename": null,
+                "discNumFromFilename": null,
+                "manuallyVerified": false,
+                "format": "MP3",
+                "duration": 3600,
+                "bitRate": 64000,
+                "language": null,
+                "codec": "mp3",
+                "timeBase": "1/14112000",
+                "channels": 2,
+                "channelLayout": "stereo",
+                "chapters": [],
+                "embeddedCoverArt": null,
+                "metaTags": {},
+                "mimeType": "audio/mpeg",
+                "title": "a.mp3",
+                "startOffset": 0,
+                "contentUrl": "/api/items/<uuid-10>/file/a.mp3"
+              }
+            ]
+          },
+          "numFiles": 0,
+          "size": null,
+          "scanVersion": null,
+          "libraryFiles": []
+        }
+      }
+    },
+    "emitted": []
+  },
+  "SessionController (characterization) > device and media type mapping (podcast episode and device rows) > maps media type, startedAt/updatedAt and device info in GET /api/sessions > podcast episode session alone": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "total": 3,
+        "numPages": 3,
+        "page": 1,
+        "itemsPerPage": 1,
+        "sessions": [
+          {
+            "id": "<episode-session>",
+            "userId": "<uuid-8>",
+            "libraryId": "<uuid-9>",
+            "libraryItemId": "<uuid-10>",
+            "bookId": null,
+            "episodeId": "<episode>",
+            "mediaType": "podcast",
+            "mediaMetadata": {
+              "title": "Pod"
+            },
+            "chapters": [],
+            "displayTitle": "Episode One",
+            "displayAuthor": "The Host",
+            "coverPath": "/c.jpg",
+            "duration": 1800,
+            "playMethod": 0,
+            "mediaPlayer": "html5",
+            "deviceInfo": {
+              "id": "<dev-web>",
+              "userId": "<uuid-8>",
+              "deviceId": "web-dev",
+              "ipAddress": "10.0.0.2",
+              "browserName": "Firefox",
+              "browserVersion": "128.0",
+              "osName": "Linux",
+              "osVersion": "6.1",
+              "clientVersion": "2.37.0",
+              "manufacturer": "",
+              "model": "",
+              "sdkVersion": "",
+              "clientName": "Abs Web",
+              "deviceName": "Linux Firefox"
+            },
+            "serverVersion": "2.37.0",
+            "date": "2024-04-02",
+            "dayOfWeek": "Tuesday",
+            "timeListening": 45,
+            "startTime": 5,
+            "currentTime": 50,
+            "startedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "lastSave": 0,
+            "audioTracks": [],
+            "stream": null,
+            "shareSessionId": null,
+            "mediaItemShareId": null,
+            "coverAspectRatio": null,
+            "user": {
+              "id": "<uuid-8>",
+              "username": "admin"
+            }
+          }
+        ],
+        "userId": "<uuid-8>"
+      }
+    },
+    "emitted": []
+  },
+  "SessionController (characterization) > device and media type mapping (podcast episode and device rows) > maps media type, startedAt/updatedAt and device info in GET /api/sessions > sessions with devices and a podcast episode": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "total": 3,
+        "numPages": 1,
+        "page": 0,
+        "itemsPerPage": 10,
+        "sessions": [
+          {
+            "id": "<book-session>",
+            "userId": "<uuid-8>",
+            "libraryId": "<uuid-9>",
+            "libraryItemId": "<uuid-10>",
+            "bookId": "<uuid-11>",
+            "episodeId": null,
+            "mediaType": "book",
+            "mediaMetadata": {
+              "title": "Book On Android",
+              "authors": [],
+              "narrators": [],
+              "genres": []
+            },
+            "chapters": [],
+            "displayTitle": "Book On Android",
+            "displayAuthor": "",
+            "coverPath": null,
+            "duration": 3600,
+            "playMethod": 0,
+            "mediaPlayer": "test-player",
+            "deviceInfo": {
+              "id": "<dev-android>",
+              "userId": "<uuid-8>",
+              "deviceId": "android-dev",
+              "ipAddress": "10.0.0.3",
+              "browserName": "Chrome",
+              "osName": "Android",
+              "osVersion": "14",
+              "clientVersion": "0.10.0",
+              "manufacturer": "Google",
+              "model": "Pixel 6",
+              "sdkVersion": "34",
+              "clientName": "Abs Android",
+              "deviceName": "Google Pixel 6"
+            },
+            "serverVersion": "2.0.0-test",
+            "date": "2024-04-01",
+            "dayOfWeek": "Friday",
+            "timeListening": 15,
+            "startTime": 0,
+            "currentTime": 60,
+            "startedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "lastSave": 0,
+            "audioTracks": [],
+            "stream": null,
+            "shareSessionId": null,
+            "mediaItemShareId": null,
+            "coverAspectRatio": null,
+            "user": {
+              "id": "<uuid-8>",
+              "username": "admin"
+            }
+          },
+          {
+            "id": "<episode-session>",
+            "userId": "<uuid-8>",
+            "libraryId": "<uuid-9>",
+            "libraryItemId": "<uuid-10>",
+            "bookId": null,
+            "episodeId": "<episode>",
+            "mediaType": "podcast",
+            "mediaMetadata": {
+              "title": "Pod"
+            },
+            "chapters": [],
+            "displayTitle": "Episode One",
+            "displayAuthor": "The Host",
+            "coverPath": "/c.jpg",
+            "duration": 1800,
+            "playMethod": 0,
+            "mediaPlayer": "html5",
+            "deviceInfo": {
+              "id": "<dev-web>",
+              "userId": "<uuid-8>",
+              "deviceId": "web-dev",
+              "ipAddress": "10.0.0.2",
+              "browserName": "Firefox",
+              "browserVersion": "128.0",
+              "osName": "Linux",
+              "osVersion": "6.1",
+              "clientVersion": "2.37.0",
+              "manufacturer": "",
+              "model": "",
+              "sdkVersion": "",
+              "clientName": "Abs Web",
+              "deviceName": "Linux Firefox"
+            },
+            "serverVersion": "2.37.0",
+            "date": "2024-04-02",
+            "dayOfWeek": "Tuesday",
+            "timeListening": 45,
+            "startTime": 5,
+            "currentTime": 50,
+            "startedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "lastSave": 0,
+            "audioTracks": [],
+            "stream": null,
+            "shareSessionId": null,
+            "mediaItemShareId": null,
+            "coverAspectRatio": null,
+            "user": {
+              "id": "<uuid-8>",
+              "username": "admin"
+            }
+          },
+          {
+            "id": "<ios-session>",
+            "userId": "<uuid-8>",
+            "libraryId": "<uuid-9>",
+            "libraryItemId": "<uuid-10>",
+            "bookId": "<uuid-11>",
+            "episodeId": null,
+            "mediaType": "book",
+            "mediaMetadata": {
+              "title": "Book On iOS",
+              "authors": [],
+              "narrators": [],
+              "genres": []
+            },
+            "chapters": [],
+            "displayTitle": "Book On iOS",
+            "displayAuthor": "",
+            "coverPath": null,
+            "duration": 3600,
+            "playMethod": 0,
+            "mediaPlayer": "test-player",
+            "deviceInfo": {
+              "id": "<dev-ios>",
+              "userId": "<uuid-8>",
+              "deviceId": "ios-dev",
+              "ipAddress": "10.0.0.4",
+              "browserVersion": "17.2",
+              "osName": "iOS",
+              "osVersion": "17.2",
+              "clientVersion": "0.9.0",
+              "manufacturer": "Apple",
+              "model": "iPhone14,7",
+              "sdkVersion": "",
+              "clientName": "Abs iOS",
+              "deviceName": "Apple iPhone 14"
+            },
+            "serverVersion": "2.0.0-test",
+            "date": "2024-04-03",
+            "dayOfWeek": "Friday",
+            "timeListening": 5,
+            "startTime": 0,
+            "currentTime": 60,
+            "startedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "lastSave": 0,
+            "audioTracks": [],
+            "stream": null,
+            "shareSessionId": null,
+            "mediaItemShareId": null,
+            "coverAspectRatio": null,
+            "user": {
+              "id": "<uuid-8>",
+              "username": "admin"
+            }
+          }
+        ]
+      }
+    },
+    "emitted": []
+  },
+  "SessionController (characterization) > device and media type mapping (podcast episode and device rows) > maps the same fields in GET /api/me/listening-sessions > admin listening sessions with devices and a podcast episode": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "total": 3,
+        "numPages": 1,
+        "page": 0,
+        "itemsPerPage": 10,
+        "sessions": [
+          {
+            "id": "<ios-session>",
+            "userId": "<uuid-8>",
+            "libraryId": "<uuid-9>",
+            "libraryItemId": "<uuid-10>",
+            "bookId": "<uuid-11>",
+            "episodeId": null,
+            "mediaType": "book",
+            "mediaMetadata": {
+              "title": "Book On iOS",
+              "authors": [],
+              "narrators": [],
+              "genres": []
+            },
+            "chapters": [],
+            "displayTitle": "Book On iOS",
+            "displayAuthor": "",
+            "coverPath": null,
+            "duration": 3600,
+            "playMethod": 0,
+            "mediaPlayer": "test-player",
+            "deviceInfo": {
+              "id": "<dev-ios>",
+              "userId": "<uuid-8>",
+              "deviceId": "ios-dev",
+              "ipAddress": "10.0.0.4",
+              "browserVersion": "17.2",
+              "osName": "iOS",
+              "osVersion": "17.2",
+              "clientVersion": "0.9.0",
+              "manufacturer": "Apple",
+              "model": "iPhone14,7",
+              "sdkVersion": "",
+              "clientName": "Abs iOS",
+              "deviceName": "Apple iPhone 14"
+            },
+            "serverVersion": "2.0.0-test",
+            "date": "2024-04-03",
+            "dayOfWeek": "Friday",
+            "timeListening": 5,
+            "startTime": 0,
+            "currentTime": 60,
+            "startedAt": "<timestamp>",
+            "updatedAt": "<timestamp>"
+          },
+          {
+            "id": "<episode-session>",
+            "userId": "<uuid-8>",
+            "libraryId": "<uuid-9>",
+            "libraryItemId": "<uuid-10>",
+            "bookId": null,
+            "episodeId": "<episode>",
+            "mediaType": "podcast",
+            "mediaMetadata": {
+              "title": "Pod"
+            },
+            "chapters": [],
+            "displayTitle": "Episode One",
+            "displayAuthor": "The Host",
+            "coverPath": "/c.jpg",
+            "duration": 1800,
+            "playMethod": 0,
+            "mediaPlayer": "html5",
+            "deviceInfo": {
+              "id": "<dev-web>",
+              "userId": "<uuid-8>",
+              "deviceId": "web-dev",
+              "ipAddress": "10.0.0.2",
+              "browserName": "Firefox",
+              "browserVersion": "128.0",
+              "osName": "Linux",
+              "osVersion": "6.1",
+              "clientVersion": "2.37.0",
+              "manufacturer": "",
+              "model": "",
+              "sdkVersion": "",
+              "clientName": "Abs Web",
+              "deviceName": "Linux Firefox"
+            },
+            "serverVersion": "2.37.0",
+            "date": "2024-04-02",
+            "dayOfWeek": "Tuesday",
+            "timeListening": 45,
+            "startTime": 5,
+            "currentTime": 50,
+            "startedAt": "<timestamp>",
+            "updatedAt": "<timestamp>"
+          },
+          {
+            "id": "<book-session>",
+            "userId": "<uuid-8>",
+            "libraryId": "<uuid-9>",
+            "libraryItemId": "<uuid-10>",
+            "bookId": "<uuid-11>",
+            "episodeId": null,
+            "mediaType": "book",
+            "mediaMetadata": {
+              "title": "Book On Android",
+              "authors": [],
+              "narrators": [],
+              "genres": []
+            },
+            "chapters": [],
+            "displayTitle": "Book On Android",
+            "displayAuthor": "",
+            "coverPath": null,
+            "duration": 3600,
+            "playMethod": 0,
+            "mediaPlayer": "test-player",
+            "deviceInfo": {
+              "id": "<dev-android>",
+              "userId": "<uuid-8>",
+              "deviceId": "android-dev",
+              "ipAddress": "10.0.0.3",
+              "browserName": "Chrome",
+              "osName": "Android",
+              "osVersion": "14",
+              "clientVersion": "0.10.0",
+              "manufacturer": "Google",
+              "model": "Pixel 6",
+              "sdkVersion": "34",
+              "clientName": "Abs Android",
+              "deviceName": "Google Pixel 6"
+            },
+            "serverVersion": "2.0.0-test",
+            "date": "2024-04-01",
+            "dayOfWeek": "Friday",
+            "timeListening": 15,
+            "startTime": 0,
+            "currentTime": 60,
+            "startedAt": "<timestamp>",
+            "updatedAt": "<timestamp>"
+          }
+        ]
+      }
+    },
+    "emitted": []
+  },
+  "SessionController (characterization) > device and media type mapping (podcast episode and device rows) > stores deviceId, serverVersion and timestamps when created through createFromOld > row created by createFromOld": {
+    "res": {
+      "row": {
+        "id": "<created>",
+        "mediaItemId": "<uuid-9>",
+        "mediaItemType": "book",
+        "displayTitle": "Old Path",
+        "displayAuthor": "Someone",
+        "duration": 3600,
+        "playMethod": 0,
+        "mediaPlayer": "html5",
+        "startTime": 1,
+        "currentTime": 2,
+        "serverVersion": "9.9.9-test",
+        "coverPath": null,
+        "timeListening": 12,
+        "mediaMetadata": {
+          "title": "Old Path"
+        },
+        "date": "2024-05-01",
+        "dayOfWeek": "Wednesday",
+        "extraData": {
+          "libraryItemId": "<uuid-10>"
+        },
+        "createdAt": "<iso-date>",
+        "updatedAt": "<iso-date>",
+        "userId": "<uuid-11>",
+        "deviceId": "<dev-android>",
+        "libraryId": "<uuid-12>"
+      }
+    },
+    "emitted": []
+  },
+  "SessionController (characterization) > device and media type mapping (podcast episode and device rows) > stores deviceId, serverVersion and timestamps when created through createFromOld > sessions list newest is the created one": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "total": 4,
+        "numPages": 4,
+        "page": 0,
+        "itemsPerPage": 1,
+        "sessions": [
+          {
+            "id": "<created>",
+            "userId": "<uuid-11>",
+            "libraryId": "<uuid-12>",
+            "libraryItemId": "<uuid-10>",
+            "bookId": "<uuid-9>",
+            "episodeId": null,
+            "mediaType": "book",
+            "mediaMetadata": {
+              "title": "Old Path"
+            },
+            "chapters": [],
+            "displayTitle": "Old Path",
+            "displayAuthor": "Someone",
+            "coverPath": null,
+            "duration": 3600,
+            "playMethod": 0,
+            "mediaPlayer": "html5",
+            "deviceInfo": {
+              "id": "<dev-android>",
+              "userId": "<uuid-11>",
+              "deviceId": "android-dev",
+              "ipAddress": "10.0.0.3",
+              "browserName": "Chrome",
+              "osName": "Android",
+              "osVersion": "14",
+              "clientVersion": "0.10.0",
+              "manufacturer": "Google",
+              "model": "Pixel 6",
+              "sdkVersion": "34",
+              "clientName": "Abs Android",
+              "deviceName": "Google Pixel 6"
+            },
+            "serverVersion": "9.9.9-test",
+            "date": "2024-05-01",
+            "dayOfWeek": "Wednesday",
+            "timeListening": 12,
+            "startTime": 1,
+            "currentTime": 2,
+            "startedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "lastSave": 0,
+            "audioTracks": [],
+            "stream": null,
+            "shareSessionId": null,
+            "mediaItemShareId": null,
+            "coverAspectRatio": null,
+            "user": {
+              "id": "<uuid-11>",
+              "username": "admin"
+            }
+          }
+        ]
+      }
+    },
+    "emitted": []
+  },
   "SessionController (characterization) > open session routes (/api/session/:id) > GET returns the open session with its library item > admin may read others": {
     "res": {
       "status": 200,

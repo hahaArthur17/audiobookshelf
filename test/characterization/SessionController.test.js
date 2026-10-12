@@ -1,3 +1,4 @@
+const { expect } = require('chai')
 const fs = require('fs')
 const path = require('path')
 const { startApi } = require('./helpers/harness')
@@ -6,7 +7,8 @@ const Database = require('../../server/Database')
 const ShareManager = require('../../server/managers/ShareManager')
 const PublicRouter = require('../../server/routers/PublicRouter')
 const { createLibrary, createBook } = require('./helpers/seed-library')
-const { createPlaybackSession, audioBookExtra } = require('./helpers/seed-users-extra')
+const { createPlaybackSession, audioBookExtra, setRow } = require('./helpers/seed-users-extra')
+const OldPlaybackSession = require('../../server/objects/PlaybackSession')
 const { recordingFake, openSession } = require('./helpers/seed-podcast-extra')
 
 describe('SessionController (characterization)', () => {
@@ -104,6 +106,120 @@ describe('SessionController (characterization)', () => {
       snap(this, await list('?itemsPerPage=-3'), 'negative itemsPerPage')
       snap(this, await list('?itemsPerPage=abc&page=abc'), 'non numeric paging')
       snap(this, await list('?page=-1&itemsPerPage=2'), 'negative page')
+    })
+  })
+
+  describe('device and media type mapping (podcast episode and device rows)', () => {
+    const EP = 'e0000000-0000-4000-8000-0000000000e1'
+    let web, android, ios, bookSession, epSession, iosSession, ids
+    const mkDevice = (user, o) => Database.deviceModel.create({ userId: user.id, ...o })
+    beforeEach(async () => {
+      web = await mkDevice(users.admin, { deviceId: 'web-dev', clientName: 'Abs Web', clientVersion: '2.37.0', ipAddress: '10.0.0.2', deviceName: 'Linux Firefox', deviceVersion: '128.0', extraData: { browserName: 'Firefox', osName: 'Linux', osVersion: '6.1' } })
+      android = await mkDevice(users.admin, { deviceId: 'android-dev', clientName: 'Abs Android', clientVersion: '0.10.0', ipAddress: '10.0.0.3', deviceName: 'Google Pixel 6', deviceVersion: '34', extraData: { browserName: 'Chrome', osName: 'Android', osVersion: '14', manufacturer: 'Google', model: 'Pixel 6' } })
+      ios = await mkDevice(users.admin, { deviceId: 'ios-dev', clientName: 'Abs iOS', clientVersion: '0.9.0', ipAddress: '10.0.0.4', deviceName: 'Apple iPhone 14', deviceVersion: '17.2', extraData: { osName: 'iOS', osVersion: '17.2', manufacturer: 'Apple', model: 'iPhone14,7' } })
+      // different createdAt (startedAt) and updatedAt
+      bookSession = await dbSession(users.admin, '2024-04-01T08:00:00Z', { title: 'Book On Android', timeListening: 15 })
+      await setRow(Database.playbackSessionModel, bookSession.id, { deviceId: android.id, updatedAt: new Date('2024-04-01T09:30:00Z') })
+      epSession = await Database.playbackSessionModel.create(
+        { userId: users.admin.id, libraryId: lf.library.id, mediaItemId: EP, mediaItemType: 'podcastEpisode', displayTitle: 'Episode One', displayAuthor: 'The Host', duration: 1800, playMethod: 0, mediaPlayer: 'html5', startTime: 5, currentTime: 50, serverVersion: '2.37.0', coverPath: '/c.jpg', timeListening: 45, mediaMetadata: { title: 'Pod' }, date: '2024-04-02', dayOfWeek: 'Tuesday', extraData: { libraryItemId: item.id }, deviceId: web.id, createdAt: new Date('2024-04-02T10:00:00Z'), updatedAt: new Date('2024-04-02T11:15:00Z') },
+        { silent: true }
+      )
+      iosSession = await dbSession(users.admin, '2024-04-03T07:00:00Z', { title: 'Book On iOS', timeListening: 5 })
+      await setRow(Database.playbackSessionModel, iosSession.id, { deviceId: ios.id, updatedAt: new Date('2024-04-03T07:45:00Z') })
+      ids = new Map([[bookSession.id, '<book-session>'], [epSession.id, '<episode-session>'], [iosSession.id, '<ios-session>'], [web.id, '<dev-web>'], [android.id, '<dev-android>'], [ios.id, '<dev-ios>'], [EP, '<episode>']])
+    })
+
+    it('maps media type, startedAt/updatedAt and device info in GET /api/sessions', async function () {
+      this.ids = ids
+      const res = await api.request('GET', '/api/sessions?sort=createdAt', { as: 'admin' })
+      snap(this, res, 'sessions with devices and a podcast episode')
+      // snapshots mask timestamps, so pin the raw startedAt (row createdAt) and updatedAt here
+      const ep = res.body.sessions.find((x) => x.id === epSession.id)
+      expect([ep.mediaType, ep.startedAt, ep.updatedAt]).to.deep.equal(['podcast', new Date('2024-04-02T10:00:00Z').valueOf(), new Date('2024-04-02T11:15:00Z').valueOf()])
+      snap(this, await api.request('GET', '/api/sessions?sort=createdAt&user=' + users.admin.id + '&itemsPerPage=1&page=1', { as: 'admin' }), 'podcast episode session alone')
+    })
+    it('maps the same fields in GET /api/me/listening-sessions', async function () {
+      this.ids = ids
+      const res = await api.request('GET', '/api/me/listening-sessions', { as: 'admin' })
+      snap(this, res, 'admin listening sessions with devices and a podcast episode')
+      const b = res.body.sessions.find((x) => x.id === bookSession.id)
+      expect([b.mediaType, b.startedAt, b.updatedAt]).to.deep.equal(['book', new Date('2024-04-01T08:00:00Z').valueOf(), new Date('2024-04-01T09:30:00Z').valueOf()])
+    })
+    it('maps a stored session in GET /api/session/:id (open session)', async function () {
+      this.ids = ids
+      for (const row of [bookSession, epSession, iosSession]) {
+        const full = await Database.playbackSessionModel.getById(row.id)
+        openSessions.push(full)
+      }
+      snap(this, await api.request('GET', `/api/session/${epSession.id}`, { as: 'admin' }), 'podcast episode session with web device')
+      snap(this, await api.request('GET', `/api/session/${bookSession.id}`, { as: 'admin' }), 'book session with android device')
+      snap(this, await api.request('GET', `/api/session/${iosSession.id}`, { as: 'admin' }), 'book session with ios device')
+    })
+    it('maps the rows through getOldPlaybackSession', async function () {
+      const ep = await Database.playbackSessionModel.getById(epSession.id)
+      expect(ep.mediaType).to.equal('podcast')
+      expect(ep.episodeId).to.equal(EP)
+      expect(ep.bookId).to.equal(null)
+      expect(ep.startedAt).to.equal(new Date('2024-04-02T10:00:00Z').valueOf())
+      expect(ep.updatedAt).to.equal(new Date('2024-04-02T11:15:00Z').valueOf())
+      const b = await Database.playbackSessionModel.getById(bookSession.id)
+      expect(b.mediaType).to.equal('book')
+      expect(b.bookId).to.equal(book.id)
+      expect(b.episodeId).to.equal(null)
+      expect(b.startedAt).to.equal(new Date('2024-04-01T08:00:00Z').valueOf())
+      expect(b.updatedAt).to.equal(new Date('2024-04-01T09:30:00Z').valueOf())
+      expect(b.deviceInfo.sdkVersion).to.equal('34')
+      expect(b.deviceInfo.browserVersion).to.equal(null)
+      expect(b.deviceInfo.browserName).to.equal('Chrome')
+      expect(b.deviceInfo.manufacturer).to.equal('Google')
+      const w = (await Database.playbackSessionModel.getById(epSession.id)).deviceInfo
+      expect(w.sdkVersion).to.equal('') // odd: DeviceInfo.construct runs stripAllTags on string fields so a null sdkVersion becomes ''
+      expect(w.browserVersion).to.equal('128.0')
+      expect(w.browserName).to.equal('Firefox')
+      expect(w.osName).to.equal('Linux')
+    })
+    it('stores deviceId, serverVersion and timestamps when created through createFromOld', async function () {
+      const old = new OldPlaybackSession({
+        id: '77777777-7777-4777-8777-777777777777',
+        userId: users.admin.id,
+        libraryId: lf.library.id,
+        libraryItemId: item.id,
+        bookId: book.id,
+        mediaType: 'book',
+        mediaMetadata: { title: 'Old Path' },
+        displayTitle: 'Old Path',
+        displayAuthor: 'Someone',
+        duration: 3600,
+        playMethod: 0,
+        mediaPlayer: 'html5',
+        deviceInfo: { ...android.getOldDevice() },
+        serverVersion: '9.9.9-test',
+        date: '2024-05-01',
+        dayOfWeek: 'Wednesday',
+        timeListening: 12,
+        startTime: 1,
+        currentTime: 2,
+        startedAt: new Date('2024-05-01T10:00:00Z').valueOf(),
+        updatedAt: new Date('2024-05-01T10:20:00Z').valueOf()
+      })
+      await Database.playbackSessionModel.createFromOld(old)
+      const row = await Database.playbackSessionModel.findByPk(old.id)
+      expect(row.deviceId).to.equal(android.id)
+      expect(row.serverVersion).to.equal('9.9.9-test')
+      expect(row.mediaItemType).to.equal('book')
+      expect(row.mediaItemId).to.equal(book.id)
+      expect(row.createdAt.toISOString()).to.equal('2024-05-01T10:00:00.000Z')
+      expect(row.updatedAt.toISOString()).to.equal('2024-05-01T10:20:00.000Z')
+      expect(row.extraData).to.deep.equal({ libraryItemId: item.id })
+      this.ids = new Map([[old.id, '<created>'], ...ids])
+      snap(this, { row: row.toJSON() }, 'row created by createFromOld')
+      snap(this, await api.request('GET', `/api/sessions?sort=createdAt&desc=1&itemsPerPage=1&page=0`, { as: 'admin' }), 'sessions list newest is the created one')
+      // a session without device info or server version stores nulls
+      const bare = new OldPlaybackSession({ ...old.toJSON(), id: '88888888-8888-4888-8888-888888888888', deviceInfo: null, serverVersion: null })
+      await Database.playbackSessionModel.createFromOld(bare)
+      const bareRow = await Database.playbackSessionModel.findByPk(bare.id)
+      expect(bareRow.deviceId).to.equal(null)
+      expect(bareRow.serverVersion).to.equal(null)
     })
   })
 

@@ -250,6 +250,22 @@ describe('UserController (characterization)', () => {
       snap(this, await api.request('DELETE', `/api/users/${target.id}`, { as: 'admin' }), 'delete again')
       snap(this, await api.request('GET', '/api/users', { as: 'admin' }), 'list afterwards')
     })
+    it('cascades the delete to the devices of the user only', async function () {
+      this.ids = named()
+      const target = await createUser({ username: 'doomed2', type: 'user' })
+      this.ids.set(target.id, '<doomed>')
+      const mk = (userId, deviceId) => Database.deviceModel.create({ userId, deviceId, clientName: 'Abs Web', clientVersion: '1', ipAddress: '10.0.0.9', extraData: {} })
+      await mk(target.id, 'doomed-1')
+      await mk(target.id, 'doomed-2')
+      await mk(users.user.id, 'kept-1')
+      expect(await Database.deviceModel.count()).to.equal(3)
+      expect(await Database.deviceModel.count({ where: { userId: target.id } })).to.equal(2)
+      const res = await api.request('DELETE', `/api/users/${target.id}`, { as: 'admin' })
+      expect(res.status).to.equal(200)
+      expect(await Database.deviceModel.count({ where: { userId: target.id } })).to.equal(0)
+      expect(await Database.deviceModel.count()).to.equal(1)
+      expect((await Database.deviceModel.findOne()).deviceId).to.equal('kept-1')
+    })
   })
 
   describe('PATCH /api/users/:id/openid-unlink', () => {
