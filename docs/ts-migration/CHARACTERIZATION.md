@@ -205,6 +205,19 @@ Reported by the test-writing agents while reading the code and recording respons
 - Direct play: `forceDirectPlay` wins over `forceTranscode`; a missing or non-array `supportedMimeTypes` silently transcodes (the model logs an error); excluded audio files are ignored.
 - PlaybackSessionManager (real manager under test, only `Stream.prototype.start` stubbed): a progress row created by a sync is never checked against the finish thresholds (only a later sync finishes the book); `/api/session/local` stamps new progress with server time and ignores the session's `updatedAt`; `closeStaleOpenSessions` only removes sessions (no save, no emit); `saveSession` is not awaited in `syncSession`; an admin syncing another user's session writes the progress for the admin; the `user_stream_update` on close still lists the closing session; a client without `deviceId` gets a new device row per play request; a session whose episode was deleted still syncs 200 with no progress written; the server caches users with their progress, so progress changed directly in the database is invisible to the next request.
 
+### PodcastManager (real manager, real ffmpeg/ffprobe, only axios replaced; recorded, not fixed)
+
+- After an auto-download trim (max episodes to keep) the library item `size` still includes the removed oldest episode's file: it is summed before the library file is removed.
+- The "Episode already in queue" warning names the current download, not the dropped episode.
+- A tagged download whose library item was deleted mid-download is removed, then the plain (untagged) retry downloads and removes it again.
+- A request failure (both user agents refused) never gets the plain retry.
+- A failed feed check still stamps `lastEpisodeCheck` and touches `updatedAt`; `GET /api/podcasts/:id/checknew` answers `{episodes: []}` for a failing feed.
+- `getDownloadQueueDetails` for another library returns `currentDownload: undefined`; `GET .../downloads` lists the queue only, not the running download.
+- `limit=abc` falls back to 3 and `limit=-1` means all (no validation).
+- The max-episodes-to-keep trim counts only episodes with a `publishedAt`; undated episodes are never removed.
+- `downloadPodcastEpisodes`, `startPodcastEpisodeDownload` and the chained next download are not awaited, so the HTTP response returns before the download finishes.
+- The ffmpeg-written tags (`tagDate`, `tagComment`, `tagSeries`, ...) in the PodcastManager snapshot depend on the ffmpeg build; if CI's ffmpeg differs, that snapshot is the first suspect.
+
 ## How the suite is kept honest
 `npm run audit:characterization` (see `test/characterization/README.md`) measures instead of trusting claims: 202 of 202 route handlers are hit and each has at least one 2xx/3xx response; every snapshot entry is compared by a test; no `.only`, no assertion-free test, no stub that replaces code under test; the only reshaping of responses before snapshotting is sorting where the server's own order is random, masking of times/versions/ids, and reducing the random "discover" shelf to its size. `npm run oracle:check` plus the Characterization Guard workflow stop the oracle from changing without a deliberate `[oracle-update]` commit.
 
