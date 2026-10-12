@@ -1,0 +1,6304 @@
+{
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > adds rssfeed and numepisodesincomplete when included > admin include both": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "results": [
+          {
+            "id": "<item-gamma>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/A Gamma Hour",
+            "relPath": "A Gamma Hour",
+            "isFile": null,
+            "mtimeMs": 1000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 2000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-gamma>",
+              "metadata": {
+                "title": "A Gamma Hour",
+                "author": null,
+                "description": "About A Gamma Hour",
+                "releaseDate": null,
+                "genres": [
+                  "Tech"
+                ],
+                "feedUrl": "https://example.test/gamma.xml",
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "en",
+                "type": null,
+                "titleIgnorePrefix": "Gamma Hour, A"
+              },
+              "coverPath": null,
+              "tags": [],
+              "numEpisodes": 0,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 9000
+            },
+            "numFiles": 0,
+            "size": 9000,
+            "rssFeed": {
+              "id": "<feed>",
+              "entityType": "libraryItem",
+              "entityId": "<item-gamma>",
+              "feedUrl": "/feed/gamma-feed",
+              "meta": {
+                "title": "Gamma feed",
+                "description": "d",
+                "preventIndexing": true,
+                "ownerName": "o",
+                "ownerEmail": "o@x"
+              }
+            }
+          },
+          {
+            "id": "<item-beta>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/beta cast",
+            "relPath": "beta cast",
+            "isFile": null,
+            "mtimeMs": 2000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 1000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-beta>",
+              "metadata": {
+                "title": "beta cast",
+                "author": "Amy able",
+                "description": "About beta cast",
+                "releaseDate": null,
+                "genres": [
+                  "Comedy"
+                ],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": true,
+                "language": "de",
+                "type": null,
+                "titleIgnorePrefix": "beta cast"
+              },
+              "coverPath": null,
+              "tags": [
+                "adult"
+              ],
+              "numEpisodes": 2,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 100
+            },
+            "numFiles": 0,
+            "size": 100,
+            "numEpisodesIncomplete": 2
+          },
+          {
+            "id": "<item-delta>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/Delta",
+            "relPath": "Delta",
+            "isFile": null,
+            "mtimeMs": 500,
+            "ctimeMs": 1000,
+            "birthtimeMs": 500,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": true,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-delta>",
+              "metadata": {
+                "title": "Delta",
+                "author": "Cy Cleaner",
+                "description": "About Delta",
+                "releaseDate": null,
+                "genres": [],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "fr",
+                "type": null,
+                "titleIgnorePrefix": "Delta"
+              },
+              "coverPath": null,
+              "tags": [
+                "kids"
+              ],
+              "numEpisodes": 1,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 50
+            },
+            "numFiles": 0,
+            "size": 50,
+            "numEpisodesIncomplete": 1
+          },
+          {
+            "id": "<item-epsilon>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/Epsilon",
+            "relPath": "Epsilon",
+            "isFile": null,
+            "mtimeMs": 4000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 4000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": true,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-epsilon>",
+              "metadata": {
+                "title": "Epsilon",
+                "author": "Eve Else",
+                "description": "About Epsilon",
+                "releaseDate": null,
+                "genres": [
+                  "News"
+                ],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "en",
+                "type": null,
+                "titleIgnorePrefix": "Epsilon"
+              },
+              "coverPath": null,
+              "tags": [],
+              "numEpisodes": 2,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 700
+            },
+            "numFiles": 0,
+            "size": 700,
+            "numEpisodesIncomplete": 2
+          },
+          {
+            "id": "<item-alpha>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/The Alpha Show",
+            "relPath": "The Alpha Show",
+            "isFile": null,
+            "mtimeMs": 9000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 3000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-alpha>",
+              "metadata": {
+                "title": "The Alpha Show",
+                "author": "Zed Zimmer",
+                "description": "About The Alpha Show",
+                "releaseDate": null,
+                "genres": [
+                  "Tech",
+                  "News"
+                ],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": "1001",
+                "itunesArtistId": "2001",
+                "explicit": false,
+                "language": "en",
+                "type": null,
+                "titleIgnorePrefix": "Alpha Show, The"
+              },
+              "coverPath": null,
+              "tags": [
+                "daily",
+                "kids"
+              ],
+              "numEpisodes": 3,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 5000
+            },
+            "numFiles": 0,
+            "size": 5000,
+            "numEpisodesIncomplete": 2
+          },
+          {
+            "id": "<item-zeta>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/Zeta",
+            "relPath": "Zeta",
+            "isFile": null,
+            "mtimeMs": 6000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 6000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-zeta>",
+              "metadata": {
+                "title": "Zeta",
+                "author": "Yan Young",
+                "description": "About Zeta",
+                "releaseDate": null,
+                "genres": [
+                  "Tech"
+                ],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": null,
+                "language": null,
+                "type": null,
+                "titleIgnorePrefix": "Zeta"
+              },
+              "coverPath": null,
+              "tags": [
+                "misc"
+              ],
+              "numEpisodes": 0,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 3000
+            },
+            "numFiles": 0,
+            "size": 3000
+          }
+        ],
+        "total": 6,
+        "limit": 0,
+        "page": 0,
+        "sortBy": "media.metadata.title",
+        "sortDesc": false,
+        "mediaType": "podcast",
+        "minified": false,
+        "collapseseries": false,
+        "include": "rssfeed,numepisodesincomplete",
+        "offset": 0
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > adds rssfeed and numepisodesincomplete when included > include variants": {
+    "admin": [
+      {
+        "title": "A Gamma Hour",
+        "numEpisodes": 0
+      },
+      {
+        "title": "beta cast",
+        "numEpisodesIncomplete": 2,
+        "numEpisodes": 2
+      },
+      {
+        "title": "Delta",
+        "numEpisodesIncomplete": 1,
+        "numEpisodes": 1
+      },
+      {
+        "title": "Epsilon",
+        "numEpisodesIncomplete": 2,
+        "numEpisodes": 2
+      },
+      {
+        "title": "The Alpha Show",
+        "numEpisodesIncomplete": 2,
+        "numEpisodes": 3
+      },
+      {
+        "title": "Zeta",
+        "numEpisodes": 0
+      }
+    ],
+    "user": [
+      {
+        "title": "A Gamma Hour",
+        "numEpisodes": 0
+      },
+      {
+        "title": "Delta",
+        "numEpisodesIncomplete": 1,
+        "numEpisodes": 1
+      },
+      {
+        "title": "Epsilon",
+        "numEpisodesIncomplete": 1,
+        "numEpisodes": 2
+      },
+      {
+        "title": "The Alpha Show",
+        "numEpisodesIncomplete": 2,
+        "numEpisodes": 3
+      }
+    ],
+    "kidsOnly": [
+      {
+        "title": "Delta",
+        "numEpisodes": 1
+      },
+      {
+        "title": "The Alpha Show",
+        "numEpisodesIncomplete": 3,
+        "numEpisodes": 3
+      }
+    ],
+    "feedOpen": [
+      {
+        "title": "A Gamma Hour",
+        "rssFeed": {
+          "id": "<feed>",
+          "entityType": "libraryItem",
+          "entityId": "<item-gamma>",
+          "feedUrl": "/feed/gamma-feed",
+          "meta": {
+            "title": "Gamma feed",
+            "description": "d",
+            "preventIndexing": true,
+            "ownerName": "o",
+            "ownerEmail": "o@x"
+          }
+        }
+      }
+    ],
+    "rssfeedOnly": [
+      {
+        "title": "A Gamma Hour",
+        "hasFeed": true,
+        "hasIncomplete": false
+      },
+      {
+        "title": "beta cast",
+        "hasFeed": false,
+        "hasIncomplete": false
+      },
+      {
+        "title": "Delta",
+        "hasFeed": false,
+        "hasIncomplete": false
+      },
+      {
+        "title": "Epsilon",
+        "hasFeed": false,
+        "hasIncomplete": false
+      },
+      {
+        "title": "The Alpha Show",
+        "hasFeed": false,
+        "hasIncomplete": false
+      },
+      {
+        "title": "Zeta",
+        "hasFeed": false,
+        "hasIncomplete": false
+      }
+    ],
+    "unknownInclude": "bogus,numepisodesincomplete"
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > applies explicit-content and tag permissions to every filter > permissions by user and filter": {
+    "root": {
+      "none": {
+        "status": 200,
+        "total": 6,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "beta cast",
+          "A Gamma Hour",
+          "Delta",
+          "Epsilon",
+          "Zeta"
+        ]
+      },
+      "filter=explicit": {
+        "status": 200,
+        "total": 1,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "beta cast"
+        ]
+      },
+      "filter=issues": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "Delta",
+          "Epsilon"
+        ]
+      },
+      "filter=recent": {
+        "status": 200,
+        "total": 5,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "Zeta",
+          "Epsilon",
+          "beta cast",
+          "The Alpha Show",
+          "A Gamma Hour"
+        ]
+      },
+      "filter=genres.VGVjaA%3D%3D": {
+        "status": 200,
+        "total": 3,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "A Gamma Hour",
+          "Zeta"
+        ]
+      },
+      "filter=tags.a2lkcw%3D%3D": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "Delta"
+        ]
+      },
+      "filter=tags.YWR1bHQ%3D": {
+        "status": 200,
+        "total": 1,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "beta cast"
+        ]
+      },
+      "filter=languages.ZW4%3D": {
+        "status": 200,
+        "total": 3,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "A Gamma Hour",
+          "Epsilon"
+        ]
+      }
+    },
+    "user": {
+      "none": {
+        "status": 200,
+        "total": 4,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "A Gamma Hour",
+          "Delta",
+          "Epsilon"
+        ]
+      },
+      "filter=explicit": {
+        "status": 200,
+        "total": 0,
+        "limit": 0,
+        "page": 0,
+        "titles": []
+      },
+      "filter=issues": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "Delta",
+          "Epsilon"
+        ]
+      },
+      "filter=recent": {
+        "status": 200,
+        "total": 3,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "Epsilon",
+          "The Alpha Show",
+          "A Gamma Hour"
+        ]
+      },
+      "filter=genres.VGVjaA%3D%3D": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "A Gamma Hour"
+        ]
+      },
+      "filter=tags.a2lkcw%3D%3D": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "Delta"
+        ]
+      },
+      "filter=tags.YWR1bHQ%3D": {
+        "status": 200,
+        "total": 0,
+        "limit": 0,
+        "page": 0,
+        "titles": []
+      },
+      "filter=languages.ZW4%3D": {
+        "status": 200,
+        "total": 3,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "A Gamma Hour",
+          "Epsilon"
+        ]
+      }
+    },
+    "guest": {
+      "none": {
+        "status": 200,
+        "total": 4,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "A Gamma Hour",
+          "Delta",
+          "Epsilon"
+        ]
+      },
+      "filter=explicit": {
+        "status": 200,
+        "total": 0,
+        "limit": 0,
+        "page": 0,
+        "titles": []
+      },
+      "filter=issues": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "Delta",
+          "Epsilon"
+        ]
+      },
+      "filter=recent": {
+        "status": 200,
+        "total": 3,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "Epsilon",
+          "The Alpha Show",
+          "A Gamma Hour"
+        ]
+      },
+      "filter=genres.VGVjaA%3D%3D": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "A Gamma Hour"
+        ]
+      },
+      "filter=tags.a2lkcw%3D%3D": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "Delta"
+        ]
+      },
+      "filter=tags.YWR1bHQ%3D": {
+        "status": 200,
+        "total": 0,
+        "limit": 0,
+        "page": 0,
+        "titles": []
+      },
+      "filter=languages.ZW4%3D": {
+        "status": 200,
+        "total": 3,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "A Gamma Hour",
+          "Epsilon"
+        ]
+      }
+    },
+    "kidsOnly": {
+      "none": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "Delta"
+        ]
+      },
+      "filter=explicit": {
+        "status": 200,
+        "total": 0,
+        "limit": 0,
+        "page": 0,
+        "titles": []
+      },
+      "filter=issues": {
+        "status": 200,
+        "total": 1,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "Delta"
+        ]
+      },
+      "filter=recent": {
+        "status": 200,
+        "total": 1,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show"
+        ]
+      },
+      "filter=genres.VGVjaA%3D%3D": {
+        "status": 200,
+        "total": 1,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show"
+        ]
+      },
+      "filter=tags.a2lkcw%3D%3D": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show",
+          "Delta"
+        ]
+      },
+      "filter=tags.YWR1bHQ%3D": {
+        "status": 200,
+        "total": 0,
+        "limit": 0,
+        "page": 0,
+        "titles": []
+      },
+      "filter=languages.ZW4%3D": {
+        "status": 200,
+        "total": 1,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "The Alpha Show"
+        ]
+      }
+    },
+    "noKids": {
+      "none": {
+        "status": 200,
+        "total": 4,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "beta cast",
+          "A Gamma Hour",
+          "Epsilon",
+          "Zeta"
+        ]
+      },
+      "filter=explicit": {
+        "status": 200,
+        "total": 1,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "beta cast"
+        ]
+      },
+      "filter=issues": {
+        "status": 200,
+        "total": 1,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "Epsilon"
+        ]
+      },
+      "filter=recent": {
+        "status": 200,
+        "total": 4,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "Zeta",
+          "Epsilon",
+          "beta cast",
+          "A Gamma Hour"
+        ]
+      },
+      "filter=genres.VGVjaA%3D%3D": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "A Gamma Hour",
+          "Zeta"
+        ]
+      },
+      "filter=tags.a2lkcw%3D%3D": {
+        "status": 200,
+        "total": 0,
+        "limit": 0,
+        "page": 0,
+        "titles": []
+      },
+      "filter=tags.YWR1bHQ%3D": {
+        "status": 200,
+        "total": 1,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "beta cast"
+        ]
+      },
+      "filter=languages.ZW4%3D": {
+        "status": 200,
+        "total": 2,
+        "limit": 0,
+        "page": 0,
+        "titles": [
+          "A Gamma Hour",
+          "Epsilon"
+        ]
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > filters by explicit, issues, feed-open, recent and ignores filter groups that do not apply to podcasts > special filters as admin": {
+    "explicit": {
+      "status": 200,
+      "total": 1,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "beta cast"
+      ]
+    },
+    "issues": {
+      "status": 200,
+      "total": 2,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "Delta",
+        "Epsilon"
+      ]
+    },
+    "feed-open": {
+      "status": 200,
+      "total": 1,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "A Gamma Hour"
+      ]
+    },
+    "recent": {
+      "status": 200,
+      "total": 5,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "Zeta",
+        "Epsilon",
+        "beta cast",
+        "The Alpha Show",
+        "A Gamma Hour"
+      ]
+    },
+    "progress.ZmluaXNoZWQ%3D": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "tracks.bXVsdGk%3D": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "series.eA%3D%3D": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "authors.eA%3D%3D": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "missing": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "bogus-filter": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "genres": {
+      "status": 200,
+      "total": 0,
+      "limit": 0,
+      "page": 0,
+      "titles": []
+    },
+    "missing.eA%3D%3D": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > filters by genres, tags and languages (base64 values) > group filters as admin": {
+    "genres=Tech": {
+      "status": 200,
+      "total": 3,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "A Gamma Hour",
+        "Zeta"
+      ]
+    },
+    "genres=News": {
+      "status": 200,
+      "total": 2,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "Epsilon"
+      ]
+    },
+    "genres=Comedy": {
+      "status": 200,
+      "total": 1,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "beta cast"
+      ]
+    },
+    "genres=Nope": {
+      "status": 200,
+      "total": 0,
+      "limit": 0,
+      "page": 0,
+      "titles": []
+    },
+    "genres=": {
+      "status": 200,
+      "total": 0,
+      "limit": 0,
+      "page": 0,
+      "titles": []
+    },
+    "tags=kids": {
+      "status": 200,
+      "total": 2,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "Delta"
+      ]
+    },
+    "tags=daily": {
+      "status": 200,
+      "total": 1,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show"
+      ]
+    },
+    "tags=adult": {
+      "status": 200,
+      "total": 1,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "beta cast"
+      ]
+    },
+    "tags=misc": {
+      "status": 200,
+      "total": 1,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "Zeta"
+      ]
+    },
+    "tags=Kids": {
+      "status": 200,
+      "total": 0,
+      "limit": 0,
+      "page": 0,
+      "titles": []
+    },
+    "languages=en": {
+      "status": 200,
+      "total": 3,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "A Gamma Hour",
+        "Epsilon"
+      ]
+    },
+    "languages=de": {
+      "status": 200,
+      "total": 1,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "beta cast"
+      ]
+    },
+    "languages=fr": {
+      "status": 200,
+      "total": 1,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "Delta"
+      ]
+    },
+    "languages=xx": {
+      "status": 200,
+      "total": 0,
+      "limit": 0,
+      "page": 0,
+      "titles": []
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > lists the library with full and minified bodies > admin full": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "results": [
+          {
+            "id": "<item-alpha>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/The Alpha Show",
+            "relPath": "The Alpha Show",
+            "isFile": null,
+            "mtimeMs": 9000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 3000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-alpha>",
+              "metadata": {
+                "title": "The Alpha Show",
+                "author": "Zed Zimmer",
+                "description": "About The Alpha Show",
+                "releaseDate": null,
+                "genres": [
+                  "Tech",
+                  "News"
+                ],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": "1001",
+                "itunesArtistId": "2001",
+                "explicit": false,
+                "language": "en",
+                "type": null,
+                "titleIgnorePrefix": "Alpha Show, The"
+              },
+              "coverPath": null,
+              "tags": [
+                "daily",
+                "kids"
+              ],
+              "numEpisodes": 3,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 5000
+            },
+            "numFiles": 0,
+            "size": 5000
+          },
+          {
+            "id": "<item-beta>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/beta cast",
+            "relPath": "beta cast",
+            "isFile": null,
+            "mtimeMs": 2000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 1000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-beta>",
+              "metadata": {
+                "title": "beta cast",
+                "author": "Amy able",
+                "description": "About beta cast",
+                "releaseDate": null,
+                "genres": [
+                  "Comedy"
+                ],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": true,
+                "language": "de",
+                "type": null,
+                "titleIgnorePrefix": "beta cast"
+              },
+              "coverPath": null,
+              "tags": [
+                "adult"
+              ],
+              "numEpisodes": 2,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 100
+            },
+            "numFiles": 0,
+            "size": 100
+          },
+          {
+            "id": "<item-gamma>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/A Gamma Hour",
+            "relPath": "A Gamma Hour",
+            "isFile": null,
+            "mtimeMs": 1000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 2000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-gamma>",
+              "metadata": {
+                "title": "A Gamma Hour",
+                "author": null,
+                "description": "About A Gamma Hour",
+                "releaseDate": null,
+                "genres": [
+                  "Tech"
+                ],
+                "feedUrl": "https://example.test/gamma.xml",
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "en",
+                "type": null,
+                "titleIgnorePrefix": "Gamma Hour, A"
+              },
+              "coverPath": null,
+              "tags": [],
+              "numEpisodes": 0,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 9000
+            },
+            "numFiles": 0,
+            "size": 9000
+          },
+          {
+            "id": "<item-delta>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/Delta",
+            "relPath": "Delta",
+            "isFile": null,
+            "mtimeMs": 500,
+            "ctimeMs": 1000,
+            "birthtimeMs": 500,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": true,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-delta>",
+              "metadata": {
+                "title": "Delta",
+                "author": "Cy Cleaner",
+                "description": "About Delta",
+                "releaseDate": null,
+                "genres": [],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "fr",
+                "type": null,
+                "titleIgnorePrefix": "Delta"
+              },
+              "coverPath": null,
+              "tags": [
+                "kids"
+              ],
+              "numEpisodes": 1,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 50
+            },
+            "numFiles": 0,
+            "size": 50
+          },
+          {
+            "id": "<item-epsilon>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/Epsilon",
+            "relPath": "Epsilon",
+            "isFile": null,
+            "mtimeMs": 4000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 4000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": true,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-epsilon>",
+              "metadata": {
+                "title": "Epsilon",
+                "author": "Eve Else",
+                "description": "About Epsilon",
+                "releaseDate": null,
+                "genres": [
+                  "News"
+                ],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "en",
+                "type": null,
+                "titleIgnorePrefix": "Epsilon"
+              },
+              "coverPath": null,
+              "tags": [],
+              "numEpisodes": 2,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 700
+            },
+            "numFiles": 0,
+            "size": 700
+          },
+          {
+            "id": "<item-zeta>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/Zeta",
+            "relPath": "Zeta",
+            "isFile": null,
+            "mtimeMs": 6000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 6000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-zeta>",
+              "metadata": {
+                "title": "Zeta",
+                "author": "Yan Young",
+                "description": "About Zeta",
+                "releaseDate": null,
+                "genres": [
+                  "Tech"
+                ],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": null,
+                "language": null,
+                "type": null,
+                "titleIgnorePrefix": "Zeta"
+              },
+              "coverPath": null,
+              "tags": [
+                "misc"
+              ],
+              "numEpisodes": 0,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 3000
+            },
+            "numFiles": 0,
+            "size": 3000
+          }
+        ],
+        "total": 6,
+        "limit": 0,
+        "page": 0,
+        "sortDesc": false,
+        "mediaType": "podcast",
+        "minified": false,
+        "collapseseries": false,
+        "include": "",
+        "offset": 0
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > lists the library with full and minified bodies > admin minified page 2": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "results": [
+          {
+            "id": "<item-gamma>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/A Gamma Hour",
+            "relPath": "A Gamma Hour",
+            "isFile": null,
+            "mtimeMs": 1000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 2000,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": false,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-gamma>",
+              "metadata": {
+                "title": "A Gamma Hour",
+                "author": null,
+                "description": "About A Gamma Hour",
+                "releaseDate": null,
+                "genres": [
+                  "Tech"
+                ],
+                "feedUrl": "https://example.test/gamma.xml",
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "en",
+                "type": null,
+                "titleIgnorePrefix": "Gamma Hour, A"
+              },
+              "coverPath": null,
+              "tags": [],
+              "numEpisodes": 0,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 9000
+            },
+            "numFiles": 0,
+            "size": 9000
+          },
+          {
+            "id": "<item-delta>",
+            "ino": null,
+            "oldLibraryItemId": null,
+            "libraryId": "<podcast-library>",
+            "folderId": "<folder>",
+            "path": "/test/pods/Delta",
+            "relPath": "Delta",
+            "isFile": null,
+            "mtimeMs": 500,
+            "ctimeMs": 1000,
+            "birthtimeMs": 500,
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "isMissing": true,
+            "isInvalid": false,
+            "mediaType": "podcast",
+            "media": {
+              "id": "<podcast-delta>",
+              "metadata": {
+                "title": "Delta",
+                "author": "Cy Cleaner",
+                "description": "About Delta",
+                "releaseDate": null,
+                "genres": [],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "fr",
+                "type": null,
+                "titleIgnorePrefix": "Delta"
+              },
+              "coverPath": null,
+              "tags": [
+                "kids"
+              ],
+              "numEpisodes": 1,
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null,
+              "size": 50
+            },
+            "numFiles": 0,
+            "size": 50
+          }
+        ],
+        "total": 6,
+        "limit": 2,
+        "page": 1,
+        "sortDesc": false,
+        "mediaType": "podcast",
+        "minified": true,
+        "collapseseries": false,
+        "include": "",
+        "offset": 2
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > paginates with limit and page > pagination": {
+    "limit=2&page=0": {
+      "status": 200,
+      "total": 6,
+      "limit": 2,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast"
+      ]
+    },
+    "limit=2&page=1": {
+      "status": 200,
+      "total": 6,
+      "limit": 2,
+      "page": 1,
+      "titles": [
+        "A Gamma Hour",
+        "Delta"
+      ]
+    },
+    "limit=2&page=2": {
+      "status": 200,
+      "total": 6,
+      "limit": 2,
+      "page": 2,
+      "titles": [
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "limit=2&page=3": {
+      "status": 200,
+      "total": 6,
+      "limit": 2,
+      "page": 3,
+      "titles": []
+    },
+    "limit=4&page=1": {
+      "status": 200,
+      "total": 6,
+      "limit": 4,
+      "page": 1,
+      "titles": [
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "limit=0": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "page=1": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 1,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "limit=abc": {
+      "status": 200,
+      "total": 6,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ]
+    },
+    "limit=-1": {
+      "status": 400,
+      "body": "Invalid request. limit must be a positive integer"
+    },
+    "limit=1.5": {
+      "status": 400,
+      "body": "Invalid request. limit must be a positive integer"
+    },
+    "page=-1": {
+      "status": 400,
+      "body": "Invalid request. page must be a positive integer"
+    },
+    "limit=3&page=1&sort=size&desc=1": {
+      "status": 200,
+      "total": 6,
+      "limit": 3,
+      "page": 1,
+      "titles": [
+        "Epsilon",
+        "beta cast",
+        "Delta"
+      ]
+    },
+    "limit=1&page=1&filter=genres.VGVjaA%3D%3D&sort=media.metadata.title": {
+      "status": 200,
+      "total": 3,
+      "limit": 1,
+      "page": 1,
+      "titles": [
+        "The Alpha Show"
+      ]
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > random sort returns every item once > random": {
+    "total": 6,
+    "limitedCount": 2,
+    "limitedTotal": 6
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > scopes by library and requires an accessible library > library restricted user": {
+    "forbidden": 403,
+    "allowed": {
+      "status": 200,
+      "total": 1,
+      "limit": 0,
+      "page": 0,
+      "titles": [
+        "Elsewhere Pod"
+      ]
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > scopes by library and requires an accessible library > other library": {
+    "status": 200,
+    "total": 1,
+    "limit": 0,
+    "page": 0,
+    "titles": [
+      "Elsewhere Pod"
+    ]
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > scopes by library and requires an accessible library > unknown and anonymous": {
+    "unknown": 404,
+    "anonymous": 401
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > sorts by every supported key in both directions > sort matrix": {
+    "addedAt desc=0": [
+      "Delta",
+      "Zeta",
+      "Epsilon",
+      "beta cast",
+      "The Alpha Show",
+      "A Gamma Hour"
+    ],
+    "addedAt desc=1": [
+      "A Gamma Hour",
+      "The Alpha Show",
+      "beta cast",
+      "Epsilon",
+      "Zeta",
+      "Delta"
+    ],
+    "size desc=0": [
+      "Delta",
+      "beta cast",
+      "Epsilon",
+      "Zeta",
+      "The Alpha Show",
+      "A Gamma Hour"
+    ],
+    "size desc=1": [
+      "A Gamma Hour",
+      "The Alpha Show",
+      "Zeta",
+      "Epsilon",
+      "beta cast",
+      "Delta"
+    ],
+    "birthtimeMs desc=0": [
+      "Delta",
+      "beta cast",
+      "A Gamma Hour",
+      "The Alpha Show",
+      "Epsilon",
+      "Zeta"
+    ],
+    "birthtimeMs desc=1": [
+      "Zeta",
+      "Epsilon",
+      "The Alpha Show",
+      "A Gamma Hour",
+      "beta cast",
+      "Delta"
+    ],
+    "mtimeMs desc=0": [
+      "Delta",
+      "A Gamma Hour",
+      "beta cast",
+      "Epsilon",
+      "Zeta",
+      "The Alpha Show"
+    ],
+    "mtimeMs desc=1": [
+      "The Alpha Show",
+      "Zeta",
+      "Epsilon",
+      "beta cast",
+      "A Gamma Hour",
+      "Delta"
+    ],
+    "media.metadata.author desc=0": [
+      "beta cast",
+      "Delta",
+      "Epsilon",
+      "Zeta",
+      "The Alpha Show",
+      "A Gamma Hour"
+    ],
+    "media.metadata.author desc=1": [
+      "A Gamma Hour",
+      "The Alpha Show",
+      "Zeta",
+      "Epsilon",
+      "Delta",
+      "beta cast"
+    ],
+    "media.metadata.title desc=0": [
+      "A Gamma Hour",
+      "beta cast",
+      "Delta",
+      "Epsilon",
+      "The Alpha Show",
+      "Zeta"
+    ],
+    "media.metadata.title desc=1": [
+      "Zeta",
+      "The Alpha Show",
+      "Epsilon",
+      "Delta",
+      "beta cast",
+      "A Gamma Hour"
+    ],
+    "media.numTracks desc=0": [
+      "A Gamma Hour",
+      "Zeta",
+      "Delta",
+      "beta cast",
+      "Epsilon",
+      "The Alpha Show"
+    ],
+    "media.numTracks desc=1": [
+      "The Alpha Show",
+      "beta cast",
+      "Epsilon",
+      "Delta",
+      "A Gamma Hour",
+      "Zeta"
+    ],
+    "media.duration desc=0": [
+      "The Alpha Show",
+      "beta cast",
+      "A Gamma Hour",
+      "Delta",
+      "Epsilon",
+      "Zeta"
+    ],
+    "media.duration desc=1": [
+      "The Alpha Show",
+      "beta cast",
+      "A Gamma Hour",
+      "Delta",
+      "Epsilon",
+      "Zeta"
+    ],
+    "bogus desc=0": [
+      "The Alpha Show",
+      "beta cast",
+      "A Gamma Hour",
+      "Delta",
+      "Epsilon",
+      "Zeta"
+    ],
+    "bogus desc=1": [
+      "The Alpha Show",
+      "beta cast",
+      "A Gamma Hour",
+      "Delta",
+      "Epsilon",
+      "Zeta"
+    ],
+    "none desc=0": [
+      "The Alpha Show",
+      "beta cast",
+      "A Gamma Hour",
+      "Delta",
+      "Epsilon",
+      "Zeta"
+    ],
+    "none desc=1": [
+      "The Alpha Show",
+      "beta cast",
+      "A Gamma Hour",
+      "Delta",
+      "Epsilon",
+      "Zeta"
+    ]
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > sorts by title with and without ignoring prefixes > title sort": {
+    "ignorePrefix=false desc=0": [
+      "A Gamma Hour",
+      "beta cast",
+      "Delta",
+      "Epsilon",
+      "The Alpha Show",
+      "Zeta"
+    ],
+    "ignorePrefix=false desc=1": [
+      "Zeta",
+      "The Alpha Show",
+      "Epsilon",
+      "Delta",
+      "beta cast",
+      "A Gamma Hour"
+    ],
+    "ignorePrefix=true desc=0": [
+      "The Alpha Show",
+      "beta cast",
+      "Delta",
+      "Epsilon",
+      "A Gamma Hour",
+      "Zeta"
+    ],
+    "ignorePrefix=true desc=1": [
+      "Zeta",
+      "A Gamma Hour",
+      "Epsilon",
+      "Delta",
+      "beta cast",
+      "The Alpha Show"
+    ]
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > sorts filtered and restricted lists > filtered and restricted sorts": {
+    "admin filter=genres.VGVjaA%3D%3D&sort=size&desc=1": [
+      "A Gamma Hour",
+      "The Alpha Show",
+      "Zeta"
+    ],
+    "admin filter=languages.ZW4%3D&sort=media.metadata.author": [
+      "Epsilon",
+      "The Alpha Show",
+      "A Gamma Hour"
+    ],
+    "admin filter=issues&sort=media.metadata.title&desc=1": [
+      "Epsilon",
+      "Delta"
+    ],
+    "user sort=size": [
+      "Delta",
+      "Epsilon",
+      "The Alpha Show",
+      "A Gamma Hour"
+    ],
+    "user sort=media.metadata.author&desc=1": [
+      "A Gamma Hour",
+      "The Alpha Show",
+      "Epsilon",
+      "Delta"
+    ],
+    "kidsOnly sort=mtimeMs&desc=1": [
+      "The Alpha Show",
+      "Delta"
+    ],
+    "noKids sort=birthtimeMs": [
+      "beta cast",
+      "A Gamma Hour",
+      "Epsilon",
+      "Zeta"
+    ]
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/items (podcast library) > the count cache is cleared by creating podcasts and episodes but not by moving an item to another library > count cache": {
+    "first": 6,
+    "afterCreate": 7,
+    "afterMove": {
+      "total": 7,
+      "rows": 6
+    },
+    "filteredAfterMove": 3,
+    "afterPodcastDestroy": 5
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/personalized (podcast library) > builds the episode shelves for each user > admin full body": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": [
+        {
+          "id": "continue-listening",
+          "label": "Continue Listening",
+          "labelStringKey": "LabelContinueListening",
+          "type": "episode",
+          "entities": [
+            {
+              "id": "<item-delta>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/Delta",
+              "relPath": "Delta",
+              "isFile": null,
+              "mtimeMs": 500,
+              "ctimeMs": 1000,
+              "birthtimeMs": 500,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": true,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-delta>",
+                "metadata": {
+                  "title": "Delta",
+                  "author": "Cy Cleaner",
+                  "description": "About Delta",
+                  "releaseDate": null,
+                  "genres": [],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": false,
+                  "language": "fr",
+                  "type": null,
+                  "titleIgnorePrefix": "Delta"
+                },
+                "coverPath": null,
+                "tags": [
+                  "kids"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 50,
+              "recentEpisode": {
+                "libraryItemId": "<item-delta>",
+                "podcastId": "<podcast-delta>",
+                "id": "<ep-delta-1>",
+                "oldEpisodeId": null,
+                "index": 1,
+                "season": "",
+                "episode": "",
+                "episodeType": "full",
+                "title": "Delta One",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Mon, 01 Apr 2024 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "6",
+                  "metadata": {
+                    "filename": "Delta One.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Delta One.mp3",
+                    "relPath": "Delta One.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 900,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            },
+            {
+              "id": "<item-alpha>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/The Alpha Show",
+              "relPath": "The Alpha Show",
+              "isFile": null,
+              "mtimeMs": 9000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 3000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-alpha>",
+                "metadata": {
+                  "title": "The Alpha Show",
+                  "author": "Zed Zimmer",
+                  "description": "About The Alpha Show",
+                  "releaseDate": null,
+                  "genres": [
+                    "Tech",
+                    "News"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": "1001",
+                  "itunesArtistId": "2001",
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Alpha Show, The"
+                },
+                "coverPath": null,
+                "tags": [
+                  "daily",
+                  "kids"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 5000,
+              "recentEpisode": {
+                "libraryItemId": "<item-alpha>",
+                "podcastId": "<podcast-alpha>",
+                "id": "<ep-alpha-1>",
+                "oldEpisodeId": null,
+                "index": 1,
+                "season": "1",
+                "episode": "1",
+                "episodeType": "full",
+                "title": "Alpha One",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Wed, 10 Jan 2024 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "1",
+                  "metadata": {
+                    "filename": "Alpha One.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Alpha One.mp3",
+                    "relPath": "Alpha One.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 600,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            }
+          ],
+          "total": 2
+        },
+        {
+          "id": "newest-episodes",
+          "label": "Newest Episodes",
+          "labelStringKey": "LabelNewestEpisodes",
+          "type": "episode",
+          "entities": [
+            {
+              "id": "<item-epsilon>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/Epsilon",
+              "relPath": "Epsilon",
+              "isFile": null,
+              "mtimeMs": 4000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 4000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": true,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-epsilon>",
+                "metadata": {
+                  "title": "Epsilon",
+                  "author": "Eve Else",
+                  "description": "About Epsilon",
+                  "releaseDate": null,
+                  "genres": [
+                    "News"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Epsilon"
+                },
+                "coverPath": null,
+                "tags": [],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 700,
+              "recentEpisode": {
+                "libraryItemId": "<item-epsilon>",
+                "podcastId": "<podcast-epsilon>",
+                "id": "<ep-epsilon-2>",
+                "oldEpisodeId": null,
+                "index": 2,
+                "season": "",
+                "episode": "",
+                "episodeType": "full",
+                "title": "Epsilon Two",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Wed, 01 Jan 2025 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "8",
+                  "metadata": {
+                    "filename": "Epsilon Two.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Epsilon Two.mp3",
+                    "relPath": "Epsilon Two.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 200,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            },
+            {
+              "id": "<item-epsilon>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/Epsilon",
+              "relPath": "Epsilon",
+              "isFile": null,
+              "mtimeMs": 4000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 4000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": true,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-epsilon>",
+                "metadata": {
+                  "title": "Epsilon",
+                  "author": "Eve Else",
+                  "description": "About Epsilon",
+                  "releaseDate": null,
+                  "genres": [
+                    "News"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Epsilon"
+                },
+                "coverPath": null,
+                "tags": [],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 700,
+              "recentEpisode": {
+                "libraryItemId": "<item-epsilon>",
+                "podcastId": "<podcast-epsilon>",
+                "id": "<ep-epsilon-1>",
+                "oldEpisodeId": null,
+                "index": 1,
+                "season": "",
+                "episode": "",
+                "episodeType": "full",
+                "title": "Epsilon One",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Sat, 01 Jan 2022 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "7",
+                  "metadata": {
+                    "filename": "Epsilon One.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Epsilon One.mp3",
+                    "relPath": "Epsilon One.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 100,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            },
+            {
+              "id": "<item-delta>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/Delta",
+              "relPath": "Delta",
+              "isFile": null,
+              "mtimeMs": 500,
+              "ctimeMs": 1000,
+              "birthtimeMs": 500,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": true,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-delta>",
+                "metadata": {
+                  "title": "Delta",
+                  "author": "Cy Cleaner",
+                  "description": "About Delta",
+                  "releaseDate": null,
+                  "genres": [],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": false,
+                  "language": "fr",
+                  "type": null,
+                  "titleIgnorePrefix": "Delta"
+                },
+                "coverPath": null,
+                "tags": [
+                  "kids"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 50,
+              "recentEpisode": {
+                "libraryItemId": "<item-delta>",
+                "podcastId": "<podcast-delta>",
+                "id": "<ep-delta-1>",
+                "oldEpisodeId": null,
+                "index": 1,
+                "season": "",
+                "episode": "",
+                "episodeType": "full",
+                "title": "Delta One",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Mon, 01 Apr 2024 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "6",
+                  "metadata": {
+                    "filename": "Delta One.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Delta One.mp3",
+                    "relPath": "Delta One.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 900,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            },
+            {
+              "id": "<item-alpha>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/The Alpha Show",
+              "relPath": "The Alpha Show",
+              "isFile": null,
+              "mtimeMs": 9000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 3000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-alpha>",
+                "metadata": {
+                  "title": "The Alpha Show",
+                  "author": "Zed Zimmer",
+                  "description": "About The Alpha Show",
+                  "releaseDate": null,
+                  "genres": [
+                    "Tech",
+                    "News"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": "1001",
+                  "itunesArtistId": "2001",
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Alpha Show, The"
+                },
+                "coverPath": null,
+                "tags": [
+                  "daily",
+                  "kids"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 5000,
+              "recentEpisode": {
+                "libraryItemId": "<item-alpha>",
+                "podcastId": "<podcast-alpha>",
+                "id": "<ep-alpha-2>",
+                "oldEpisodeId": null,
+                "index": 2,
+                "season": "1",
+                "episode": "2",
+                "episodeType": "full",
+                "title": "Alpha Two",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Tue, 05 Mar 2024 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "2",
+                  "metadata": {
+                    "filename": "Alpha Two.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Alpha Two.mp3",
+                    "relPath": "Alpha Two.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 1200,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            },
+            {
+              "id": "<item-alpha>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/The Alpha Show",
+              "relPath": "The Alpha Show",
+              "isFile": null,
+              "mtimeMs": 9000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 3000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-alpha>",
+                "metadata": {
+                  "title": "The Alpha Show",
+                  "author": "Zed Zimmer",
+                  "description": "About The Alpha Show",
+                  "releaseDate": null,
+                  "genres": [
+                    "Tech",
+                    "News"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": "1001",
+                  "itunesArtistId": "2001",
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Alpha Show, The"
+                },
+                "coverPath": null,
+                "tags": [
+                  "daily",
+                  "kids"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 5000,
+              "recentEpisode": {
+                "libraryItemId": "<item-alpha>",
+                "podcastId": "<podcast-alpha>",
+                "id": "<ep-alpha-1>",
+                "oldEpisodeId": null,
+                "index": 1,
+                "season": "1",
+                "episode": "1",
+                "episodeType": "full",
+                "title": "Alpha One",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Wed, 10 Jan 2024 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "1",
+                  "metadata": {
+                    "filename": "Alpha One.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Alpha One.mp3",
+                    "relPath": "Alpha One.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 600,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            },
+            {
+              "id": "<item-beta>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/beta cast",
+              "relPath": "beta cast",
+              "isFile": null,
+              "mtimeMs": 2000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-beta>",
+                "metadata": {
+                  "title": "beta cast",
+                  "author": "Amy able",
+                  "description": "About beta cast",
+                  "releaseDate": null,
+                  "genres": [
+                    "Comedy"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": true,
+                  "language": "de",
+                  "type": null,
+                  "titleIgnorePrefix": "beta cast"
+                },
+                "coverPath": null,
+                "tags": [
+                  "adult"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 100,
+              "recentEpisode": {
+                "libraryItemId": "<item-beta>",
+                "podcastId": "<podcast-beta>",
+                "id": "<ep-beta-2>",
+                "oldEpisodeId": null,
+                "index": 2,
+                "season": "",
+                "episode": "",
+                "episodeType": "full",
+                "title": "Beta Two",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Mon, 25 Dec 2023 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "5",
+                  "metadata": {
+                    "filename": "Beta Two.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Beta Two.mp3",
+                    "relPath": "Beta Two.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 450,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            },
+            {
+              "id": "<item-beta>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/beta cast",
+              "relPath": "beta cast",
+              "isFile": null,
+              "mtimeMs": 2000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-beta>",
+                "metadata": {
+                  "title": "beta cast",
+                  "author": "Amy able",
+                  "description": "About beta cast",
+                  "releaseDate": null,
+                  "genres": [
+                    "Comedy"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": true,
+                  "language": "de",
+                  "type": null,
+                  "titleIgnorePrefix": "beta cast"
+                },
+                "coverPath": null,
+                "tags": [
+                  "adult"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 100,
+              "recentEpisode": {
+                "libraryItemId": "<item-beta>",
+                "podcastId": "<podcast-beta>",
+                "id": "<ep-beta-1>",
+                "oldEpisodeId": null,
+                "index": 1,
+                "season": "",
+                "episode": "",
+                "episodeType": "full",
+                "title": "Beta One",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Wed, 01 May 2024 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "4",
+                  "metadata": {
+                    "filename": "Beta One.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Beta One.mp3",
+                    "relPath": "Beta One.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 300,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            }
+          ],
+          "total": 7
+        },
+        {
+          "id": "recently-added",
+          "label": "Recently Added",
+          "labelStringKey": "LabelRecentlyAdded",
+          "type": "podcast",
+          "entities": [
+            {
+              "id": "<item-gamma>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/A Gamma Hour",
+              "relPath": "A Gamma Hour",
+              "isFile": null,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 2000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-gamma>",
+                "metadata": {
+                  "title": "A Gamma Hour",
+                  "author": null,
+                  "description": "About A Gamma Hour",
+                  "releaseDate": null,
+                  "genres": [
+                    "Tech"
+                  ],
+                  "feedUrl": "https://example.test/gamma.xml",
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Gamma Hour, A"
+                },
+                "coverPath": null,
+                "tags": [],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 9000
+              },
+              "numFiles": 0,
+              "size": 9000
+            },
+            {
+              "id": "<item-alpha>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/The Alpha Show",
+              "relPath": "The Alpha Show",
+              "isFile": null,
+              "mtimeMs": 9000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 3000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-alpha>",
+                "metadata": {
+                  "title": "The Alpha Show",
+                  "author": "Zed Zimmer",
+                  "description": "About The Alpha Show",
+                  "releaseDate": null,
+                  "genres": [
+                    "Tech",
+                    "News"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": "1001",
+                  "itunesArtistId": "2001",
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Alpha Show, The"
+                },
+                "coverPath": null,
+                "tags": [
+                  "daily",
+                  "kids"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 5000
+              },
+              "numFiles": 0,
+              "size": 5000
+            },
+            {
+              "id": "<item-beta>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/beta cast",
+              "relPath": "beta cast",
+              "isFile": null,
+              "mtimeMs": 2000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-beta>",
+                "metadata": {
+                  "title": "beta cast",
+                  "author": "Amy able",
+                  "description": "About beta cast",
+                  "releaseDate": null,
+                  "genres": [
+                    "Comedy"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": true,
+                  "language": "de",
+                  "type": null,
+                  "titleIgnorePrefix": "beta cast"
+                },
+                "coverPath": null,
+                "tags": [
+                  "adult"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 100
+              },
+              "numFiles": 0,
+              "size": 100
+            },
+            {
+              "id": "<item-epsilon>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/Epsilon",
+              "relPath": "Epsilon",
+              "isFile": null,
+              "mtimeMs": 4000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 4000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": true,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-epsilon>",
+                "metadata": {
+                  "title": "Epsilon",
+                  "author": "Eve Else",
+                  "description": "About Epsilon",
+                  "releaseDate": null,
+                  "genres": [
+                    "News"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Epsilon"
+                },
+                "coverPath": null,
+                "tags": [],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 700
+              },
+              "numFiles": 0,
+              "size": 700
+            },
+            {
+              "id": "<item-zeta>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/Zeta",
+              "relPath": "Zeta",
+              "isFile": null,
+              "mtimeMs": 6000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 6000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-zeta>",
+                "metadata": {
+                  "title": "Zeta",
+                  "author": "Yan Young",
+                  "description": "About Zeta",
+                  "releaseDate": null,
+                  "genres": [
+                    "Tech"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": null,
+                  "language": null,
+                  "type": null,
+                  "titleIgnorePrefix": "Zeta"
+                },
+                "coverPath": null,
+                "tags": [
+                  "misc"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 3000
+              },
+              "numFiles": 0,
+              "size": 3000
+            }
+          ],
+          "total": 5
+        },
+        {
+          "id": "listen-again",
+          "label": "Listen Again",
+          "labelStringKey": "LabelListenAgain",
+          "type": "episode",
+          "entities": [
+            {
+              "id": "<item-alpha>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<podcast-library>",
+              "folderId": "<folder>",
+              "path": "/test/pods/The Alpha Show",
+              "relPath": "The Alpha Show",
+              "isFile": null,
+              "mtimeMs": 9000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 3000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-alpha>",
+                "metadata": {
+                  "title": "The Alpha Show",
+                  "author": "Zed Zimmer",
+                  "description": "About The Alpha Show",
+                  "releaseDate": null,
+                  "genres": [
+                    "Tech",
+                    "News"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": "1001",
+                  "itunesArtistId": "2001",
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Alpha Show, The"
+                },
+                "coverPath": null,
+                "tags": [
+                  "daily",
+                  "kids"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0
+              },
+              "numFiles": 0,
+              "size": 5000,
+              "recentEpisode": {
+                "libraryItemId": "<item-alpha>",
+                "podcastId": "<podcast-alpha>",
+                "id": "<ep-alpha-2>",
+                "oldEpisodeId": null,
+                "index": 2,
+                "season": "1",
+                "episode": "2",
+                "episodeType": "full",
+                "title": "Alpha Two",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Tue, 05 Mar 2024 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "2",
+                  "metadata": {
+                    "filename": "Alpha Two.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Alpha Two.mp3",
+                    "relPath": "Alpha Two.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 1200,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>"
+              }
+            }
+          ],
+          "total": 1
+        }
+      ]
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/personalized (podcast library) > builds the episode shelves for each user > compact shelves by user": {
+    "root": [
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 7,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One",
+          "Delta / Delta One",
+          "The Alpha Show / Alpha Two",
+          "The Alpha Show / Alpha One",
+          "beta cast / Beta Two",
+          "beta cast / Beta One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 5,
+        "entities": [
+          "A Gamma Hour",
+          "The Alpha Show",
+          "beta cast",
+          "Epsilon",
+          "Zeta"
+        ]
+      }
+    ],
+    "admin": [
+      {
+        "id": "continue-listening",
+        "type": "episode",
+        "total": 2,
+        "entities": [
+          "Delta / Delta One",
+          "The Alpha Show / Alpha One"
+        ]
+      },
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 7,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One",
+          "Delta / Delta One",
+          "The Alpha Show / Alpha Two",
+          "The Alpha Show / Alpha One",
+          "beta cast / Beta Two",
+          "beta cast / Beta One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 5,
+        "entities": [
+          "A Gamma Hour",
+          "The Alpha Show",
+          "beta cast",
+          "Epsilon",
+          "Zeta"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "The Alpha Show / Alpha Two"
+        ]
+      }
+    ],
+    "user": [
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 5,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One",
+          "Delta / Delta One",
+          "The Alpha Show / Alpha Two",
+          "The Alpha Show / Alpha One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 3,
+        "entities": [
+          "A Gamma Hour",
+          "The Alpha Show",
+          "Epsilon"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 2,
+        "entities": [
+          "Epsilon / Epsilon One",
+          "The Alpha Show / Alpha One"
+        ]
+      }
+    ],
+    "guest": [
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 5,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One",
+          "Delta / Delta One",
+          "The Alpha Show / Alpha Two",
+          "The Alpha Show / Alpha One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 3,
+        "entities": [
+          "A Gamma Hour",
+          "The Alpha Show",
+          "Epsilon"
+        ]
+      }
+    ],
+    "kidsOnly": [
+      {
+        "id": "continue-listening",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "The Alpha Show / Alpha Two"
+        ]
+      },
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 3,
+        "entities": [
+          "Delta / Delta One",
+          "The Alpha Show / Alpha Two",
+          "The Alpha Show / Alpha One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 1,
+        "entities": [
+          "The Alpha Show"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "Delta / Delta One"
+        ]
+      }
+    ],
+    "noKids": [
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 4,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One",
+          "beta cast / Beta Two",
+          "beta cast / Beta One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 4,
+        "entities": [
+          "A Gamma Hour",
+          "beta cast",
+          "Epsilon",
+          "Zeta"
+        ]
+      }
+    ]
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/personalized (podcast library) > honours limit and include > limits and includes": {
+    "limit=1": [
+      {
+        "id": "continue-listening",
+        "type": "episode",
+        "total": 2,
+        "entities": [
+          "Delta / Delta One"
+        ]
+      },
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 7,
+        "entities": [
+          "Epsilon / Epsilon Two"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 5,
+        "entities": [
+          "A Gamma Hour"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "The Alpha Show / Alpha Two"
+        ]
+      }
+    ],
+    "limit=2": [
+      {
+        "id": "continue-listening",
+        "type": "episode",
+        "total": 2,
+        "entities": [
+          "Delta / Delta One",
+          "The Alpha Show / Alpha One"
+        ]
+      },
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 7,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 5,
+        "entities": [
+          "A Gamma Hour",
+          "The Alpha Show"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "The Alpha Show / Alpha Two"
+        ]
+      }
+    ],
+    "limit=100": [
+      {
+        "id": "continue-listening",
+        "type": "episode",
+        "total": 2,
+        "entities": [
+          "Delta / Delta One",
+          "The Alpha Show / Alpha One"
+        ]
+      },
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 7,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One",
+          "Delta / Delta One",
+          "The Alpha Show / Alpha Two",
+          "The Alpha Show / Alpha One",
+          "beta cast / Beta Two",
+          "beta cast / Beta One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 5,
+        "entities": [
+          "A Gamma Hour",
+          "The Alpha Show",
+          "beta cast",
+          "Epsilon",
+          "Zeta"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "The Alpha Show / Alpha Two"
+        ]
+      }
+    ],
+    "limit=0": [
+      {
+        "id": "continue-listening",
+        "type": "episode",
+        "total": 2,
+        "entities": [
+          "Delta / Delta One",
+          "The Alpha Show / Alpha One"
+        ]
+      },
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 7,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One",
+          "Delta / Delta One",
+          "The Alpha Show / Alpha Two",
+          "The Alpha Show / Alpha One",
+          "beta cast / Beta Two",
+          "beta cast / Beta One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 5,
+        "entities": [
+          "A Gamma Hour",
+          "The Alpha Show",
+          "beta cast",
+          "Epsilon",
+          "Zeta"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "The Alpha Show / Alpha Two"
+        ]
+      }
+    ],
+    "include=rssfeed": [
+      {
+        "id": "continue-listening",
+        "type": "episode",
+        "total": 2,
+        "entities": [
+          "Delta / Delta One",
+          "The Alpha Show / Alpha One"
+        ]
+      },
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 7,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One",
+          "Delta / Delta One",
+          "The Alpha Show / Alpha Two",
+          "The Alpha Show / Alpha One",
+          "beta cast / Beta Two",
+          "beta cast / Beta One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 5,
+        "entities": [
+          "A Gamma Hour",
+          "The Alpha Show",
+          "beta cast",
+          "Epsilon",
+          "Zeta"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "The Alpha Show / Alpha Two"
+        ]
+      }
+    ],
+    "include=numepisodesincomplete": [
+      {
+        "id": "continue-listening",
+        "type": "episode",
+        "total": 2,
+        "entities": [
+          "Delta / Delta One",
+          "The Alpha Show / Alpha One"
+        ]
+      },
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 7,
+        "entities": [
+          "Epsilon / Epsilon Two",
+          "Epsilon / Epsilon One",
+          "Delta / Delta One",
+          "The Alpha Show / Alpha Two",
+          "The Alpha Show / Alpha One",
+          "beta cast / Beta Two",
+          "beta cast / Beta One"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 5,
+        "entities": [
+          "A Gamma Hour",
+          "The Alpha Show",
+          "beta cast",
+          "Epsilon",
+          "Zeta"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "The Alpha Show / Alpha Two"
+        ]
+      }
+    ],
+    "limit=1&include=rssfeed,numepisodesincomplete": [
+      {
+        "id": "continue-listening",
+        "type": "episode",
+        "total": 2,
+        "entities": [
+          "Delta / Delta One"
+        ]
+      },
+      {
+        "id": "newest-episodes",
+        "type": "episode",
+        "total": 7,
+        "entities": [
+          "Epsilon / Epsilon Two"
+        ]
+      },
+      {
+        "id": "recently-added",
+        "type": "podcast",
+        "total": 5,
+        "entities": [
+          "A Gamma Hour"
+        ]
+      },
+      {
+        "id": "listen-again",
+        "type": "episode",
+        "total": 1,
+        "entities": [
+          "The Alpha Show / Alpha Two"
+        ]
+      }
+    ]
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/personalized (podcast library) > honours limit and include > recently added with includes": [
+    {
+      "title": "A Gamma Hour",
+      "rssFeed": true
+    },
+    {
+      "title": "The Alpha Show",
+      "rssFeed": false,
+      "numEpisodesIncomplete": 2
+    },
+    {
+      "title": "beta cast",
+      "rssFeed": false,
+      "numEpisodesIncomplete": 2
+    },
+    {
+      "title": "Epsilon",
+      "rssFeed": false,
+      "numEpisodesIncomplete": 2
+    },
+    {
+      "title": "Zeta",
+      "rssFeed": false
+    }
+  ],
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/personalized (podcast library) > lists newest episodes by created date, skipping episodes older than 60 days and restricted podcasts > newest episodes": {
+    "admin": {
+      "total": 7,
+      "episodes": [
+        "Epsilon Two",
+        "Epsilon One",
+        "Delta One",
+        "Alpha Two",
+        "Alpha One",
+        "Beta Two",
+        "Beta One"
+      ]
+    },
+    "user": {
+      "total": 5,
+      "episodes": [
+        "Epsilon Two",
+        "Epsilon One",
+        "Delta One",
+        "Alpha Two",
+        "Alpha One"
+      ]
+    },
+    "kidsOnly": {
+      "total": 3,
+      "episodes": [
+        "Delta One",
+        "Alpha Two",
+        "Alpha One"
+      ]
+    },
+    "noKids": {
+      "total": 4,
+      "episodes": [
+        "Epsilon Two",
+        "Epsilon One",
+        "Beta Two",
+        "Beta One"
+      ]
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/personalized (podcast library) > orders continue listening by progress update time and hides hidden progress > continue listening": {
+    "admin": [
+      {
+        "title": "Delta One",
+        "libraryItem": "<item-delta>",
+        "isMissing": true
+      },
+      {
+        "title": "Alpha One",
+        "libraryItem": "<item-alpha>",
+        "isMissing": false
+      }
+    ],
+    "user": null
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/personalized (podcast library) > returns no shelves for an empty library > empty library": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": []
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/personalized (podcast library) > shows finished episodes on listen again > listen again": {
+    "admin": {
+      "total": 1,
+      "episodes": [
+        "The Alpha Show / Alpha Two"
+      ]
+    },
+    "user": {
+      "total": 2,
+      "episodes": [
+        "Epsilon / Epsilon One",
+        "The Alpha Show / Alpha One"
+      ]
+    },
+    "kidsOnly": {
+      "total": 1,
+      "episodes": [
+        "Delta / Delta One"
+      ]
+    },
+    "guest": null
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/recent-episodes > is a 404 for book libraries > book library": {
+    "bookLibrary": 404,
+    "podcastLibrary": 200
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/recent-episodes > lists unfinished episodes newest published first with pagination > recent episodes": {
+    "admin limit=20": {
+      "limit": 20,
+      "page": 0,
+      "episodes": [
+        "Epsilon / Epsilon Two",
+        "beta cast / Beta One",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha Three",
+        "The Alpha Show / Alpha One",
+        "beta cast / Beta Two",
+        "Epsilon / Epsilon One"
+      ]
+    },
+    "admin limit=3&page=0": {
+      "limit": 3,
+      "page": 0,
+      "episodes": [
+        "Epsilon / Epsilon Two",
+        "beta cast / Beta One",
+        "Delta / Delta One"
+      ]
+    },
+    "admin limit=3&page=1": {
+      "limit": 3,
+      "page": 1,
+      "episodes": [
+        "The Alpha Show / Alpha Three",
+        "The Alpha Show / Alpha One",
+        "beta cast / Beta Two"
+      ]
+    },
+    "admin limit=3&page=2": {
+      "limit": 3,
+      "page": 2,
+      "episodes": [
+        "Epsilon / Epsilon One"
+      ]
+    },
+    "admin limit=3&page=9": {
+      "limit": 3,
+      "page": 9,
+      "episodes": []
+    },
+    "admin ": {
+      "limit": 0,
+      "page": 0,
+      "episodes": []
+    },
+    "user limit=20": {
+      "limit": 20,
+      "page": 0,
+      "episodes": [
+        "Epsilon / Epsilon Two",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three"
+      ]
+    },
+    "guest limit=20": {
+      "limit": 20,
+      "page": 0,
+      "episodes": [
+        "Epsilon / Epsilon Two",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three",
+        "The Alpha Show / Alpha One",
+        "Epsilon / Epsilon One"
+      ]
+    },
+    "kidsOnly limit=20": {
+      "limit": 20,
+      "page": 0,
+      "episodes": [
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three",
+        "The Alpha Show / Alpha One"
+      ]
+    },
+    "noKids limit=20": {
+      "limit": 20,
+      "page": 0,
+      "episodes": [
+        "Epsilon / Epsilon Two",
+        "beta cast / Beta One",
+        "beta cast / Beta Two",
+        "Epsilon / Epsilon One"
+      ]
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/recent-episodes > lists unfinished episodes newest published first with pagination > user full body": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "episodes": [
+          {
+            "libraryItemId": "<item-epsilon>",
+            "podcastId": "<podcast-epsilon>",
+            "id": "<ep-epsilon-2>",
+            "oldEpisodeId": null,
+            "index": 2,
+            "season": "",
+            "episode": "",
+            "episodeType": "full",
+            "title": "Epsilon Two",
+            "subtitle": null,
+            "description": null,
+            "enclosure": null,
+            "guid": null,
+            "pubDate": "Wed, 01 Jan 2025 00:00:00 GMT",
+            "chapters": [],
+            "audioFile": {
+              "index": 1,
+              "ino": "8",
+              "metadata": {
+                "filename": "Epsilon Two.mp3",
+                "ext": ".mp3",
+                "path": "/x/Epsilon Two.mp3",
+                "relPath": "Epsilon Two.mp3",
+                "size": 1000,
+                "mtimeMs": 1,
+                "ctimeMs": 1,
+                "birthtimeMs": 1
+              },
+              "addedAt": 1,
+              "updatedAt": 1,
+              "trackNumFromMeta": null,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "format": "MP3",
+              "duration": 200,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "embeddedCoverArt": null,
+              "metaTags": {},
+              "mimeType": "audio/mpeg"
+            },
+            "publishedAt": "<timestamp>",
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "audioTrack": {
+              "index": 1,
+              "ino": "8",
+              "metadata": {
+                "filename": "Epsilon Two.mp3",
+                "ext": ".mp3",
+                "path": "/x/Epsilon Two.mp3",
+                "relPath": "Epsilon Two.mp3",
+                "size": 1000,
+                "mtimeMs": 1,
+                "ctimeMs": 1,
+                "birthtimeMs": 1
+              },
+              "addedAt": 1,
+              "updatedAt": 1,
+              "trackNumFromMeta": null,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "format": "MP3",
+              "duration": 200,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "embeddedCoverArt": null,
+              "metaTags": {},
+              "mimeType": "audio/mpeg",
+              "startOffset": 0,
+              "title": "Epsilon Two.mp3",
+              "contentUrl": "/api/items/<item-epsilon>/file/8"
+            },
+            "size": 1000,
+            "duration": 200,
+            "podcast": {
+              "id": "<podcast-epsilon>",
+              "libraryItemId": "<item-epsilon>",
+              "metadata": {
+                "title": "Epsilon",
+                "author": "Eve Else",
+                "description": "About Epsilon",
+                "releaseDate": null,
+                "genres": [
+                  "News"
+                ],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "en",
+                "type": null
+              },
+              "coverPath": null,
+              "tags": [],
+              "episodes": [],
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null
+            },
+            "libraryId": "<podcast-library>"
+          },
+          {
+            "libraryItemId": "<item-delta>",
+            "podcastId": "<podcast-delta>",
+            "id": "<ep-delta-1>",
+            "oldEpisodeId": null,
+            "index": 1,
+            "season": "",
+            "episode": "",
+            "episodeType": "full",
+            "title": "Delta One",
+            "subtitle": null,
+            "description": null,
+            "enclosure": null,
+            "guid": null,
+            "pubDate": "Mon, 01 Apr 2024 00:00:00 GMT",
+            "chapters": [],
+            "audioFile": {
+              "index": 1,
+              "ino": "6",
+              "metadata": {
+                "filename": "Delta One.mp3",
+                "ext": ".mp3",
+                "path": "/x/Delta One.mp3",
+                "relPath": "Delta One.mp3",
+                "size": 1000,
+                "mtimeMs": 1,
+                "ctimeMs": 1,
+                "birthtimeMs": 1
+              },
+              "addedAt": 1,
+              "updatedAt": 1,
+              "trackNumFromMeta": null,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "format": "MP3",
+              "duration": 900,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "embeddedCoverArt": null,
+              "metaTags": {},
+              "mimeType": "audio/mpeg"
+            },
+            "publishedAt": "<timestamp>",
+            "addedAt": "<timestamp>",
+            "updatedAt": "<timestamp>",
+            "audioTrack": {
+              "index": 1,
+              "ino": "6",
+              "metadata": {
+                "filename": "Delta One.mp3",
+                "ext": ".mp3",
+                "path": "/x/Delta One.mp3",
+                "relPath": "Delta One.mp3",
+                "size": 1000,
+                "mtimeMs": 1,
+                "ctimeMs": 1,
+                "birthtimeMs": 1
+              },
+              "addedAt": 1,
+              "updatedAt": 1,
+              "trackNumFromMeta": null,
+              "discNumFromMeta": null,
+              "trackNumFromFilename": null,
+              "discNumFromFilename": null,
+              "manuallyVerified": false,
+              "format": "MP3",
+              "duration": 900,
+              "bitRate": 64000,
+              "language": null,
+              "codec": "mp3",
+              "timeBase": "1/14112000",
+              "channels": 2,
+              "channelLayout": "stereo",
+              "chapters": [],
+              "embeddedCoverArt": null,
+              "metaTags": {},
+              "mimeType": "audio/mpeg",
+              "startOffset": 0,
+              "title": "Delta One.mp3",
+              "contentUrl": "/api/items/<item-delta>/file/6"
+            },
+            "size": 1000,
+            "duration": 900,
+            "podcast": {
+              "id": "<podcast-delta>",
+              "libraryItemId": "<item-delta>",
+              "metadata": {
+                "title": "Delta",
+                "author": "Cy Cleaner",
+                "description": "About Delta",
+                "releaseDate": null,
+                "genres": [],
+                "feedUrl": null,
+                "imageUrl": null,
+                "itunesPageUrl": null,
+                "itunesId": null,
+                "itunesArtistId": null,
+                "explicit": false,
+                "language": "fr",
+                "type": null
+              },
+              "coverPath": null,
+              "tags": [
+                "kids"
+              ],
+              "episodes": [],
+              "autoDownloadEpisodes": null,
+              "autoDownloadSchedule": null,
+              "lastEpisodeCheck": null,
+              "maxEpisodesToKeep": null,
+              "maxNewEpisodesToDownload": null
+            },
+            "libraryId": "<podcast-library>"
+          }
+        ],
+        "limit": 2,
+        "page": 0
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/search (podcast library) > applies explicit and tag permissions to titles and episodes > restricted users": {
+    "user a": {
+      "podcast": [
+        "The Alpha Show",
+        "A Gamma Hour",
+        "Delta"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three",
+        "Delta / Delta One"
+      ],
+      "tags": [
+        {
+          "name": "daily",
+          "numItems": 1
+        },
+        {
+          "name": "adult",
+          "numItems": 1
+        }
+      ],
+      "genres": []
+    },
+    "user beta": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "user kids": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [
+        {
+          "name": "kids",
+          "numItems": 2
+        }
+      ],
+      "genres": []
+    },
+    "user one": {
+      "podcast": [],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "Delta / Delta One",
+        "Epsilon / Epsilon One"
+      ],
+      "tags": [],
+      "genres": []
+    },
+    "kidsOnly a": {
+      "podcast": [
+        "The Alpha Show",
+        "Delta"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three",
+        "Delta / Delta One"
+      ],
+      "tags": [
+        {
+          "name": "daily",
+          "numItems": 1
+        },
+        {
+          "name": "adult",
+          "numItems": 1
+        }
+      ],
+      "genres": []
+    },
+    "kidsOnly beta": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "kidsOnly kids": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [
+        {
+          "name": "kids",
+          "numItems": 2
+        }
+      ],
+      "genres": []
+    },
+    "kidsOnly one": {
+      "podcast": [],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "Delta / Delta One"
+      ],
+      "tags": [],
+      "genres": []
+    },
+    "noKids a": {
+      "podcast": [
+        "beta cast",
+        "A Gamma Hour",
+        "Zeta"
+      ],
+      "episodes": [
+        "beta cast / Beta One",
+        "beta cast / Beta Two"
+      ],
+      "tags": [
+        {
+          "name": "daily",
+          "numItems": 1
+        },
+        {
+          "name": "adult",
+          "numItems": 1
+        }
+      ],
+      "genres": []
+    },
+    "noKids beta": {
+      "podcast": [
+        "beta cast"
+      ],
+      "episodes": [
+        "beta cast / Beta One",
+        "beta cast / Beta Two"
+      ],
+      "tags": [],
+      "genres": []
+    },
+    "noKids kids": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [
+        {
+          "name": "kids",
+          "numItems": 2
+        }
+      ],
+      "genres": []
+    },
+    "noKids one": {
+      "podcast": [],
+      "episodes": [
+        "beta cast / Beta One",
+        "Epsilon / Epsilon One"
+      ],
+      "tags": [],
+      "genres": []
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/search (podcast library) > limits each result group and checks the query parameter > limits and invalid queries": {
+    "q=a&limit=1": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One"
+      ],
+      "tags": [
+        {
+          "name": "daily",
+          "numItems": 1
+        }
+      ],
+      "genres": []
+    },
+    "q=a&limit=2": {
+      "podcast": [
+        "The Alpha Show",
+        "beta cast"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two"
+      ],
+      "tags": [
+        {
+          "name": "daily",
+          "numItems": 1
+        },
+        {
+          "name": "adult",
+          "numItems": 1
+        }
+      ],
+      "genres": []
+    },
+    "q=a&limit=0": {
+      "podcast": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Zeta"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three",
+        "beta cast / Beta One",
+        "beta cast / Beta Two",
+        "Delta / Delta One"
+      ],
+      "tags": [
+        {
+          "name": "daily",
+          "numItems": 1
+        },
+        {
+          "name": "adult",
+          "numItems": 1
+        }
+      ],
+      "genres": []
+    },
+    "q=a": {
+      "podcast": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Zeta"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three",
+        "beta cast / Beta One",
+        "beta cast / Beta Two",
+        "Delta / Delta One"
+      ],
+      "tags": [
+        {
+          "name": "daily",
+          "numItems": 1
+        },
+        {
+          "name": "adult",
+          "numItems": 1
+        }
+      ],
+      "genres": []
+    },
+    "q=%20alpha%20": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three"
+      ],
+      "tags": [],
+      "genres": []
+    },
+    "q=": {
+      "status": 400,
+      "body": "Invalid request. Query param \"q\" must be a string"
+    },
+    "limit=2": {
+      "status": 400,
+      "body": "Invalid request. Query param \"q\" must be a string"
+    },
+    "q=a&q=b": {
+      "status": 400,
+      "body": "Invalid request. Query param \"q\" must be a string"
+    },
+    "q[]=a": {
+      "status": 400,
+      "body": "Invalid request. Query param \"q\" must be a string"
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/search (podcast library) > matches title, author, itunes ids, episode titles, tags and genres > queries as admin": {
+    "100": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "200": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "1001": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "2001": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "alpha": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three"
+      ],
+      "tags": [],
+      "genres": []
+    },
+    "ALPHA": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three"
+      ],
+      "tags": [],
+      "genres": []
+    },
+    "zed": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "Gamma Hour": {
+      "podcast": [
+        "A Gamma Hour"
+      ],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "one": {
+      "podcast": [],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "beta cast / Beta One",
+        "Delta / Delta One",
+        "Epsilon / Epsilon One"
+      ],
+      "tags": [],
+      "genres": []
+    },
+    "kids": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [
+        {
+          "name": "kids",
+          "numItems": 2
+        }
+      ],
+      "genres": []
+    },
+    "tech": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [],
+      "genres": [
+        {
+          "name": "Tech",
+          "numItems": 3
+        }
+      ]
+    },
+    "news": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [],
+      "genres": [
+        {
+          "name": "News",
+          "numItems": 2
+        }
+      ]
+    },
+    "comedy": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [],
+      "genres": [
+        {
+          "name": "Comedy",
+          "numItems": 1
+        }
+      ]
+    },
+    "ep": {
+      "podcast": [
+        "Epsilon"
+      ],
+      "episodes": [
+        "Epsilon / Epsilon One",
+        "Epsilon / Epsilon Two"
+      ],
+      "tags": [],
+      "genres": []
+    },
+    "amy": {
+      "podcast": [
+        "beta cast"
+      ],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "001": {
+      "podcast": [
+        "The Alpha Show"
+      ],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "nothing-matches": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "%": {
+      "podcast": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three",
+        "beta cast / Beta One",
+        "beta cast / Beta Two",
+        "Delta / Delta One",
+        "Epsilon / Epsilon One",
+        "Epsilon / Epsilon Two"
+      ],
+      "tags": [
+        {
+          "name": "kids",
+          "numItems": 2
+        },
+        {
+          "name": "misc",
+          "numItems": 1
+        },
+        {
+          "name": "daily",
+          "numItems": 1
+        },
+        {
+          "name": "adult",
+          "numItems": 1
+        }
+      ],
+      "genres": [
+        {
+          "name": "Tech",
+          "numItems": 3
+        },
+        {
+          "name": "News",
+          "numItems": 2
+        },
+        {
+          "name": "Comedy",
+          "numItems": 1
+        }
+      ]
+    },
+    "_": {
+      "podcast": [
+        "The Alpha Show",
+        "beta cast",
+        "A Gamma Hour",
+        "Delta",
+        "Epsilon",
+        "Zeta"
+      ],
+      "episodes": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three",
+        "beta cast / Beta One",
+        "beta cast / Beta Two",
+        "Delta / Delta One",
+        "Epsilon / Epsilon One",
+        "Epsilon / Epsilon Two"
+      ],
+      "tags": [
+        {
+          "name": "kids",
+          "numItems": 2
+        },
+        {
+          "name": "misc",
+          "numItems": 1
+        },
+        {
+          "name": "daily",
+          "numItems": 1
+        },
+        {
+          "name": "adult",
+          "numItems": 1
+        }
+      ],
+      "genres": [
+        {
+          "name": "Tech",
+          "numItems": 3
+        },
+        {
+          "name": "News",
+          "numItems": 2
+        },
+        {
+          "name": "Comedy",
+          "numItems": 1
+        }
+      ]
+    },
+    "o'brien": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "a\"b": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "Zeta": {
+      "podcast": [
+        "Zeta"
+      ],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/search (podcast library) > only searches the requested library > full body in other library": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "podcast": [
+          {
+            "libraryItem": {
+              "id": "<item-elsewhere>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<other-library>",
+              "folderId": "<other-folder>",
+              "path": "/test/otherpods/Elsewhere Pod",
+              "relPath": "Elsewhere Pod",
+              "isFile": null,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-elsewhere>",
+                "metadata": {
+                  "title": "Elsewhere Pod",
+                  "author": "Far Away",
+                  "description": "About Elsewhere Pod",
+                  "releaseDate": null,
+                  "genres": [
+                    "Tech"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Elsewhere Pod"
+                },
+                "coverPath": null,
+                "tags": [
+                  "kids"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0,
+                "libraryItemId": "<item-elsewhere>",
+                "episodes": []
+              },
+              "numFiles": 0,
+              "size": 123,
+              "scanVersion": null,
+              "libraryFiles": []
+            }
+          }
+        ],
+        "tags": [],
+        "genres": [],
+        "episodes": [
+          {
+            "libraryItem": {
+              "id": "<item-elsewhere>",
+              "ino": null,
+              "oldLibraryItemId": null,
+              "libraryId": "<other-library>",
+              "folderId": "<other-folder>",
+              "path": "/test/otherpods/Elsewhere Pod",
+              "relPath": "Elsewhere Pod",
+              "isFile": null,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000,
+              "addedAt": "<timestamp>",
+              "updatedAt": "<timestamp>",
+              "isMissing": false,
+              "isInvalid": false,
+              "mediaType": "podcast",
+              "media": {
+                "id": "<podcast-elsewhere>",
+                "metadata": {
+                  "title": "Elsewhere Pod",
+                  "author": "Far Away",
+                  "description": "About Elsewhere Pod",
+                  "releaseDate": null,
+                  "genres": [
+                    "Tech"
+                  ],
+                  "feedUrl": null,
+                  "imageUrl": null,
+                  "itunesPageUrl": null,
+                  "itunesId": null,
+                  "itunesArtistId": null,
+                  "explicit": false,
+                  "language": "en",
+                  "type": null,
+                  "titleIgnorePrefix": "Elsewhere Pod"
+                },
+                "coverPath": null,
+                "tags": [
+                  "kids"
+                ],
+                "numEpisodes": 0,
+                "autoDownloadEpisodes": null,
+                "autoDownloadSchedule": null,
+                "lastEpisodeCheck": null,
+                "maxEpisodesToKeep": null,
+                "maxNewEpisodesToDownload": null,
+                "size": 0,
+                "libraryItemId": "<item-elsewhere>",
+                "episodes": []
+              },
+              "numFiles": 0,
+              "size": 123,
+              "scanVersion": null,
+              "libraryFiles": [],
+              "recentEpisode": {
+                "libraryItemId": "<item-elsewhere>",
+                "podcastId": "<podcast-elsewhere>",
+                "id": "<ep-elsewhere-1>",
+                "oldEpisodeId": null,
+                "index": 1,
+                "season": "",
+                "episode": "",
+                "episodeType": "full",
+                "title": "Elsewhere One",
+                "subtitle": null,
+                "description": null,
+                "enclosure": null,
+                "guid": null,
+                "pubDate": "Sat, 01 Jun 2024 00:00:00 GMT",
+                "chapters": [],
+                "audioFile": {
+                  "index": 1,
+                  "ino": "9",
+                  "metadata": {
+                    "filename": "Elsewhere One.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Elsewhere One.mp3",
+                    "relPath": "Elsewhere One.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 111,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg"
+                },
+                "publishedAt": "<timestamp>",
+                "addedAt": "<timestamp>",
+                "updatedAt": "<timestamp>",
+                "audioTrack": {
+                  "index": 1,
+                  "ino": "9",
+                  "metadata": {
+                    "filename": "Elsewhere One.mp3",
+                    "ext": ".mp3",
+                    "path": "/x/Elsewhere One.mp3",
+                    "relPath": "Elsewhere One.mp3",
+                    "size": 1000,
+                    "mtimeMs": 1,
+                    "ctimeMs": 1,
+                    "birthtimeMs": 1
+                  },
+                  "addedAt": 1,
+                  "updatedAt": 1,
+                  "trackNumFromMeta": null,
+                  "discNumFromMeta": null,
+                  "trackNumFromFilename": null,
+                  "discNumFromFilename": null,
+                  "manuallyVerified": false,
+                  "format": "MP3",
+                  "duration": 111,
+                  "bitRate": 64000,
+                  "language": null,
+                  "codec": "mp3",
+                  "timeBase": "1/14112000",
+                  "channels": 2,
+                  "channelLayout": "stereo",
+                  "chapters": [],
+                  "embeddedCoverArt": null,
+                  "metaTags": {},
+                  "mimeType": "audio/mpeg",
+                  "startOffset": 0,
+                  "title": "Elsewhere One.mp3",
+                  "contentUrl": "/api/items/<item-elsewhere>/file/9"
+                },
+                "size": 1000,
+                "duration": 111
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/search (podcast library) > only searches the requested library > library scoped": {
+    "here": {
+      "podcast": [],
+      "episodes": [],
+      "tags": [],
+      "genres": []
+    },
+    "there": {
+      "podcast": [
+        "Elsewhere Pod"
+      ],
+      "episodes": [
+        "Elsewhere Pod / Elsewhere One"
+      ],
+      "tags": [],
+      "genres": []
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/stats and filterdata (podcast library) > filterdata lists the genres, tags and languages used in the library > admin": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "authors": [],
+        "genres": [
+          "Comedy",
+          "News",
+          "Tech"
+        ],
+        "tags": [
+          "adult",
+          "daily",
+          "kids",
+          "misc"
+        ],
+        "series": [],
+        "narrators": [],
+        "languages": [
+          "de",
+          "en",
+          "fr"
+        ],
+        "publishers": [],
+        "publishedDecades": [],
+        "bookCount": 0,
+        "authorCount": 0,
+        "seriesCount": 0,
+        "podcastCount": 6,
+        "numIssues": 0,
+        "loadedAt": "<timestamp>"
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/stats and filterdata (podcast library) > filterdata lists the genres, tags and languages used in the library > cached for restricted users": {
+    "user": {
+      "authors": [],
+      "genres": [
+        "Comedy",
+        "News",
+        "Tech"
+      ],
+      "tags": [
+        "adult",
+        "daily",
+        "kids",
+        "misc"
+      ],
+      "series": [],
+      "narrators": [],
+      "languages": [
+        "de",
+        "en",
+        "fr"
+      ],
+      "publishers": [],
+      "publishedDecades": [],
+      "bookCount": 0,
+      "authorCount": 0,
+      "seriesCount": 0,
+      "podcastCount": 6,
+      "numIssues": 0,
+      "loadedAt": "<timestamp>"
+    },
+    "kidsOnlyAfterNewPodcast": {
+      "authors": [],
+      "genres": [
+        "Comedy",
+        "News",
+        "Tech"
+      ],
+      "tags": [
+        "adult",
+        "daily",
+        "kids",
+        "misc"
+      ],
+      "series": [],
+      "narrators": [],
+      "languages": [
+        "de",
+        "en",
+        "fr"
+      ],
+      "publishers": [],
+      "publishedDecades": [],
+      "bookCount": 0,
+      "authorCount": 0,
+      "seriesCount": 0,
+      "podcastCount": 6,
+      "numIssues": 0,
+      "loadedAt": "<timestamp>"
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/stats and filterdata (podcast library) > returns totals, genres, longest and largest podcasts > other library as user": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "largestItems": [
+          {
+            "id": "<item-elsewhere>",
+            "title": "Elsewhere Pod",
+            "size": 123
+          }
+        ],
+        "totalGenres": 1,
+        "genresWithCount": [
+          {
+            "genre": "Tech",
+            "count": 1
+          }
+        ],
+        "totalItems": 1,
+        "longestItems": [
+          {
+            "id": "<item-elsewhere>",
+            "title": "Elsewhere Pod",
+            "duration": 111
+          }
+        ],
+        "totalSize": 123,
+        "totalDuration": 111,
+        "numAudioTracks": 1
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/stats and filterdata (podcast library) > returns totals, genres, longest and largest podcasts > podcast library": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "largestItems": [
+          {
+            "id": "<item-gamma>",
+            "title": "A Gamma Hour",
+            "size": 9000
+          },
+          {
+            "id": "<item-alpha>",
+            "title": "The Alpha Show",
+            "size": 5000
+          },
+          {
+            "id": "<item-zeta>",
+            "title": "Zeta",
+            "size": 3000
+          },
+          {
+            "id": "<item-epsilon>",
+            "title": "Epsilon",
+            "size": 700
+          },
+          {
+            "id": "<item-beta>",
+            "title": "beta cast",
+            "size": 100
+          },
+          {
+            "id": "<item-delta>",
+            "title": "Delta",
+            "size": 50
+          }
+        ],
+        "totalGenres": 3,
+        "genresWithCount": [
+          {
+            "genre": "Tech",
+            "count": 3
+          },
+          {
+            "genre": "News",
+            "count": 2
+          },
+          {
+            "genre": "Comedy",
+            "count": 1
+          }
+        ],
+        "totalItems": 6,
+        "longestItems": [
+          {
+            "id": "<item-alpha>",
+            "title": "The Alpha Show",
+            "duration": 3600
+          },
+          {
+            "id": "<item-delta>",
+            "title": "Delta",
+            "duration": 900
+          },
+          {
+            "id": "<item-beta>",
+            "title": "beta cast",
+            "duration": 750
+          },
+          {
+            "id": "<item-epsilon>",
+            "title": "Epsilon",
+            "duration": 300
+          },
+          {
+            "id": "<item-gamma>",
+            "title": "A Gamma Hour",
+            "duration": null
+          },
+          {
+            "id": "<item-zeta>",
+            "title": "Zeta",
+            "duration": null
+          }
+        ],
+        "totalSize": 17850,
+        "totalDuration": 5550,
+        "numAudioTracks": 8
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/stats and filterdata (podcast library) > returns zeros for an empty library and limits the top lists to ten > empty library": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "largestItems": [],
+        "totalGenres": 0,
+        "genresWithCount": [],
+        "totalItems": 0,
+        "longestItems": [],
+        "totalSize": 0,
+        "totalDuration": 0,
+        "numAudioTracks": 0
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/stats and filterdata (podcast library) > returns zeros for an empty library and limits the top lists to ten > twelve podcasts": {
+    "totals": {
+      "items": 12,
+      "size": 7800,
+      "duration": 780,
+      "tracks": 12,
+      "genres": 3
+    },
+    "genresWithCount": [
+      {
+        "genre": "Tech",
+        "count": 6
+      },
+      {
+        "genre": "Odd",
+        "count": 6
+      },
+      {
+        "genre": "Even",
+        "count": 6
+      }
+    ],
+    "longest": [
+      "Pod 12:120",
+      "Pod 11:110",
+      "Pod 10:100",
+      "Pod 09:90",
+      "Pod 08:80",
+      "Pod 07:70",
+      "Pod 06:60",
+      "Pod 05:50",
+      "Pod 04:40",
+      "Pod 03:30"
+    ],
+    "largest": [
+      "Pod 12:1200",
+      "Pod 11:1100",
+      "Pod 10:1000",
+      "Pod 09:900",
+      "Pod 08:800",
+      "Pod 07:700",
+      "Pod 06:600",
+      "Pod 05:500",
+      "Pod 04:400",
+      "Pod 03:300"
+    ]
+  },
+  "QueryFiltersPodcast (characterization) > GET /api/libraries/:id/stats and filterdata (podcast library) > stats need library access > access": {
+    "forbidden": 403,
+    "unknown": 404,
+    "anonymous": 401
+  },
+  "QueryFiltersPodcast (characterization) > adminStats and userStats > GET /api/me/stats/year/:year aggregates a user: books, podcasts, finished books and months > admin 2024": {
+    "admin": {
+      "totalListeningSessions": 1,
+      "totalListeningTime": 9999,
+      "totalBookListeningTime": 9999,
+      "totalPodcastListeningTime": 0,
+      "topAuthors": [
+        {
+          "name": "Ann Author",
+          "time": 9999
+        }
+      ],
+      "topGenres": [],
+      "mostListenedNarrator": null,
+      "mostListenedMonth": {
+        "month": 0,
+        "time": 9999
+      },
+      "numBooksFinished": 0,
+      "numBooksListened": 1,
+      "longestAudiobookFinished": null,
+      "booksWithCovers": [
+        "<uuid-1>"
+      ],
+      "finishedBooksWithCovers": []
+    }
+  },
+  "QueryFiltersPodcast (characterization) > adminStats and userStats > GET /api/me/stats/year/:year aggregates a user: books, podcasts, finished books and months > user 2024": {
+    "view": {
+      "totalListeningSessions": 8,
+      "totalListeningTime": 1202,
+      "totalBookListeningTime": 1051,
+      "totalPodcastListeningTime": 151,
+      "topAuthors": [
+        {
+          "name": "Ann Author",
+          "time": 700
+        },
+        {
+          "name": "Bob Author",
+          "time": 300
+        },
+        {
+          "name": "Cy Author",
+          "time": 50
+        }
+      ],
+      "topGenres": [
+        {
+          "genre": "Fantasy",
+          "time": 700
+        },
+        {
+          "genre": "Mystery",
+          "time": 300
+        },
+        {
+          "genre": "Horror",
+          "time": 50
+        }
+      ],
+      "mostListenedNarrator": {
+        "time": 700,
+        "name": "Nora"
+      },
+      "mostListenedMonth": {
+        "month": 0,
+        "time": 600
+      },
+      "numBooksFinished": 3,
+      "numBooksListened": 3,
+      "longestAudiobookFinished": {
+        "id": "<uuid-1>",
+        "title": "b2024b",
+        "duration": 2001,
+        "finishedAt": "<iso-date>"
+      },
+      "booksWithCovers": [],
+      "finishedBooksWithCovers": [
+        "b2024a",
+        "b2024b"
+      ]
+    },
+    "longestFinishedTitle": "b2024b"
+  },
+  "QueryFiltersPodcast (characterization) > adminStats and userStats > GET /api/me/stats/year/:year lists at most 5 finished and 25 other books with covers > cover caps": {
+    "finished": 7,
+    "finishedCovers": 5,
+    "covers": 25,
+    "sessions": 32,
+    "numBooksListened": 32,
+    "longest": 17
+  },
+  "QueryFiltersPodcast (characterization) > adminStats and userStats > GET /api/stats/server totals sizes and audio files > books and podcasts": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "books": {
+          "totalSize": 46010,
+          "numItems": 5,
+          "numAudioFiles": 5
+        },
+        "podcasts": {
+          "totalSize": 22973,
+          "numItems": 8,
+          "numAudioFiles": 11
+        },
+        "total": {
+          "totalSize": 68983,
+          "numItems": 13,
+          "numAudioFiles": 16
+        }
+      }
+    }
+  },
+  "QueryFiltersPodcast (characterization) > adminStats and userStats > GET /api/stats/year/:year aggregates books added and listening, with year boundaries and limits > years": {
+    "2000": {
+      "numListeningSessions": 0,
+      "numBooksAdded": 0,
+      "numAuthorsAdded": 0,
+      "totalBooksAddedSize": 0,
+      "totalBooksAddedDuration": 0,
+      "booksAddedWithCovers": [],
+      "totalBooksSize": 46010,
+      "totalBooksDuration": 7100.8,
+      "totalListeningTime": 0,
+      "numBooks": 5,
+      "topAuthors": [],
+      "topNarrators": [],
+      "topGenres": []
+    },
+    "2023": {
+      "numListeningSessions": 2,
+      "numBooksAdded": 1,
+      "numAuthorsAdded": 1,
+      "totalBooksAddedSize": 10,
+      "totalBooksAddedDuration": 100,
+      "booksAddedWithCovers": [
+        "b2023"
+      ],
+      "totalBooksSize": 46010,
+      "totalBooksDuration": 7100.8,
+      "totalListeningTime": 4999,
+      "numBooks": 5,
+      "topAuthors": [
+        {
+          "name": "Old Author",
+          "time": 999
+        }
+      ],
+      "topNarrators": [],
+      "topGenres": []
+    },
+    "2024": {
+      "numListeningSessions": 8,
+      "numBooksAdded": 3,
+      "numAuthorsAdded": 3,
+      "totalBooksAddedSize": 6000,
+      "totalBooksAddedDuration": 3001,
+      "booksAddedWithCovers": [
+        "b2024a",
+        "b2024b"
+      ],
+      "totalBooksSize": 46010,
+      "totalBooksDuration": 7100.8,
+      "totalListeningTime": 483,
+      "numBooks": 5,
+      "topAuthors": [
+        {
+          "name": "Bob Author",
+          "time": 300
+        },
+        {
+          "name": "Ann Author",
+          "time": 150
+        },
+        {
+          "name": "Cy Author",
+          "time": 20
+        }
+      ],
+      "topNarrators": [
+        {
+          "name": "Nora",
+          "time": 450
+        },
+        {
+          "name": "Nick",
+          "time": 300
+        },
+        {
+          "name": "Zed",
+          "time": 10
+        }
+      ],
+      "topGenres": [
+        {
+          "genre": "Fantasy",
+          "time": 450
+        },
+        {
+          "genre": "Mystery",
+          "time": 300
+        },
+        {
+          "genre": "Horror",
+          "time": 20
+        }
+      ]
+    },
+    "2025": {
+      "numListeningSessions": 2,
+      "numBooksAdded": 1,
+      "numAuthorsAdded": 1,
+      "totalBooksAddedSize": 40000,
+      "totalBooksAddedDuration": 4000,
+      "booksAddedWithCovers": [
+        "b2025"
+      ],
+      "totalBooksSize": 46010,
+      "totalBooksDuration": 7100.8,
+      "totalListeningTime": 8888,
+      "numBooks": 5,
+      "topAuthors": [
+        {
+          "name": "New Author",
+          "time": 888
+        }
+      ],
+      "topNarrators": [],
+      "topGenres": []
+    },
+    "2026": {
+      "numListeningSessions": 0,
+      "numBooksAdded": 0,
+      "numAuthorsAdded": 0,
+      "totalBooksAddedSize": 0,
+      "totalBooksAddedDuration": 0,
+      "booksAddedWithCovers": [],
+      "totalBooksSize": 46010,
+      "totalBooksDuration": 7100.8,
+      "totalListeningTime": 0,
+      "numBooks": 5,
+      "topAuthors": [],
+      "topNarrators": [],
+      "topGenres": []
+    }
+  },
+  "QueryFiltersPodcast (characterization) > adminStats and userStats > GET /api/stats/year/:year lists at most 25 books with covers > cover cap": {
+    "numBooksAdded": 27,
+    "covers": 25,
+    "totalBooksAddedSize": 27
+  },
+  "QueryFiltersPodcast (characterization) > authorFilters through the library routes > authorFilters functions take library, limit and offset > direct": {
+    "total": [
+      12,
+      3,
+      0
+    ],
+    "top3": [
+      "Author 01:12",
+      "Author 02:11",
+      "Author 03:10"
+    ],
+    "otherTop": [
+      "Foreign Author:15"
+    ],
+    "search limit 3 offset 0": [
+      "Author 01:12",
+      "Author 02:11",
+      "Author 03:10"
+    ],
+    "search limit 3 offset 3": [
+      "Author 04:9",
+      "Author 05:8",
+      "Author 06:7"
+    ],
+    "search limit 3 offset 8": [
+      "Author 09:4"
+    ],
+    "search limit 20 offset 0": [
+      "Author 01:12",
+      "Author 02:11",
+      "Author 03:10",
+      "Author 04:9",
+      "Author 05:8",
+      "Author 06:7",
+      "Author 07:6",
+      "Author 08:5",
+      "Author 09:4"
+    ],
+    "search limit 2 offset 1": [
+      "Author 02:11",
+      "Author 03:10"
+    ],
+    "otherLibrarySearch": [
+      "Author 01:1",
+      "Foreign Author:15",
+      "Other Author:1"
+    ]
+  },
+  "QueryFiltersPodcast (characterization) > authorFilters through the library routes > library stats list the ten authors with most books, totals and genres > twelve authors": {
+    "authorsWithCount": [
+      "Author 01:12",
+      "Author 02:11",
+      "Author 03:10",
+      "Author 04:9",
+      "Author 05:8",
+      "Author 06:7",
+      "Author 07:6",
+      "Author 08:5",
+      "Author 09:4",
+      "Author 10:3"
+    ],
+    "totalAuthors": 12,
+    "totalItems": 79
+  },
+  "QueryFiltersPodcast (characterization) > authorFilters through the library routes > searching authors matches names, limits results and counts books > author search": {
+    "Author 01": {
+      "authors": [
+        "Author 01:12"
+      ],
+      "book": 3
+    },
+    "author 1": {
+      "authors": [
+        "Author 10:3",
+        "Author 11:2",
+        "Author 12:1"
+      ],
+      "book": 3
+    },
+    "author": {
+      "authors": [
+        "Author 01:12",
+        "Author 02:11",
+        "Author 03:10"
+      ],
+      "book": 3
+    },
+    "Other": {
+      "authors": [],
+      "book": 0
+    },
+    "nobody": {
+      "authors": [],
+      "book": 0
+    },
+    "AUTHOR 12": {
+      "authors": [
+        "Author 12:1"
+      ],
+      "book": 1
+    },
+    "unlimited": 12
+  },
+  "QueryFiltersPodcast (characterization) > libraryItemsPodcastFilters called directly > an unfinished episode with zero progress is not in progress > zero progress": {
+    "direct": {
+      "count": 3,
+      "items": [
+        "beta cast / Beta One",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha One"
+      ]
+    },
+    "shelf": [
+      "Delta One",
+      "Alpha One"
+    ]
+  },
+  "QueryFiltersPodcast (characterization) > libraryItemsPodcastFilters called directly > getFilteredLibraryItems honours filters, includes and the count cache > library items": {
+    "plain": {
+      "count": 6,
+      "items": [
+        {
+          "title": "beta cast"
+        },
+        {
+          "title": "Delta"
+        },
+        {
+          "title": "Epsilon"
+        }
+      ]
+    },
+    "feed": {
+      "count": 1,
+      "items": [
+        {
+          "title": "A Gamma Hour",
+          "feed": "gamma-feed"
+        }
+      ]
+    },
+    "incomplete": {
+      "count": 6,
+      "items": [
+        {
+          "title": "A Gamma Hour",
+          "incomplete": 0
+        },
+        {
+          "title": "beta cast",
+          "incomplete": 2
+        },
+        {
+          "title": "Delta",
+          "incomplete": 1
+        },
+        {
+          "title": "Epsilon",
+          "incomplete": 2
+        },
+        {
+          "title": "The Alpha Show",
+          "incomplete": 2
+        },
+        {
+          "title": "Zeta",
+          "incomplete": 0
+        }
+      ]
+    },
+    "tagsKids": {
+      "count": 2,
+      "items": [
+        {
+          "title": "The Alpha Show"
+        },
+        {
+          "title": "Delta"
+        }
+      ]
+    },
+    "genreWithPrefix": {
+      "count": 3,
+      "items": [
+        {
+          "title": "A Gamma Hour"
+        },
+        {
+          "title": "The Alpha Show"
+        },
+        {
+          "title": "Zeta"
+        }
+      ]
+    },
+    "explicitIgnoresValue": {
+      "count": 1,
+      "items": [
+        {
+          "title": "beta cast"
+        }
+      ]
+    },
+    "languagesNull": {
+      "count": 1,
+      "items": [
+        {
+          "title": "Zeta"
+        }
+      ]
+    }
+  },
+  "QueryFiltersPodcast (characterization) > libraryItemsPodcastFilters called directly > getFilteredPodcastEpisodes applies user permissions and the count cache > episodes restricted and cached": {
+    "user": {
+      "count": 0,
+      "items": []
+    },
+    "userFinished": {
+      "count": 2,
+      "items": [
+        "The Alpha Show / Alpha One",
+        "Epsilon / Epsilon One"
+      ]
+    },
+    "kidsOnlyAll": {
+      "count": 4,
+      "items": [
+        "The Alpha Show / Alpha Three",
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "Delta / Delta One"
+      ]
+    },
+    "noKidsAll": {
+      "count": 4,
+      "items": [
+        "beta cast / Beta One",
+        "beta cast / Beta Two",
+        "Epsilon / Epsilon One",
+        "Epsilon / Epsilon Two"
+      ]
+    },
+    "counts": {
+      "first": 8,
+      "second": 8,
+      "secondRows": 3,
+      "third": 9,
+      "restricted": 4
+    }
+  },
+  "QueryFiltersPodcast (characterization) > libraryItemsPodcastFilters called directly > getFilteredPodcastEpisodes filters by progress and sorts > episodes admin": {
+    "in-progress by progress desc": {
+      "count": 3,
+      "items": [
+        "beta cast / Beta One",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha One"
+      ]
+    },
+    "in-progress by progress asc": {
+      "count": 3,
+      "items": [
+        "The Alpha Show / Alpha One",
+        "Delta / Delta One",
+        "beta cast / Beta One"
+      ]
+    },
+    "in-progress by createdAt desc": {
+      "count": 3,
+      "items": [
+        "Delta / Delta One",
+        "The Alpha Show / Alpha One",
+        "beta cast / Beta One"
+      ]
+    },
+    "in-progress by createdAt asc": {
+      "count": 3,
+      "items": [
+        "beta cast / Beta One",
+        "The Alpha Show / Alpha One",
+        "Delta / Delta One"
+      ]
+    },
+    "in-progress home page hides hidden": {
+      "count": 2,
+      "items": [
+        "Delta / Delta One",
+        "The Alpha Show / Alpha One"
+      ]
+    },
+    "finished": {
+      "count": 1,
+      "items": [
+        "The Alpha Show / Alpha Two"
+      ]
+    },
+    "finished home page": {
+      "count": 1,
+      "items": [
+        "The Alpha Show / Alpha Two"
+      ]
+    },
+    "progress other value": {
+      "count": 4,
+      "items": [
+        "beta cast / Beta One",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha One"
+      ]
+    },
+    "progress null value": {
+      "count": 4,
+      "items": [
+        "beta cast / Beta One",
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "Delta / Delta One"
+      ]
+    },
+    "in-progress limit 1 offset 1": {
+      "count": 3,
+      "items": [
+        "Delta / Delta One"
+      ]
+    },
+    "recent desc": {
+      "count": 7,
+      "items": [
+        "Epsilon / Epsilon Two",
+        "Epsilon / Epsilon One",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha One",
+        "beta cast / Beta Two",
+        "beta cast / Beta One"
+      ]
+    },
+    "recent asc limit 2": {
+      "count": 7,
+      "items": [
+        "beta cast / Beta One",
+        "beta cast / Beta Two"
+      ]
+    },
+    "recent offset 2": {
+      "count": 7,
+      "items": [
+        "Delta / Delta One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha One",
+        "beta cast / Beta Two",
+        "beta cast / Beta One"
+      ]
+    },
+    "no filter createdAt desc": {
+      "count": 8,
+      "items": [
+        "Epsilon / Epsilon Two",
+        "Epsilon / Epsilon One",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha One",
+        "beta cast / Beta Two",
+        "beta cast / Beta One",
+        "The Alpha Show / Alpha Three"
+      ]
+    },
+    "no filter createdAt asc": {
+      "count": 8,
+      "items": [
+        "The Alpha Show / Alpha Three",
+        "beta cast / Beta One",
+        "beta cast / Beta Two",
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "Delta / Delta One",
+        "Epsilon / Epsilon One",
+        "Epsilon / Epsilon Two"
+      ]
+    },
+    "no filter unknown sort": {
+      "count": 8,
+      "items": [
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha Three",
+        "beta cast / Beta One",
+        "beta cast / Beta Two",
+        "Delta / Delta One",
+        "Epsilon / Epsilon One",
+        "Epsilon / Epsilon Two"
+      ]
+    },
+    "sort progress without progress filter falls back to createdAt": {
+      "count": 8,
+      "items": [
+        "Epsilon / Epsilon Two",
+        "Epsilon / Epsilon One",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha One",
+        "beta cast / Beta Two",
+        "beta cast / Beta One",
+        "The Alpha Show / Alpha Three"
+      ]
+    },
+    "sort progress with recent filter falls back to createdAt": {
+      "count": 7,
+      "items": [
+        "beta cast / Beta One",
+        "beta cast / Beta Two",
+        "The Alpha Show / Alpha One",
+        "The Alpha Show / Alpha Two",
+        "Delta / Delta One",
+        "Epsilon / Epsilon One",
+        "Epsilon / Epsilon Two"
+      ]
+    },
+    "limit 0 means all": {
+      "count": 8,
+      "items": [
+        "Epsilon / Epsilon Two",
+        "Epsilon / Epsilon One",
+        "Delta / Delta One",
+        "The Alpha Show / Alpha Two",
+        "The Alpha Show / Alpha One",
+        "beta cast / Beta Two",
+        "beta cast / Beta One",
+        "The Alpha Show / Alpha Three"
+      ]
+    }
+  },
+  "QueryFiltersPodcast (characterization) > libraryItemsPodcastFilters called directly > getUserPermissionPodcastWhereQuery, getMediaGroupQuery and getOrder build the expected clauses > clauses": {
+    "perms": {
+      "explicit allowed, all tags": {
+        "where": [],
+        "replacements": {}
+      },
+      "explicit denied, all tags": {
+        "where": [
+          {
+            "explicit": false
+          }
+        ],
+        "replacements": {}
+      },
+      "selected tags accessible": {
+        "where": [
+          {
+            "attribute": {
+              "val": "(SELECT count(*) FROM json_each(tags) WHERE json_valid(tags) AND json_each.value IN (:userTagsSelected))"
+            },
+            "comparator": "=",
+            "logic": {}
+          }
+        ],
+        "replacements": {
+          "userTagsSelected": [
+            "a",
+            "b"
+          ]
+        }
+      },
+      "selected tags not accessible": {
+        "where": [
+          {
+            "explicit": false
+          },
+          {
+            "attribute": {
+              "val": "(SELECT count(*) FROM json_each(tags) WHERE json_valid(tags) AND json_each.value IN (:userTagsSelected))"
+            },
+            "comparator": "=",
+            "logic": 0
+          }
+        ],
+        "replacements": {
+          "userTagsSelected": [
+            "a"
+          ]
+        }
+      },
+      "no tag selection": {
+        "where": [],
+        "replacements": {}
+      },
+      "no permissions object": {
+        "where": [],
+        "replacements": {}
+      }
+    },
+    "groups": {
+      "genres": {
+        "mediaWhere": {
+          "genres": {
+            "attribute": {
+              "val": "(SELECT count(*) FROM json_each(genres) WHERE json_valid(genres) AND json_each.value = :filterValue)"
+            },
+            "comparator": "=",
+            "logic": {}
+          }
+        },
+        "replacements": {
+          "filterValue": "Tech"
+        }
+      },
+      "tags": {
+        "mediaWhere": {
+          "tags": {
+            "attribute": {
+              "val": "(SELECT count(*) FROM json_each(tags) WHERE json_valid(tags) AND json_each.value = :filterValue)"
+            },
+            "comparator": "=",
+            "logic": {}
+          }
+        },
+        "replacements": {
+          "filterValue": "kids"
+        }
+      },
+      "languages": {
+        "mediaWhere": {
+          "language": "en"
+        },
+        "replacements": {}
+      },
+      "explicit": {
+        "mediaWhere": {
+          "explicit": true
+        },
+        "replacements": {}
+      },
+      "progress": {
+        "mediaWhere": {},
+        "replacements": {}
+      },
+      "null": {
+        "mediaWhere": {},
+        "replacements": {}
+      },
+      "": {
+        "mediaWhere": {},
+        "replacements": {}
+      }
+    },
+    "orders": {
+      "addedAt asc": [
+        [
+          {
+            "val": "libraryItem.createdAt"
+          },
+          "ASC"
+        ]
+      ],
+      "addedAt desc": [
+        [
+          {
+            "val": "libraryItem.createdAt"
+          },
+          "DESC"
+        ]
+      ],
+      "size asc": [
+        [
+          {
+            "val": "libraryItem.size"
+          },
+          "ASC"
+        ]
+      ],
+      "size desc": [
+        [
+          {
+            "val": "libraryItem.size"
+          },
+          "DESC"
+        ]
+      ],
+      "birthtimeMs asc": [
+        [
+          {
+            "val": "libraryItem.birthtime"
+          },
+          "ASC"
+        ]
+      ],
+      "birthtimeMs desc": [
+        [
+          {
+            "val": "libraryItem.birthtime"
+          },
+          "DESC"
+        ]
+      ],
+      "mtimeMs asc": [
+        [
+          {
+            "val": "libraryItem.mtime"
+          },
+          "ASC"
+        ]
+      ],
+      "mtimeMs desc": [
+        [
+          {
+            "val": "libraryItem.mtime"
+          },
+          "DESC"
+        ]
+      ],
+      "media.metadata.author asc": [
+        [
+          {
+            "val": "`podcast`.`author` COLLATE NOCASE ASC NULLS LAST"
+          }
+        ]
+      ],
+      "media.metadata.author desc": [
+        [
+          {
+            "val": "`podcast`.`author` COLLATE NOCASE DESC NULLS FIRST"
+          }
+        ]
+      ],
+      "media.metadata.title asc": [
+        [
+          {
+            "val": "`libraryItem`.`title` COLLATE NOCASE"
+          },
+          "ASC"
+        ]
+      ],
+      "media.metadata.title desc": [
+        [
+          {
+            "val": "`libraryItem`.`title` COLLATE NOCASE"
+          },
+          "DESC"
+        ]
+      ],
+      "media.numTracks asc": [
+        [
+          "numEpisodes",
+          "ASC"
+        ]
+      ],
+      "media.numTracks desc": [
+        [
+          "numEpisodes",
+          "DESC"
+        ]
+      ],
+      "bogus asc": [],
+      "bogus desc": [],
+      "title ignore prefix asc": [
+        [
+          {
+            "val": "`libraryItem`.`titleIgnorePrefix` COLLATE NOCASE"
+          },
+          "ASC"
+        ]
+      ]
+    }
+  }
+}
