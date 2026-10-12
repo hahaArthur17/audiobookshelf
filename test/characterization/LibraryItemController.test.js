@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const sinon = require('sinon')
+const { expect } = require('chai')
 const { startApi } = require('./helpers/harness')
 const { matchSnapshot } = require('./helpers/snapshot')
 const { createLibrary } = require('./helpers/seed-library')
@@ -582,25 +583,25 @@ describe('LibraryItemController (characterization)', () => {
     })
 
     it('direct plays a book whose tracks are all one supported type, transcodes when that type is missing', async function () {
-      await play(this, plain, { supportedMimeTypes: ['audio/mpeg'] }, 'plain, mp3 supported')
-      await play(this, plain, { supportedMimeTypes: ['audio/mp4'] }, 'plain, mp3 unsupported')
+      expect((await play(this, plain, { supportedMimeTypes: ['audio/mpeg'] }, 'plain, mp3 supported')).playMethod).to.equal(0) // direct play
+      expect((await play(this, plain, { supportedMimeTypes: ['audio/mp4'] }, 'plain, mp3 unsupported')).playMethod).to.equal(2) // transcode
     })
 
     it('transcodes when supportedMimeTypes is missing or not an array', async function () {
-      await play(this, plain, {}, 'plain, no supportedMimeTypes')
-      await play(this, plain, { supportedMimeTypes: 'audio/mpeg' }, 'plain, string instead of array')
+      expect((await play(this, plain, {}, 'plain, no supportedMimeTypes')).playMethod).to.equal(2)
+      expect((await play(this, plain, { supportedMimeTypes: 'audio/mpeg' }, 'plain, string instead of array')).playMethod).to.equal(2)
     })
 
     it('ignores excluded audio files when deciding', async function () {
-      await play(this, withExcluded, { supportedMimeTypes: ['audio/mpeg'] }, 'excluded flac ignored')
-      await play(this, withExcluded, { supportedMimeTypes: ['audio/flac'] }, 'only the excluded type supported')
+      expect((await play(this, withExcluded, { supportedMimeTypes: ['audio/mpeg'] }, 'excluded flac ignored')).playMethod).to.equal(0)
+      expect((await play(this, withExcluded, { supportedMimeTypes: ['audio/flac'] }, 'only the excluded type supported')).playMethod).to.equal(2)
     })
 
     it('forceDirectPlay and forceTranscode override the mime type check', async function () {
-      await play(this, mixed, { supportedMimeTypes: ['audio/mpeg'], forceDirectPlay: true }, 'forceDirectPlay with partial support')
-      await play(this, mixed, { forceDirectPlay: true }, 'forceDirectPlay without supportedMimeTypes')
-      await play(this, mixed, { supportedMimeTypes: ['audio/mpeg', 'audio/mp4'], forceTranscode: true }, 'forceTranscode with full support')
-      await play(this, mixed, { supportedMimeTypes: ['audio/mpeg', 'audio/mp4'], forceTranscode: true, forceDirectPlay: true }, 'both flags: forceDirectPlay wins')
+      expect((await play(this, mixed, { supportedMimeTypes: ['audio/mpeg'], forceDirectPlay: true }, 'forceDirectPlay with partial support')).playMethod).to.equal(0)
+      expect((await play(this, mixed, { forceDirectPlay: true }, 'forceDirectPlay without supportedMimeTypes')).playMethod).to.equal(0)
+      expect((await play(this, mixed, { supportedMimeTypes: ['audio/mpeg', 'audio/mp4'], forceTranscode: true }, 'forceTranscode with full support')).playMethod).to.equal(2)
+      expect((await play(this, mixed, { supportedMimeTypes: ['audio/mpeg', 'audio/mp4'], forceTranscode: true, forceDirectPlay: true }, 'both flags: forceDirectPlay wins')).playMethod).to.equal(0)
     })
   })
 

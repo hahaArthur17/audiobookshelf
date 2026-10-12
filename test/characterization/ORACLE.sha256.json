@@ -13,7 +13,7 @@
   "FileSystemController.test.js": "d5570b2b63e02aefd78b14491706393ed5cc57eb459d2012b44a33d90aff5c64",
   "HlsRouter.test.js": "599f0c2f59f8921b45bbb43c6fe2db34058c92a08b52496fce95b77012b45931",
   "LibraryController.test.js": "884ac22d94738fe273be6a1119ce7f1cd07a768ea230249b1336313991ae3b86",
-  "LibraryItemController.test.js": "743dd49d4355b445b6a8b468206bd202813f29e0bc1ed55d62ce544cf357c340",
+  "LibraryItemController.test.js": "5d103b4895f8a9c51e3d3a9936c64819ed4c790c4ae77115cd0e98d096300876",
   "MeController.test.js": "f129b62e34756d8c7d6efda6d1ef3133a0fe5f923b8b0a77c7cd7f498fe84b66",
   "MiscController.test.js": "a6dd202e953f1308bf6bcf5a14b9454bb4cb3c379776508f3411ec38f1908036",
   "NotificationController.test.js": "3666be8662b725b857bafaa347348878ebbf720b24d3b081dd74ea8b6e19a221",
