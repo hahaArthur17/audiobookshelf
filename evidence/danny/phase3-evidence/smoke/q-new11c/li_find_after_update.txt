@@ -1,0 +1,127 @@
+STATUS 200
+LOCATION 
+{
+ "addedAt": "MASK",
+ "birthtimeMs": "MASK",
+ "ctimeMs": "MASK",
+ "folderId": "MASK",
+ "id": "MASK",
+ "ino": "MASK",
+ "isFile": false,
+ "isInvalid": false,
+ "isMissing": false,
+ "lastScan": "MASK",
+ "libraryFiles": [
+  {
+   "addedAt": "MASK",
+   "fileType": "ebook",
+   "ino": "MASK",
+   "isSupplementary": false,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".pdf",
+    "filename": "Book Two.pdf",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author One/Book Two/Book Two.pdf",
+    "relPath": "Book Two.pdf",
+    "size": 8
+   },
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "fileType": "text",
+   "ino": "MASK",
+   "isSupplementary": null,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".nfo",
+    "filename": "metadata.nfo",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author One/Book Two/metadata.nfo",
+    "relPath": "metadata.nfo",
+    "size": 109
+   },
+   "updatedAt": "MASK"
+  }
+ ],
+ "libraryId": "MASK",
+ "media": {
+  "audioFiles": [],
+  "chapters": [],
+  "coverPath": null,
+  "duration": 0,
+  "ebookFile": {
+   "addedAt": "MASK",
+   "ebookFormat": "pdf",
+   "fileType": "ebook",
+   "ino": "MASK",
+   "isSupplementary": null,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".pdf",
+    "filename": "Book Two.pdf",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author One/Book Two/Book Two.pdf",
+    "relPath": "Book Two.pdf",
+    "size": 8
+   },
+   "updatedAt": "MASK"
+  },
+  "ebookFormat": "pdf",
+  "id": "MASK",
+  "libraryItemId": "MASK",
+  "metadata": {
+   "abridged": false,
+   "asin": null,
+   "authorName": "NFO Author",
+   "authorNameLF": "Author, NFO",
+   "authors": [
+    {
+     "id": "MASK",
+     "name": "NFO Author"
+    }
+   ],
+   "description": null,
+   "descriptionPlain": null,
+   "explicit": false,
+   "genres": [
+    "Mystery"
+   ],
+   "isbn": null,
+   "language": null,
+   "narratorName": "NFO Narrator",
+   "narrators": [
+    "NFO Narrator"
+   ],
+   "publishedDate": null,
+   "publishedYear": null,
+   "publisher": null,
+   "series": [],
+   "seriesName": "",
+   "subtitle": "Sub",
+   "title": "NFO Title",
+   "titleIgnorePrefix": "NFO Title"
+  },
+  "numAudioFiles": 0,
+  "numChapters": 0,
+  "numTracks": 0,
+  "size": 8,
+  "tags": [
+   "t1"
+  ],
+  "tracks": []
+ },
+ "mediaType": "book",
+ "mtimeMs": "MASK",
+ "numFiles": 2,
+ "oldLibraryItemId": null,
+ "path": "ROOT/lib/books/Author One/Book Two",
+ "relPath": "Author One/Book Two",
+ "scanVersion": "2.37.0",
+ "size": 117,
+ "updatedAt": "MASK"
+}

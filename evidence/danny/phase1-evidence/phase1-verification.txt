@@ -1,0 +1,18 @@
+== date
+2026-10-03T14:31:29+13:00
+== branch and commit
+danny/phase1
+90dd0958 workflow1 phase1: convert server/finders to TypeScript (Claude Code, Opus 5.5, one prompt, no plan review)
+== tsc error count (strict, noEmit)
+0
+== diff stat vs baseline
+ server/finders/AuthorFinder.js                     |  68 ------
+ server/finders/AuthorFinder.ts                     |  85 +++++++
+ server/finders/{BookFinder.js => BookFinder.ts}    | 256 ++++++++++++++-------
+ .../finders/{PodcastFinder.js => PodcastFinder.ts} |  21 +-
+ 4 files changed, 277 insertions(+), 153 deletions(-)
+== test dir diff vs baseline (empty = no change)
+== any / ts directives in finders
+none
+== unknown casts in finders
+server/finders/BookFinder.ts:706:    const optionsAsIsbn = options as unknown as string

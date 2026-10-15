@@ -1,0 +1,15 @@
+== per-file difference base vs new (expect only LibraryItemController.ts)
+20a21
+> server/controllers/LibraryItemController.ts as=35 unknown_as=0 nonnull=10
+195c196
+< TOTAL files=194 as=649 unknown_as=122 nonnull=281
+---
+> TOTAL files=195 as=684 unknown_as=122 nonnull=291
+== totals base
+TOTAL files=194 as=649 unknown_as=122 nonnull=281
+== totals new
+TOTAL files=195 as=684 unknown_as=122 nonnull=291
+== casttags base against agent before-summary (expect same)
+same
+== casttags new against agent after-summary (expect same)
+same

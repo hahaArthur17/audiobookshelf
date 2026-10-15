@@ -1,0 +1,1940 @@
+diff --git a/server/Auth.ts b/server/Auth.ts
+index 81d55683..8ae3e543 100644
+--- a/server/Auth.ts
++++ b/server/Auth.ts
+@@ -165 +165 @@ class Auth {
+-          // TokenSecret is set by initTokenSecret (Server.init) before passport is initialized
++          // cast(d): TokenSecret is set by initTokenSecret (Server.init) before passport is initialized
+@@ -334 +334 @@ class Auth {
+-    // req.user is set by passport.authenticate before this runs (see above)
++    // cast(d): req.user is set by passport.authenticate before this runs (see above)
+@@ -337 +337 @@ class Auth {
+-    // req.user is set by passport.authenticate (see above)
++    // cast(d): req.user is set by passport.authenticate (see above)
+@@ -392 +392 @@ class Auth {
+-      // handleRefreshToken returns the user when there is no error
++      // cast(d): handleRefreshToken returns the user when there is no error (checked above)
+@@ -414 +414 @@ class Auth {
+-      // the url is set when there is no error
++      // cast(d): the url is set when there is no error (checked above)
+@@ -505 +505 @@ class Auth {
+-      // req.user is set by isAuthenticated (the middleware before this handler)
++      // cast(d): req.user is set by isAuthenticated (the middleware before this handler)
+@@ -507 +507 @@ class Auth {
+-        // req.user is set by isAuthenticated (see above)
++        // cast(d): req.user is set by isAuthenticated (see above)
+diff --git a/server/Database.ts b/server/Database.ts
+index a9b521d6..eb5a9eb8 100644
+--- a/server/Database.ts
++++ b/server/Database.ts
+@@ -186 +186 @@ class Database {
+-    // dbPath is set by init before it calls this
++    // cast(d): dbPath is set by init before it calls this
+@@ -251 +251 @@ class Database {
+-      // dbPath is set by init before it calls this
++      // cast(d): dbPath is set by init before it calls this
+diff --git a/server/Logger.ts b/server/Logger.ts
+index 768768af..af8cfa45 100644
+--- a/server/Logger.ts
++++ b/server/Logger.ts
+@@ -45 +45 @@ class Logger {
+-    // Error() always has a stack in V8
++    // cast(d): Error() always has a stack in V8
+diff --git a/server/Server.ts b/server/Server.ts
+index c4bf6ab7..1131a105 100644
+--- a/server/Server.ts
++++ b/server/Server.ts
+@@ -237 +237 @@ class Server {
+-    // logManager is set in the constructor
++    // cast(d): logManager is set in the constructor
+@@ -345 +345 @@ class Server {
+-        // set by initTokenSecret in init (before start creates the app)
++        // cast(d): set by initTokenSecret in init (before start creates the app)
+@@ -616 +616 @@ class Server {
+-    // stop runs after start, which creates the server
++    // cast(d): stop runs after start, which creates the server
+diff --git a/server/SocketAuthority.ts b/server/SocketAuthority.ts
+index 7834534c..b46add24 100644
+--- a/server/SocketAuthority.ts
++++ b/server/SocketAuthority.ts
+@@ -49 +49 @@ class SocketAuthority {
+-        // filtered on user above
++        // cast(d): the clients are filtered on user above
+@@ -51 +51 @@ class SocketAuthority {
+-          // filtered on user above
++          // cast(d): the clients are filtered on user above
+@@ -54 +54 @@ class SocketAuthority {
+-          // filtered on user above
++          // cast(d): the clients are filtered on user above
+@@ -56 +56 @@ class SocketAuthority {
+-            // filtered on user above; Server is set by initialize before any socket connects
++            // cast(d) (2): filtered on user above; Server is set by initialize before any socket connects
+@@ -78 +78 @@ class SocketAuthority {
+-        // checked just above
++        // cast(d): user is checked just above
+@@ -141 +141 @@ class SocketAuthority {
+-        // checked just above
++        // cast(d): user is checked just above (the filter runs inside that if)
+@@ -182 +182 @@ class SocketAuthority {
+-    // server is created in Server.start before it calls initialize
++    // cast(d): the server is created in Server.start before it calls initialize
+@@ -192 +192 @@ class SocketAuthority {
+-      // server is created in Server.start before it calls initialize
++      // cast(d): the server is created in Server.start before it calls initialize
+@@ -249 +249 @@ class SocketAuthority {
+-            // Server is set by initialize before any socket connects
++            // cast(d): Server is set by initialize before any socket connects
+@@ -376 +376 @@ class SocketAuthority {
+-    // Server is set by initialize before any socket connects
++    // cast(d): Server is set by initialize before any socket connects
+@@ -396 +396 @@ class SocketAuthority {
+-    // Server is set by initialize before any socket connects
++    // cast(d): Server is set by initialize before any socket connects
+diff --git a/server/Watcher.ts b/server/Watcher.ts
+index eda97fb5..376c70e5 100644
+--- a/server/Watcher.ts
++++ b/server/Watcher.ts
+@@ -80 +80 @@ class FolderWatcher extends EventEmitter {
+-    // the callers pass libraries loaded with their folders (getAllWithFolders, the library controller)
++    // cast(b): the callers pass libraries loaded with their folders (getAllWithFolders, the library controller); the association is optional in the model
+@@ -119 +119 @@ class FolderWatcher extends EventEmitter {
+-      // loaded with the library (see above)
++      // cast(b): loaded with the library (see above); the association is optional in the model
+@@ -167 +167 @@ class FolderWatcher extends EventEmitter {
+-      // the library controller passes the library loaded with its folders
++      // cast(b): the library controller passes the library loaded with its folders; the association is optional in the model
+@@ -367 +367 @@ class FolderWatcher extends EventEmitter {
+-        // pendingTask is set by addFileUpdate before it starts this timeout
++        // cast(d): pendingTask is set by addFileUpdate before it starts this timeout
+@@ -369 +369 @@ class FolderWatcher extends EventEmitter {
+-        // as above
++        // cast(d): pendingTask is set by addFileUpdate (as above)
+diff --git a/server/auth/LocalAuthStrategy.ts b/server/auth/LocalAuthStrategy.ts
+index a6d26744..79259497 100644
+--- a/server/auth/LocalAuthStrategy.ts
++++ b/server/auth/LocalAuthStrategy.ts
+@@ -139 +139 @@ class LocalAuthStrategy {
+-    // Without a callback compare returns a promise
++    // cast(a): the vendored bcryptjs is typed with both overloads; without a callback compare returns a promise
+diff --git a/server/auth/OidcAuthStrategy.ts b/server/auth/OidcAuthStrategy.ts
+index f00ef0f0..bbd69e1c 100644
+--- a/server/auth/OidcAuthStrategy.ts
++++ b/server/auth/OidcAuthStrategy.ts
+@@ -75 +75 @@ class OidcAuthStrategy {
+-      // Typed with the internal fields read in getAuthorizationUrl
++      // cast(d): typed with the internal fields of the openid-client strategy read in getAuthorizationUrl (see OidcStrategy)
+@@ -102 +102 @@ class OidcAuthStrategy {
+-      // Settings were checked valid above; a null logout URL is passed through, like the JS
++      // cast(d): the settings are string | null; they were checked valid above, and a null logout URL is passed through, like the JS
+@@ -112 +112 @@ class OidcAuthStrategy {
+-      // Settings were checked valid above
++      // cast(d): the settings are string | null; they were checked valid above
+@@ -210 +210 @@ class OidcAuthStrategy {
+-      // Errors thrown above are Error objects
++      // cast(d) (2): catch variable is unknown; errors thrown above are Error objects
+@@ -250 +250 @@ class OidcAuthStrategy {
+-    // The group claim is a list of group names
++    // cast(d): assumed: the provider sends the group claim as a list of group names (only its presence is checked above)
+@@ -406 +406 @@ class OidcAuthStrategy {
+-      // Index the session by the strategy's session key
++      // cast(b): express-session types the session without the strategy's key; it is indexed by that key here
+@@ -433 +433 @@ class OidcAuthStrategy {
+-      // Errors thrown above are Error objects
++      // cast(d): catch variable is unknown; errors thrown above are Error objects
+@@ -437 +437 @@ class OidcAuthStrategy {
+-        // Error object (see above)
++        // cast(d): catch variable is unknown; errors thrown above are Error objects
+@@ -452 +452 @@ class OidcAuthStrategy {
+-    // The issuer exposes its metadata fields directly (end_session_endpoint is a string or unset)
++    // cast(d): openid-client types issuer without its metadata fields, which it exposes directly (end_session_endpoint is a string or unset)
+@@ -474 +474 @@ class OidcAuthStrategy {
+-        // undefined and null both leave the parameter out
++        // cast(d): postLogoutRedirectUri is string | null; undefined and null both leave the parameter out
+@@ -506 +506 @@ class OidcAuthStrategy {
+-      // configUrl was set in the try block above (it returns otherwise)
++      // cast(d): configUrl was set in the try block above, which returns otherwise (the cast changes no type)
+@@ -542 +542 @@ class OidcAuthStrategy {
+-      // has(state) was checked above
++      // cast(d): has(state) was checked above, so get returns the session
+@@ -557 +557 @@ class OidcAuthStrategy {
+-      // Errors thrown above are Error objects
++      // cast(d): catch variable is unknown; errors thrown above are Error objects
+diff --git a/server/auth/TokenManager.ts b/server/auth/TokenManager.ts
+index 1a60ce2b..56481047 100644
+--- a/server/auth/TokenManager.ts
++++ b/server/auth/TokenManager.ts
+@@ -43 +43 @@ class TokenManager {
+-    // Each `as string` below: parseInt(undefined) is NaN, like the JS
++    // cast(d): the variable may be unset; parseInt(undefined) is NaN, so the fallback is used, like the JS
+@@ -44,0 +45 @@ class TokenManager {
++    // cast(d): the variable may be unset; parseInt(undefined) is NaN, so the fallback is used, like the JS
+@@ -45,0 +47 @@ class TokenManager {
++    // cast(d): the variable may be unset; parseInt(undefined) is NaN, so the fallback is used, like the JS
+@@ -47,0 +50 @@ class TokenManager {
++    // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+@@ -50,0 +54 @@ class TokenManager {
++    // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+@@ -53,0 +58 @@ class TokenManager {
++    // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+@@ -75 +80 @@ class TokenManager {
+-      // Required here like the JS; typed as the node crypto module
++      // cast(d): require() is typed any; required here like the JS, typed as the node crypto module
+@@ -267,0 +273 @@ class TokenManager {
++      // cast(c): typed as found; when the row was deleted findOne returns null (see NOTE above)
+@@ -300 +306 @@ class TokenManager {
+-      // API key tokens are signed with a keyId
++      // cast(d): api tokens are signed with a keyId by ApiKey (passport-jwt verified the signature); keyId is optional in JwtPayload
+@@ -341 +347 @@ class TokenManager {
+-      // isBearerAccessTokenPayload checked that userId is set
++      // cast(d): isBearerAccessTokenPayload checked that userId is set
+@@ -383 +389 @@ class TokenManager {
+-      // Typed with the refresh token columns
++      // cast(d): SessionRow names the refresh token columns; the Session model declares them since batch 3a, so the cast changes no type
+@@ -450 +456 @@ class TokenManager {
+-      // jwt.verify and the queries throw Error objects
++      // cast(d): catch variable is unknown; jwt.verify and the queries throw Error objects
+@@ -461 +467 @@ class TokenManager {
+-          // The query throws Error objects
++          // cast(d): catch variable is unknown; the query throws Error objects
+@@ -467,0 +474 @@ class TokenManager {
++      // cast(d): catch variable is unknown; jwt.verify and the queries throw Error objects
+@@ -469 +476 @@ class TokenManager {
+-        // Error object (see above)
++        // cast(d): catch variable is unknown (see above)
+@@ -475 +482 @@ class TokenManager {
+-        // Error object (see above)
++        // cast(d): catch variable is unknown (see above)
+@@ -495 +502 @@ class TokenManager {
+-    // Only called from authenticated routes, so req.user is set
++    // cast(d): the callers (MeController and UserController routes) run after the auth middleware, so req.user is set
+@@ -499 +506 @@ class TokenManager {
+-      // Typed with the refresh token columns
++      // cast(d): SessionRow names the refresh token columns; the Session model declares them since batch 3a, so the cast changes no type
+@@ -569 +576 @@ class TokenManager {
+-      // The query throws Error objects
++      // cast(d): catch variable is unknown; the query throws Error objects
+diff --git a/server/controllers/LibraryController.ts b/server/controllers/LibraryController.ts
+index f5d2cd75..fa69ba79 100644
+--- a/server/controllers/LibraryController.ts
++++ b/server/controllers/LibraryController.ts
+@@ -244,0 +245 @@ class LibraryController {
++        // cast(d): each folder path is set in the map above
+@@ -733 +734 @@ class LibraryController {
+-      // cast(d): decode returns null for an invalid id; findByPk(null) in handleCollapseSubseries then finds no series, as in the JS
++      // cast(d) (2): filterByGroup is only set when filterBy is; decode returns null for an invalid id, and findByPk(null) in handleCollapseSubseries then finds no series, as in the JS
+@@ -1469,0 +1471 @@ class LibraryController {
++          // cast(d): the library item is included with a where, so every podcast has one
+diff --git a/server/controllers/MiscController.ts b/server/controllers/MiscController.ts
+index 4320f6ba..6ce66346 100644
+--- a/server/controllers/MiscController.ts
++++ b/server/controllers/MiscController.ts
+@@ -754 +754 @@ class MiscController {
+-      // logManager is set in the Server constructor, before any route is served
++      // cast(d): logManager is set in the Server constructor, before any route is served
+diff --git a/server/controllers/SearchController.ts b/server/controllers/SearchController.ts
+index 82d05393..11993cdd 100644
+--- a/server/controllers/SearchController.ts
++++ b/server/controllers/SearchController.ts
+@@ -103,0 +104 @@ class SearchController {
++      // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+@@ -128,0 +130 @@ class SearchController {
++      // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+@@ -149,0 +152 @@ class SearchController {
++      // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+@@ -168,0 +172 @@ class SearchController {
++      // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+@@ -193,0 +198 @@ class SearchController {
++      // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+@@ -211,0 +217 @@ class SearchController {
++    // cast(d): typed view from Phase 2, when the model's init() kept it from being a ModelStatic; since batch 3a findAll is typed on the model
+diff --git a/server/controllers/SessionController.ts b/server/controllers/SessionController.ts
+index 6fe7c45d..24cae35e 100644
+--- a/server/controllers/SessionController.ts
++++ b/server/controllers/SessionController.ts
+@@ -201 +201 @@ class SessionController {
+-    // the session was loaded from the db by the middleware, so it has an id
++    // cast(d): the session was loaded from the db by the middleware, so it has an id
+diff --git a/server/finders/AuthorFinder.ts b/server/finders/AuthorFinder.ts
+index e434eba4..f2fb36b0 100644
+--- a/server/finders/AuthorFinder.ts
++++ b/server/finders/AuthorFinder.ts
+@@ -41,0 +42 @@ class AuthorFinder {
++    // cast(d): ServerGlobals names MetadataPath, which Server sets at startup (utils/types.ts declares it on global too, so the cast changes no type)
+diff --git a/server/finders/BookFinder.ts b/server/finders/BookFinder.ts
+index c0010c30..a3830b9e 100644
+--- a/server/finders/BookFinder.ts
++++ b/server/finders/BookFinder.ts
+@@ -86,0 +87 @@ class BookFinder {
++        // cast(d): the same result object, which gets the score fields assigned below
+@@ -132,0 +134 @@ class BookFinder {
++          // cast(d): authorDistance is set for every result above when author is given (this branch)
+@@ -172,0 +175 @@ class BookFinder {
++    // cast(c): typed as results without null; entries are null for volumes without volumeInfo (see NOTE above)
+@@ -197,0 +201 @@ class BookFinder {
++    // cast(d): split always returns at least one element, so pop is not undefined
+@@ -608,0 +613 @@ class BookFinder {
++    // cast(c): options is passed in the isbn position of search() (see NOTE above)
+diff --git a/server/managers/ApiCacheManager.ts b/server/managers/ApiCacheManager.ts
+index b7056904..56a50319 100644
+--- a/server/managers/ApiCacheManager.ts
++++ b/server/managers/ApiCacheManager.ts
+@@ -113 +113 @@ class ApiCacheManager {
+-      // The cached routes are behind the auth middleware, which sets req.user
++      // cast(d): the cached routes are behind the auth middleware, which sets req.user
+@@ -136 +136 @@ class ApiCacheManager {
+-        // Set just above, before send is replaced
++        // cast(d): set just above, before send is replaced
+diff --git a/server/managers/AudioMetadataManager.ts b/server/managers/AudioMetadataManager.ts
+index 9a79a9f9..1cba08fa 100644
+--- a/server/managers/AudioMetadataManager.ts
++++ b/server/managers/AudioMetadataManager.ts
+@@ -285 +285 @@ class AudioMetadataMangaer {
+-      // The queue is not empty (checked above)
++      // cast(d): the queue is not empty (checked above)
+diff --git a/server/managers/BackupManager.ts b/server/managers/BackupManager.ts
+index 1733ab65..34f319df 100644
+--- a/server/managers/BackupManager.ts
++++ b/server/managers/BackupManager.ts
+@@ -129 +129 @@ class BackupManager {
+-      // Set: the branch above handles a missing task
++      // cast(d) (2): set: the branch above handles a missing task
+@@ -201 +201 @@ class BackupManager {
+-    // Set from the constructor data
++    // cast(d): fullPath is set from the constructor data (the backup was loaded from its file)
+@@ -332 +332 @@ class BackupManager {
+-          // Set in the try block (it continues on failure)
++          // cast(d): set in the try block (the catch continues the loop on failure)
+@@ -345 +345 @@ class BackupManager {
+-          // Set from the constructor data
++          // cast(d): fullPath is set from the constructor data (the backup was loaded from its file)
+@@ -355 +355 @@ class BackupManager {
+-          // Set in the try block (it continues on failure)
++          // cast(d): set in the try block (the catch continues the loop on failure)
+@@ -400 +400 @@ class BackupManager {
+-    // Set by setData
++    // cast(d): fullPath is set by setData
+@@ -413 +413 @@ class BackupManager {
+-      // Loaded and new backups have createdAt
++      // cast(d) (2): loaded and new backups have createdAt
+@@ -416 +416 @@ class BackupManager {
+-      // There are more backups than backupsToKeep
++      // cast(d): there are more backups than backupsToKeep (the loop condition), so shift returns one
+@@ -431 +431 @@ class BackupManager {
+-      // Loaded and new backups have a fullPath
++      // cast(d): loaded and new backups have a fullPath
+@@ -444 +443,0 @@ class BackupManager {
+-    // dbPath is set by Database.init
+@@ -445,0 +445 @@ class BackupManager {
++    // cast(d): dbPath is set by Database.init, which runs before backups are made
+@@ -471 +471 @@ class BackupManager {
+-      // Set by setData
++      // cast(d): fullPath is set by setData
+diff --git a/server/managers/CacheManager.ts b/server/managers/CacheManager.ts
+index 63490214..37577d8c 100644
+--- a/server/managers/CacheManager.ts
++++ b/server/managers/CacheManager.ts
+@@ -72 +72 @@ class CacheManager {
+-    // Set by ensureCachePaths at startup
++    // cast(d): set by ensureCachePaths at startup
+@@ -150 +150 @@ class CacheManager {
+-    // Set by ensureCachePaths at startup
++    // cast(d): set by ensureCachePaths at startup
+@@ -152 +152 @@ class CacheManager {
+-      // Set by ensureCachePaths at startup
++      // cast(d): set by ensureCachePaths at startup
+@@ -162 +162 @@ class CacheManager {
+-    // Set by ensureCachePaths at startup
++    // cast(d): set by ensureCachePaths at startup
+@@ -164 +164 @@ class CacheManager {
+-      // Set by ensureCachePaths at startup
++      // cast(d): set by ensureCachePaths at startup
+@@ -182 +182 @@ class CacheManager {
+-    // Set by ensureCachePaths at startup
++    // cast(d): set by ensureCachePaths at startup
+diff --git a/server/managers/CoverManager.ts b/server/managers/CoverManager.ts
+index ff24cdb6..39da6676 100644
+--- a/server/managers/CoverManager.ts
++++ b/server/managers/CoverManager.ts
+@@ -260 +260 @@ class CoverManager {
+-    // Scanned and stored audio files have a path
++    // cast(d): scanned and stored audio files have a path
+diff --git a/server/managers/CronManager.ts b/server/managers/CronManager.ts
+index 6fb2c70c..0899b20e 100644
+--- a/server/managers/CronManager.ts
++++ b/server/managers/CronManager.ts
+@@ -88 +88 @@ class CronManager {
+-    // Only called when the library has a cron expression
++    // cast(d): only called when the library has a cron expression
+@@ -147 +147 @@ class CronManager {
+-      // The query only returns podcasts with a schedule (autoDownloadSchedule not null)
++      // cast(d): the query only returns podcasts with a schedule (autoDownloadSchedule not null)
+@@ -148,0 +149 @@ class CronManager {
++        // cast(d) (2): the query only returns podcasts with a schedule (autoDownloadSchedule not null)
+@@ -154 +155 @@ class CronManager {
+-      // libraryItem is included above
++      // cast(d): the query only returns podcasts with a schedule; cast(b): libraryItem is included above, the association is optional in the model
+diff --git a/server/managers/LogManager.ts b/server/managers/LogManager.ts
+index 262c75d2..e032a507 100644
+--- a/server/managers/LogManager.ts
++++ b/server/managers/LogManager.ts
+@@ -81 +81 @@ class LogManager {
+-        // Set just above
++        // cast(d): set just above
+diff --git a/server/managers/MigrationManager.ts b/server/managers/MigrationManager.ts
+index 3af77ba0..202cc429 100644
+--- a/server/managers/MigrationManager.ts
++++ b/server/managers/MigrationManager.ts
+@@ -135 +135 @@ class MigrationManager {
+-    // Both are set by init (checked above)
++    // cast(d) (2): both are set by init (checked above)
+@@ -143 +143 @@ class MigrationManager {
+-    // Set by initUmzug
++    // cast(d): set by initUmzug, which runs before
+@@ -145 +145 @@ class MigrationManager {
+-    // Set by initUmzug
++    // cast(d): set by initUmzug, which runs before
+@@ -165 +165 @@ class MigrationManager {
+-        // Set by initUmzug
++        // cast(d): set by initUmzug, which runs before
+@@ -197 +197 @@ class MigrationManager {
+-    // migrationsDir is set by init
++    // cast(d): migrationsDir is set by init
+@@ -203 +203 @@ class MigrationManager {
+-      // migrationsDir is set by init
++      // cast(d): migrationsDir is set by init
+@@ -251 +251 @@ class MigrationManager {
+-          // Migration names were validated above (each has a version)
++          // cast(d) (2): migration names were validated above (each has a version)
+@@ -331 +331 @@ class MigrationManager {
+-          // migrationsDir is set by init
++          // cast(d): migrationsDir is set by init
+@@ -347 +347 @@ class MigrationManager {
+-        // initUmzug validated that every migration name has a version
++        // cast(d): initUmzug validated that every migration name has a version
+@@ -350,0 +351 @@ class MigrationManager {
++          // cast(d) (2): the database and server versions are set by init
+@@ -353,0 +355 @@ class MigrationManager {
++          // cast(d) (2): the database and server versions are set by init
+diff --git a/server/managers/NotificationManager.ts b/server/managers/NotificationManager.ts
+index a22f4511..8b077b68 100644
+--- a/server/managers/NotificationManager.ts
++++ b/server/managers/NotificationManager.ts
+@@ -196 +196 @@ class NotificationManager {
+-        // The queue is not empty (checked above)
++        // cast(d): the queue is not empty (checked above)
+diff --git a/server/managers/PlaybackSessionManager.ts b/server/managers/PlaybackSessionManager.ts
+index 4899e414..019d2711 100644
+--- a/server/managers/PlaybackSessionManager.ts
++++ b/server/managers/PlaybackSessionManager.ts
+@@ -311 +311 @@ class PlaybackSessionManager {
+-      // progressSynced is only true when the media progress was set
++      // cast(d) (2): progressSynced is only true when the media progress was set
+@@ -373 +373 @@ class PlaybackSessionManager {
+-      // setData sets the session id
++      // cast(d): setData sets the session id
+@@ -399 +399 @@ class PlaybackSessionManager {
+-    // Open sessions have a library item id (setData)
++    // cast(d): open sessions have a library item id (setData)
+@@ -506 +506 @@ class PlaybackSessionManager {
+-    // Open sessions are created with setData (startSession), which sets updatedAt
++    // cast(d): open sessions are created with setData (startSession), which sets updatedAt
+@@ -509 +509 @@ class PlaybackSessionManager {
+-      // Set by setData (see above)
++      // cast(d): set by setData (see above)
+diff --git a/server/managers/PodcastManager.ts b/server/managers/PodcastManager.ts
+index 53ebfd1d..232ed55a 100644
+--- a/server/managers/PodcastManager.ts
++++ b/server/managers/PodcastManager.ts
+@@ -190 +190 @@ class PodcastManager {
+-      // The queue is not empty (checked above)
++      // cast(d): the queue is not empty (checked above)
+@@ -202 +202 @@ class PodcastManager {
+-    // cast(d): setData sets targetFilename to a string before the download starts
++    // cast(d) (3): currentDownload is set by startPodcastEpisodeDownload, the only caller, until this returns; setData sets targetFilename to a string before the download starts
+@@ -210 +210 @@ class PodcastManager {
+-    // cast(d): the library item of a podcast episode download is a podcast
++    // cast(d) (2): the library item of a podcast episode download is a podcast; currentDownload is set (see the comment at the start of this method)
+@@ -212,0 +213 @@ class PodcastManager {
++      // cast(d): currentDownload is set (see the comment at the start of this method)
+@@ -217 +218 @@ class PodcastManager {
+-    // cast(d): setData sets rssPodcastEpisode before the download is queued
++    // cast(d) (2): currentDownload is set (see above); setData sets rssPodcastEpisode before the download is queued
+@@ -232,0 +234 @@ class PodcastManager {
++    // cast(d): currentDownload is set (see the comment at the start of this method)
+@@ -268,0 +271 @@ class PodcastManager {
++    // cast(d): currentDownload is set (see the comment at the start of this method)
+@@ -310 +313 @@ class PodcastManager {
+-    // setDataFromPath (called before this) sets the path
++    // cast(d): setDataFromPath (called before this) sets the path
+diff --git a/server/managers/ShareManager.ts b/server/managers/ShareManager.ts
+index e0611137..55ceb8db 100644
+--- a/server/managers/ShareManager.ts
++++ b/server/managers/ShareManager.ts
+@@ -157 +157 @@ class ShareManager {
+-    // Open share sessions are created with setData, which sets updatedAt
++    // cast(d): open share sessions are created with setData, which sets updatedAt
+@@ -160 +160 @@ class ShareManager {
+-      // Set by setData (see above)
++      // cast(d): set by setData (see above)
+diff --git a/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.ts b/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.ts
+index 903b7606..128a0814 100644
+--- a/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.ts
++++ b/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.ts
+@@ -76 +76 @@ async function getServerSettings(queryInterface: QueryInterface, logger: Migrati
+-  // set by the try block (the catch rethrows)
++  // cast(d): set by the try block (the catch rethrows)
+diff --git a/server/migrations/v2.17.7-add-indices.ts b/server/migrations/v2.17.7-add-indices.ts
+index b2355b24..1279550d 100644
+--- a/server/migrations/v2.17.7-add-indices.ts
++++ b/server/migrations/v2.17.7-add-indices.ts
+@@ -54 +54 @@ async function addIndex(queryInterface: QueryInterface, logger: MigrationContext
+-    // cast(d): catch variable is unknown
++    // cast(d) (2): catch variable is unknown
+diff --git a/server/migrations/v2.19.1-copy-title-to-library-items.ts b/server/migrations/v2.19.1-copy-title-to-library-items.ts
+index 038440b7..fd574494 100644
+--- a/server/migrations/v2.19.1-copy-title-to-library-items.ts
++++ b/server/migrations/v2.19.1-copy-title-to-library-items.ts
+@@ -82 +82 @@ async function addIndex(queryInterface: QueryInterface, logger: MigrationContext
+-    // cast(d): catch variable is unknown
++    // cast(d) (2): catch variable is unknown
+diff --git a/server/migrations/v2.20.0-improve-author-sort-queries.ts b/server/migrations/v2.20.0-improve-author-sort-queries.ts
+index c3d8f42e..1bf2d6fb 100644
+--- a/server/migrations/v2.20.0-improve-author-sort-queries.ts
++++ b/server/migrations/v2.20.0-improve-author-sort-queries.ts
+@@ -239 +239 @@ class MigrationHelper {
+-      // cast(d): catch variable is unknown
++      // cast(d) (2): catch variable is unknown
+diff --git a/server/models/ApiKey.ts b/server/models/ApiKey.ts
+index 2b3a6314..022040ed 100644
+--- a/server/models/ApiKey.ts
++++ b/server/models/ApiKey.ts
+@@ -257 +257 @@ class ApiKey extends Model<ApiKeyAttributes, InferCreationAttributes<ApiKey>> {
+-    // cast(b): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
++    // cast(b) (2): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+diff --git a/server/models/Author.ts b/server/models/Author.ts
+index 07ed6632..03c8f35b 100644
+--- a/server/models/Author.ts
++++ b/server/models/Author.ts
+@@ -85,0 +86 @@ class Author extends Model<InferAttributes<Author>, InferCreationAttributes<Auth
++    // cast(c): author is null when no author has this id (see NOTE above); read as in the JS
+@@ -86,0 +88 @@ class Author extends Model<InferAttributes<Author>, InferCreationAttributes<Auth
++      // cast(c): author is null when no author has this id (see NOTE above); read as in the JS
+diff --git a/server/models/Feed.ts b/server/models/Feed.ts
+index d7d363b4..84abf6b4 100644
+--- a/server/models/Feed.ts
++++ b/server/models/Feed.ts
+@@ -137 +137 @@ class Feed extends Model<InferAttributes<Feed>, InferCreationAttributes<Feed>> {
+-      // cast(d): media is a Podcast when mediaType is "podcast" and a Book otherwise
++      // cast(d) (2): media is a Podcast when mediaType is "podcast" and a Book otherwise
+@@ -460,0 +461 @@ class Feed extends Model<InferAttributes<Feed>, InferCreationAttributes<Feed>> {
++      // cast(c): itemExpanded may be null (see NOTE above); passed on as in the JS
+@@ -463,0 +465 @@ class Feed extends Model<InferAttributes<Feed>, InferCreationAttributes<Feed>> {
++      // cast(c): itemExpanded may be null (see NOTE above), but then the line above has already thrown
+@@ -473,0 +476 @@ class Feed extends Model<InferAttributes<Feed>, InferCreationAttributes<Feed>> {
++      // cast(c): collectionExpanded may be null (see NOTE above); passed on as in the JS
+@@ -482,0 +486 @@ class Feed extends Model<InferAttributes<Feed>, InferCreationAttributes<Feed>> {
++      // cast(c): seriesExpanded may be null (see NOTE above); passed on as in the JS
+@@ -500 +504 @@ class Feed extends Model<InferAttributes<Feed>, InferCreationAttributes<Feed>> {
+-      // The entity is only null in the library item case noted above, which has already thrown
++      // cast(d): the entity is only null in the library item case noted above, which has already thrown
+diff --git a/server/models/FeedEpisode.ts b/server/models/FeedEpisode.ts
+index 1d00f689..344a98ee 100644
+--- a/server/models/FeedEpisode.ts
++++ b/server/models/FeedEpisode.ts
+@@ -77 +77 @@ class FeedEpisode extends Model<InferAttributes<FeedEpisode>, InferCreationAttri
+-      // cast(d): subtracting Dates subtracts their timestamps, as in the JS
++      // cast(d) (2): subtracting Dates subtracts their timestamps, as in the JS
+@@ -80 +80 @@ class FeedEpisode extends Model<InferAttributes<FeedEpisode>, InferCreationAttri
+-      // cast(d): subtracting Dates subtracts their timestamps, as in the JS
++      // cast(d) (2): subtracting Dates subtracts their timestamps, as in the JS
+@@ -200 +200 @@ class FeedEpisode extends Model<InferAttributes<FeedEpisode>, InferCreationAttri
+-        // earliestLibraryItemCreatedAt is set: this loop only runs when books is not empty
++        // cast(d): earliestLibraryItemCreatedAt is set: this loop only runs when books is not empty
+diff --git a/server/models/Podcast.ts b/server/models/Podcast.ts
+index 8c58ddd1..401ab539 100644
+--- a/server/models/Podcast.ts
++++ b/server/models/Podcast.ts
+@@ -390 +390 @@ class Podcast extends Model<InferAttributes<Podcast>, InferCreationAttributes<Po
+-        // publishedAt is set (the comparison above is false for null)
++        // cast(d): publishedAt is set (the comparison above is false for null)
+diff --git a/server/models/User.ts b/server/models/User.ts
+index 4bc5ed4d..f1ce1510 100644
+--- a/server/models/User.ts
++++ b/server/models/User.ts
+@@ -996 +996 @@ class User extends Model<UserAttributes, InferCreationAttributes<User>> {
+-    // cast(b): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
++    // cast(b) (2): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+diff --git a/server/objects/Backup.ts b/server/objects/Backup.ts
+index 9dc726ab..111db3ab 100644
+--- a/server/objects/Backup.ts
++++ b/server/objects/Backup.ts
+@@ -5 +5 @@ import type { DateAndTime } from './types'
+-// Typed view of the untyped vendored date-and-time
++// cast(a): typed view of the untyped vendored date-and-time (see DateAndTime)
+@@ -54 +54 @@ class Backup {
+-    // Loose comparison with the number 1 (the key is a string), like the JS
++    // cast(d): key is a string; the loose comparison with the number 1 coerces it, like the JS
+diff --git a/server/objects/DailyLog.ts b/server/objects/DailyLog.ts
+index 4bfc61ce..7b7dabe3 100644
+--- a/server/objects/DailyLog.ts
++++ b/server/objects/DailyLog.ts
+@@ -7 +7 @@ import type { DateAndTime } from './types'
+-// Typed view of the untyped vendored date-and-time
++// cast(a): typed view of the untyped vendored date-and-time (see DateAndTime)
+diff --git a/server/objects/DeviceInfo.ts b/server/objects/DeviceInfo.ts
+index 5f4bdfc6..a4197ccd 100644
+--- a/server/objects/DeviceInfo.ts
++++ b/server/objects/DeviceInfo.ts
+@@ -78 +78 @@ class DeviceInfo {
+-    // Index this object and the stored data by key
++    // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+@@ -79,0 +80 @@ class DeviceInfo {
++    // cast(d): the stored data is read by key in the loop below (same object)
+@@ -106 +107 @@ class DeviceInfo {
+-    // Index the JSON object by key
++    // cast(d): the JSON object is read and its empty keys deleted by key in the loop below (same object)
+@@ -176 +177 @@ class DeviceInfo {
+-    // Index this object and both JSON objects by key
++    // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+@@ -177,0 +179 @@ class DeviceInfo {
++    // cast(d): the new JSON is read by key in the loop below (same object)
+@@ -178,0 +181 @@ class DeviceInfo {
++    // cast(d): the existing JSON is read by key in the loop below (same object)
+diff --git a/server/objects/Notification.ts b/server/objects/Notification.ts
+index 2b741e9b..45cfea30 100644
+--- a/server/objects/Notification.ts
++++ b/server/objects/Notification.ts
+@@ -138 +138 @@ class Notification {
+-    // Index this object by key
++    // cast(d): this object is read and written by key in the loop below (same object)
+@@ -171 +171 @@ class Notification {
+-        // Event data values are not all strings; replace coerces the replacement to a string, like the JS
++        // cast(d): event data values are not all strings; replace coerces the replacement to a string, like the JS
+diff --git a/server/objects/PlaybackSession.ts b/server/objects/PlaybackSession.ts
+index 7aa8f8b7..2c2719ea 100644
+--- a/server/objects/PlaybackSession.ts
++++ b/server/objects/PlaybackSession.ts
+@@ -9 +9 @@ import type { AudioChapter, DateAndTime } from './types'
+-// Typed view of the untyped vendored date-and-time
++// cast(a): typed view of the untyped vendored date-and-time (see DateAndTime)
+@@ -239 +239 @@ class PlaybackSession {
+-    // Copied as given (possibly undefined), like the JS
++    // cast(d): updatedAt and startedAt of the stored session may be undefined; copied as given, like the JS
+@@ -296 +296 @@ class PlaybackSession {
+-    // Book media ignores the episode id; podcast sessions always pass one
++    // cast(d): a book ignores the id; for a podcast a null id finds no episode, so getChapters logs it and returns [], as in the JS
+@@ -318 +318 @@ class PlaybackSession {
+-    // isNaN coerces its argument
++    // cast(d): timeListened is number | string; isNaN coerces its argument
+@@ -327 +327 @@ class PlaybackSession {
+-    // timeListening is null before the first update (null + n is n); parseFloat coerces numbers to strings
++    // cast(d) (2): timeListening is null before the first update (null + n is n); parseFloat coerces numbers to strings
+diff --git a/server/objects/PodcastEpisodeDownload.ts b/server/objects/PodcastEpisodeDownload.ts
+index 577f2083..fc9f446e 100644
+--- a/server/objects/PodcastEpisodeDownload.ts
++++ b/server/objects/PodcastEpisodeDownload.ts
+@@ -40 +40 @@ class PodcastEpisodeDownload {
+-    // Typed LibraryItem (as the JSDoc did); setData sets it before use
++    // cast(d): typed LibraryItem (as the JSDoc did); setData sets it before use (left from batch 11a, see Skipped files)
+@@ -100 +100 @@ class PodcastEpisodeDownload {
+-    // setData sets targetFilename to a string before the getters are used
++    // cast(d): setData sets targetFilename to a string before the getters are used
+@@ -110 +110 @@ class PodcastEpisodeDownload {
+-    // cast(d): setData sets rssPodcastEpisode before the getters are used (2)
++    // cast(d): setData sets rssPodcastEpisode before the getters are used
+@@ -111,0 +112 @@ class PodcastEpisodeDownload {
++    // cast(d): setData sets rssPodcastEpisode before the getters are used
+diff --git a/server/objects/Stream.ts b/server/objects/Stream.ts
+index 7a726c8c..c5b44b3d 100644
+--- a/server/objects/Stream.ts
++++ b/server/objects/Stream.ts
+@@ -75 +75 @@ class Stream extends EventEmitter {
+-    // Media of a podcast library item is a Podcast
++    // cast(d): isPodcast is checked just above (a getter does not narrow media), so media is a Podcast
+@@ -85 +85 @@ class Stream extends EventEmitter {
+-    // getTrackList only reads the episode id for podcasts (null for books)
++    // cast(d): getTrackList only reads the episode id for podcasts (null for books)
+@@ -132 +132 @@ class Stream extends EventEmitter {
+-    // includes(null) is false
++    // cast(d): tracksAudioFileType may be null; includes(null) is false
+@@ -249,0 +250 @@ class Stream extends EventEmitter {
++    // cast(d): loop is null before the first transcode; clearInterval ignores null, but its type does not accept it
+@@ -299 +300 @@ class Stream extends EventEmitter {
+-    // includes(null) is false
++    // cast(d) (2): the mime type and codec may be null; includes(null) is false
+@@ -307 +308 @@ class Stream extends EventEmitter {
+-    // includes(null) is false
++    // cast(d): tracksCodec may be null; includes(null) is false
+@@ -352,0 +354 @@ class Stream extends EventEmitter {
++        // cast(d): loop may be null; clearInterval ignores null, but its type does not accept it
+@@ -381,0 +384 @@ class Stream extends EventEmitter {
++      // cast(d): loop may be null; clearInterval ignores null, but its type does not accept it
+@@ -388,0 +392 @@ class Stream extends EventEmitter {
++    // cast(d): loop is null when no transcode ran; clearInterval ignores null, but its type does not accept it
+@@ -411,0 +416 @@ class Stream extends EventEmitter {
++    // cast(d): loop may be null; clearInterval ignores null, but its type does not accept it
+diff --git a/server/objects/files/AudioFile.ts b/server/objects/files/AudioFile.ts
+index ea6a6ef0..ba73a52f 100644
+--- a/server/objects/files/AudioFile.ts
++++ b/server/objects/files/AudioFile.ts
+@@ -72 +72 @@ class AudioFile {
+-    // Typed FileMetadata (as the JSDoc did); construct or setDataFromProbe sets it before use
++    // cast(d): typed FileMetadata (as the JSDoc did); construct or setDataFromProbe sets it before use (left from batch 11a, see Skipped files)
+@@ -166 +166 @@ class AudioFile {
+-    // Index the mime type map by any format string; unknown formats read undefined, like the JS
++    // cast(d): the mime type map is indexed by any format string; unknown formats read undefined, like the JS
+@@ -198 +198 @@ class AudioFile {
+-    // Probe data from prober.probe always has audioMetaTags (MediaProbeData.setData)
++    // cast(d): probe data from prober.probe always has audioMetaTags (MediaProbeData.setData sets it)
+@@ -242 +242 @@ class AudioFile {
+-    // Index this object and the new JSON by key
++    // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+@@ -243,0 +244 @@ class AudioFile {
++    // cast(d): the new JSON is read by key in the loop below (same object)
+diff --git a/server/objects/files/LibraryFile.ts b/server/objects/files/LibraryFile.ts
+index 51142d6e..f1cb5f84 100644
+--- a/server/objects/files/LibraryFile.ts
++++ b/server/objects/files/LibraryFile.ts
+@@ -40 +40 @@ class LibraryFile {
+-    // Typed FileMetadata; construct or setDataFromPath sets it before use
++    // cast(d): typed FileMetadata; construct or setDataFromPath sets it before use (left from batch 11a, see Skipped files)
+@@ -60 +60 @@ class LibraryFile {
+-    // Typed as set: toJSON is only called on files that construct or setDataFromPath filled in (isSupplementary may still be null)
++    // cast(d): typed as set: toJSON is only called on files that construct or setDataFromPath filled in (isSupplementary may still be null)
+@@ -97,0 +98 @@ class LibraryFile {
++    // cast(c): typed without false; when stat fails it is false and the reads below are undefined, as in the JS (see NOTE above)
+diff --git a/server/objects/metadata/AudioMetaTags.ts b/server/objects/metadata/AudioMetaTags.ts
+index f2ef4038..b55fd113 100644
+--- a/server/objects/metadata/AudioMetaTags.ts
++++ b/server/objects/metadata/AudioMetaTags.ts
+@@ -135 +135 @@ class AudioMetaTags {
+-    // Index this object by key
++    // cast(d): this object is read by key in the loop below (same object; the tag fields are string | null)
+@@ -321 +321 @@ class AudioMetaTags {
+-    // Index this object by key
++    // cast(d): this object is read and written by key in the loop below (same object; the tag fields are string | null)
+@@ -339 +339 @@ class AudioMetaTags {
+-    // Index both objects by key
++    // cast(d): the other meta tags object is read by key in the loop below (same object; the tag fields are string | null)
+@@ -340,0 +341 @@ class AudioMetaTags {
++    // cast(d): this object is read by key in the loop below (same object; the tag fields are string | null)
+diff --git a/server/objects/metadata/FileMetadata.ts b/server/objects/metadata/FileMetadata.ts
+index c14d6936..56ce1301 100644
+--- a/server/objects/metadata/FileMetadata.ts
++++ b/server/objects/metadata/FileMetadata.ts
+@@ -25 +25 @@ class FileMetadata {
+-      // Missing fields are copied as undefined, like the JS
++      // cast(d): the stored JSON may lack fields; missing fields are copied as undefined, like the JS
+@@ -45 +45 @@ class FileMetadata {
+-    // Typed as set: toJSON is only called on metadata that construct or setData filled in
++    // cast(d): typed as set: toJSON is only called on metadata that construct or setData filled in
+@@ -72 +72 @@ class FileMetadata {
+-    // Index this object and the payload by key
++    // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+@@ -73,0 +74 @@ class FileMetadata {
++    // cast(d): the payload is read by key in the loop below (same object)
+@@ -86 +87 @@ class FileMetadata {
+-    // Index this object and the payload by key
++    // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+@@ -87,0 +89 @@ class FileMetadata {
++    // cast(d): the payload is read by key in the loop below (same object)
+diff --git a/server/objects/settings/EmailSettings.ts b/server/objects/settings/EmailSettings.ts
+index 831ab598..500fd7d6 100644
+--- a/server/objects/settings/EmailSettings.ts
++++ b/server/objects/settings/EmailSettings.ts
+@@ -117 +117 @@ class EmailSettings {
+-      // filter removes the null (invalid) devices
++      // cast(d): filter removes the null (invalid) devices, but TypeScript keeps null in the element type
+@@ -141 +141 @@ class EmailSettings {
+-    // Index this object and the JSON by key
++    // cast(d): this object is written by key in the loop below (same object; the class has no index signature)
+@@ -142,0 +143 @@ class EmailSettings {
++    // cast(d): the JSON is read by key in the loop below (same object)
+diff --git a/server/objects/settings/ServerSettings.ts b/server/objects/settings/ServerSettings.ts
+index 43376ba3..3d55523a 100644
+--- a/server/objects/settings/ServerSettings.ts
++++ b/server/objects/settings/ServerSettings.ts
+@@ -183 +183 @@ class ServerSettings {
+-    // Copied as given (possibly undefined), like the JS
++    // cast(d): tokenSecret of the stored settings may be undefined; copied as given, like the JS
+@@ -187 +187 @@ class ServerSettings {
+-    // Copied as given (possibly undefined), like the JS
++    // cast(d): scannerParseSubtitle of the stored settings may be undefined; copied as given, like the JS
+@@ -196 +196 @@ class ServerSettings {
+-    // isNaN coerces its argument (undefined is NaN)
++    // cast(d): isNaN coerces its argument (undefined is NaN)
+@@ -198 +198 @@ class ServerSettings {
+-    // isNaN coerces its argument (undefined is NaN)
++    // cast(d): isNaN coerces its argument (undefined is NaN)
+@@ -271 +271 @@ class ServerSettings {
+-      // Copied as given (possibly undefined), like the JS
++      // cast(d): bookshelfView of the stored settings may be undefined; copied as given, like the JS
+@@ -437 +437 @@ class ServerSettings {
+-    // Index this object by key
++    // cast(d): this object is read and written by key in the loop below (same object)
+diff --git a/server/providers/Audible.ts b/server/providers/Audible.ts
+index a94e43dc..f46d0907 100644
+--- a/server/providers/Audible.ts
++++ b/server/providers/Audible.ts
+@@ -235,0 +236 @@ class Audible {
++    // cast(c): items is null when the catalog response has no "products" (see NOTE above); read as in the JS
+diff --git a/server/providers/Audnexus.ts b/server/providers/Audnexus.ts
+index 1fd12f17..6b8a9eca 100644
+--- a/server/providers/Audnexus.ts
++++ b/server/providers/Audnexus.ts
+@@ -140,0 +141 @@ class Audnexus {
++    // cast(d): with a plain null initialiser TypeScript narrows closestMatch to null, so the assignments in the callback below would not type check
+@@ -187,0 +189 @@ class Audnexus {
++      // cast(d): catch variable is unknown; axios rejects with an error that may have a response (see RequestError)
+diff --git a/server/providers/CustomProviderAdapter.ts b/server/providers/CustomProviderAdapter.ts
+index caf08c76..55b94e8e 100644
+--- a/server/providers/CustomProviderAdapter.ts
++++ b/server/providers/CustomProviderAdapter.ts
+@@ -72,0 +73 @@ class CustomProviderAdapter {
++    // cast(d): typed view from Phase 2, when the model's init() kept it from being a ModelStatic; since batch 3a findByPk is typed on the model
+@@ -185,0 +187 @@ class CustomProviderAdapter {
++        // cast(d): for...in only yields keys of payload
+@@ -186,0 +189 @@ class CustomProviderAdapter {
++          // cast(d): for...in only yields keys of payload
+diff --git a/server/providers/FantLab.ts b/server/providers/FantLab.ts
+index 551f84b1..5d9c6dd4 100644
+--- a/server/providers/FantLab.ts
++++ b/server/providers/FantLab.ts
+@@ -215,0 +216 @@ class FantLab {
++    // cast(d): the list was checked above to have items, so pop is not undefined
+diff --git a/server/providers/GoogleBooks.ts b/server/providers/GoogleBooks.ts
+index 01834f96..1067bb70 100644
+--- a/server/providers/GoogleBooks.ts
++++ b/server/providers/GoogleBooks.ts
+@@ -67,0 +68 @@ class GoogleBooks {
++      // cast(d): imageLinks has keys (checked above), so pop is not undefined
+diff --git a/server/providers/iTunes.ts b/server/providers/iTunes.ts
+index 50a197f6..92eddc9e 100644
+--- a/server/providers/iTunes.ts
++++ b/server/providers/iTunes.ts
+@@ -136,0 +137 @@ class iTunes {
++    // cast(c): search() returns a plain array when term is empty (see NOTE above)
+@@ -164,0 +166 @@ class iTunes {
++    // cast(c): search() returns a plain array when term is empty (see NOTE above)
+diff --git a/server/routers/ApiRouter.ts b/server/routers/ApiRouter.ts
+index 86df20f1..b600131e 100644
+--- a/server/routers/ApiRouter.ts
++++ b/server/routers/ApiRouter.ts
+@@ -43 +43 @@ const fs = fsExtra
+-// Typed view of the untyped vendored date-and-time
++// cast(a): typed view of the untyped vendored date-and-time (see DateAndTime)
+@@ -124 +124 @@ class ApiRouter {
+-    // Same app; typed so the routes accept the controller handlers (see ApiRouterApp)
++    // cast(b): same app; typed so the routes accept the controller handlers, which express's RequestHandler rejects (see ApiRouterApp)
+@@ -501 +501 @@ class ApiRouter {
+-          // Sequelize accepts an array of where conditions at runtime; its types do not
++          // cast(b): Sequelize accepts an array of where conditions at runtime; its types do not
+@@ -529 +529 @@ class ApiRouter {
+-      // The queries throw Error objects
++      // cast(d): catch variable is unknown; the queries throw Error objects
+@@ -566 +566 @@ class ApiRouter {
+-          // Sequelize accepts an array of where conditions at runtime; its types do not
++          // cast(b): Sequelize accepts an array of where conditions at runtime; its types do not
+@@ -590 +590 @@ class ApiRouter {
+-      // The queries throw Error objects
++      // cast(d): catch variable is unknown; the queries throw Error objects
+@@ -598 +598 @@ class ApiRouter {
+-    // Stored sessions always have updatedAt
++    // cast(d) (2): sessions loaded from the database always have updatedAt (Sequelize timestamps)
+@@ -605 +605 @@ class ApiRouter {
+-    // Stored sessions always have updatedAt
++    // cast(d) (2): sessions loaded from the database always have updatedAt (Sequelize timestamps)
+@@ -621 +621 @@ class ApiRouter {
+-    // Same array; typed as the stats read the sessions (see ListeningStatsSession)
++    // cast(d): same array; typed as the stats read the sessions (see ListeningStatsSession)
+diff --git a/server/scanner/AbsMetadataFileScanner.ts b/server/scanner/AbsMetadataFileScanner.ts
+index 465b9c1b..d07f1db4 100644
+--- a/server/scanner/AbsMetadataFileScanner.ts
++++ b/server/scanner/AbsMetadataFileScanner.ts
+@@ -30 +30 @@ class AbsMetadataFileScanner {
+-    // Scanned library files have a path (set by setDataFromPath)
++    // cast(d): scanned library files have a path (set by setDataFromPath)
+@@ -68 +68 @@ class AbsMetadataFileScanner {
+-    // Scanned library files have a path (set by setDataFromPath)
++    // cast(d): scanned library files have a path (set by setDataFromPath)
+diff --git a/server/scanner/AudioFileScanner.ts b/server/scanner/AudioFileScanner.ts
+index bd99517c..6a92b912 100644
+--- a/server/scanner/AudioFileScanner.ts
++++ b/server/scanner/AudioFileScanner.ts
+@@ -153 +153 @@ class AudioFileScanner {
+-        // The disc and track keys were set above
++        // cast(d) (4): the disc and track keys were set above (TypeScript already narrows them); a null number sorts as 0 in the subtraction, as in the JS
+@@ -154,0 +155 @@ class AudioFileScanner {
++        // cast(d) (4): the track key was set above (TypeScript already narrows it); a null number sorts as 0 in the subtraction, as in the JS
+@@ -160 +161 @@ class AudioFileScanner {
+-      // The track key was set above; a file without a track number (null) sorts as 0
++      // cast(d) (4): the track key was set above (TypeScript already narrows it); a file without a track number (null) sorts as 0, as in the JS
+@@ -220 +221 @@ class AudioFileScanner {
+-    // setDataFromPath sets the path of scanned files
++    // cast(d): setDataFromPath sets the path of scanned files
+@@ -234 +235 @@ class AudioFileScanner {
+-    // setData sets the audio meta tags of probe data
++    // cast(d): setData sets the audio meta tags of probe data
+@@ -235,0 +237 @@ class AudioFileScanner {
++    // cast(d): setData sets the audio meta tags of probe data
+@@ -610 +612 @@ class AudioFileScanner {
+-            // cast(d): every file has meta tags with a title tag when useMetaTagAsTitle is true
++            // cast(d) (2): every file has meta tags with a title tag when useMetaTagAsTitle is true
+diff --git a/server/scanner/BookScanner.ts b/server/scanner/BookScanner.ts
+index 06e93368..d6756cad 100644
+--- a/server/scanner/BookScanner.ts
++++ b/server/scanner/BookScanner.ts
+@@ -213 +213 @@ class BookScanner {
+-      // Scanned library files have a path (set by setDataFromPath)
++      // cast(d): scanned library files have a path (set by setDataFromPath)
+@@ -227 +227 @@ class BookScanner {
+-      // ebookFile was checked above
++      // cast(d): media.ebookFile was checked in the if condition above (narrowing does not reach the callback)
+@@ -231 +231 @@ class BookScanner {
+-        // cast(d): the constructor sets metadata from the library file JSON, which has an extension (2 reads)
++        // cast(d) (2): the constructor sets metadata from the library file JSON, which has an extension
+@@ -232,0 +233 @@ class BookScanner {
++        // cast(d): the constructor sets metadata from the library file JSON
+@@ -244 +245 @@ class BookScanner {
+-      // Scanned library files have an extension (set by setDataFromPath)
++      // cast(d): scanned library files have an extension (set by setDataFromPath)
+@@ -377 +378 @@ class BookScanner {
+-          // Not undefined (skipped above); only set to an image file path
++          // cast(d): not undefined (undefined keys are skipped above); only set to an image file path
+@@ -382 +383 @@ class BookScanner {
+-          // Not undefined (skipped above); only set to an image file path
++          // cast(d): not undefined (undefined keys are skipped above); only set to an image file path
+@@ -499 +500 @@ class BookScanner {
+-    // Scanned library files have an extension (set by setDataFromPath)
++    // cast(d): scanned library files have an extension (set by setDataFromPath)
+@@ -592 +593 @@ class BookScanner {
+-      // Scanned library files have an extension (set by setDataFromPath)
++      // cast(d): scanned library files have an extension (set by setDataFromPath)
+@@ -645 +646 @@ class BookScanner {
+-    // The book (with its join rows) is created with the library item (included above)
++    // cast(b): the book (with its join rows) is created with the library item (included above); the association is optional in the model
+@@ -646,0 +648 @@ class BookScanner {
++      // cast(b): the book is created with the library item (included above); the association is optional in the model
+@@ -652,0 +655 @@ class BookScanner {
++    // cast(b): the book is created with the library item (included above); the association is optional in the model
+@@ -653,0 +657 @@ class BookScanner {
++      // cast(b): the book is created with the library item (included above); the association is optional in the model
+@@ -662,0 +667 @@ class BookScanner {
++    // cast(b): the book is created with the library item (included above); the association is optional in the model
+@@ -663,0 +669 @@ class BookScanner {
++    // cast(b): the book is created with the library item (included above); the association is optional in the model
+@@ -664,0 +671 @@ class BookScanner {
++    // cast(b): the book is created with the library item (included above); the association is optional in the model
+@@ -665,0 +673 @@ class BookScanner {
++    // cast(b): the book is created with the library item (included above); the association is optional in the model
+@@ -666,0 +675 @@ class BookScanner {
++    // cast(b): the book is created with the library item (included above); the association is optional in the model
+@@ -668,0 +678 @@ class BookScanner {
++    // cast(b): the book is created with the library item (included above); the association is optional in the model
+@@ -713 +723 @@ class BookScanner {
+-      // The folder or file name gives the title
++      // cast(d): the folder or file name gives the title (LibraryItemScanData types it optional)
+@@ -749 +759 @@ class BookScanner {
+-      // Scanned library files have a path (set by setDataFromPath)
++      // cast(d): scanned library files have a path (set by setDataFromPath)
+@@ -793 +803 @@ class BookScanner {
+-        // The folder or file name gives the title
++        // cast(d): the folder or file name gives the title (LibraryItemScanData types it optional)
+@@ -800 +810 @@ class BookScanner {
+-            // The key is in the ebook metadata
++            // cast(d): the key is in the ebook metadata (for...in over it)
+@@ -801,0 +812 @@ class BookScanner {
++              // cast(d): the key is in the ebook metadata (for...in over it)
+@@ -805 +816 @@ class BookScanner {
+-            // The key is in the ebook metadata
++            // cast(d): the key is in the ebook metadata (for...in over it)
+@@ -806,0 +818 @@ class BookScanner {
++              // cast(d): the key is in the ebook metadata (for...in over it)
+@@ -843 +855 @@ class BookScanner {
+-        // Scanned library files have a path (set by setDataFromPath)
++        // cast(d): scanned library files have a path (set by setDataFromPath)
+@@ -850 +862 @@ class BookScanner {
+-        // Scanned library files have a path (set by setDataFromPath)
++        // cast(d): scanned library files have a path (set by setDataFromPath)
+diff --git a/server/scanner/LibraryItemScanData.ts b/server/scanner/LibraryItemScanData.ts
+index 6e3e98a6..eb93e73d 100644
+--- a/server/scanner/LibraryItemScanData.ts
++++ b/server/scanner/LibraryItemScanData.ts
+@@ -203 +203 @@ class LibraryItemScanData {
+-    // Scanned library files have an extension (set by setDataFromPath)
++    // cast(d): scanned library files have an extension (set by setDataFromPath)
+@@ -209 +209 @@ class LibraryItemScanData {
+-    // Scanned library files have an extension (set by setDataFromPath)
++    // cast(d): scanned library files have an extension (set by setDataFromPath)
+@@ -327 +327 @@ class LibraryItemScanData {
+-      // setDataFromPath sets the ino of scanned files
++      // cast(d): setDataFromPath sets the ino of scanned files
+diff --git a/server/scanner/LibraryItemScanner.ts b/server/scanner/LibraryItemScanner.ts
+index d1d72372..20827dcc 100644
+--- a/server/scanner/LibraryItemScanner.ts
++++ b/server/scanner/LibraryItemScanner.ts
+@@ -77 +77 @@ class LibraryItemScanner {
+-    // The library folder is included above
++    // cast(b): the library folder is included in the query above; the association is optional in the model
+diff --git a/server/scanner/LibraryScan.ts b/server/scanner/LibraryScan.ts
+index d1d18bc2..ab593f91 100644
+--- a/server/scanner/LibraryScan.ts
++++ b/server/scanner/LibraryScan.ts
+@@ -64,0 +65 @@ class LibraryScan {
++    // cast(d): the library getters are used after setData, which sets the library
+@@ -67,0 +69 @@ class LibraryScan {
++    // cast(d): the library getters are used after setData, which sets the library
+@@ -70,0 +73 @@ class LibraryScan {
++    // cast(d): the library getters are used after setData, which sets the library
+@@ -73,0 +77 @@ class LibraryScan {
++    // cast(d): the library getters are used after setData, which sets the library
+@@ -85 +89 @@ class LibraryScan {
+-    // Set by setComplete, which runs before the results are read
++    // cast(d): set by setComplete, which runs before the results are read
+@@ -97 +101 @@ class LibraryScan {
+-    // Set by setComplete, which runs before the results are read
++    // cast(d): set by setComplete, which runs before the results are read
+@@ -115,0 +120 @@ class LibraryScan {
++      // cast(d): toJSON is used after setData, which sets the library
+@@ -136 +141 @@ class LibraryScan {
+-    // startedAt is set by setData
++    // cast(d): startedAt is set by setData, which runs before setComplete
+diff --git a/server/scanner/LibraryScanner.ts b/server/scanner/LibraryScanner.ts
+index 31cc395f..75b77d6f 100644
+--- a/server/scanner/LibraryScanner.ts
++++ b/server/scanner/LibraryScanner.ts
+@@ -69 +69 @@ class LibraryScanner {
+-    // Libraries are loaded with their folders for scans
++    // cast(b): both callers load the library with its folders (findByIdWithFolders in CronManager and the LibraryController middleware); the association is optional in the model
+@@ -119 +119 @@ class LibraryScanner {
+-      // Set by createAndAddTask
++      // cast(d): set by createAndAddTask (with the scan data)
+@@ -135 +135 @@ class LibraryScanner {
+-      // Set by createAndAddTask
++      // cast(d): set by createAndAddTask (with the scan data)
+@@ -163 +163 @@ class LibraryScanner {
+-    // The library of the scan is loaded with its folders (setData sets the library)
++    // cast(b): setData sets the library of the scan, which is loaded with its folders; the association is optional in the model
+@@ -164,0 +165 @@ class LibraryScanner {
++      // cast(b): setData sets the library of the scan, which is loaded with its folders; the association is optional in the model
+@@ -165,0 +167 @@ class LibraryScanner {
++      // cast(d): setData sets the library of the scan
+@@ -218 +220 @@ class LibraryScanner {
+-            // setData sets the library of the scan
++            // cast(d): setData sets the library of the scan
+@@ -278 +280 @@ class LibraryScanner {
+-        // setData sets the library of the scan
++        // cast(d): setData sets the library of the scan
+@@ -424 +426 @@ class LibraryScanner {
+-      // The library folder is included above
++      // cast(b): the library folder is included in the query above; the association is optional in the model
+@@ -466 +468 @@ class LibraryScanner {
+-    // The watcher's pending task is created with data and a start time (setData)
++    // cast(d) (2): the watcher's pending task is created with data and a start time (setData)
+@@ -479 +481 @@ class LibraryScanner {
+-      // The queue is not empty (checked above)
++      // cast(d): the queue is not empty (checked above)
+diff --git a/server/scanner/MediaProbeData.ts b/server/scanner/MediaProbeData.ts
+index 3b0b1b0f..5d689412 100644
+--- a/server/scanner/MediaProbeData.ts
++++ b/server/scanner/MediaProbeData.ts
+@@ -68 +68 @@ class MediaProbeData {
+-        // cast(d): this object indexed by the keys of the stored probe data; the stored audio meta tags are AudioMetaTags toJSON
++        // cast(d) (2): this object indexed by the keys of the stored probe data; the stored audio meta tags are AudioMetaTags toJSON
+diff --git a/server/scanner/NfoFileScanner.ts b/server/scanner/NfoFileScanner.ts
+index 5d19df2d..ba783795 100644
+--- a/server/scanner/NfoFileScanner.ts
++++ b/server/scanner/NfoFileScanner.ts
+@@ -18 +18 @@ class NfoFileScanner {
+-    // Scanned library files have a path (set by setDataFromPath)
++    // cast(d): scanned library files have a path (set by setDataFromPath)
+@@ -25 +25 @@ class NfoFileScanner {
+-          // The key is in the parsed metadata
++          // cast(d): the key is in the parsed metadata (for...in over it)
+@@ -26,0 +27 @@ class NfoFileScanner {
++            // cast(d): the key is in the parsed metadata (for...in over it)
+@@ -31 +32 @@ class NfoFileScanner {
+-          // The key is in the parsed metadata
++          // cast(d): the key is in the parsed metadata (for...in over it)
+@@ -32,0 +34 @@ class NfoFileScanner {
++            // cast(d): the key is in the parsed metadata (for...in over it)
+diff --git a/server/scanner/OpfFileScanner.ts b/server/scanner/OpfFileScanner.ts
+index f02da35f..07ab0ff1 100644
+--- a/server/scanner/OpfFileScanner.ts
++++ b/server/scanner/OpfFileScanner.ts
+@@ -18 +18 @@ class OpfFileScanner {
+-    // Scanned library files have a path (set by setDataFromPath)
++    // cast(d): scanned library files have a path (set by setDataFromPath)
+diff --git a/server/scanner/PodcastScanner.ts b/server/scanner/PodcastScanner.ts
+index 3bb60527..52c18bd1 100644
+--- a/server/scanner/PodcastScanner.ts
++++ b/server/scanner/PodcastScanner.ts
+@@ -200 +200 @@ class PodcastScanner {
+-      // Scanned library files have a path (set by setDataFromPath)
++      // cast(d): scanned library files have a path (set by setDataFromPath)
+@@ -314 +314 @@ class PodcastScanner {
+-      // Scanned library files have a path (set by setDataFromPath)
++      // cast(d): scanned library files have a path (set by setDataFromPath)
+@@ -359 +359 @@ class PodcastScanner {
+-    // The podcast is created with the library item (included above)
++    // cast(b): the podcast is created with the library item (included above); the association is optional in the model
+@@ -360,0 +361 @@ class PodcastScanner {
++    // cast(b): the podcast is created with the library item (included above); the association is optional in the model
+@@ -386 +387 @@ class PodcastScanner {
+-      // The folder or file name gives the title
++      // cast(d): the folder or file name gives the title (LibraryItemScanData types it optional)
+diff --git a/server/scanner/ScanLogger.ts b/server/scanner/ScanLogger.ts
+index 55d71d20..2cadb05f 100644
+--- a/server/scanner/ScanLogger.ts
++++ b/server/scanner/ScanLogger.ts
+@@ -65 +65 @@ class ScanLogger {
+-    // startedAt is set by setData
++    // cast(d): startedAt is set by setData, which runs before setComplete
+diff --git a/server/scanner/Scanner.ts b/server/scanner/Scanner.ts
+index 0a8bbff9..1da908d6 100644
+--- a/server/scanner/Scanner.ts
++++ b/server/scanner/Scanner.ts
+@@ -92 +92 @@ class Scanner {
+-          // The error was checked just above, so the cover path is set
++          // cast(d): the error was checked just above, so the cover path is set
+@@ -109,0 +110 @@ class Scanner {
++      // cast(c): search returns null for a podcast without a title (see NOTE above)
+@@ -115 +116 @@ class Scanner {
+-      // See NOTE above
++      // cast(c): see NOTE above (results may be null)
+@@ -125 +126 @@ class Scanner {
+-          // The error was checked just above, so the cover path is set
++          // cast(d): the error was checked just above, so the cover path is set
+@@ -394 +395,2 @@ class Scanner {
+-    // Only called for podcasts with a feed url
++    // NOTE: the match-episodes route (PodcastController quickMatchEpisodes) does not check feedURL; for a podcast without one getPodcastFeed calls null.startsWith and throws a TypeError
++    // cast(c): quickMatchLibraryItem checks feedURL before it calls this; the route passes a podcast without one (see NOTE above)
+@@ -403 +405 @@ class Scanner {
+-      // Episodes without an enclosure url were scanned from audio files, which give them a title (the title tag or the file name)
++      // cast(d): episodes without an enclosure url were scanned from audio files, which give them a title (the title tag or the file name)
+@@ -551 +553 @@ class Scanner {
+-      // Set by createAndAddTask
++      // cast(d): set by createAndAddTask (with the scan data)
+diff --git a/server/utils/areEquivalent.ts b/server/utils/areEquivalent.ts
+index fbb4784a..110439ea 100644
+--- a/server/utils/areEquivalent.ts
++++ b/server/utils/areEquivalent.ts
+@@ -22 +22 @@ function areEquivalent(value1: unknown, value2: unknown, numToString = false, st
+-    // isNaN coerces its argument, so any value is accepted at runtime
++    // cast(d): value1 is unknown; isNaN coerces its argument, so any value is accepted at runtime
+@@ -24 +24 @@ function areEquivalent(value1: unknown, value2: unknown, numToString = false, st
+-    // isNaN coerces its argument, so any value is accepted at runtime
++    // cast(d): value2 is unknown; isNaN coerces its argument, so any value is accepted at runtime
+@@ -53 +53 @@ function areEquivalent(value1: unknown, value2: unknown, numToString = false, st
+-    // type1 === 'number' and the types match, so both are numbers
++    // cast(d) (2): type1 === 'number' and the types match, so both are numbers
+@@ -62 +62 @@ function areEquivalent(value1: unknown, value2: unknown, numToString = false, st
+-    // type1 === 'function' and the types match, so both are functions
++    // cast(d) (2): type1 === 'function' and the types match, so both are functions
+@@ -67 +67 @@ function areEquivalent(value1: unknown, value2: unknown, numToString = false, st
+-  // type1 is widened to string so the already handled 'function' check stays as it was
++  // cast(d): type1 is widened to string so the already handled 'function' check stays as it was (TypeScript has narrowed 'function' out)
+@@ -98 +98 @@ function areEquivalent(value1: unknown, value2: unknown, numToString = false, st
+-  // Only objects remain (null was handled by the falsy checks above)
++  // cast(d): only non-null objects remain (null was handled by the falsy checks above)
+@@ -100 +100 @@ function areEquivalent(value1: unknown, value2: unknown, numToString = false, st
+-  // Same type as value1, so also a non-null object
++  // cast(d): same type as value1 (checked above), so also a non-null object
+diff --git a/server/utils/comicBookExtractors.ts b/server/utils/comicBookExtractors.ts
+index a9bdfd55..7d1221cc 100644
+--- a/server/utils/comicBookExtractors.ts
++++ b/server/utils/comicBookExtractors.ts
+@@ -101 +101 @@ class CbrComicBookExtractor extends AbstractComicBookExtractor {
+-      // tmpDir is set in open() before files are extracted
++      // cast(d): tmpDir is set in open() before files are extracted
+@@ -113 +113 @@ class CbrComicBookExtractor extends AbstractComicBookExtractor {
+-      // tmpDir is set in open() before files are extracted
++      // cast(d): tmpDir is set in open() before files are extracted
+@@ -167 +167 @@ class CbzComicBookExtractor extends AbstractComicBookExtractor {
+-    // Archive.open resolves to the opened archive; its JSDoc return type is wrong. null buffer is passed through as before
++    // cast(a): Archive.open resolves to the opened archive, its JSDoc return type is wrong; cast(c): a null buffer is passed through as before (see NOTE above)
+diff --git a/server/utils/ffmpegHelpers.ts b/server/utils/ffmpegHelpers.ts
+index 864a9546..695f77f6 100644
+--- a/server/utils/ffmpegHelpers.ts
++++ b/server/utils/ffmpegHelpers.ts
+@@ -161 +161 @@ const downloadPodcastEpisode = (podcastEpisodeDownload: PodcastEpisodeDownload):
+-        // cast(d): setData sets url before the download is queued (5 reads below)
++        // cast(d) (5): setData sets url before the download is queued (the url! reads of this axios call)
+@@ -179 +179 @@ const downloadPodcastEpisode = (podcastEpisodeDownload: PodcastEpisodeDownload):
+-        // axios rejects with an Error
++        // cast(d): catch variable is unknown; axios rejects with an Error
+@@ -200 +200 @@ const downloadPodcastEpisode = (podcastEpisodeDownload: PodcastEpisodeDownload):
+-    // Episodes are only downloaded for podcast library items
++    // cast(d): episodes are only downloaded for podcast library items (PodcastManager queues downloads of podcasts)
+@@ -233 +233 @@ const downloadPodcastEpisode = (podcastEpisodeDownload: PodcastEpisodeDownload):
+-        // The year is a number: its length is undefined so the check is false, as in the JS
++        // cast(d): the year is a number: its length is undefined so the check is false, as in the JS
+diff --git a/server/utils/fileUtils.ts b/server/utils/fileUtils.ts
+index e9235d9b..0133477c 100644
+--- a/server/utils/fileUtils.ts
++++ b/server/utils/fileUtils.ts
+@@ -185 +185 @@ const recurseFiles = async (path: string, relPathToReplace: string | null = null
+-  // list() resolves to the items, or to an { error, path } object when the dir cannot be read
++  // cast(a): the vendored recursive-readdir-async list() resolves to the items, or to an { error, path } object when the dir cannot be read
+@@ -203 +203 @@ const recurseFiles = async (path: string, relPathToReplace: string | null = null
+-      // relPathToReplace is set above
++      // cast(d): relPathToReplace is set above (it is already typed string, the cast changes no type)
+@@ -237 +237 @@ const recurseFiles = async (path: string, relPathToReplace: string | null = null
+-        // relPathToReplace is set above
++        // cast(d): relPathToReplace is set above (it is already typed string, the cast changes no type)
+@@ -239 +239 @@ const recurseFiles = async (path: string, relPathToReplace: string | null = null
+-        // relPathToReplace is set above
++        // cast(d): relPathToReplace is set above (it is already typed string, the cast changes no type)
+@@ -291 +291 @@ const downloadFile = (url: string, filepath: string, contentTypeFilter: ((conten
+-        // content-type is a single header string
++        // cast(d): axios types a header as string | string[] | number...; content-type is a single header string
+@@ -296 +296 @@ const downloadFile = (url: string, filepath: string, contentTypeFilter: ((conten
+-        // content-length is a single header string
++        // cast(d): axios types a header as possibly undefined; content-length is a single header string (parseInt(undefined) is NaN)
+@@ -402 +402 @@ const getAudioMimeTypeFromExtname = (extname: string | null | undefined): string
+-  // Unknown keys read undefined and return null below
++  // cast(d): an unknown key reads undefined and returns null below
+diff --git a/server/utils/generators/abmetadataGenerator.ts b/server/utils/generators/abmetadataGenerator.ts
+index 5e3421c3..ffe4740a 100644
+--- a/server/utils/generators/abmetadataGenerator.ts
++++ b/server/utils/generators/abmetadataGenerator.ts
+@@ -107 +107 @@ function parseJsonMetadataText(text: string, mediaType: 'book' | 'podcast'): Val
+-        // validated.title is a validated string value or null
++        // cast(d): validated.title is a validated string value or null (the cast changes no type)
+diff --git a/server/utils/generators/opmlGenerator.ts b/server/utils/generators/opmlGenerator.ts
+index 6a58be03..11891114 100644
+--- a/server/utils/generators/opmlGenerator.ts
++++ b/server/utils/generators/opmlGenerator.ts
+@@ -22 +22 @@ const generate = (podcasts: Podcast[], indent = true): string => {
+-    // Podcast has no itunesPageUrl property; widened so the existing (always undefined) read compiles
++    // cast(c): Podcast has no itunesPageUrl property; widened so the existing (always undefined) read compiles (see NOTE above)
+diff --git a/server/utils/index.ts b/server/utils/index.ts
+index cb9c3f60..8ceb6d3d 100644
+--- a/server/utils/index.ts
++++ b/server/utils/index.ts
+@@ -54 +54 @@ const isNullOrNaN = (num: unknown): boolean => {
+-  // isNaN coerces its argument, so any value is accepted at runtime
++  // cast(d): num is unknown; isNaN coerces its argument, so any value is accepted at runtime
+@@ -73 +73 @@ const xmlToJSON = <T = unknown>(xml: string): Promise<T | null> => {
+-        // The xml2js output shape is described by the caller
++        // cast(d): assumed: the parsed XML has the shape the caller names in T (xml2js output is not checked)
+@@ -152 +152 @@ const copyValue = (val: unknown): unknown => {
+-      // key comes from for...in over val
++      // cast(d): val is an object here and key comes from for...in over it
+@@ -160 +160 @@ const toNumber = (val: unknown, fallback = 0): number => {
+-  // isNaN coerces its argument, so any value is accepted at runtime
++  // cast(d): val is unknown; isNaN coerces its argument, so any value is accepted at runtime
+diff --git a/server/utils/libraryHelpers.ts b/server/utils/libraryHelpers.ts
+index 821cda0b..00eaa6d9 100644
+--- a/server/utils/libraryHelpers.ts
++++ b/server/utils/libraryHelpers.ts
+@@ -12 +12 @@ const { getTitlePrefixAtEnd, isNullOrNaN, getTitleIgnorePrefix } = utils
+-// The vendored fast-sort has untyped parameters, see SortInstance
++// cast(a): the vendored fast-sort has untyped parameters (see SortInstance)
+@@ -104 +104 @@ const libraryHelpers = {
+-        // Book library items give book json
++        // cast(d): toOldJSONMinified of a book library item; SeriesBookJson adds the sequence fields set below
+@@ -108 +108 @@ const libraryHelpers = {
+-          // The items are the books of filterSeries (see handleCollapseSubseries), so the series is found
++          // cast(d): find is typed as possibly undefined; the items are the books of filterSeries (see handleCollapseSubseries), so the series is found
+@@ -207 +207 @@ const libraryHelpers = {
+-    // The series is loaded with its books, each with its library item, authors and series
++    // cast(b): Sequelize types the include as Book[]; the series is loaded with its books, each with its library item, authors and series
+@@ -213 +213 @@ const libraryHelpers = {
+-        // libraryItem is included in the query above
++        // cast(b): libraryItem is included in the query above; typed optional so it can be deleted below
+@@ -237 +237 @@ const libraryHelpers = {
+-            // The items are the books of this series
++            // cast(d): find is typed as possibly undefined; the items are the books of this series, so the series is found
+@@ -278 +278 @@ const libraryHelpers = {
+-            // sortBy is set in this branch; nested properties are read by path
++            // cast(d) (2): this is the else branch of !payload.sortBy, so sortBy is set (narrowing does not reach the callback); each step of the path is an object or undefined
+@@ -288 +288 @@ const libraryHelpers = {
+-      // An undefined page gives NaN, as in the JS
++      // cast(d): page is optional; an undefined page gives NaN, as in the JS
+@@ -295 +295 @@ const libraryHelpers = {
+-        // The items are the books of this series
++        // cast(d): find is typed as possibly undefined; the items are the books of this series, so the series is found
+@@ -297 +297 @@ const libraryHelpers = {
+-        // Book json; series and collapsedSeries are added below
++        // cast(d): toOldJSONMinified of a book library item; CollapsedItemJson adds the series and collapsedSeries set below
+@@ -319 +319 @@ const libraryHelpers = {
+-              // Only books with a filterSeriesSequence are kept above
++              // cast(d): the sequences are filtered by filterSeriesSequence above, so each is a set string
+@@ -325 +325 @@ const libraryHelpers = {
+-              // lastRange.isNumber is checked so end is a number
++              // cast(d): lastRange.isNumber is checked in the same condition, and a range with isNumber has a number end
+diff --git a/server/utils/migrations/dbMigration.ts b/server/utils/migrations/dbMigration.ts
+index ecd86e8b..348e9403 100644
+--- a/server/utils/migrations/dbMigration.ts
++++ b/server/utils/migrations/dbMigration.ts
+@@ -620 +620 @@ function migrateLibraryItems(oldLibraryItems: OldLibraryItem[]): Record<string,
+-      // migrateBook always sets book
++      // cast(d): migrateBook starts with book null and always sets it before it returns
+@@ -628 +628 @@ function migrateLibraryItems(oldLibraryItems: OldLibraryItem[]): Record<string,
+-      // migratePodcast always sets podcast
++      // cast(d): migratePodcast starts with podcast null and always sets it before it returns
+@@ -648 +648 @@ function migrateLibraries(oldLibraries: OldLibrary[]): Record<string, NewRecord[
+-    // includes() is false for a missing mediaType
++    // cast(d): mediaType of the old library JSON may be missing; includes() is false for undefined
+@@ -909 +909 @@ function migrateSessions(oldSessions: OldSession[]): Record<string, NewRecord[]>
+-      // deviceInfo is set, so the device string is too
++      // cast(d): getDeviceInfoString returns null only for a missing deviceInfo, which is checked just above
+@@ -973 +973 @@ function migrateSessions(oldSessions: OldSession[]): Record<string, NewRecord[]>
+-      // A missing episodeId reads undefined, as in the JS
++      // cast(d): episodeId is optional in the old session; a missing one reads the key "undefined" (undefined || null), as in the JS
+@@ -1267 +1267 @@ async function handleMigrateLibraries(DatabaseModels: DatabaseModels) {
+-  // Entities of the old libraries db
++  // cast(d): assumed: the old libraries db files hold old library objects (loadOldData parses the JSON without checking it)
+@@ -1280 +1280 @@ async function handleMigrateSettings(DatabaseModels: DatabaseModels) {
+-  // Entities of the old settings db
++  // cast(d): assumed: the old settings db files hold old settings objects (loadOldData parses the JSON without checking it)
+@@ -1291 +1291 @@ async function handleMigrateAuthors(DatabaseModels: DatabaseModels, oldLibraryIt
+-  // Entities of the old authors db
++  // cast(d): assumed: the old authors db files hold old author objects (loadOldData parses the JSON without checking it)
+@@ -1302 +1302 @@ async function handleMigrateSeries(DatabaseModels: DatabaseModels, oldLibraryIte
+-  // Entities of the old series db
++  // cast(d): assumed: the old series db files hold old series objects (loadOldData parses the JSON without checking it)
+@@ -1325 +1325 @@ async function handleMigrateAuthorsSeriesAndLibraryItems(DatabaseModels: Databas
+-  // Entities of the old library items db
++  // cast(d): assumed: the old library items db files hold old library item objects (loadOldData parses the JSON without checking it)
+@@ -1343 +1343 @@ async function handleMigrateUsers(DatabaseModels: DatabaseModels) {
+-  // Entities of the old users db
++  // cast(d): assumed: the old users db files hold old user objects (loadOldData parses the JSON without checking it)
+@@ -1356 +1356 @@ async function handleMigrateSessions(DatabaseModels: DatabaseModels) {
+-  // Entities of the old sessions db
++  // cast(d): assumed: the old sessions db files hold old session objects (loadOldData parses the JSON without checking it)
+@@ -1376 +1376 @@ async function handleMigrateCollections(DatabaseModels: DatabaseModels) {
+-  // Entities of the old collections db
++  // cast(d): assumed: the old collections db files hold old collection objects (loadOldData parses the JSON without checking it)
+@@ -1389 +1389 @@ async function handleMigratePlaylists(DatabaseModels: DatabaseModels) {
+-  // Entities of the old playlists db
++  // cast(d): assumed: the old playlists db files hold old playlist objects (loadOldData parses the JSON without checking it)
+@@ -1402 +1402 @@ async function handleMigrateFeeds(DatabaseModels: DatabaseModels) {
+-  // Entities of the old feeds db
++  // cast(d): assumed: the old feeds db files hold old feed objects (loadOldData parses the JSON without checking it)
+@@ -1509 +1509 @@ async function handleOldLibraryItems(ctx: typeof DatabaseModule) {
+-  // Entities of the old library items db
++  // cast(d): assumed: the old library items db files hold old library item objects (loadOldData parses the JSON without checking it)
+@@ -1529 +1529 @@ async function handleOldLibraryItems(ctx: typeof DatabaseModule) {
+-      // Books have no podcastEpisodes
++      // cast(d): media is Book | Podcast; Book has no podcastEpisodes, so for a book the read is undefined, as in the JS
+@@ -1573 +1573 @@ async function handleOldLibraries(ctx: typeof DatabaseModule) {
+-  // Entities of the old libraries db
++  // cast(d): assumed: the old libraries db files hold old library objects (loadOldData parses the JSON without checking it)
+@@ -1585 +1585 @@ async function handleOldLibraries(ctx: typeof DatabaseModule) {
+-      // getAllWithFolders includes the folders
++      // cast(b): getAllWithFolders includes the folders; the Library model declares libraryFolders optional
+@@ -1590 +1590 @@ async function handleOldLibraries(ctx: typeof DatabaseModule) {
+-      // extraData is a JSON column
++      // cast(d): extraData is the Library JSON column (LibraryExtraData | null); the cast lets it take the oldLibraryId key set below
+@@ -1597 +1597 @@ async function handleOldLibraries(ctx: typeof DatabaseModule) {
+-      // Read as before (see NOTE above)
++      // cast(c): the Library model has no oldLibraryId; read as in the JS (see NOTE above)
+@@ -1635 +1635 @@ async function handleOldUsers(ctx: typeof DatabaseModule) {
+-    // permissions is a JSON column
++    // cast(d): permissions is the User JSON column; the cast types the ids as possibly undefined, which they become when mapped below
+@@ -1641 +1641 @@ async function handleOldUsers(ctx: typeof DatabaseModule) {
+-      // librariesAccessible came from permissions, so it is set; its ids are strings
++      // cast(d) (2): permissions is set when librariesAccessible has items (it came from permissions); its ids are strings before the mapping
+@@ -1654 +1654 @@ async function handleOldUsers(ctx: typeof DatabaseModule) {
+-    // extraData is a JSON column
++    // cast(d): extraData is the User JSON column; the cast types the ids as possibly null, which they become when mapped below
+@@ -1659 +1659 @@ async function handleOldUsers(ctx: typeof DatabaseModule) {
+-      // seriesHideFromContinueListening came from extraData, so it is set; its ids are strings
++      // cast(d) (2): userExtraData is set when the list has items (it came from extraData); its ids are strings before the mapping
+diff --git a/server/utils/migrations/oldDbFiles.ts b/server/utils/migrations/oldDbFiles.ts
+index fc1343e4..ce75c2f3 100644
+--- a/server/utils/migrations/oldDbFiles.ts
++++ b/server/utils/migrations/oldDbFiles.ts
+@@ -13 +13 @@ const fs = fsExtra
+-// The vendored archiver function is inferred as a non-callable class
++// cast(a): the vendored archiver function is inferred as a non-callable class (see ArchiverFactory)
+diff --git a/server/utils/parsers/parseComicMetadata.ts b/server/utils/parsers/parseComicMetadata.ts
+index ccc5b3d1..6294fb63 100644
+--- a/server/utils/parsers/parseComicMetadata.ts
++++ b/server/utils/parsers/parseComicMetadata.ts
+@@ -46 +46 @@ async function parse(ebookFile: EBookFileObject): Promise<EBookFileScanData | nu
+-    // filePaths is undefined when getFilePaths fails; sort then throws and the catch below returns null, as in the JS
++    // cast(d): filePaths is undefined when getFilePaths fails; sort then throws and the catch below returns null, as in the JS
+diff --git a/server/utils/parsers/parseEpubMetadata.ts b/server/utils/parsers/parseEpubMetadata.ts
+index 025c5d76..1432f5f2 100644
+--- a/server/utils/parsers/parseEpubMetadata.ts
++++ b/server/utils/parsers/parseEpubMetadata.ts
+@@ -109 +109 @@ async function parse(ebookFile: EBookFileObject): Promise<EBookFileScanData | nu
+-  // The package document is the OPF package json parseOpfMetadataJson reads
++  // cast(a): xml2js output is untyped; the package document is the OPF package json parseOpfMetadataJson reads
+diff --git a/server/utils/parsers/parseFullName.ts b/server/utils/parsers/parseFullName.ts
+index 5bfff343..aa1ee0f5 100644
+--- a/server/utils/parsers/parseFullName.ts
++++ b/server/utils/parsers/parseFullName.ts
+@@ -37 +37 @@ function parseFullName(nameToParse: string | null | undefined, partToReturn?: st
+-  // fixCase is never a string; widened so the comparison compiles
++  // cast(c): fixCase is never a string; widened so the comparison compiles (see NOTE above)
+@@ -64 +64 @@ function parseFullName(nameToParse: string | null | undefined, partToReturn?: st
+-      // Object.keys of a ParsedName with 'error' filtered out
++      // cast(d): Object.keys returns string[]; these are the keys of a ParsedName with 'error' filtered out
+@@ -114 +114 @@ function parseFullName(nameToParse: string | null | undefined, partToReturn?: st
+-    // partToReturn is 'all' or one of the ParsedName keys after validation above
++    // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+@@ -211 +211 @@ function parseFullName(nameToParse: string | null | undefined, partToReturn?: st
+-    // partToReturn is 'all' or one of the ParsedName keys after validation above
++    // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+@@ -254 +254 @@ function parseFullName(nameToParse: string | null | undefined, partToReturn?: st
+-    // partToReturn is 'all' or one of the ParsedName keys after validation above
++    // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+@@ -285 +285 @@ function parseFullName(nameToParse: string | null | undefined, partToReturn?: st
+-    // partToReturn is 'all' or one of the ParsedName keys after validation above
++    // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+@@ -351 +351 @@ function parseFullName(nameToParse: string | null | undefined, partToReturn?: st
+-    // partToReturn is 'all' or one of the ParsedName keys after validation above
++    // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+@@ -359 +359 @@ function parseFullName(nameToParse: string | null | undefined, partToReturn?: st
+-    // partToReturn is 'all' or one of the ParsedName keys after validation above
++    // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+@@ -370 +370 @@ function parseFullName(nameToParse: string | null | undefined, partToReturn?: st
+-  // partToReturn is 'all' or one of the ParsedName keys after validation above
++  // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+diff --git a/server/utils/parsers/parseOpfMetadata.ts b/server/utils/parsers/parseOpfMetadata.ts
+index 28b18995..0ee33a2e 100644
+--- a/server/utils/parsers/parseOpfMetadata.ts
++++ b/server/utils/parsers/parseOpfMetadata.ts
+@@ -49 +49 @@ function parseCreators(metadata: OpfMetadata): (MetadataCreatorObject | false)[]
+-  // xml2js puts child elements in arrays
++  // cast(a): xml2js output is untyped; it puts child elements in arrays
+@@ -80 +80 @@ function fetchCreators(creators: (MetadataCreatorObject | false)[] | null, role:
+-  // false entries read undefined properties here and are filtered out, as in the JS
++  // cast(d): false entries read undefined properties here and are filtered out, as in the JS
+@@ -86 +86 @@ function fetchTagString(metadata: XmlTagMap, tag: string): string | null {
+-  // xml2js puts child elements in arrays
++  // cast(a): xml2js output is untyped; it puts child elements in arrays
+@@ -118 +118 @@ function fetchDate(metadata: XmlTagMap): string | null {
+-  // isNaN coerces the string
++  // cast(d): isNaN coerces the string, as in the JS
+@@ -133 +133 @@ function fetchIdentifier(metadata: XmlTagMap, scheme: string): string | null {
+-  // xml2js puts child elements in arrays; identifiers with a scheme attribute are elements
++  // cast(a): xml2js output is untyped; it puts child elements in arrays, identifiers with a scheme attribute are elements
+@@ -142 +142 @@ function fetchIdentifier(metadata: XmlTagMap, scheme: string): string | null {
+-    // i['$'] was checked above
++    // cast(d): i['$'] was checked above (the cast changes no type)
+@@ -174 +174 @@ function fetchGenres(metadata: XmlTagMap): string[] {
+-  // xml2js puts child elements in arrays
++  // cast(a): xml2js output is untyped; it puts child elements in arrays
+@@ -205 +205 @@ function fetchSeries(metadataMeta: XmlElement[] | undefined): { name: string; se
+-      // find() above only matches metas with $ set
++      // cast(d): find() above only matches metas with $ set
+@@ -220 +220 @@ function fetchNarrators(creators: (MetadataCreatorObject | false)[] | null, meta
+-    // A null tag string throws here and is caught below, as in the JS
++    // cast(d): a null tag string throws here and is caught below, as in the JS
+@@ -229 +229 @@ function fetchTags(metadata: XmlTagMap): string[] {
+-  // xml2js puts child elements in arrays
++  // cast(a): xml2js output is untyped; it puts child elements in arrays
+@@ -250 +250 @@ const parseOpfMetadataJson = (json: OpfPackageJson) => {
+-  // The <metadata> element of the OPF package as parsed by xml2js
++  // cast(a): xml2js output is untyped; this is the <metadata> element of the OPF package
+@@ -258 +258 @@ const parseOpfMetadataJson = (json: OpfPackageJson) => {
+-  // Before it is replaced below, meta holds the raw <meta> elements
++  // cast(a): xml2js output is untyped; before it is replaced below, meta holds the raw <meta> elements
+diff --git a/server/utils/parsers/parseOverdriveMediaMarkers.ts b/server/utils/parsers/parseOverdriveMediaMarkers.ts
+index 5fb54ded..55e8f47c 100644
+--- a/server/utils/parsers/parseOverdriveMediaMarkers.ts
++++ b/server/utils/parsers/parseOverdriveMediaMarkers.ts
+@@ -102 +102 @@ function objectValuesArrayToString(arrayOfObjects: Record<string, unknown>[]): O
+-      // xml2js values are arrays (never null)
++      // cast(a): xml2js output is untyped; its values are arrays (never null)
+@@ -107 +107 @@ function objectValuesArrayToString(arrayOfObjects: Record<string, unknown>[]): O
+-  // Every value was converted to a string above; Name and Time come from the MediaMarker XML
++  // cast(d): every value was converted to a string above; Name and Time come from the MediaMarker XML
+@@ -155 +155 @@ function generateParsedChapters(includedAudioFiles: OverdriveAudioFile[], cleane
+-      // split always returns at least one element
++      // cast(d): split always returns at least one element, so pop is not undefined
+@@ -159 +159 @@ function generateParsedChapters(includedAudioFiles: OverdriveAudioFile[], cleane
+-        // timeParts.length was checked above
++        // cast(d): timeParts.length was checked above, so pop is not undefined
+@@ -164 +164 @@ function generateParsedChapters(includedAudioFiles: OverdriveAudioFile[], cleane
+-        // timeParts.length was checked above
++        // cast(d): timeParts.length was checked above, so pop is not undefined
+diff --git a/server/utils/parsers/parseUserAgent.ts b/server/utils/parsers/parseUserAgent.ts
+index b531f761..74dc6329 100644
+--- a/server/utils/parsers/parseUserAgent.ts
++++ b/server/utils/parsers/parseUserAgent.ts
+@@ -28 +28 @@ function parseUserAgent(userAgent: string | null | undefined): DeviceInfo | null
+-    // for...in only yields keys of deviceInfo
++    // cast(d) (2): for...in only yields keys of deviceInfo
+diff --git a/server/utils/podcastUtils.ts b/server/utils/podcastUtils.ts
+index 8e903539..eb56721f 100644
+--- a/server/utils/podcastUtils.ts
++++ b/server/utils/podcastUtils.ts
+@@ -17 +17 @@ type FuseConstructor = new <T>(
+-// See FuseConstructor
++// cast(a): fuse.js is required as a module object; see FuseConstructor
+@@ -148 +148 @@ function extractFirstArrayItem(json: XmlElement, key: string): unknown {
+-  // xml2js puts child elements in arrays
++  // cast(a): xml2js output is untyped; it puts child elements in arrays
+@@ -156 +156 @@ function extractStringOrStringify(json: XmlElement): string {
+-    // xml2js puts child elements in arrays
++    // cast(a): xml2js output is untyped; it puts child elements in arrays
+@@ -172 +172 @@ function extractFirstArrayItemString(json: XmlElement, key: string): string {
+-    // Objects in xml2js output are elements
++    // cast(a): xml2js output is untyped; objects in it are elements
+@@ -183 +183 @@ function extractImage(channel: RssChannel): string | null {
+-  // Read as the object the code expects (see NOTE)
++  // cast(c): read as the object the code expects (see NOTE above)
+@@ -240 +240 @@ function extractPodcastMetadata(channel: RssChannel): RssPodcastMetadata {
+-    // split always returns at least one element
++    // cast(d): split always returns at least one element, so pop is not undefined
+@@ -243 +243 @@ function extractPodcastMetadata(channel: RssChannel): RssPodcastMetadata {
+-    // Reads `_` of an element value; strings and null read undefined, as in the JS
++    // cast(d) (2): reads `_` of an element value; strings and null read undefined, as in the JS
+@@ -255 +255 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-    // url was checked above
++    // cast(a): xml2js output is untyped; url was checked above, so these are the enclosure attributes
+@@ -259 +259 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-    // The check above found an audio media:content
++    // cast(c): the enclosure attributes may lack url (see NOTE above); cast(d): the check above found an audio media:content, so this find finds one too
+@@ -293 +293 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-    // A non-string value is an element (or null when missing)
++    // cast(a): xml2js output is untyped; a non-string value is an element (or null when missing)
+@@ -305 +305 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-    // A non-string value is an element (or null when missing)
++    // cast(a): xml2js output is untyped; a non-string value is an element (or null when missing)
+@@ -318 +318 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-    // split always returns at least one element
++    // cast(d): split always returns at least one element, so pop is not undefined
+@@ -334 +334 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-    // psc:chapter was checked above
++    // cast(d): psc:chapter was checked above (the RssItem type already says XmlElement[], the cast changes no type)
+@@ -340 +340 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-      // start was checked above
++      // cast(d): start was checked above (the cast to XmlAttributes changes no type)
+@@ -348 +348 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-        // title was checked above
++        // cast(d) (2): title was checked above to be a string (the cast to XmlAttributes changes no type)
+@@ -357 +357 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-      // No chapter is null here
++      // cast(d): the some() check above found no null chapter
+@@ -361 +361 @@ function extractEpisodeData(item: RssItem): RssEpisodeData | null {
+-        // durationSeconds was checked above
++        // cast(d): durationSeconds was checked in the if condition above (it is not null here)
+@@ -378 +378 @@ function cleanEpisodeData(data: RssEpisodeData): RssPodcastEpisode {
+-  // isNaN coerces the date to its timestamp
++  // cast(d): isNaN coerces the date to its timestamp, as in the JS
+diff --git a/server/utils/prober.ts b/server/utils/prober.ts
+index 560d8a1f..9082ba8d 100644
+--- a/server/utils/prober.ts
++++ b/server/utils/prober.ts
+@@ -7 +7 @@ import type { ProbeChapter, ProbeStreamInfo, ProbeTags, RawProbeData } from './t
+-// isNaN coerces its argument; ffprobe reports most numbers as strings
++// cast(d): isNaN coerces its argument; ffprobe reports most numbers as strings
+@@ -75 +75 @@ type Ffprobe = ((file: string) => Promise<FfprobeOutput>) & { FFPROBE_PATH?: str
+-// The vendored module is an IIFE so its inferred type does not describe the output
++// cast(a): the vendored module is an IIFE, so its inferred type does not describe the output (see Ffprobe)
+@@ -152 +152 @@ function tryGrabTags(stream: { tags?: ProbeTags }, ...tags: string[]): string |
+-    // A missing key reads undefined, as in the JS
++    // cast(d): find returns undefined when no tag matches; the undefined key reads undefined, as in the JS
+@@ -224 +224 @@ function parseChapters(_chapters: FfprobeChapter[] | undefined): ProbeChapter[]
+-      // time_base was checked above
++      // cast(d): time_base was checked in the same expression (the cast changes no type)
+@@ -342 +342 @@ function parseProbeData(data: FfprobeOutput, verbose = false): RawProbeData | nu
+-      // null compares as 0, as in the JS
++      // cast(d) (2): the bit rates may be null; null compares as 0, as in the JS
+diff --git a/server/utils/profiler.ts b/server/utils/profiler.ts
+index 80ea74ed..75235c40 100644
+--- a/server/utils/profiler.ts
++++ b/server/utils/profiler.ts
+@@ -23 +23 @@ function profile<A extends unknown[], R>(asyncFunc: (...args: A) => Promise<R>,
+-    // values is added on the next line
++    // cast(d): values is added on the next line
+@@ -28 +28 @@ function profile<A extends unknown[], R>(asyncFunc: (...args: A) => Promise<R>,
+-  // Set above when missing
++  // cast(d): Map.get is typed as possibly undefined; the histogram is set above when missing
+@@ -33 +33 @@ function profile<A extends unknown[], R>(asyncFunc: (...args: A) => Promise<R>,
+-      // When isFindQuery is set the first argument is a sequelize find options object
++      // cast(d): with isFindQuery (the default) the first argument of the profiled findAll or count is its options object
+diff --git a/server/utils/queries/adminStats.ts b/server/utils/queries/adminStats.ts
+index 70210824..a7b9f838 100644
+--- a/server/utils/queries/adminStats.ts
++++ b/server/utils/queries/adminStats.ts
+@@ -71 +71 @@ export = {
+-    // libraryItem is included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@@ -110 +110 @@ export = {
+-      // mediaMetadata is a JSON column
++      // cast(d): mediaMetadata is the PlaybackSession JSON column, typed PlaybackMediaMetadata | null since batch 3a; the cast changes no type
+@@ -165 +165 @@ export = {
+-    // Row of the SUM/COUNT query above
++    // cast(b): query() types the rows as unknown[]; the first row has the selected sums and the count (undefined when there is no row)
+@@ -190 +190 @@ export = {
+-    // Rows of the query above
++    // cast(b): query() types the rows as unknown[]; the rows have the selected columns (mediaType, totalSize, numItems)
+@@ -218 +218 @@ export = {
+-    // Row of the SUM query above
++    // cast(b): query() types the rows as unknown[]; the first row has the selected sum (undefined when there is no row)
+diff --git a/server/utils/queries/authorFilters.ts b/server/utils/queries/authorFilters.ts
+index 8729fbcd..e8afdb8b 100644
+--- a/server/utils/queries/authorFilters.ts
++++ b/server/utils/queries/authorFilters.ts
+@@ -43 +43 @@ export = {
+-    // author is included above
++    // cast(b): Sequelize types findAll rows without their includes; author is included above
+diff --git a/server/utils/queries/libraryFilters.ts b/server/utils/queries/libraryFilters.ts
+index 0a690765..529384ff 100644
+--- a/server/utils/queries/libraryFilters.ts
++++ b/server/utils/queries/libraryFilters.ts
+@@ -22 +22 @@ const { profile } = profiler
+-// The vendored fast-sort has untyped parameters, see SortInstance
++// cast(a): the vendored fast-sort has untyped parameters (see SortInstance)
+@@ -77 +77 @@ export = {
+-      // decodeURIComponent throws a URIError
++      // cast(d): catch variable is unknown; decodeURIComponent throws a URIError
+@@ -150 +150 @@ export = {
+-            // size is a BIGINT column that sqlite returns as a number (the model JSDoc says BigInt)
++            // cast(d): size is typed number since batch 3a (sqlite returns the BIGINT as a number), so the cast changes no type
+@@ -169 +169 @@ export = {
+-            // size is a BIGINT column that sqlite returns as a number (the model JSDoc says BigInt)
++            // cast(d): size is typed number since batch 3a (sqlite returns the BIGINT as a number), so the cast changes no type
+@@ -279 +279 @@ export = {
+-      // permissions is a JSON column
++      // cast(d): permissions is the User JSON column, typed UserPermissions since batch 3a; the cast only adds null (the ?. reads below allow it)
+@@ -321 +321 @@ export = {
+-    // bookSeries (with book and libraryItem) and feeds are included above
++    // cast(b): Sequelize types findAll rows without their includes; bookSeries (with book and libraryItem) and feeds are included above
+@@ -397 +397 @@ export = {
+-      // books are included above
++      // cast(b): Sequelize types findAll rows without their includes; books are included above
+@@ -502 +502 @@ export = {
+-      // count options; this cast is not needed (the options are valid CountOptions), kept as before
++      // cast(b): count options; this cast is not needed (the options are valid CountOptions), kept as before
+@@ -517,0 +518 @@ export = {
++      // cast(b): limit is not a count option, which sequelize ignores and CountOptions rejects
+@@ -561 +562 @@ export = {
+-      // Rows of the podcast model
++      // cast(d): findAll is bound (or wrapped by profile) above, which loses its generic row type; the rows are Podcast models
+@@ -604,0 +606 @@ export = {
++      // cast(b): limit is not a count option, which sequelize ignores and CountOptions rejects
+@@ -624,0 +627 @@ export = {
++      // cast(b): limit is not a count option, which sequelize ignores and CountOptions rejects
+@@ -635,0 +639 @@ export = {
++      // cast(b): limit is not a count option, which sequelize ignores and CountOptions rejects
+@@ -673 +677 @@ export = {
+-      // libraryItem is included above
++      // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@@ -687 +691 @@ export = {
+-        // publishedYear is a string; isNaN, the comparisons and the division coerce it to a number
++        // cast(d): publishedYear is a string; isNaN, the comparisons and the division coerce it to a number
+@@ -713 +717 @@ export = {
+-    // Same object as data; its sets are replaced by sorted arrays below
++    // cast(d): same object as data; its sets are replaced by sorted arrays below, which is the LibraryFilterData shape
+diff --git a/server/utils/queries/libraryItemFilters.ts b/server/utils/queries/libraryItemFilters.ts
+index 5afa4fe3..acb1a35c 100644
+--- a/server/utils/queries/libraryItemFilters.ts
++++ b/server/utils/queries/libraryItemFilters.ts
+@@ -52 +52 @@ export = {
+-    // libraryItem is included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@@ -74 +74 @@ export = {
+-    // libraryItem is included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@@ -113 +113 @@ export = {
+-    // libraryItem is included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@@ -135 +135 @@ export = {
+-    // libraryItem is included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@@ -175 +175 @@ export = {
+-    // libraryItem is included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+diff --git a/server/utils/queries/libraryItemsBookFilters.ts b/server/utils/queries/libraryItemsBookFilters.ts
+index 65cafb4a..17ec4a3b 100644
+--- a/server/utils/queries/libraryItemsBookFilters.ts
++++ b/server/utils/queries/libraryItemsBookFilters.ts
+@@ -104 +104 @@ export = {
+-    // permissions is a JSON column
++    // cast(d): permissions is the User JSON column, typed UserPermissions since batch 3a; the cast only adds null (the ?. reads below allow it)
+@@ -296 +296 @@ export = {
+-      // includes() is false for a null value
++      // cast(d): value is string | null | undefined (the decoded filter value); includes() is false for null or undefined
+@@ -298 +298 @@ export = {
+-        // value is one of the strings above
++        // cast(d): value is one of the strings of the list checked just above
+@@ -304 +304 @@ export = {
+-        // includes() is false for a null value
++        // cast(d): value is string | null | undefined (the decoded filter value); includes() is false for null or undefined
+@@ -306 +306 @@ export = {
+-        // value is one of the strings above
++        // cast(d): value is one of the strings of the list checked just above
+@@ -317 +317 @@ export = {
+-      // parseInt(null) is NaN, as in the JS
++      // cast(d): value may be null or undefined; parseInt of it is NaN, as in the JS
+@@ -319 +319 @@ export = {
+-      // parseInt(null) is NaN, as in the JS
++      // cast(d): value may be null or undefined; parseInt of it is NaN, as in the JS
+@@ -409 +409 @@ export = {
+-    // books (with their book_series row and libraryItem) are included above
++    // cast(b): Sequelize types findAll rows without their includes; the books (with their book_series row and libraryItem) are included above
+@@ -451 +451 @@ export = {
+-      // A null or undefined offset is passed through, as in the JS
++      // cast(d): offset is number | null | undefined; a null or undefined offset is passed through to findAll, as in the JS
+@@ -457 +457 @@ export = {
+-      // Set above when missing
++      // cast(d): Map.get is typed as possibly undefined; the count for this key is set just above when missing
+@@ -462 +462 @@ export = {
+-    // A null or undefined offset is passed through, as in the JS
++    // cast(d): offset is number | null | undefined; a null or undefined offset is passed through to findAll, as in the JS
+@@ -496 +496 @@ export = {
+-    // Typed by assertion so the null check below is not narrowed away
++    // cast(d): with a plain null initialiser TypeScript narrows bookAttributes to null, so the later assignment and null check would not type check
+@@ -625 +625 @@ export = {
+-    // includes() is false for a null sortBy
++    // cast(d): sortBy is string | null (no sort); includes() is false for null
+@@ -631 +631 @@ export = {
+-          // Sorting by progress is only requested with a user
++          // cast(d): the only caller without a user (getLibraryItemsForSeries) passes sortBy null, so a progress sort always has a user
+@@ -717 +717 @@ export = {
+-    // The rows are books with the includes above
++    // cast(b): Sequelize types findAll rows without their includes; the rows are books with the includes above
+@@ -719 +719 @@ export = {
+-      // libraryItem is a required include
++      // cast(b): libraryItem is a required include of the query above; the Book model declares it optional
+@@ -736 +736 @@ export = {
+-          // series is included through bookSeries
++          // cast(b): series is included through bookSeries in the query above; the BookSeries model declares it optional
+@@ -821 +821 @@ export = {
+-            // extraData is a JSON column
++            // cast(d): extraData is the User JSON column, already typed UserExtraData | null with this key; the cast changes no type
+@@ -888 +888 @@ export = {
+-    // bookSeries (with book, libraryItem, authors and progress) is included above
++    // cast(b): Sequelize types findAndCountAll rows without their includes; bookSeries (with book, libraryItem, authors and progress) is included above
+@@ -906 +906 @@ export = {
+-        // libraryItem is included above
++        // cast(b): libraryItem is included with the book in the query above; the Book model declares it optional
+@@ -971 +971 @@ export = {
+-    // bookSeries is included above
++    // cast(b): Sequelize types findAll rows without their includes; bookSeries is included above
+@@ -1087 +1087 @@ export = {
+-    // Books with the includes above; filter(Boolean) removes ids that were not found
++    // cast(d): filter(Boolean) removes the ids that were not found, but TypeScript keeps undefined in the element type; the books have the includes above
+@@ -1092 +1092 @@ export = {
+-      // libraryItem is included above
++      // cast(b): libraryItem is a required include of the query above; the Book model declares it optional
+@@ -1099 +1099 @@ export = {
+-          // series is included through bookSeries
++          // cast(b): series is included through bookSeries in the query above; the BookSeries model declares it optional
+@@ -1164 +1164 @@ export = {
+-      // libraryItem is a required include
++      // cast(b): libraryItem is a required include of the query above; the Book model declares it optional
+@@ -1244 +1244 @@ export = {
+-    // libraryItem, bookSeries and bookAuthors are included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem, bookSeries and bookAuthors are included above
+@@ -1246 +1246 @@ export = {
+-      // libraryItem is a required include
++      // cast(b): libraryItem is a required include of the query above; the Book model declares it optional
+@@ -1250 +1250 @@ export = {
+-      // bookSeries is a separate include, so it is always an array
++      // cast(b): bookSeries is a separate include of the query above, so it is always an array; the model declares it optional
+@@ -1252 +1252 @@ export = {
+-        // series is included through bookSeries
++        // cast(b): series is included through bookSeries in the query above; the BookSeries model declares it optional
+@@ -1260 +1260 @@ export = {
+-      // bookAuthors is a separate include, so it is always an array
++      // cast(b): bookAuthors is a separate include of the query above, so it is always an array; the model declares it optional
+@@ -1284 +1284 @@ export = {
+-    // Rows of the query above
++    // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numBooks)
+@@ -1302 +1302 @@ export = {
+-    // Rows of the query above
++    // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numBooks)
+@@ -1320 +1320 @@ export = {
+-    // Rows of the query above
++    // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numBooks)
+@@ -1358 +1358 @@ export = {
+-    // bookSeries (with book and libraryItem) is included above
++    // cast(b): Sequelize types findAll rows without their includes; bookSeries (with book and libraryItem) is included above
+@@ -1361 +1361 @@ export = {
+-        // libraryItem is included above
++        // cast(b): libraryItem is included with the book in the query above; the Book model declares it optional
+@@ -1364 +1364 @@ export = {
+-        // media is the book set above
++        // cast(d): media is the book set on the line above; the cast only names it BookExpanded (authors and series are set here)
+@@ -1366 +1366 @@ export = {
+-        // media is the book set above
++        // cast(d): media is the book set two lines above; the cast only names it BookExpanded (authors and series are set here)
+@@ -1402 +1402 @@ export = {
+-    // Rows of the query above
++    // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numBooks)
+@@ -1421 +1421 @@ export = {
+-    // Rows of the query above
++    // cast(b): query() types the rows as unknown[]; the row has the selected sums and the count
+@@ -1447 +1447 @@ export = {
+-    // libraryItem is included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+diff --git a/server/utils/queries/libraryItemsPodcastFilters.ts b/server/utils/queries/libraryItemsPodcastFilters.ts
+index ade87c81..2ecea3d3 100644
+--- a/server/utils/queries/libraryItemsPodcastFilters.ts
++++ b/server/utils/queries/libraryItemsPodcastFilters.ts
+@@ -51 +51 @@ export = {
+-    // permissions is a JSON column
++    // cast(d): permissions is the User JSON column, typed UserPermissions since batch 3a; the cast only adds null (the ?. reads below allow it)
+@@ -113 +113 @@ export = {
+-      // sequelize accepts an order item with only a literal; its types require a direction
++      // cast(b): sequelize accepts an order item with only a literal; its types require a direction
+@@ -150 +150 @@ export = {
+-      // Set above when missing
++      // cast(d): Map.get is typed as possibly undefined; the count for this key is set just above when missing
+@@ -230 +230 @@ export = {
+-    // libraryItem is included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@@ -233 +233 @@ export = {
+-      // Typed as optional so it can be deleted
++      // cast(d): typed with an optional libraryItem so it can be deleted below (same object)
+@@ -243 +243 @@ export = {
+-        // mediaProgresses is loaded with the user for requests
++        // cast(d): mediaProgresses is already typed as set (NonAttribute<MediaProgress[]>); the cast changes no type
+@@ -348 +348 @@ export = {
+-    // The podcast and its libraryItem are included above
++    // cast(b): Sequelize types findAll rows without their includes; the podcast and its libraryItem are included above
+@@ -351 +351 @@ export = {
+-      // Typed as optional so it can be deleted
++      // cast(d): typed with an optional libraryItem so it can be deleted below (same object)
+@@ -377,0 +378 @@ export = {
++    // cast(b): distinct is not a findAll option (sequelize ignores it, see below); FindOptions rejects it
+@@ -416 +417 @@ export = {
+-    // libraryItem is included above; typed as optional so it can be deleted
++    // cast(d): libraryItem is included above; typed as optional so it can be deleted below (findAll already types the rows as Podcast)
+@@ -418 +419 @@ export = {
+-      // Included above
++      // cast(b): libraryItem is included in the query above; the cast types it as set
+@@ -428,0 +430 @@ export = {
++    // cast(b): distinct is not a findAll option (sequelize ignores it, see below); FindOptions rejects it
+@@ -454 +456 @@ export = {
+-    // The podcast and its libraryItem are included above
++    // cast(b): Sequelize types findAll rows without their includes; the podcast and its libraryItem are included above
+@@ -479 +481 @@ export = {
+-    // Rows of the query above
++    // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numItems)
+@@ -497 +499 @@ export = {
+-    // Rows of the query above
++    // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numItems)
+@@ -557 +559 @@ export = {
+-    // The podcast and its libraryItem are included above
++    // cast(b): Sequelize types findAll rows without their includes; the podcast and its libraryItem are included above
+@@ -586 +588 @@ export = {
+-    // Rows of the queries above
++    // cast(b): query() types the rows as unknown[]; the row has the selected sum
+@@ -588 +590 @@ export = {
+-    // Rows of the queries above
++    // cast(b): query() types the rows as unknown[]; the row has the selected sums and the count
+@@ -609 +611 @@ export = {
+-    // Rows of the query above
++    // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numItems)
+@@ -635 +637 @@ export = {
+-    // libraryItem is included above
++    // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+diff --git a/server/utils/queries/seriesFilters.ts b/server/utils/queries/seriesFilters.ts
+index 25198bc9..4b221309 100644
+--- a/server/utils/queries/seriesFilters.ts
++++ b/server/utils/queries/seriesFilters.ts
+@@ -32 +32 @@ export = {
+-      // decodeURIComponent throws a URIError
++      // cast(d): catch variable is unknown; decodeURIComponent throws a URIError
+@@ -79 +79 @@ export = {
+-    // includes() is false for a null filterGroup
++    // cast(d): filterGroup is string | null; includes() is false for null
+@@ -118 +118 @@ export = {
+-      // permissions is a JSON column
++      // cast(d): permissions is the User JSON column, typed UserPermissions since batch 3a; the cast only adds null (the ?. reads below allow it)
+@@ -204 +204 @@ export = {
+-    // bookSeries (with book and libraryItem) and feeds are included above
++    // cast(b): Sequelize types findAll rows without their includes; bookSeries (with book and libraryItem) and feeds are included above
+@@ -226 +226 @@ export = {
+-        // libraryItem is included above
++        // cast(b): libraryItem is included with the book in the query above; the Book model declares it optional
+@@ -229 +229 @@ export = {
+-        // The book is the media of its library item
++        // cast(d): the book is the media of its library item; the cast drops the libraryItem the BookExpandedWithLibraryItem row type adds
+diff --git a/server/utils/queries/userStats.ts b/server/utils/queries/userStats.ts
+index 9f004a50..ee52e675 100644
+--- a/server/utils/queries/userStats.ts
++++ b/server/utils/queries/userStats.ts
+@@ -37 +37 @@ export = {
+-        // sequelize accepts a single nested include object; its types only allow an array
++        // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+@@ -46 +46 @@ export = {
+-    // The book (mediaItem) is included above
++    // cast(b): Sequelize types findAll rows without their includes; the book (mediaItem) is included above
+@@ -67 +67 @@ export = {
+-        // sequelize accepts a single nested include object; its types only allow an array
++        // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+@@ -76 +76 @@ export = {
+-    // The book (mediaItem) is included above
++    // cast(b): Sequelize types findAll rows without their includes; the book (mediaItem) is included above
+@@ -142 +142 @@ export = {
+-        // mediaMetadata is a JSON column
++        // cast(d): mediaMetadata is the PlaybackSession JSON column, typed PlaybackMediaMetadata | null since batch 3a; the cast changes no type
+diff --git a/server/utils/rateLimiterFactory.ts b/server/utils/rateLimiterFactory.ts
+index 49d8616a..caff9b2c 100644
+--- a/server/utils/rateLimiterFactory.ts
++++ b/server/utils/rateLimiterFactory.ts
+@@ -35 +35 @@ class RateLimiterFactory {
+-    // parseInt(undefined) is NaN, which fails the check
++    // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+@@ -37 +37 @@ class RateLimiterFactory {
+-      // Set when the check above passes
++      // cast(d): the variable is set, the check above passed
+@@ -45 +45 @@ class RateLimiterFactory {
+-    // parseInt(undefined) is NaN, which fails the check
++    // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+@@ -47 +47 @@ class RateLimiterFactory {
+-      // Set when the check above passes
++      // cast(d): the variable is set, the check above passed
+@@ -66 +66 @@ class RateLimiterFactory {
+-        // req.ip is set by express for socket requests
++        // cast(d): assumed: express sets req.ip from the socket for every request (its type allows undefined)
+diff --git a/server/utils/scandir.ts b/server/utils/scandir.ts
+index 44291d98..e7d319f1 100644
+--- a/server/utils/scandir.ts
++++ b/server/utils/scandir.ts
+@@ -83 +83 @@ function groupFileItemsIntoLibraryItemDirs(mediaType: string, fileItems: FilePat
+-        // i < numparts, so dirparts is not empty
++        // cast(d): i < numparts, so dirparts is not empty and shift returns a string
+@@ -91 +91 @@ function groupFileItemsIntoLibraryItemDirs(mediaType: string, fileItems: FilePat
+-          // Groups for directories are arrays; a root file group is a string (see NOTE above)
++          // cast(c): groups for directories are arrays; a root file group is a string (see NOTE above)
+@@ -115 +115 @@ function groupFileItemsIntoLibraryItemDirs(mediaType: string, fileItems: FilePat
+-      // i < numparts, so dirparts is not empty
++      // cast(d): i < numparts, so dirparts is not empty and shift returns a string
+@@ -122 +122 @@ function groupFileItemsIntoLibraryItemDirs(mediaType: string, fileItems: FilePat
+-        // Groups for directories are arrays; a root file group is a string (see NOTE above)
++        // cast(c): groups for directories are arrays; a root file group is a string (see NOTE above)
+@@ -151 +151 @@ function getBookDataFromDir(relPath: string, parseSubtitle = false): LibraryItem
+-  // split always returns at least one element
++  // cast(d): split always returns at least one element, so pop is not undefined
+@@ -183 +183 @@ function getNarrator(folder: string): [string, string | null] {
+-  // The pattern has named groups, so groups is set when it matches
++  // cast(d) (2): the pattern has the named groups title and narrators, so groups is set when it matches
+@@ -210 +210 @@ function getSequence(folder: string): [string, string | null] {
+-    // Parts are only set to undefined right before the loop breaks
++    // cast(d): parts are only set to undefined right before the loop breaks, so this part is a string
+@@ -212 +212 @@ function getSequence(folder: string): [string, string | null] {
+-    // The pattern has named groups, so groups is set when it matches
++    // cast(d): the pattern has named groups, so groups is set when it matches (undefined only without a match)
+@@ -216 +216 @@ function getSequence(folder: string): [string, string | null] {
+-      // The sequence group always participates in the match; isNaN coerces the string
++      // cast(d): the sequence group always takes part in the match (it may match the empty string)
+@@ -218 +218 @@ function getSequence(folder: string): [string, string | null] {
+-      // isNaN coerces the string
++      // cast(d): isNaN coerces the string, as in the JS
+diff --git a/server/utils/stringifySequelizeQuery.ts b/server/utils/stringifySequelizeQuery.ts
+index f4b1da2b..0e8fd380 100644
+--- a/server/utils/stringifySequelizeQuery.ts
++++ b/server/utils/stringifySequelizeQuery.ts
+@@ -9 +9 @@ function stringifySequelizeQuery(findOptions: unknown): string {
+-        // Indexing by a symbol own property of the object
++        // cast(d): indexing by a symbol own property of the object (Object.getOwnPropertySymbols)
+diff --git a/server/utils/zipHelpers.ts b/server/utils/zipHelpers.ts
+index e5ae80a0..28803df2 100644
+--- a/server/utils/zipHelpers.ts
++++ b/server/utils/zipHelpers.ts
+@@ -7 +7 @@ import type { ArchiverFactory } from './types'
+-// The vendored archiver function is inferred as a non-callable class
++// cast(a): the vendored archiver function is inferred as a non-callable class (see ArchiverFactory)

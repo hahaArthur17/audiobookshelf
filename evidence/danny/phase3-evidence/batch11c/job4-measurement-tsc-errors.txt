@@ -1,0 +1,136 @@
+(70,55): error TS2339: Property 'split' does not exist on type 'string | ParsedQs | (string | ParsedQs)[]'.
+(71,9): error TS2367: This comparison appears to be unintentional because the types 'string | ParsedQs | (string | ParsedQs)[] | undefined' and 'number' have no overlap.
+(77,14): error TS2339: Property 'userMediaProgress' does not exist on type '{ lastScan: number | undefined; scanVersion: string | null; media: { libraryItemId: string; metadata: { title: string | null; subtitle: string | null; authors: { id: string & { [CreationAttributeBrand]?: true | undefined; }; name: string; }[]; ... 11 more ...; abridged: boolean; } & { ...; }; ... 12 more ...; ebookF...'.
+(77,72): error TS2345: Argument of type 'string | ParsedQs | (string | ParsedQs)[] | null' is not assignable to parameter of type 'string | null | undefined'.
+(82,14): error TS2339: Property 'rssFeed' does not exist on type '{ lastScan: number | undefined; scanVersion: string | null; media: { libraryItemId: string; metadata: { title: string | null; subtitle: string | null; authors: { id: string & { [CreationAttributeBrand]?: true | undefined; }; name: string; }[]; ... 11 more ...; abridged: boolean; } & { ...; }; ... 12 more ...; ebookF...'.
+(86,14): error TS2339: Property 'mediaItemShare' does not exist on type '{ lastScan: number | undefined; scanVersion: string | null; media: { libraryItemId: string; metadata: { title: string | null; subtitle: string | null; authors: { id: string & { [CreationAttributeBrand]?: true | undefined; }; name: string; }[]; ... 11 more ...; abridged: boolean; } & { ...; }; ... 12 more ...; ebookF...'.
+(91,14): error TS2339: Property 'episodeDownloadsQueued' does not exist on type '{ lastScan: number | undefined; scanVersion: string | null; media: { libraryItemId: string; metadata: { title: string | null; subtitle: string | null; authors: { id: string & { [CreationAttributeBrand]?: true | undefined; }; name: string; }[]; ... 11 more ...; abridged: boolean; } & { ...; }; ... 12 more ...; ebookF...'.
+(93,16): error TS2339: Property 'episodesDownloading' does not exist on type '{ lastScan: number | undefined; scanVersion: string | null; media: { libraryItemId: string; metadata: { title: string | null; subtitle: string | null; authors: { id: string & { [CreationAttributeBrand]?: true | undefined; }; name: string; }[]; ... 11 more ...; abridged: boolean; } & { ...; }; ... 12 more ...; ebookF...'.
+(109,24): error TS2367: This comparison appears to be unintentional because the types 'string | ParsedQs | (string | ParsedQs)[] | undefined' and 'number' have no overlap.
+(116,50): error TS2339: Property 'podcastEpisodes' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(116,71): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+(119,33): error TS2339: Property 'authors' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(120,49): error TS2339: Property 'authors' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(120,62): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(122,33): error TS2339: Property 'series' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(123,49): error TS2339: Property 'series' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(123,61): error TS7006: Parameter 'se' implicitly has an 'any' type.
+(178,139): error TS2794: Expected 1 arguments, but got 0. Did you forget to include 'void' in your type argument to 'Promise'?
+(186,49): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ code?: string | undefined; }'.
+(205,84): error TS2339: Property 'autoDownloadEpisodes' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(207,91): error TS2339: Property 'autoDownloadSchedule' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(217,51): error TS2349: This expression is not callable.
+(220,60): error TS2551: Property 'updateSeriesFromRequest' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'. Did you mean 'updateFromRequest'?
+(224,79): error TS7006: Parameter 'se' implicitly has an 'any' type.
+(228,47): error TS7006: Parameter 'se' implicitly has an 'any' type.
+(238,62): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(238,132): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(239,60): error TS2551: Property 'updateAuthorsFromRequest' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'. Did you mean 'updateFromRequest'?
+(243,87): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(248,48): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(262,49): error TS2345: Argument of type 'LibraryItemExpanded' is not assignable to parameter of type 'PodcastLibraryItem'.
+(303,35): error TS2554: Expected 0 arguments, but got 2.
+(304,33): error TS2349: This expression is not callable.
+(335,26): error TS2339: Property 'updated' does not exist on type '{ error: string; cover?: undefined; } | { cover: string; updated: boolean; error?: undefined; }'.
+(336,7): error TS2322: Type 'string | undefined' is not assignable to type 'string | CreationOptional<string | null>'.
+(337,37): error TS2554: Expected 0 arguments, but got 2.
+(338,35): error TS2349: This expression is not callable.
+(358,37): error TS2554: Expected 0 arguments, but got 2.
+(359,35): error TS2349: This expression is not callable.
+(404,50): error TS2345: Argument of type 'string | ParsedQs | (string | ParsedQs)[]' is not assignable to parameter of type 'string'.
+(405,48): error TS2345: Argument of type 'string | ParsedQs | (string | ParsedQs)[]' is not assignable to parameter of type 'string'.
+(407,62): error TS2345: Argument of type '{ format: string | QueryString.ParsedQs | (string | QueryString.ParsedQs)[]; height: number | null; width: number | null; }' is not assignable to parameter of type 'CacheImageOptions'.
+(432,32): error TS2339: Property 'podcastEpisodes' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(432,54): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+(455,85): error TS2339: Property 'audioFiles' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(455,102): error TS7006: Parameter 'af' implicitly has an 'any' type.
+(462,47): error TS2339: Property 'audioFiles' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(462,64): error TS7006: Parameter 'af' implicitly has an 'any' type.
+(474,27): error TS2339: Property 'audioFiles' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(475,35): error TS2554: Expected 0 arguments, but got 2.
+(476,33): error TS2349: This expression is not callable.
+(492,9): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+(496,15): error TS2339: Property 'overrideCover' does not exist on type '{}'.
+(499,15): error TS2339: Property 'overrideDetails' does not exist on type '{}'.
+(517,24): error TS2367: This comparison appears to be unintentional because the types 'string | ParsedQs | (string | ParsedQs)[] | undefined' and 'number' have no overlap.
+(546,48): error TS2339: Property 'podcastEpisodes' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(546,69): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+(549,31): error TS2339: Property 'series' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(550,47): error TS2339: Property 'series' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(550,59): error TS7006: Parameter 'se' implicitly has an 'any' type.
+(552,31): error TS2339: Property 'authors' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(553,47): error TS2339: Property 'authors' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(553,60): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(621,11): error TS18048: 'libraryItem' is possibly 'undefined'.
+(622,152): error TS18048: 'libraryItem' is possibly 'undefined'.
+(626,30): error TS18048: 'libraryItem' is possibly 'undefined'.
+(626,48): error TS2349: This expression is not callable.
+(628,11): error TS18048: 'libraryItem' is possibly 'undefined'.
+(629,40): error TS18048: 'libraryItem' is possibly 'undefined'.
+(629,58): error TS2551: Property 'updateSeriesFromRequest' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'. Did you mean 'updateFromRequest'?
+(629,112): error TS18048: 'libraryItem' is possibly 'undefined'.
+(631,72): error TS7006: Parameter 'se' implicitly has an 'any' type.
+(634,49): error TS7006: Parameter 'se' implicitly has an 'any' type.
+(635,44): error TS18048: 'libraryItem' is possibly 'undefined'.
+(643,11): error TS18048: 'libraryItem' is possibly 'undefined'.
+(644,64): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(644,134): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(645,40): error TS18048: 'libraryItem' is possibly 'undefined'.
+(645,58): error TS2551: Property 'updateAuthorsFromRequest' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'. Did you mean 'updateFromRequest'?
+(645,96): error TS18048: 'libraryItem' is possibly 'undefined'.
+(647,73): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(651,50): error TS7006: Parameter 'au' implicitly has an 'any' type.
+(652,44): error TS18048: 'libraryItem' is possibly 'undefined'.
+(659,9): error TS18048: 'libraryItem' is possibly 'undefined'.
+(660,15): error TS18048: 'libraryItem' is possibly 'undefined'.
+(662,15): error TS18048: 'libraryItem' is possibly 'undefined'.
+(664,77): error TS18048: 'libraryItem' is possibly 'undefined'.
+(665,60): error TS2345: Argument of type 'LibraryItemExpanded | undefined' is not assignable to parameter of type 'LibraryItem'.
+(731,15): error TS2339: Property 'provider' does not exist on type '{}'.
+(734,15): error TS2339: Property 'overrideCover' does not exist on type '{}'.
+(737,15): error TS2339: Property 'overrideDetails' does not exist on type '{}'.
+(811,53): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ NOTHING: number; ADDED: number; UPDATED: number; REMOVED: number; UPTODATE: number; }'.
+(824,88): error TS2339: Property 'includedAudioFiles' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(829,64): error TS2345: Argument of type 'LibraryItemExpanded' is not assignable to parameter of type 'BookLibraryItem'.
+(846,70): error TS7006: Parameter 'c' implicitly has an 'any' type.
+(854,51): error TS2339: Property 'chapters' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(855,29): error TS2339: Property 'chapters' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(855,54): error TS7006: Parameter 'c' implicitly has an 'any' type.
+(855,57): error TS7006: Parameter 'index' implicitly has an 'any' type.
+(866,54): error TS2339: Property 'chapters' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(877,37): error TS2554: Expected 0 arguments, but got 2.
+(878,35): error TS2349: This expression is not callable.
+(924,68): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+(928,18): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+(939,21): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+(947,33): error TS2339: Property 'audioFiles' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(947,50): error TS7006: Parameter 'af' implicitly has an 'any' type.
+(948,31): error TS2339: Property 'audioFiles' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(948,66): error TS2339: Property 'audioFiles' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(948,85): error TS7006: Parameter 'af' implicitly has an 'any' type.
+(949,39): error TS2554: Expected 0 arguments, but got 2.
+(950,40): error TS2339: Property 'ebookFile' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(951,31): error TS2339: Property 'ebookFile' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(952,39): error TS2554: Expected 0 arguments, but got 2.
+(957,38): error TS2339: Property 'podcastEpisodes' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(957,60): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+(958,53): error TS2339: Property 'podcastEpisodes' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(958,75): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+(975,29): error TS2339: Property 'podcastEpisodes' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(975,69): error TS2339: Property 'podcastEpisodes' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(975,93): error TS7006: Parameter 'ep' implicitly has an 'any' type.
+(979,35): error TS2349: This expression is not callable.
+(1010,66): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+(1023,59): error TS2769: No overload matches this call.
+(1023,153): error TS2794: Expected 1 arguments, but got 0. Did you forget to include 'void' in your type argument to 'Promise'?
+(1027,49): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ code?: string | undefined; }'.
+(1046,41): error TS2339: Property 'ebookFile' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(1064,110): error TS2794: Expected 1 arguments, but got 0. Did you forget to include 'void' in your type argument to 'Promise'?
+(1068,49): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ code?: string | undefined; }'.
+(1100,14): error TS2790: The operand of a 'delete' operator must be optional.
+(1101,14): error TS2790: The operand of a 'delete' operator must be optional.
+(1102,24): error TS2339: Property 'ebookFormat' does not exist on type 'LibraryFileJSON'.
+(1107,27): error TS2339: Property 'ebookFile' does not exist on type '(NonAttribute<Book | Podcast> & Book) | (NonAttribute<Book | Podcast> & Podcast)'.
+(1108,35): error TS2554: Expected 0 arguments, but got 2.
+(1109,33): error TS2349: This expression is not callable.
+(1130,5): error TS2322: Type 'LibraryItemExpanded | null' is not assignable to type 'LibraryItemExpanded | undefined'.

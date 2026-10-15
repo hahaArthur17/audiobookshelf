@@ -1,0 +1,48 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-watch-wXSx/config, METADATA_PATH=/tmp/abs-watch-wXSx/metadata, PORT=3333, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 14:06:38.119] INFO: === Starting Server ===
+[2026-10-10 14:06:38.120] INFO: [Server] Init v2.37.0
+[2026-10-10 14:06:38.120] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 14:06:38.120] INFO: [Server] Platform: linux
+[2026-10-10 14:06:38.120] INFO: [Server] Arch: x64
+[2026-10-10 14:06:38.161] INFO: [BinaryManager] Found valid executable ffmpeg at /tmp/abs-base-b11b/ffmpeg
+[2026-10-10 14:06:38.161] INFO: [BinaryManager] Updating process.env.FFMPEG_PATH
+[2026-10-10 14:06:38.196] INFO: [BinaryManager] Found valid executable ffprobe at /tmp/abs-base-b11b/ffprobe
+[2026-10-10 14:06:38.196] INFO: [BinaryManager] Updating process.env.FFPROBE_PATH
+[2026-10-10 14:06:38.197] INFO: [BinaryManager] Found valid library libnusqlite3 at /tmp/abs-base-b11b/libnusqlite3.so
+[2026-10-10 14:06:38.197] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-10 14:06:38.197] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-watch-wXSx/config/absdatabase.sqlite
+[2026-10-10 14:06:38.197] INFO: [Database] Initializing db at "/tmp/abs-watch-wXSx/config/absdatabase.sqlite"
+[2026-10-10 14:06:38.206] INFO: [Database] Loading extension /tmp/abs-base-b11b/libnusqlite3.so
+[2026-10-10 14:06:38.206] INFO: [Database] Successfully loaded extension /tmp/abs-base-b11b/libnusqlite3.so
+[2026-10-10 14:06:38.207] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-10 14:06:38.207] INFO: [Database] Db connection was successful
+[2026-10-10 14:06:38.234] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 14:06:38.512] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 14:06:38.512] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 14:06:38.516] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 14:06:38.521] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 14:06:38.525] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 14:06:38.530] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 14:06:38.534] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 14:06:38.539] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 14:06:38.558] INFO: [Database] running ANALYZE
+[2026-10-10 14:06:38.563] INFO: [Database] ANALYZE completed
+[2026-10-10 14:06:38.563] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 14:06:38.563] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 14:06:38.569] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 14:06:38.571] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 14:06:38.571] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 14:06:38.580] INFO: Listening on port :3333
+[2026-10-10 14:06:38.902] INFO: Received ping
+[2026-10-10 14:06:38.912] INFO: [Server] Initializing new server
+[2026-10-10 14:06:38.964] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 14:06:39.000] INFO: [Watcher] Initializing watcher for "Test".
+[2026-10-10 14:06:39.004] INFO: [Watcher] "Test" Ready
+[2026-10-10 14:06:39.021] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 14:06:39.022] INFO: [LibraryScanner] Starting (forced) library scan 08d59713-cfe1-4988-a51b-578ca1556d60 for Test
+[2026-10-10 14:06:39.176] INFO: [LibraryScanner] Library scan "08d59713-cfe1-4988-a51b-578ca1556d60" completed in 0:00 | 5 Added | 0 Updated | 0 Missing
+[2026-10-10 14:06:39.182] INFO: [LibraryScan] Scan log saved "/tmp/abs-watch-wXSx/metadata/logs/scans/2026-10-10_08d59713-cfe1-4988-a51b-578ca1556d60.txt"
+[2026-10-10 14:06:39.182] INFO: [LibraryController] Scan complete
+[2026-10-10 14:07:04.120] INFO: [SocketAuthority] Socket Connected to /socket.io FaBMftd9B5SF11CQAAAB
+[2026-10-10 14:07:09.119] INFO: [SocketAuthority] Socket FaBMftd9B5SF11CQAAAB disconnected from client "root" after 5000ms (Reason: transport close)

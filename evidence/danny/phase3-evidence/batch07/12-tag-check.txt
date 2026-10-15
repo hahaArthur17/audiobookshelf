@@ -1,0 +1,126 @@
+== casts: distance in lines up to the nearest cast( tag ==
+server/controllers/ApiKeyController.ts:98: dist=8: } as CreationAttributes<ApiKey>
+server/controllers/ApiKeyController.ts:99: dist=NONE: )) as ApiKeyWithUser
+server/controllers/ApiKeyController.ts:123: dist=5: })) as ApiKeyWithUser | null
+server/controllers/AuthorController.ts:39: dist=3: }) as SortInstance
+server/controllers/AuthorController.ts:49: dist=1: const include = ((req.query.include as string | undefined) || '').split(',')
+server/controllers/AuthorController.ts:56: dist=1: const libraryItems = (await Database.libraryItemModel.getForAuthor(req.author, req.user)) as Library
+server/controllers/AuthorController.ts:110: dist=1: payload[key as 'name' | 'description' | 'asin'] = req.body[key]
+server/controllers/AuthorController.ts:143: dist=1: const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id)) a
+server/controllers/AuthorController.ts:155: dist=6: } as Author)
+server/controllers/AuthorController.ts:208: dist=1: const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id)) a
+server/controllers/AuthorController.ts:255: dist=1: const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id)) a
+server/controllers/AuthorController.ts:417: dist=1: format: (format as string | undefined) || (reqSupportsWebp(req) ? 'webp' : 'jpeg'),
+server/controllers/AuthorController.ts:419: dist=1: height: clampPositiveInt(height ? parseInt(height as string) : null, 4096),
+server/controllers/AuthorController.ts:421: dist=1: width: clampPositiveInt(width ? parseInt(width as string) : null, 4096)
+server/controllers/CollectionController.ts:80: dist=1: const transaction = await (Database as InitializedDatabase).sequelize.transaction()
+server/controllers/CollectionController.ts:138: dist=1: const includeEntities = ((req.query.include as string | undefined) || '').split(',')
+server/controllers/CollectionController.ts:185: dist=1: } satisfies RuntimeFindOptions as unknown as FindOptions)) as (CollectionBook & { book: Book.BookExp
+server/controllers/EmailController.ts:100: dist=1: const ebookFile = (libraryItem.media as Book).ebookFile
+server/controllers/FileSystemController.ts:22: dist=1: const relpath = req.query.path as string | undefined
+server/controllers/MeController.ts:433: dist=1: const limit = !isNaN(req.query.limit as unknown as number) ? Number(req.query.limit) || 25 : 25
+server/controllers/MeController.ts:440: dist=1: const libraryItems = await Database.libraryItemModel.findAllExpandedWhere({ id: libraryItemsIds as s
+server/controllers/MeController.ts:450: dist=1: const episode = (libraryItem.media as Podcast).podcastEpisodes.find((ep) => ep.id === oldMediaProgre
+server/controllers/MiscController.ts:84: dist=1: const cleanedOutputDirectoryParts = outputDirectoryParts.filter(Boolean).map((part) => sanitizeFilen
+server/controllers/MiscController.ts:98: dist=1: const path = Path.join(outputDirectory, sanitizeFilename(file.name) as string)
+server/controllers/MiscController.ts:120: dist=1: const includeArray = ((req.query.include as string | undefined) || '').split(',')
+server/controllers/MiscController.ts:217: dist=1: await Database.bookModel.bulkCreate(bulkUpdateBooks as CreationAttributes<Book>[], {
+server/controllers/MiscController.ts:240: dist=1: await Database.podcastModel.bulkCreate(bulkUpdatePodcasts as CreationAttributes<Podcast>[], {
+server/controllers/MiscController.ts:265: dist=1: await Database.seriesModel.bulkCreate(bulkUpdateSeries as CreationAttributes<Series>[], {
+server/controllers/MiscController.ts:362: dist=1: await (libraryItem.media as Model).update({
+server/controllers/MiscController.ts:403: dist=1: await (libraryItem.media as Model).update({
+server/controllers/MiscController.ts:493: dist=1: await (libraryItem.media as Model).update({
+server/controllers/MiscController.ts:534: dist=1: await (libraryItem.media as Model).update({
+server/controllers/MiscController.ts:643: dist=1: let updatedAuthMethods = (settingsUpdate[key] as string[] | undefined)?.filter?.((authMeth) => Datab
+server/controllers/MiscController.ts:688: dist=1: if (key === 'authLoginCustomMessage' && updatedValue) updatedValue = sanitize(updatedValue as string
+server/controllers/MiscController.ts:695: dist=1: ;(Database.serverSettings as unknown as Record<string, unknown>)[key] = updatedValue
+server/controllers/PlaylistController.ts:101: dist=1: const transaction = await (Database as InitializedDatabase).sequelize.transaction()
+server/controllers/PlaylistController.ts:153: dist=1: const playlistsForUser = await (Database.playlistModel.getOldPlaylistsForUserAndLibrary as (userId: 
+server/controllers/PlaylistController.ts:204: dist=1: const changed = req.playlist.changed() as string[]
+server/controllers/PlaylistController.ts:304: dist=1: if (itemToAdd.episodeId && !(libraryItem.media as Podcast).podcastEpisodes.some((pe) => pe.id === it
+server/controllers/PlaylistController.ts:328: dist=2: const episode = (libraryItem.media as Podcast).podcastEpisodes.find((ep) => ep.id === itemToAdd.epis
+server/controllers/PlaylistController.ts:360: dist=1: playlistMediaItem = req.playlist.playlistMediaItems.find((pmi) => (pmi.mediaItem as Book).libraryIte
+server/controllers/PlaylistController.ts:439: dist=3: const episode = (libraryItem.media as Podcast).podcastEpisodes.find((ep) => ep.id === item.episodeId
+server/controllers/PlaylistController.ts:485: dist=1: playlistMediaItem = req.playlist.playlistMediaItems.find((pmi) => (pmi.mediaItem as Book).libraryIte
+server/controllers/PlaylistController.ts:538: dist=1: const transaction = await (Database as InitializedDatabase).sequelize.transaction()
+server/controllers/PlaylistController.ts:552: dist=1: for (const [index, libraryItem] of (collectionExpanded.books as ReturnType<LibraryItem['toOldJSONExp
+server/controllers/PodcastController.ts:119: dist=1: const libraryItemFolderStats = (await getFileTimestampsWithIno(podcastPath)) as Exclude<Awaited<Retu
+server/controllers/PodcastController.ts:126: dist=1: const transaction = await (Database as InitializedDatabase).sequelize.transaction()
+server/controllers/PodcastController.ts:153: dist=NONE: )) as LibraryItem.PodcastLibraryItem
+server/controllers/PodcastController.ts:163: dist=1: newLibraryItem.media = (await newLibraryItem.getMediaExpanded()) as Podcast
+server/controllers/PodcastController.ts:194: dist=1: newLibraryItem.libraryFiles.push(newLibraryFile as LibraryFileObject)
+server/controllers/PodcastController.ts:298: dist=1: const maxEpisodesToDownload = !isNaN(req.query.limit as unknown as number) ? Number(req.query.limit)
+server/controllers/PodcastController.ts:364: dist=1: ;(this.podcastManager.downloadPodcastEpisodes as (libraryItem: LibraryItem.PodcastLibraryItem, episo
+server/controllers/PodcastController.ts:417: dist=1: updatePayload[key as 'title' | 'subtitle' | 'description' | 'pubDate' | 'episode' | 'season' | 'epis
+server/controllers/PodcastController.ts:438: dist=1: episode.set(updatePayload as unknown as Partial<Attributes<PodcastEpisode>>)
+server/controllers/SeriesController.ts:33: dist=1: const include = ((req.query.include as string | undefined) || '')
+server/controllers/SessionController.ts:49: dist=1: let userId: string | null | undefined = req.query.user as string | undefined
+server/controllers/SessionController.ts:57: dist=1: let orderKey = (req.query.sort as string | undefined) || 'updatedAt'
+server/controllers/SessionController.ts:99: dist=1: } satisfies RuntimeFindOptions as FindAndCountOptions)) as { rows: PlaybackSessionWithUser[]; count:
+server/controllers/SessionController.ts:170: dist=1: const sessionForClient = req.playbackSession.toJSONForClient(libraryItem as LibraryItem | undefined)
+server/controllers/SessionController.ts:261: dist=1: const audioTrackIndex = (toNumber as (val: unknown, fallback: number | null) => number | null)(req.p
+server/controllers/ShareController.ts:46: dist=1: let startTime = req.query.t && !isNaN(req.query.t as unknown as number) ? Math.max(0, parseInt(req.q
+server/controllers/ShareController.ts:93: dist=1: const publicTracks = (libraryItem.media as Book).includedAudioFiles.map((audioFile) => {
+server/controllers/ShareController.ts:119: dist=1: const deviceInfo = await this.playbackSessionManager.getDeviceInfo(req as RequestWithUser, clientDev
+server/controllers/ShareController.ts:123: dist=1: ;(newPlaybackSession.setData as (libraryItem: LibraryItem, userId: string | null, mediaPlayer: strin
+server/controllers/ShareController.ts:125: dist=1: newPlaybackSession.audioTracks = publicTracks as unknown as AudioTrack[]
+server/controllers/ShareController.ts:371: dist=8: } as CreationAttributes<MediaItemShare>
+server/controllers/ToolsController.ts:46: dist=1: this.abMergeManager.startAudiobookMerge(req.user.id, req.libraryItem as LibraryItem.BookLibraryItem,
+server/controllers/ToolsController.ts:84: dist=1: this.audioMetadataManager.updateMetadataForItem(req.user.id, req.libraryItem as LibraryItem.BookLibr
+server/controllers/ToolsController.ts:123: dist=1: libraryItems.push(libraryItem as LibraryItem.BookLibraryItem)
+server/controllers/UserController.ts:41: dist=1: const includes = ((req.query.include as string | undefined) || '').split(',').map((i) => i.trim())
+server/controllers/UserController.ts:50: dist=1: const userSessions = (await Database.getPlaybackSessions({ userId: user.id })) as OldPlaybackSession
+server/controllers/UserController.ts:93: dist=1: } satisfies RuntimeFindOptions as unknown as FindOptions)) as MediaProgressWithMediaItem[]
+server/controllers/UserController.ts:403: dist=3: } as unknown as { userId: string },
+server/controllers/UserController.ts:431: dist=1: ;(req.reqUser.extraData as { authOpenIDSub?: string | null }).authOpenIDSub = null
+server/routers/ApiRouter.ts:44: dist=NONE: const fs = fsExtra as unknown as FsExtra
+server/routers/ApiRouter.ts:45: dist=NONE: const date = dateAndTime as unknown as DateAndTime
+server/routers/ApiRouter.ts:50: dist=1: const Database = DatabaseModule as InitializedDatabase
+server/routers/ApiRouter.ts:126: dist=NONE: this.router = express() as unknown as ApiRouterApp
+server/routers/ApiRouter.ts:181: dist=1: this.router.post('/items/:id/cover', LibraryItemController.middleware.bind(this), LibraryItemControl
+server/routers/ApiRouter.ts:503: dist=NONE: } as unknown as FindOptions)
+server/routers/ApiRouter.ts:531: dist=NONE: Logger.error(`[ApiRouter] Error removing empty series: ${(error as Error).message}`)
+server/routers/ApiRouter.ts:568: dist=NONE: } as unknown as FindOptions)
+server/routers/ApiRouter.ts:592: dist=NONE: Logger.error(`[ApiRouter] Error removing authors: ${(error as Error).message}`)
+server/routers/ApiRouter.ts:598: dist=1: const userSessions = (await Database.getPlaybackSessions({ userId })) as OldPlaybackSession[]
+server/routers/ApiRouter.ts:600: dist=3: return userSessions.sort((a, b) => (b.updatedAt as number) - (a.updatedAt as number))
+server/routers/ApiRouter.ts:605: dist=1: const userSessions = (await Database.getPlaybackSessions({ userId, mediaItemId })) as OldPlaybackSes
+server/routers/ApiRouter.ts:607: dist=3: return userSessions.sort((a, b) => (b.updatedAt as number) - (a.updatedAt as number))
+server/routers/ApiRouter.ts:623: dist=NONE: const sessionsForStats = listeningSessions as unknown as ListeningStatsSession[]
+== non-null: distance to the nearest comment ==
+server/controllers/ApiKeyController.ts:77: comment_dist=1: const apiKey = await Database.apiKeyModel.generateApiKey(this.auth.tokenManager.TokenSecret!, keyId,
+server/controllers/AuthorController.ts:87: comment_dist=1: seriesMap[key].items = naturalSort(seriesMap[key].items).asc((li) => li.media.metadata.series!.seque
+server/controllers/AuthorController.ts:123: comment_dist=1: payload.lastFirst = Database.authorModel.getLastFirst(payload.name!)
+server/controllers/AuthorController.ts:152: comment_dist=1: id: existingAuthor!.id,
+server/controllers/AuthorController.ts:154: comment_dist=1: name: existingAuthor!.name
+server/controllers/AuthorController.ts:162: comment_dist=1: authorId: existingAuthor!.id
+server/controllers/BackupController.ts:116: comment_dist=1: res.sendFile(req.backup.fullPath!)
+server/controllers/CollectionController.ts:97: comment_dist=1: collectionId: newCollection!.id,
+server/controllers/CollectionController.ts:99: comment_dist=1: bookId: libraryItem!.mediaId,
+server/controllers/CollectionController.ts:127: comment_dist=1: const accessibleCollections = collectionsExpanded.filter((c) => req.user.checkCanAccessLibrary(c!.li
+server/controllers/MeController.ts:436: comment_dist=1: const mediaProgressesInProgress = req.user.mediaProgresses.filter((mp) => !mp.isFinished && (mp.curr
+server/controllers/MiscController.ts:73: comment_dist=1: const folder = library.libraryFolders!.find((fold) => fold.id === folderId)
+server/controllers/NotificationController.ts:71: comment_dist=1: if (Database.notificationSettings.removeNotification(req.notification.id!)) {
+server/controllers/PlaylistController.ts:118: comment_dist=1: const libraryItem = libraryItems.find((li) => li.id === item.libraryItemId)!
+server/controllers/PlaylistController.ts:235: comment_dist=1: const libraryItem = libraryItems.find((li) => li.id === item.libraryItemId)!
+server/controllers/PlaylistController.ts:328: comment_dist=1: const episode = (libraryItem.media as Podcast).podcastEpisodes.find((ep) => ep.id === itemToAdd.epis
+server/controllers/PlaylistController.ts:330: comment_dist=1: jsonExpanded.items!.push({
+server/controllers/PlaylistController.ts:338: comment_dist=1: jsonExpanded.items!.push({
+server/controllers/PlaylistController.ts:383: comment_dist=1: if (!jsonExpanded.items!.length) {
+server/controllers/PlaylistController.ts:420: comment_dist=1: const libraryItem = libraryItems.find((li) => li.id === item.libraryItemId)!
+server/controllers/PlaylistController.ts:439: comment_dist=1: const episode = (libraryItem.media as Podcast).podcastEpisodes.find((ep) => ep.id === item.episodeId
+server/controllers/PlaylistController.ts:441: comment_dist=1: jsonExpanded.items!.push({
+server/controllers/PlaylistController.ts:449: comment_dist=1: jsonExpanded.items!.push({
+server/controllers/PodcastController.ts:78: comment_dist=1: const folder = library.libraryFolders!.find((fold) => fold.id === payload.folderId)
+server/controllers/SessionController.ts:168: comment_dist=1: const libraryItem = await Database.libraryItemModel.getExpandedById(req.playbackSession.libraryItemI
+server/controllers/SessionController.ts:196: comment_dist=1: const openSession = this.playbackSessionManager.getSession(req.playbackSession.id!)
+server/controllers/SessionController.ts:297: comment_dist=1: const user = await Database.userModel.getUserById(playbackSession.userId!)
+server/controllers/SessionController.ts:300: comment_dist=1: Logger.debug(`[SessionController] Serving audio track ${audioTrack.index} for session "${req.params.
+server/controllers/ShareController.ts:66: comment_dist=1: if (startTime > 0 && startTime < playbackSession.duration!) {
+server/controllers/ShareController.ts:130: comment_dist=1: newPlaybackSession.coverAspectRatio = libraryItem.library!.settings.coverAspectRatio
+server/controllers/ShareController.ts:210: comment_dist=1: const audioTrackPath = audioTrack.metadata!.path!
+server/controllers/ShareController.ts:252: comment_dist=1: const libraryItem = await Database.libraryItemModel.findByPk(playbackSession.libraryItemId!, {
+server/controllers/ShareController.ts:311: comment_dist=1: playbackSession.currentTime = Math.min(currentTime, playbackSession.duration!)
+server/controllers/UserController.ts:52: comment_dist=1: user.latestSession = userSessions.sort((a, b) => b.updatedAt! - a.updatedAt!).shift() || null
+server/controllers/UserController.ts:305: comment_dist=1: if (updateItemTagsSelected && updateItemTagsSelected.join(',') !== user.permissions.itemTagsSelected
+server/controllers/UserController.ts:311: comment_dist=1: if (updateLibrariesAccessible && updateLibrariesAccessible.join(',') !== user.permissions.librariesA

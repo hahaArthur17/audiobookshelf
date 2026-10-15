@@ -1,0 +1,14 @@
+== tests that call buildModels
+test/server/models/oldJsonSerialization.test.js
+test/server/controllers/LibraryController.test.js
+test/server/controllers/LibraryItemController.test.js
+== tests that mention the shared helpers
+== tests that read the Sequelize statics
+test/server/managers/MigrationManager.test.js
+test/server/migrations/v2.15.0-series-column-unique.test.js
+test/server/migrations/v0.0.1-migration_example.js
+test/server/migrations/v2.19.1-copy-title-to-library-items.test.js
+test/server/migrations/v2.19.4-improve-podcast-queries.test.js
+test/server/migrations/v2.17.6-share-add-isdownloadable.test.js
+test/server/migrations/v2.20.0-improve-author-sort-queries.test.js
+test/server/migrations/v2.17.5-remove-host-from-feed-urls.test.js

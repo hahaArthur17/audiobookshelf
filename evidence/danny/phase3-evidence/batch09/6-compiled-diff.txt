@@ -1,0 +1,362 @@
+diff -ruw /tmp/flt-base-b9/index.js /tmp/flt-new-b9/index.js
+--- /tmp/flt-base-b9/index.js	2026-10-10 11:18:19.504489449 +1300
++++ /tmp/flt-new-b9/index.js	2026-10-10 11:18:19.615650205 +1300
+@@ -1,4 +1,5 @@
+ "use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ const optionDefinitions = [
+     { name: 'config', alias: 'c', type: String },
+     { name: 'metadata', alias: 'm', type: String },
+@@ -8,11 +9,11 @@
+     { name: 'dev', alias: 'd', type: Boolean },
+     { name: 'prod-with-dev-env', alias: 'r', type: Boolean }
+ ];
+-const commandLineArgs = require('./server/libs/commandLineArgs');
++const commandLineArgs = require("./server/libs/commandLineArgs");
+ const options = commandLineArgs(optionDefinitions);
+-const Path = require('path');
++const Path = require("path");
+ process.env.NODE_ENV = options.dev ? 'development' : process.env.NODE_ENV || 'production';
+-const server = require('./server/Server');
++const server = require("./server/Server");
+ global.appRoot = Path.basename(__dirname) === 'dist-server' ? Path.resolve(__dirname, '..') : __dirname;
+ const isDev = process.env.NODE_ENV !== 'production';
+ if (isDev || options['prod-with-dev-env']) {
+diff -ruw /tmp/flt-base-b9/package.json /tmp/flt-new-b9/package.json
+--- /tmp/flt-base-b9/package.json	2026-10-10 11:18:19.500318638 +1300
++++ /tmp/flt-new-b9/package.json	2026-10-10 11:18:19.611678601 +1300
+@@ -62,12 +62,14 @@
+         "xml2js": "^0.5.0"
+     },
+     "devDependencies": {
++        "@types/cookie-parser": "^1.4.10",
+         "@types/express": "^4.17.25",
+         "@types/express-session": "^1.19.0",
+         "@types/jsonwebtoken": "^9.0.10",
+         "@types/node": "^24.13.6",
+         "@types/nodemailer": "^6.4.24",
+         "@types/passport": "^1.0.17",
++        "@types/passport-jwt": "^4.0.1",
+         "@types/semver": "^7.8.0",
+         "@types/uuid": "^8.3.4",
+         "@types/xml2js": "^0.4.14",
+diff -ruw /tmp/flt-base-b9/server/Auth.js /tmp/flt-new-b9/server/Auth.js
+--- /tmp/flt-base-b9/server/Auth.js	2026-10-10 11:18:19.543078282 +1300
++++ /tmp/flt-new-b9/server/Auth.js	2026-10-10 11:18:19.650487491 +1300
+@@ -1,15 +1,16 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const passport = require('passport');
+-const JwtStrategy = require('passport-jwt').Strategy;
+-const ExtractJwt = require('passport-jwt').ExtractJwt;
+-const Database = require('./Database');
+-const Logger = require('./Logger');
+-const TokenManager = require('./auth/TokenManager');
+-const LocalAuthStrategy = require('./auth/LocalAuthStrategy');
+-const OidcAuthStrategy = require('./auth/OidcAuthStrategy');
+-const RateLimiterFactory = require('./utils/rateLimiterFactory');
+-const { escapeRegExp } = require('./utils');
++const passport = require("passport");
++const passportJwt = require("passport-jwt");
++const Database = require("./Database");
++const Logger = require("./Logger");
++const TokenManager = require("./auth/TokenManager");
++const LocalAuthStrategy = require("./auth/LocalAuthStrategy");
++const OidcAuthStrategy = require("./auth/OidcAuthStrategy");
++const RateLimiterFactory = require("./utils/rateLimiterFactory");
++const utils = require("./utils");
++const JwtStrategy = passportJwt.Strategy;
++const ExtractJwt = passportJwt.ExtractJwt;
++const { escapeRegExp } = utils;
+ class Auth {
+     constructor() {
+         const escapedRouterBasePath = escapeRegExp(global.RouterBasePath);
+diff -ruw /tmp/flt-base-b9/server/Database.js /tmp/flt-new-b9/server/Database.js
+--- /tmp/flt-base-b9/server/Database.js	2026-10-10 11:18:19.533999382 +1300
++++ /tmp/flt-new-b9/server/Database.js	2026-10-10 11:18:19.641589454 +1300
+@@ -1,12 +1,13 @@
+ "use strict";
+-const Path = require('path');
+-const { Sequelize, Op } = require('sequelize');
+-const packageJson = require('../package.json');
+-const fs = require('./libs/fsExtra');
+-const Logger = require('./Logger');
+-const dbMigration = require('./utils/migrations/dbMigration');
+-const Auth = require('./Auth');
+-const MigrationManager = require('./managers/MigrationManager');
++const Path = require("path");
++const sequelize = require("sequelize");
++const packageJson = require("../package.json");
++const fs = require("./libs/fsExtra");
++const Logger = require("./Logger");
++const dbMigration = require("./utils/migrations/dbMigration");
++require("./Auth");
++const MigrationManager = require("./managers/MigrationManager");
++const { Sequelize, Op } = sequelize;
+ class Database {
+     constructor() {
+         this.sequelize = null;
+@@ -570,7 +571,7 @@
+         if (badSessionsRemoved > 0) {
+             Logger.warn(`Removed ${badSessionsRemoved} sessions that were 3 seconds or less`);
+         }
+-        const [duplicateMediaProgresses] = await this.sequelize.query(`SELECT mp1.id, mp1.mediaItemId
++        const [duplicateMediaProgresses] = (await this.sequelize.query(`SELECT mp1.id, mp1.mediaItemId
+ FROM mediaProgresses mp1
+ WHERE EXISTS (
+     SELECT 1
+@@ -581,7 +582,7 @@
+         mp2.updatedAt > mp1.updatedAt
+         OR (mp2.updatedAt = mp1.updatedAt AND mp2.id < mp1.id)
+     )
+-)`);
++)`));
+         for (const duplicateMediaProgress of duplicateMediaProgresses) {
+             Logger.warn(`Found duplicate mediaProgress for mediaItem "${duplicateMediaProgress.mediaItemId}" - removing it`);
+             await this.mediaProgressModel.destroy({
+@@ -629,7 +630,7 @@
+         const action = `update_${targetTable}_${targetColumn}`;
+         const fromSource = sourceTable === 'books' ? '' : `_from_${sourceTable}_${sourceColumn}`;
+         const triggerName = this.convertToSnakeCase(`${action}${fromSource}`);
+-        const [[{ count }]] = await this.sequelize.query(`SELECT COUNT(*) as count FROM sqlite_master WHERE type='trigger' AND name='${triggerName}'`);
++        const [[{ count }]] = (await this.sequelize.query(`SELECT COUNT(*) as count FROM sqlite_master WHERE type='trigger' AND name='${triggerName}'`));
+         if (count > 0)
+             return; // Trigger already exists
+         Logger.info(`[Database] Adding trigger ${triggerName}`);
+@@ -664,7 +665,7 @@
+         FROM ${authorsJoin}
+         WHERE ${bookAuthors}.bookId = ${modifiedRecord}.bookId
+       `;
+-            const [[{ count }]] = await this.sequelize.query(`SELECT COUNT(*) as count FROM sqlite_master WHERE type='trigger' AND name='${triggerName}'`);
++            const [[{ count }]] = (await this.sequelize.query(`SELECT COUNT(*) as count FROM sqlite_master WHERE type='trigger' AND name='${triggerName}'`));
+             if (count > 0)
+                 return; // Trigger already exists
+             Logger.info(`[Database] Adding trigger ${triggerName}`);
+@@ -686,7 +687,7 @@
+         FROM ${authorsJoin}
+         WHERE ${bookAuthors}.bookId = ${libraryItems}.mediaId
+       `;
+-            const [[{ count }]] = await this.sequelize.query(`SELECT COUNT(*) as count FROM sqlite_master WHERE type='trigger' AND name='${triggerName}'`);
++            const [[{ count }]] = (await this.sequelize.query(`SELECT COUNT(*) as count FROM sqlite_master WHERE type='trigger' AND name='${triggerName}'`));
+             if (count > 0)
+                 return; // Trigger already exists
+             Logger.info(`[Database] Adding trigger ${triggerName}`);
+@@ -723,7 +724,7 @@
+                 return;
+             const escapedQuery = this.sequelize.escape(this.query);
+             const normalizedQueryExpression = this.normalize(escapedQuery);
+-            const normalizedQueryResult = await this.sequelize.query(`SELECT ${normalizedQueryExpression} as normalized_query`);
++            const normalizedQueryResult = (await this.sequelize.query(`SELECT ${normalizedQueryExpression} as normalized_query`));
+             const normalizedQuery = normalizedQueryResult[0][0].normalized_query;
+             this.hasAccents = escapedQuery !== this.sequelize.escape(normalizedQuery);
+         }
+diff -ruw /tmp/flt-base-b9/server/Logger.js /tmp/flt-new-b9/server/Logger.js
+--- /tmp/flt-base-b9/server/Logger.js	2026-10-10 11:18:19.539993803 +1300
++++ /tmp/flt-new-b9/server/Logger.js	2026-10-10 11:18:19.647603530 +1300
+@@ -1,8 +1,10 @@
+ "use strict";
+ var _a;
+-const date = require('./libs/dateAndTime');
+-const { LogLevel } = require('./utils/constants');
+-const util = require('util');
++const dateAndTime = require("./libs/dateAndTime");
++const constants = require("./utils/constants");
++const util = require("util");
++const { LogLevel } = constants;
++const date = dateAndTime;
+ class Logger {
+     constructor() {
+         this.logManager = null;
+@@ -21,8 +23,9 @@
+         return Error().stack.split('\n')[3].replace(regex, '$1');
+     }
+     getLogLevelString(level) {
+-        for (const key in LogLevel) {
+-            if (LogLevel[key] === level) {
++        const logLevels = LogLevel;
++        for (const key in logLevels) {
++            if (logLevels[key] === level) {
+                 return key;
+             }
+         }
+diff -ruw /tmp/flt-base-b9/server/Server.js /tmp/flt-new-b9/server/Server.js
+--- /tmp/flt-base-b9/server/Server.js	2026-10-10 11:18:19.534654149 +1300
++++ /tmp/flt-new-b9/server/Server.js	2026-10-10 11:18:19.642142932 +1300
+@@ -1,43 +1,50 @@
+ "use strict";
+-const Path = require('path');
+-const Sequelize = require('sequelize');
+-const express = require('express');
+-const http = require('http');
+-const util = require('util');
+-const fs = require('./libs/fsExtra');
+-const fileUpload = require('./libs/expressFileupload');
+-const cookieParser = require('cookie-parser');
+-const axios = require('axios');
+-const { version } = require('../package.json');
+-const is = require('./libs/requestIp/isJs');
+-const fileUtils = require('./utils/fileUtils');
+-const { toNumber } = require('./utils/index');
+-const { getRequestOrigin } = require('./utils/requestUtils');
+-const Logger = require('./Logger');
+-const Auth = require('./Auth');
+-const Watcher = require('./Watcher');
+-const Database = require('./Database');
+-const SocketAuthority = require('./SocketAuthority');
+-const ApiRouter = require('./routers/ApiRouter');
+-const HlsRouter = require('./routers/HlsRouter');
+-const PublicRouter = require('./routers/PublicRouter');
+-const LogManager = require('./managers/LogManager');
+-const EmailManager = require('./managers/EmailManager');
+-const AbMergeManager = require('./managers/AbMergeManager');
+-const CacheManager = require('./managers/CacheManager');
+-const BackupManager = require('./managers/BackupManager');
+-const PlaybackSessionManager = require('./managers/PlaybackSessionManager');
+-const PodcastManager = require('./managers/PodcastManager');
+-const AudioMetadataMangaer = require('./managers/AudioMetadataManager');
+-const RssFeedManager = require('./managers/RssFeedManager');
+-const CronManager = require('./managers/CronManager');
+-const ApiCacheManager = require('./managers/ApiCacheManager');
+-const BinaryManager = require('./managers/BinaryManager');
+-const ShareManager = require('./managers/ShareManager');
+-const LibraryScanner = require('./scanner/LibraryScanner');
+-const passport = require('passport');
+-const expressSession = require('express-session');
+-const MemoryStore = require('./libs/memorystore');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const Path = require("path");
++const Sequelize = require("sequelize");
++const express = require("express");
++const http = require("http");
++const util = require("util");
++const fs = require("./libs/fsExtra");
++const fileUpload = require("./libs/expressFileupload");
++const cookieParser = require("cookie-parser");
++const axios_1 = __importDefault(require("axios"));
++const packageJson = require("../package.json");
++const isModule = require("./libs/requestIp/isJs");
++const fileUtils = require("./utils/fileUtils");
++const utils = require("./utils/index");
++const requestUtils = require("./utils/requestUtils");
++const Logger = require("./Logger");
++const Auth = require("./Auth");
++const Watcher = require("./Watcher");
++const Database = require("./Database");
++const SocketAuthority = require("./SocketAuthority");
++const ApiRouter = require("./routers/ApiRouter");
++const HlsRouter = require("./routers/HlsRouter");
++const PublicRouter = require("./routers/PublicRouter");
++const LogManager = require("./managers/LogManager");
++const EmailManager = require("./managers/EmailManager");
++const AbMergeManager = require("./managers/AbMergeManager");
++const CacheManager = require("./managers/CacheManager");
++const BackupManager = require("./managers/BackupManager");
++const PlaybackSessionManager = require("./managers/PlaybackSessionManager");
++const PodcastManager = require("./managers/PodcastManager");
++const AudioMetadataMangaer = require("./managers/AudioMetadataManager");
++const RssFeedManager = require("./managers/RssFeedManager");
++const CronManager = require("./managers/CronManager");
++const ApiCacheManager = require("./managers/ApiCacheManager");
++const BinaryManager = require("./managers/BinaryManager");
++const ShareManager = require("./managers/ShareManager");
++const LibraryScanner = require("./scanner/LibraryScanner");
++const passport = require("passport");
++const expressSession = require("express-session");
++const MemoryStore = require("./libs/memorystore");
++const { version } = packageJson;
++const { toNumber } = utils;
++const { getRequestOrigin } = requestUtils;
++const is = isModule;
+ function getPreparedNextBasePath(nextApp) {
+     const nodeServer = nextApp.server?.server;
+     const basePath = nodeServer?.nextConfig?.basePath;
+@@ -57,10 +64,10 @@
+         if (process.env.EXP_PROXY_SUPPORT === '1') {
+             Logger.info(`[Server] Experimental Proxy Support Enabled, SSRF Request Filter was Disabled`);
+             global.DisableSsrfRequestFilter = () => true;
+-            axios.defaults.maxRedirects = 0;
+-            axios.interceptors.response.use((response) => response, (error) => {
++            axios_1.default.defaults.maxRedirects = 0;
++            axios_1.default.interceptors.response.use((response) => response, (error) => {
+                 if ([301, 302].includes(error.response?.status)) {
+-                    return axios({
++                    return (0, axios_1.default)({
+                         ...error.config,
+                         url: error.response.headers.location
+                     });
+@@ -217,7 +224,8 @@
+         app.use(global.RouterBasePath, router);
+         app.disable('x-powered-by');
+         this.server = http.createServer(app);
+-        router.use(/^(?!\/internal-api).*/, fileUpload({
++        router.use(/^(?!\/internal-api).*/, 
++        fileUpload({
+             defCharset: 'utf8',
+             defParamCharset: 'utf8',
+             useTempFiles: true,
+@@ -380,10 +388,10 @@
+             }
+         }
+         try {
+-            const users = await Database.sequelize.query(`SELECT u.id, u.username, u.extraData, json_group_array(value) AS seriesIdsToRemove FROM users u, json_each(u.extraData->"seriesHideFromContinueListening") LEFT JOIN series se ON se.id = value WHERE se.id IS NULL GROUP BY u.id;`, {
++            const users = (await Database.sequelize.query(`SELECT u.id, u.username, u.extraData, json_group_array(value) AS seriesIdsToRemove FROM users u, json_each(u.extraData->"seriesHideFromContinueListening") LEFT JOIN series se ON se.id = value WHERE se.id IS NULL GROUP BY u.id;`, {
+                 model: Database.userModel,
+                 type: Sequelize.QueryTypes.SELECT
+-            });
++            }));
+             for (const user of users) {
+                 const extraData = JSON.parse(user.extraData);
+                 const existingSeriesIds = extraData.seriesHideFromContinueListening;
+diff -ruw /tmp/flt-base-b9/server/SocketAuthority.js /tmp/flt-new-b9/server/SocketAuthority.js
+--- /tmp/flt-base-b9/server/SocketAuthority.js	2026-10-10 11:18:19.529896409 +1300
++++ /tmp/flt-new-b9/server/SocketAuthority.js	2026-10-10 11:18:19.637947467 +1300
+@@ -1,10 +1,11 @@
+ "use strict";
+-const SocketIO = require('socket.io');
+-const Logger = require('./Logger');
+-const Database = require('./Database');
+-const TokenManager = require('./auth/TokenManager');
+-const CoverSearchManager = require('./managers/CoverSearchManager');
+-const { LogLevel } = require('./utils/constants');
++const SocketIO = require("socket.io");
++const Logger = require("./Logger");
++const Database = require("./Database");
++const TokenManager = require("./auth/TokenManager");
++const CoverSearchManager = require("./managers/CoverSearchManager");
++const constants = require("./utils/constants");
++const { LogLevel } = constants;
+ class SocketAuthority {
+     constructor() {
+         this.Server = null;
+diff -ruw /tmp/flt-base-b9/server/Watcher.js /tmp/flt-new-b9/server/Watcher.js
+--- /tmp/flt-base-b9/server/Watcher.js	2026-10-10 11:18:19.513267401 +1300
++++ /tmp/flt-new-b9/server/Watcher.js	2026-10-10 11:18:19.622699268 +1300
+@@ -1,11 +1,12 @@
+ "use strict";
+-const Path = require('path');
+-const EventEmitter = require('events');
+-const Watcher = require('./libs/watcher/watcher');
+-const Logger = require('./Logger');
+-const Task = require('./objects/Task');
+-const TaskManager = require('./managers/TaskManager');
+-const { filePathToPOSIX, isSameOrSubPath, getFileMTimeMs, shouldIgnoreFile } = require('./utils/fileUtils');
++require("path");
++const EventEmitter = require("events");
++const Watcher = require("./libs/watcher/watcher");
++const Logger = require("./Logger");
++require("./objects/Task");
++const TaskManager = require("./managers/TaskManager");
++const fileUtils = require("./utils/fileUtils");
++const { filePathToPOSIX, isSameOrSubPath, getFileMTimeMs, shouldIgnoreFile } = fileUtils;
+ class FolderWatcher extends EventEmitter {
+     constructor() {
+         super();
+@@ -281,4 +282,5 @@
+         }, 5000);
+     }
+ }
+-module.exports = new FolderWatcher();
++const folderWatcher = new FolderWatcher();
++module.exports = folderWatcher;

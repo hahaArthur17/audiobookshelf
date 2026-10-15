@@ -1,0 +1,120 @@
+== NOTE lines added
++    // NOTE: author is null when no author has this id, then reading books throws a TypeError
++        // NOTE: this is the Collection class (static method), not c, so c.toOldJSONExpanded() below uses the unfiltered books
++      // NOTE: itemExpanded is null when the library item no longer exists (or has no media), then getFeedObjForLibraryItem throws a TypeError outside the try below
++      // NOTE: collectionExpanded is null when the collection no longer exists, then getFeedObjForCollection throws a TypeError outside the try below
++      // NOTE: seriesExpanded is null when the series no longer exists, then getFeedObjForSeries throws a TypeError outside the try below
++    // NOTE: `|| 0` applies to the promise (always truthy), not to the result, so an empty table resolves to null instead of 0
++        // NOTE: Podcast has no asin, so this is always undefined (and left out of the JSON)
++    // NOTE: a podcast episode media item has no libraryItem (it is on episode.podcast), so this throws a TypeError for playlists with episodes
++      // NOTE: RSS chapters can have end null (the last chapter when no end time is given), which is stored as is in chapters
++  // NOTE: NOT NULL column, but TokenManager writes generateRefreshToken results, which are null when signing fails (create/update then fail validation and throw)
++    // NOTE: neither Book nor Podcast has a metadata property (the old models had one), so the second check is always false
+== getMediaItemsInProgress
+server/models/LibraryItem.ts:390:    // The JS passed a fifth argument (false), which getMediaItemsInProgress does not take (it was ignored)
+server/models/LibraryItem.ts:391:    const itemsInProgressPayload = await libraryFilters.getMediaItemsInProgress(library, user, include, limit)
+server/utils/queries/libraryFilters.ts:111:  async getMediaItemsInProgress(library: Library, user: User, include: string[], limit: number) {
+== AudioTrack diff
+diff --git a/server/objects/files/AudioTrack.ts b/server/objects/files/AudioTrack.ts
+index 7c7039d5..c03cfc75 100644
+--- a/server/objects/files/AudioTrack.ts
++++ b/server/objects/files/AudioTrack.ts
+@@ -47,7 +47,7 @@ class AudioTrack {
+     this.metadata = audioFile.metadata.clone()
+   }
+ 
+-  setFromStream(title: string, duration: number, contentUrl: string) {
++  setFromStream(title: string | null, duration: number, contentUrl: string) {
+     this.index = 1
+     this.startOffset = 0
+     this.duration = duration
+== mtime/ctime/birthtime in models
+server/models/LibraryItem.ts:61: * Attributes accepted by create: mtime, ctime and birthtime may be epoch ms (the DATE columns convert them to Dates)
+server/models/LibraryItem.ts:63:type LibraryItemCreationAttributes = InferCreationAttributes<LibraryItem, { omit: 'mtime' | 'ctime' | 'birthtime' }> & {
+server/models/LibraryItem.ts:64:  mtime: Date | number | null
+server/models/LibraryItem.ts:65:  ctime: Date | number | null
+server/models/LibraryItem.ts:66:  birthtime: Date | number | null
+server/models/LibraryItem.ts:70: * mtime, ctime and birthtime are read as Dates (or null). They are also set to epoch ms (file timestamps),
+server/models/LibraryItem.ts:74:  get mtime(): Date | null
+server/models/LibraryItem.ts:75:  set mtime(value: Date | number | null)
+server/models/LibraryItem.ts:76:  get ctime(): Date | null
+server/models/LibraryItem.ts:77:  set ctime(value: Date | number | null)
+server/models/LibraryItem.ts:78:  get birthtime(): Date | null
+server/models/LibraryItem.ts:79:  set birthtime(value: Date | number | null)
+server/models/LibraryItem.ts:718:              metadataLibraryFile.metadata.mtimeMs = fileTimestamps.mtimeMs
+server/models/LibraryItem.ts:719:              metadataLibraryFile.metadata.ctimeMs = fileTimestamps.ctimeMs
+server/models/LibraryItem.ts:726:            this.mtime = libraryItemDirTimestamps.mtimeMs
+server/models/LibraryItem.ts:727:            this.ctime = libraryItemDirTimestamps.ctimeMs
+server/models/LibraryItem.ts:767:        mtime: DataTypes.DATE(6),
+server/models/LibraryItem.ts:768:        ctime: DataTypes.DATE(6),
+server/models/LibraryItem.ts:769:        birthtime: DataTypes.DATE(6),
+server/models/LibraryItem.ts:815:            fields: ['birthtime']
+server/models/LibraryItem.ts:818:            fields: ['mtime']
+server/models/LibraryItem.ts:996:      mtimeMs: this.mtime?.valueOf(),
+server/models/LibraryItem.ts:997:      ctimeMs: this.ctime?.valueOf(),
+server/models/LibraryItem.ts:998:      birthtimeMs: this.birthtime?.valueOf(),
+server/models/LibraryItem.ts:1031:      mtimeMs: this.mtime?.valueOf(),
+server/models/LibraryItem.ts:1032:      ctimeMs: this.ctime?.valueOf(),
+server/models/LibraryItem.ts:1033:      birthtimeMs: this.birthtime?.valueOf(),
+== init signatures
+747-   */
+748:  static init(sequelize: ModelsSequelize): void
+749-  // Model.init signature, only declared so the class stays assignable to Model (Database calls init(sequelize))
+750:  static init<MS extends ModelStatic<Sequelize.Model>, M extends InstanceType<MS>>(this: MS, attributes: ModelAttributes<M, Attributes<M>> | ModelsSequelize, options?: InitOptions<M>): MS
+751:  static init(sequelize: ModelsSequelize) {
+752-    super.init(
+753-      {
+754-        id: {
+755-          type: DataTypes.UUID,
+== casts to Book/Podcast types
+server/models/User.ts:791:      mediaProgress = (libraryItem.media as Book).mediaProgresses?.[0]
+server/models/Feed.ts:138:      author: libraryItem.mediaType === 'podcast' ? (media as Podcast).author : (media as Book).authorName,
+server/models/Feed.ts:140:      podcastType: libraryItem.mediaType === 'podcast' ? (media as Podcast).podcastType : 'serial',
+server/models/Playlist.ts:329:    return this.playlistMediaItems.some((pmi) => (pmi.mediaItem as Book.BookExpandedWithLibraryItem).libraryItem.id === libraryItemId)
+server/models/Playlist.ts:356:        const book = pmi.mediaItem as Book.BookExpandedWithLibraryItem
+server/models/Playlist.ts:369:      const episode = pmi.mediaItem as PodcastEpisode & { podcast: Podcast.PodcastExpandedWithLibraryItem }
+server/models/LibraryItem.ts:240:      })) as Book | Podcast
+server/models/LibraryItem.ts:262:      })) as Book | Podcast
+server/models/LibraryItem.ts:294:      })) as Book | Podcast
+server/models/LibraryItem.ts:316:      })) as Book | Podcast
+server/models/LibraryItem.ts:656:      const book = mediaExpanded as Book
+server/models/LibraryItem.ts:682:      const podcast = mediaExpanded as Podcast
+server/models/LibraryItem.ts:697:        asin: (podcast as Podcast & { asin?: string }).asin,
+server/models/LibraryItem.ts:945:      return (this.media as Book).audioFiles.find((af) => af.ino === ino)
+server/models/LibraryItem.ts:948:      return (this.media as Podcast).podcastEpisodes.find((pe) => pe.audioFile?.ino === ino)?.audioFile
+== Collection bug site
+36:  static async getOldCollectionsJsonExpanded(user: User, libraryId?: string, include?: string[]) {
+37-    let collectionWhere: WhereOptions<Collection> | null = null
+38-    if (libraryId) {
+39-      collectionWhere = {
+40-        libraryId
+41-      }
+42-    }
+43-
+44-    // Optionally include rssfeed for collection
+45-    const collectionIncludes: Includeable[] = []
+46-    if (include?.includes('rssfeed')) {
+47-      collectionIncludes.push({
+48-        model: this.sequelize.models.feed
+49-      })
+50-    }
+51-
+52-    const collections = await this.findAll({
+53-      // cast(b): sequelize accepts a null where (no condition), its types do not
+54-      where: collectionWhere as WhereOptions<Collection>,
+55-      include: [
+56-        {
+57-          model: this.sequelize.models.book,
+58-          include: [
+59-            {
+60-              model: this.sequelize.models.libraryItem
+61-            },
+== Library bug site
+89-   */
+90:  static getMaxDisplayOrder() {
+91-    // NOTE: `|| 0` applies to the promise (always truthy), not to the result, so an empty table resolves to null instead of 0
+92-    return this.max('displayOrder') || 0
+93-  }
+94-
+95-  /**
+96-   * Updates displayOrder to be sequential

@@ -1,0 +1,14 @@
+STATUS 200
+LOCATION 
+{
+ "collapseseries": false,
+ "include": "",
+ "limit": 0,
+ "mediaType": "podcast",
+ "minified": false,
+ "offset": 0,
+ "page": 0,
+ "results": [],
+ "sortDesc": false,
+ "total": 0
+}

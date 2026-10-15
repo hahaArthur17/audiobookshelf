@@ -1,0 +1,39 @@
+== branch and log
+danny/phase3
+5b2067d0 phase3 batch 12: LibraryItemController to TypeScript
+ed0fece6 phase3 batch 11d-fix: correct deferred work notes
+9694c3c5 phase3 batch 11d: deferred work and Log
+== status
+== worktrees
+/home/danny/Code/compx574/audiobookshelf  5b2067d0 [danny/phase3]
+== files changed
+ MIGRATION.md                                       |  64 ++-
+ ...yItemController.js => LibraryItemController.ts} | 514 ++++++++++-----------
+ 2 files changed, 313 insertions(+), 265 deletions(-)
+== protected files changed since ed0fece6 (expect none)
+== build
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+== tsc error count
+0
+== test
+  scanUtils
+    ✔ should properly group files into potential book library items
+
+  stringifySequelizeQuery
+    ✔ should stringify a sequelize query containing an op
+    ✔ should stringify a sequelize query containing a literal
+    ✔ should stringify a sequelize query containing a class
+    ✔ should ignore non-class functions
+
+
+  356 passing (2s)
+
+== lint
+
+> audiobookshelf@2.37.0 lint
+> eslint .
+
+lint exit: 0

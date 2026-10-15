@@ -1,0 +1,47 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-smoke-nXfS/config, METADATA_PATH=/tmp/abs-smoke-nXfS/metadata, PORT=3333, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 10:09:33.554] INFO: === Starting Server ===
+[2026-10-10 10:09:33.555] INFO: [Server] Init v2.37.0
+[2026-10-10 10:09:33.555] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 10:09:33.555] INFO: [Server] Platform: linux
+[2026-10-10 10:09:33.555] INFO: [Server] Arch: x64
+[2026-10-10 10:09:33.593] INFO: [BinaryManager] Found valid executable ffmpeg at /tmp/abs-base-b8/ffmpeg
+[2026-10-10 10:09:33.593] INFO: [BinaryManager] Updating process.env.FFMPEG_PATH
+[2026-10-10 10:09:33.625] INFO: [BinaryManager] Found valid executable ffprobe at /tmp/abs-base-b8/ffprobe
+[2026-10-10 10:09:33.625] INFO: [BinaryManager] Updating process.env.FFPROBE_PATH
+[2026-10-10 10:09:33.626] INFO: [BinaryManager] Found valid library libnusqlite3 at /tmp/abs-base-b8/libnusqlite3.so
+[2026-10-10 10:09:33.626] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-10 10:09:33.626] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-smoke-nXfS/config/absdatabase.sqlite
+[2026-10-10 10:09:33.627] INFO: [Database] Initializing db at "/tmp/abs-smoke-nXfS/config/absdatabase.sqlite"
+[2026-10-10 10:09:33.636] INFO: [Database] Loading extension /tmp/abs-base-b8/libnusqlite3.so
+[2026-10-10 10:09:33.636] INFO: [Database] Successfully loaded extension /tmp/abs-base-b8/libnusqlite3.so
+[2026-10-10 10:09:33.636] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-10 10:09:33.636] INFO: [Database] Db connection was successful
+[2026-10-10 10:09:33.730] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 10:09:34.019] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 10:09:34.020] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 10:09:34.024] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 10:09:34.031] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 10:09:34.036] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 10:09:34.041] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 10:09:34.071] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 10:09:34.075] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 10:09:34.098] INFO: [Database] running ANALYZE
+[2026-10-10 10:09:34.103] INFO: [Database] ANALYZE completed
+[2026-10-10 10:09:34.103] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 10:09:34.103] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 10:09:34.110] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 10:09:34.112] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 10:09:34.112] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 10:09:34.121] INFO: Listening on port :3333
+[2026-10-10 10:09:34.342] INFO: Received ping
+[2026-10-10 10:09:34.352] INFO: [Server] Initializing new server
+[2026-10-10 10:09:34.399] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 10:09:34.466] INFO: [Watcher] Initializing watcher for "Test".
+[2026-10-10 10:09:34.468] INFO: [Watcher] "Test" Ready
+[2026-10-10 10:09:34.486] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 10:09:34.487] INFO: [LibraryScanner] Starting (forced) library scan 3ed10a69-02b3-4a31-be74-68f7d61cf70d for Test
+[2026-10-10 10:09:34.495] ERROR: Root path has no media folders: /tmp/abs-smoke-nXfS/lib
+[2026-10-10 10:09:34.496] INFO: [LibraryScanner] Library scan "3ed10a69-02b3-4a31-be74-68f7d61cf70d" completed in 0:00 | 0 Added | 0 Updated | 0 Missing
+[2026-10-10 10:09:34.504] INFO: [LibraryScan] Scan log saved "/tmp/abs-smoke-nXfS/metadata/logs/scans/2026-10-10_3ed10a69-02b3-4a31-be74-68f7d61cf70d.txt"
+[2026-10-10 10:09:34.504] INFO: [LibraryController] Scan complete

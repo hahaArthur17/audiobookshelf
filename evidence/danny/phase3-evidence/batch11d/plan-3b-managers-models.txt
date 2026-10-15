@@ -1,0 +1,87 @@
+# Batch 11d, commit 3 (second plan): server/managers, server/models
+@ server/managers/BackupManager.ts
+R 129 // cast(d) (2): set: the branch above handles a missing task
+R 201 // cast(d): fullPath is set from the constructor data (the backup was loaded from its file)
+R 332 // cast(d): set in the try block (the catch continues the loop on failure)
+R 345 // cast(d): fullPath is set from the constructor data (the backup was loaded from its file)
+R 355 // cast(d): set in the try block (the catch continues the loop on failure)
+R 400 // cast(d): fullPath is set by setData
+R 413 // cast(d) (2): loaded and new backups have createdAt
+R 416 // cast(d): there are more backups than backupsToKeep (the loop condition), so shift returns one
+R 431 // cast(d): loaded and new backups have a fullPath
+R 444 // cast(a): the sqlite3 types do not include the backup API (https://github.com/TryGhost/node-sqlite3/pull/1116)
+R 445 // cast(d): dbPath is set by Database.init, which runs before backups are made
+R 471 // cast(d): fullPath is set by setData
+@ server/managers/MigrationManager.ts
+R 135 // cast(d) (2): both are set by init (checked above)
+R 143 // cast(d): set by initUmzug, which runs before
+R 145 // cast(d): set by initUmzug, which runs before
+R 165 // cast(d): set by initUmzug, which runs before
+R 197 // cast(d): migrationsDir is set by init
+R 203 // cast(d): migrationsDir is set by init
+R 251 // cast(d) (2): migration names were validated above (each has a version)
+R 331 // cast(d): migrationsDir is set by init
+R 347 // cast(d): initUmzug validated that every migration name has a version
+I 351 // cast(d) (2): the database and server versions are set by init
+I 354 // cast(d) (2): the database and server versions are set by init
+@ server/managers/PodcastManager.ts
+R 190 // cast(d): the queue is not empty (checked above)
+R 202 // cast(d) (3): currentDownload is set by startPodcastEpisodeDownload, the only caller, until this returns; setData sets targetFilename to a string before the download starts
+R 210 // cast(d) (2): the library item of a podcast episode download is a podcast; currentDownload is set (see the comment at the start of this method)
+I 213 // cast(d): currentDownload is set (see the comment at the start of this method)
+R 217 // cast(d) (2): currentDownload is set (see above); setData sets rssPodcastEpisode before the download is queued
+I 233 // cast(d): currentDownload is set (see the comment at the start of this method)
+I 269 // cast(d): currentDownload is set (see the comment at the start of this method)
+R 310 // cast(d): setDataFromPath (called before this) sets the path
+@ server/managers/ApiCacheManager.ts
+R 113 // cast(d): the cached routes are behind the auth middleware, which sets req.user
+R 136 // cast(d): set just above, before send is replaced
+@ server/managers/AudioMetadataManager.ts
+R 285 // cast(d): the queue is not empty (checked above)
+@ server/managers/CacheManager.ts
+R 72 // cast(d): set by ensureCachePaths at startup
+R 150 // cast(d): set by ensureCachePaths at startup
+R 152 // cast(d): set by ensureCachePaths at startup
+R 162 // cast(d): set by ensureCachePaths at startup
+R 164 // cast(d): set by ensureCachePaths at startup
+R 182 // cast(d): set by ensureCachePaths at startup
+@ server/managers/CoverManager.ts
+R 260 // cast(d): scanned and stored audio files have a path
+@ server/managers/CronManager.ts
+R 88 // cast(d): only called when the library has a cron expression
+R 147 // cast(d): the query only returns podcasts with a schedule (autoDownloadSchedule not null)
+I 149 // cast(d) (2): the query only returns podcasts with a schedule (autoDownloadSchedule not null)
+R 154 // cast(d): the query only returns podcasts with a schedule; cast(b): libraryItem is included above, the association is optional in the model
+@ server/managers/LogManager.ts
+R 81 // cast(d): set just above
+@ server/managers/NotificationManager.ts
+R 196 // cast(d): the queue is not empty (checked above)
+@ server/managers/PlaybackSessionManager.ts
+R 311 // cast(d) (2): progressSynced is only true when the media progress was set
+R 373 // cast(d): setData sets the session id
+R 399 // cast(d): open sessions have a library item id (setData)
+R 506 // cast(d): open sessions are created with setData (startSession), which sets updatedAt
+R 509 // cast(d): set by setData (see above)
+@ server/managers/ShareManager.ts
+R 157 // cast(d): open share sessions are created with setData, which sets updatedAt
+R 160 // cast(d): set by setData (see above)
+@ server/models/ApiKey.ts
+R 257 // cast(b) (2): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+@ server/models/User.ts
+R 996 // cast(b) (2): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+@ server/models/Author.ts
+I 86 // cast(c): author is null when no author has this id (see NOTE above); read as in the JS
+I 87 // cast(c): author is null when no author has this id (see NOTE above); read as in the JS
+@ server/models/Feed.ts
+R 137 // cast(d) (2): media is a Podcast when mediaType is "podcast" and a Book otherwise
+I 461 // cast(c): itemExpanded may be null (see NOTE above); passed on as in the JS
+I 464 // cast(c): itemExpanded may be null (see NOTE above), but then the line above has already thrown
+I 474 // cast(c): collectionExpanded may be null (see NOTE above); passed on as in the JS
+I 483 // cast(c): seriesExpanded may be null (see NOTE above); passed on as in the JS
+R 500 // cast(d): the entity is only null in the library item case noted above, which has already thrown
+@ server/models/FeedEpisode.ts
+R 77 // cast(d) (2): subtracting Dates subtracts their timestamps, as in the JS
+R 80 // cast(d) (2): subtracting Dates subtracts their timestamps, as in the JS
+R 200 // cast(d): earliestLibraryItemCreatedAt is set: this loop only runs when books is not empty
+@ server/models/Podcast.ts
+R 390 // cast(d): publishedAt is set (the comparison above is false for null)

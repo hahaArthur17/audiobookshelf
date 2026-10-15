@@ -1,0 +1,56 @@
+--- /tmp/abs-base2/dist-server/server/providers/OpenLibrary.js	2026-10-03 16:15:06.607767440 +1300
++++ dist-server/server/providers/OpenLibrary.js	2026-10-03 15:34:12.959664939 +1300
+@@ -1,20 +1,18 @@
+ "use strict";
+-const axios = require('axios').default;
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const axios_1 = __importDefault(require("axios"));
+ class OpenLibrary {
+     #responseTimeout = 10000;
++    baseUrl;
+     constructor() {
+         this.baseUrl = 'https://openlibrary.org';
+     }
+-    /**
+-     *
+-     * @param {string} uri
+-     * @param {number} timeout
+-     * @returns {Promise<Object>}
+-     */
+     get(uri, timeout = this.#responseTimeout) {
+         if (!timeout || isNaN(timeout))
+             timeout = this.#responseTimeout;
+-        return axios
++        return axios_1.default
+             .get(`${this.baseUrl}/${uri}`, {
+             timeout
+         })
+@@ -66,9 +64,10 @@
+     parsePublishYear(doc, worksData) {
+         if (doc.first_publish_year && !isNaN(doc.first_publish_year))
+             return String(doc.first_publish_year);
+-        if (worksData.first_publish_date) {
+-            var year = worksData.first_publish_date.split('-')[0];
+-            if (!isNaN(year))
++        const firstPublishDate = 'first_publish_date' in worksData ? worksData.first_publish_date : undefined;
++        if (firstPublishDate) {
++            var year = firstPublishDate.split('-')[0];
++            if (!isNaN(Number(year)))
+                 return String(year);
+         }
+         return null;
+@@ -97,12 +96,6 @@
+         var searchDocs = await Promise.all(lookupData.docs.map((d) => this.cleanSearchDoc(d)));
+         return searchDocs;
+     }
+-    /**
+-     *
+-     * @param {string} title
+-     * @param {number} timeout
+-     * @returns {Promise<Object[]>}
+-     */
+     async searchTitle(title, timeout = this.#responseTimeout) {
+         title = encodeURIComponent(title);
+         var lookupData = await this.get(`/search.json?title=${title}`, timeout);

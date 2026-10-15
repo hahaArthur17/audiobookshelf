@@ -1,0 +1,299 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/config, METADATA_PATH=/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata, PORT=13404, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 13:51:58.169] INFO: === Starting Server ===
+[2026-10-10 13:51:58.169] INFO: [Server] Init v2.37.0
+[2026-10-10 13:51:58.170] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 13:51:58.170] INFO: [Server] Platform: linux
+[2026-10-10 13:51:58.170] INFO: [Server] Arch: x64
+[2026-10-10 13:51:58.171] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 13:51:58.171] INFO: [Database] absdatabase.sqlite not found at /tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/config/absdatabase.sqlite
+[2026-10-10 13:51:58.171] INFO: [Database] Initializing db at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/config/absdatabase.sqlite"
+[2026-10-10 13:51:58.180] INFO: [Database] Db connection was successful
+[2026-10-10 13:51:58.330] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 13:51:58.809] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 13:51:58.810] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 13:51:58.815] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 13:51:58.823] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 13:51:58.831] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 13:51:58.839] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 13:51:58.847] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 13:51:58.857] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 13:51:58.878] INFO: [Database] running ANALYZE
+[2026-10-10 13:51:58.885] INFO: [Database] ANALYZE completed
+[2026-10-10 13:51:58.885] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 13:51:58.885] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 13:51:58.892] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 13:51:58.896] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 13:51:58.896] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 13:51:58.904] INFO: Listening on port :13404
+[2026-10-10 13:51:58.937] INFO: Received ping
+[2026-10-10 13:51:58.947] INFO: [Server] Initializing new server
+[2026-10-10 13:51:59.064] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 13:51:59.090] DEBUG: Set Log Level to DEBUG
+[2026-10-10 13:51:59.097] DEBUG: [ApiCacheManager] Array.afterUpsert: Clearing cache
+[2026-10-10 13:51:59.119] DEBUG: [ApiCacheManager] libraryFolder.afterCreate: Clearing cache
+[2026-10-10 13:51:59.119] DEBUG: [ApiCacheManager] Books.afterCreate: Clearing cache
+[2026-10-10 13:51:59.120] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 13:51:59.120] DEBUG: [Watcher] Init watcher for library folder path "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books"
+[2026-10-10 13:51:59.125] INFO: [Watcher] "Books" Ready
+[2026-10-10 13:51:59.144] DEBUG: [ApiCacheManager] libraryFolder.afterCreate: Clearing cache
+[2026-10-10 13:51:59.144] DEBUG: [ApiCacheManager] Pods.afterCreate: Clearing cache
+[2026-10-10 13:51:59.145] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 13:51:59.145] DEBUG: [Watcher] Init watcher for library folder path "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/podcasts"
+[2026-10-10 13:51:59.147] INFO: [Watcher] "Pods" Ready
+[2026-10-10 13:51:59.157] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 13:51:59.157] INFO: [LibraryScanner] Starting (forced) library scan 2e5f270c-1301-42b5-8f89-08ee606c18f5 for Books
+[2026-10-10 13:51:59.165] INFO: [LibraryScanner] Starting library scan 46767299-8b5f-4889-b7ab-0e29dcaf494f for Pods
+[2026-10-10 13:51:59.170] DEBUG: Loaded filterdata in 0.01s
+[2026-10-10 13:51:59.170] DEBUG: Loaded filterdata in 0.01s
+[2026-10-10 13:51:59.173] DEBUG: [LibraryScan] "Pods": 2 item data found in folder "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/podcasts"
+[2026-10-10 13:51:59.185] DEBUG: [LibraryScan] "Books": 7 item data found in folder "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books"
+[2026-10-10 13:51:59.186] DEBUG: [LibraryScan] "Books": "Loose Book" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:51:59.195] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.196] DEBUG: [ApiCacheManager] book.afterCreate: Clearing cache
+[2026-10-10 13:51:59.204] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:51:59.208] DEBUG: [LibraryScan] "Books": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/2535d62b-4442-491a-8574-d43746f0e02f/metadata.json"
+[2026-10-10 13:51:59.208] DEBUG: [LibraryScan] "Books": Created new library item "Loose Book.pdf" with id "2535d62b-4442-491a-8574-d43746f0e02f"
+[2026-10-10 13:51:59.217] DEBUG: [LibraryScan] "Pods": New Podcast episode "untagged" found
+[2026-10-10 13:51:59.230] DEBUG: [LibraryItemsPodcastFilters] podcastEpisode.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.230] DEBUG: [ApiCacheManager] podcastEpisode.afterCreate: Clearing cache
+[2026-10-10 13:51:59.230] DEBUG: [LibraryItemsPodcastFilters] podcast.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.230] DEBUG: [ApiCacheManager] podcast.afterCreate: Clearing cache
+[2026-10-10 13:51:59.237] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:51:59.239] DEBUG: [LibraryScan] "Pods": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/705b9998-6785-47ed-9b51-464165f808e2/metadata.json"
+[2026-10-10 13:51:59.239] DEBUG: [LibraryScan] "Pods": Created new library item "Other Show" with id "705b9998-6785-47ed-9b51-464165f808e2"
+[2026-10-10 13:51:59.249] DEBUG: [AudioFileScanner] Smart track order for "Tag Author/Tagged Book" using track key trackNumFromMeta
+[2026-10-10 13:51:59.249] DEBUG: [LibraryScan] "Books": "Tagged Book" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:51:59.267] DEBUG: [ApiCacheManager] Tag Author.afterCreate: Clearing cache
+[2026-10-10 13:51:59.276] DEBUG: [ApiCacheManager] bookAuthor.afterCreate: Clearing cache
+[2026-10-10 13:51:59.276] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.276] DEBUG: [ApiCacheManager] book.afterCreate: Clearing cache
+[2026-10-10 13:51:59.277] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagComment => description: First ep
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagDate => pubDate: 2021
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagTrack => episode: 1
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagTitle => title: Episode 1: Start
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": New Podcast episode "Episode 1: Start" found
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagTrack => episode: 2
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagTitle => title: Episode 2: Next
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": New Podcast episode "Episode 2: Next" found
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagAlbum => title: My Show
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagArtist => author: Show Host
+[2026-10-10 13:51:59.278] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagGenre => genres: Podcast
+[2026-10-10 13:51:59.287] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:51:59.304] DEBUG: [LibraryItemsPodcastFilters] podcastEpisode.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.304] DEBUG: [ApiCacheManager] podcastEpisode.afterCreate: Clearing cache
+[2026-10-10 13:51:59.312] DEBUG: [LibraryItemsPodcastFilters] podcastEpisode.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.312] DEBUG: [ApiCacheManager] podcastEpisode.afterCreate: Clearing cache
+[2026-10-10 13:51:59.313] DEBUG: [LibraryItemsPodcastFilters] podcast.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.313] DEBUG: [ApiCacheManager] podcast.afterCreate: Clearing cache
+[2026-10-10 13:51:59.315] DEBUG: [LibraryScan] "Books": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/9107daf7-275e-4e45-8140-b860b58f6667/metadata.json"
+[2026-10-10 13:51:59.315] DEBUG: [LibraryScan] "Books": Created new library item "Tag Author/Tagged Book" with id "9107daf7-275e-4e45-8140-b860b58f6667"
+[2026-10-10 13:51:59.321] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:51:59.324] DEBUG: [LibraryScan] "Pods": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/dddefbf7-4146-4eb8-8fb1-05ef1b6add9c/metadata.json"
+[2026-10-10 13:51:59.324] DEBUG: [LibraryScan] "Pods": Created new library item "My Show" with id "dddefbf7-4146-4eb8-8fb1-05ef1b6add9c"
+[2026-10-10 13:51:59.324] DEBUG: [LibraryScan] "Pods": Scan completed. 2 Added | 0 Updated | 0 Missing
+[2026-10-10 13:51:59.324] INFO: [LibraryScanner] Library scan "46767299-8b5f-4889-b7ab-0e29dcaf494f" completed in 0:00 | 2 Added | 0 Updated | 0 Missing
+[2026-10-10 13:51:59.334] DEBUG: [ApiCacheManager] Pods.afterUpdate: Clearing cache
+[2026-10-10 13:51:59.339] INFO: [LibraryScan] Scan log saved "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/logs/scans/2026-10-10_46767299-8b5f-4889-b7ab-0e29dcaf494f.txt"
+[2026-10-10 13:51:59.339] INFO: [LibraryController] Scan complete
+[2026-10-10 13:51:59.350] DEBUG: [AudioFileScanner] Smart track order for "Author Two/Audio Book" using track key trackNumFromFilename
+[2026-10-10 13:51:59.350] DEBUG: [LibraryScan] "Books": "Audio Book" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:51:59.370] DEBUG: [ApiCacheManager] Author Two.afterCreate: Clearing cache
+[2026-10-10 13:51:59.377] DEBUG: [ApiCacheManager] bookAuthor.afterCreate: Clearing cache
+[2026-10-10 13:51:59.377] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.377] DEBUG: [ApiCacheManager] book.afterCreate: Clearing cache
+[2026-10-10 13:51:59.384] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:51:59.388] DEBUG: [LibraryScan] "Books": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/9363aba7-8c6e-4f2f-b3b4-ed56ed1de214/metadata.json"
+[2026-10-10 13:51:59.388] DEBUG: [LibraryScan] "Books": Created new library item "Author Two/Audio Book" with id "9363aba7-8c6e-4f2f-b3b4-ed56ed1de214"
+[2026-10-10 13:51:59.421] DEBUG: [AudioFileScanner] Smart track order for "Author Six/Series Book" using track key trackNumFromMeta
+[2026-10-10 13:51:59.421] DEBUG: Parsing metadata from epub at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Six/Series Book/Series Book.epub"
+[2026-10-10 13:51:59.422] ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 13:51:59.423] ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 13:51:59.423] DEBUG: [LibraryScan] "Books": "Series Book" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:51:59.435] DEBUG: [ApiCacheManager] Author Six.afterCreate: Clearing cache
+[2026-10-10 13:51:59.440] DEBUG: [ApiCacheManager] bookAuthor.afterCreate: Clearing cache
+[2026-10-10 13:51:59.440] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.440] DEBUG: [ApiCacheManager] book.afterCreate: Clearing cache
+[2026-10-10 13:51:59.448] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:51:59.450] DEBUG: [LibraryScan] "Books": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/b1cd9801-2a65-4975-93c4-24e292063119/metadata.json"
+[2026-10-10 13:51:59.450] DEBUG: [LibraryScan] "Books": Created new library item "Author Six/Series Book" with id "b1cd9801-2a65-4975-93c4-24e292063119"
+[2026-10-10 13:51:59.451] DEBUG: [LibraryScan] "Books": "Book Two" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:51:59.466] DEBUG: [ApiCacheManager] NFO Author.afterCreate: Clearing cache
+[2026-10-10 13:51:59.474] DEBUG: [ApiCacheManager] bookAuthor.afterCreate: Clearing cache
+[2026-10-10 13:51:59.475] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.475] DEBUG: [ApiCacheManager] book.afterCreate: Clearing cache
+[2026-10-10 13:51:59.483] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:51:59.487] DEBUG: [LibraryScan] "Books": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/2957aed7-50b7-4892-98d2-429368013dd2/metadata.json"
+[2026-10-10 13:51:59.487] DEBUG: [LibraryScan] "Books": Created new library item "Author One/Book Two" with id "2957aed7-50b7-4892-98d2-429368013dd2"
+[2026-10-10 13:51:59.487] DEBUG: [LibraryScan] "Books": "Book Three" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:51:59.487] DEBUG: [LibraryScan] "Books": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Three/metadata.json"
+[2026-10-10 13:51:59.504] DEBUG: [ApiCacheManager] JSON Series.afterCreate: Clearing cache
+[2026-10-10 13:51:59.511] DEBUG: [ApiCacheManager] JSON Author.afterCreate: Clearing cache
+[2026-10-10 13:51:59.517] DEBUG: [ApiCacheManager] bookSeries.afterCreate: Clearing cache
+[2026-10-10 13:51:59.521] DEBUG: [ApiCacheManager] bookAuthor.afterCreate: Clearing cache
+[2026-10-10 13:51:59.521] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.521] DEBUG: [ApiCacheManager] book.afterCreate: Clearing cache
+[2026-10-10 13:51:59.529] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:51:59.532] DEBUG: [LibraryScan] "Books": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/c3e86a84-ed31-4964-b04e-907e71f5ffa6/metadata.json"
+[2026-10-10 13:51:59.532] DEBUG: [LibraryScan] "Books": Created new library item "Author One/Book Three" with id "c3e86a84-ed31-4964-b04e-907e71f5ffa6"
+[2026-10-10 13:51:59.532] DEBUG: [LibraryScan] "Books": "Book One" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:51:59.552] DEBUG: [ApiCacheManager] OPF Series.afterCreate: Clearing cache
+[2026-10-10 13:51:59.559] DEBUG: [ApiCacheManager] OPF Author.afterCreate: Clearing cache
+[2026-10-10 13:51:59.566] DEBUG: [ApiCacheManager] bookSeries.afterCreate: Clearing cache
+[2026-10-10 13:51:59.571] DEBUG: [ApiCacheManager] bookAuthor.afterCreate: Clearing cache
+[2026-10-10 13:51:59.571] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+[2026-10-10 13:51:59.571] DEBUG: [ApiCacheManager] book.afterCreate: Clearing cache
+[2026-10-10 13:51:59.578] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:51:59.581] DEBUG: [LibraryScan] "Books": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/9782c079-d354-4345-9e7e-040f6b9aeef9/metadata.json"
+[2026-10-10 13:51:59.582] DEBUG: [LibraryScan] "Books": Created new library item "Author One/Book One" with id "9782c079-d354-4345-9e7e-040f6b9aeef9"
+[2026-10-10 13:51:59.582] DEBUG: [LibraryScan] "Books": Scan completed. 7 Added | 0 Updated | 0 Missing
+[2026-10-10 13:51:59.582] INFO: [LibraryScanner] Library scan "2e5f270c-1301-42b5-8f89-08ee606c18f5" completed in 0:00 | 7 Added | 0 Updated | 0 Missing
+[2026-10-10 13:51:59.591] DEBUG: [ApiCacheManager] Books.afterUpdate: Clearing cache
+[2026-10-10 13:51:59.592] INFO: [LibraryScan] Scan log saved "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/logs/scans/2026-10-10_2e5f270c-1301-42b5-8f89-08ee606c18f5.txt"
+[2026-10-10 13:51:59.592] INFO: [LibraryController] Scan complete
+[2026-10-10 13:52:05.172] DEBUG: [ApiCacheManager] count: 0 size: 0
+[2026-10-10 13:52:05.175] DEBUG: [LibraryItemsBookFilters] countCacheKey: {"where":{"0":{}},"distinct":true,"attributes":null,"replacements":{},"include":{"0":{"model":"libraryItem","required":true,"where":{"libraryId":"fbb658f1-5a83-491d-af69-18e5b71afc44"},"include":{}},"1":{"model":"bookSeries","attributes":{"0":"id","1":"seriesId","2":"sequence","3":"createdAt"},"include":{"model":"series","attributes":{"0":"id","1":"name","2":"nameIgnorePrefix"}},"order":{"0":{"0":"createdAt","1":"ASC"}},"separate":true},"2":{"model":"bookAuthor","attributes":{"0":"authorId","1":"createdAt"},"include":{"model":"author","attributes":{"0":"id","1":"name"}},"order":{"0":{"0":"createdAt","1":"ASC"}},"separate":true}},"order":{},"subQuery":false}
+[2026-10-10 13:52:05.183] DEBUG: Loaded 7 of 7 items for libary page in 0.01s
+[2026-10-10 13:52:05.184] DEBUG: [ApiCacheManager] Cache miss: {"user":"root","url":"/libraries/fbb658f1-5a83-491d-af69-18e5b71afc44/items"}
+[2026-10-10 13:52:05.194] DEBUG: [ApiCacheManager] count: 1 size: 8166
+[2026-10-10 13:52:05.194] DEBUG: [ApiCacheManager] Cache hit: {"user":"root","url":"/libraries/fbb658f1-5a83-491d-af69-18e5b71afc44/items"}
+[2026-10-10 13:52:05.275] DEBUG: [ApiCacheManager] count: 1 size: 8166
+[2026-10-10 13:52:05.277] DEBUG: [LibraryItemsPodcastFilters] countCacheKey: {"where":{},"replacements":{"userId":"dd171222-626c-428e-8d25-8ad1f003b92b"},"distinct":true,"attributes":{"include":{}},"include":{"0":{"model":"libraryItem","required":true,"where":{"libraryId":"45c937db-7cca-454d-bba6-a7c80c99d71a"},"include":{}}},"order":{},"subQuery":false}
+[2026-10-10 13:52:05.279] DEBUG: Loaded 2 of 2 items for libary page in 0.00s
+[2026-10-10 13:52:05.279] DEBUG: [ApiCacheManager] Cache miss: {"user":"root","url":"/libraries/45c937db-7cca-454d-bba6-a7c80c99d71a/items"}
+[2026-10-10 13:52:05.291] DEBUG: [ApiCacheManager] count: 2 size: 10652
+[2026-10-10 13:52:05.291] DEBUG: [ApiCacheManager] Cache hit: {"user":"root","url":"/libraries/45c937db-7cca-454d-bba6-a7c80c99d71a/items"}
+[2026-10-10 13:52:05.336] INFO: [LibraryScanner] Starting (forced) library scan c2eb4064-d700-44e0-817c-bdf9a980d0f8 for Books
+[2026-10-10 13:52:05.347] INFO: [LibraryScanner] Starting (forced) library scan 0a4088b9-7d4a-45e7-94cb-6dac09c81949 for Pods
+[2026-10-10 13:52:05.354] DEBUG: [LibraryScan] "Pods": 2 item data found in folder "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/podcasts"
+[2026-10-10 13:52:05.363] DEBUG: [LibraryScan] "Pods": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/705b9998-6785-47ed-9b51-464165f808e2/metadata.json"
+[2026-10-10 13:52:05.364] DEBUG: [LibraryScan] "Pods": Library item "Other Show" is up-to-date
+[2026-10-10 13:52:05.371] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagAlbum => title: My Show
+[2026-10-10 13:52:05.372] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagArtist => author: Show Host
+[2026-10-10 13:52:05.372] DEBUG: [LibraryScan] "Pods": Mapping metadata to key tagGenre => genres: Podcast
+[2026-10-10 13:52:05.374] DEBUG: [LibraryScan] "Pods": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/dddefbf7-4146-4eb8-8fb1-05ef1b6add9c/metadata.json"
+[2026-10-10 13:52:05.375] DEBUG: [LibraryScan] "Pods": Library item "My Show" is up-to-date
+[2026-10-10 13:52:05.376] DEBUG: [LibraryScan] "Pods": Scan completed. 0 Added | 0 Updated | 0 Missing
+[2026-10-10 13:52:05.376] INFO: [LibraryScanner] Library scan "0a4088b9-7d4a-45e7-94cb-6dac09c81949" completed in 0:00 | 0 Added | 0 Updated | 0 Missing
+[2026-10-10 13:52:05.386] DEBUG: [ApiCacheManager] Pods.afterUpdate: Clearing cache
+[2026-10-10 13:52:05.391] INFO: [LibraryScan] Scan log saved "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/logs/scans/2026-10-10_0a4088b9-7d4a-45e7-94cb-6dac09c81949.txt"
+[2026-10-10 13:52:05.392] INFO: [LibraryController] Scan complete
+[2026-10-10 13:52:05.393] DEBUG: [LibraryScan] "Books": 7 item data found in folder "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books"
+[2026-10-10 13:52:05.397] DEBUG: [LibraryScan] "Books": Library item "Author One/Book Two" key "mtime" changed from "1791593435797" to "1791593525327"
+[2026-10-10 13:52:05.397] DEBUG: [LibraryScan] "Books": Library item "Author One/Book Two" key "ctime" changed from "1791593517920" to "1791593525327"
+[2026-10-10 13:52:05.398] DEBUG: [LibraryScan] "Books": Library file "metadata.nfo" for library item "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Two" key "size" changed from "109" to "117"
+[2026-10-10 13:52:05.398] DEBUG: [LibraryScan] "Books": Library file "metadata.nfo" for library item "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Two" key "mtimeMs" changed from "1791593435798" to "1791593525327"
+[2026-10-10 13:52:05.398] DEBUG: [LibraryScan] "Books": Library file "metadata.nfo" for library item "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Two" key "ctimeMs" changed from "1791593517920" to "1791593525327"
+[2026-10-10 13:52:05.398] DEBUG: [LibraryScan] "Books": Library file "metadata.nfo" for library item "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Two" key "birthtimeMs" changed from "1791593517920" to "1791593525326"
+[2026-10-10 13:52:05.398] DEBUG: [LibraryScan] "Books": Library item "Author One/Book Two" changed: [mtime,ctime,size,lastScan]
+[2026-10-10 13:52:05.410] DEBUG: [ApiCacheManager] libraryItem.afterUpdate: Clearing cache
+[2026-10-10 13:52:05.417] DEBUG: [LibraryScan] "Books": "Book Two" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:52:05.419] DEBUG: [LibraryScan] "Books": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/2957aed7-50b7-4892-98d2-429368013dd2/metadata.json"
+[2026-10-10 13:52:05.420] DEBUG: [LibraryScan] "Books": Library item "Author One/Book Two" is up-to-date
+[2026-10-10 13:52:05.421] DEBUG: [LibraryScan] "Books": Library item "Author One/Book One" key "mtime" changed from "1791593435797" to "1791593525326"
+[2026-10-10 13:52:05.421] DEBUG: [LibraryScan] "Books": Library item "Author One/Book One" key "ctime" changed from "1791593517920" to "1791593525326"
+[2026-10-10 13:52:05.421] DEBUG: [LibraryScan] "Books": Library file "metadata.opf" for library item "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book One" key "size" changed from "692" to "700"
+[2026-10-10 13:52:05.421] DEBUG: [LibraryScan] "Books": Library file "metadata.opf" for library item "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book One" key "mtimeMs" changed from "1791593435797" to "1791593525326"
+[2026-10-10 13:52:05.421] DEBUG: [LibraryScan] "Books": Library file "metadata.opf" for library item "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book One" key "ctimeMs" changed from "1791593517920" to "1791593525326"
+[2026-10-10 13:52:05.422] DEBUG: [LibraryScan] "Books": Library file "metadata.opf" for library item "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book One" key "birthtimeMs" changed from "1791593517920" to "1791593525325"
+[2026-10-10 13:52:05.422] DEBUG: [LibraryScan] "Books": Library item "Author One/Book One" changed: [mtime,ctime,size,lastScan]
+[2026-10-10 13:52:05.430] DEBUG: [ApiCacheManager] libraryItem.afterUpdate: Clearing cache
+[2026-10-10 13:52:05.436] DEBUG: [LibraryScan] "Books": "Book One" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:52:05.441] DEBUG: [LibraryScan] "Books": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/9782c079-d354-4345-9e7e-040f6b9aeef9/metadata.json"
+[2026-10-10 13:52:05.442] DEBUG: [LibraryScan] "Books": Library item "Author One/Book One" is up-to-date
+[2026-10-10 13:52:05.447] DEBUG: [LibraryScan] "Books": "Tagged Book" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:52:05.448] DEBUG: [LibraryScan] "Books": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/9107daf7-275e-4e45-8140-b860b58f6667/metadata.json"
+[2026-10-10 13:52:05.449] DEBUG: [LibraryScan] "Books": Library item "Tag Author/Tagged Book" is up-to-date
+[2026-10-10 13:52:05.450] DEBUG: [LibraryScan] "Books": Library item "Author One/Book Three" key "mtime" changed from "1791593435798" to "1791593525327"
+[2026-10-10 13:52:05.450] DEBUG: [LibraryScan] "Books": Library item "Author One/Book Three" key "ctime" changed from "1791593517921" to "1791593525327"
+[2026-10-10 13:52:05.450] DEBUG: [LibraryScan] "Books": New library file found with path "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Three/notes.txt" for library item "Author One/Book Three"
+[2026-10-10 13:52:05.450] DEBUG: [LibraryScan] "Books": Library item "Author One/Book Three" changed: [mtime,ctime,size,lastScan]
+[2026-10-10 13:52:05.458] DEBUG: [ApiCacheManager] libraryItem.afterUpdate: Clearing cache
+[2026-10-10 13:52:05.463] DEBUG: [LibraryScan] "Books": "Book Three" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:52:05.463] DEBUG: [LibraryScan] "Books": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Three/metadata.json"
+[2026-10-10 13:52:05.464] DEBUG: [LibraryScan] "Books": Library item "Author One/Book Three" is up-to-date
+[2026-10-10 13:52:05.469] DEBUG: [LibraryScan] "Books": "Loose Book" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:52:05.470] DEBUG: [LibraryScan] "Books": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/2535d62b-4442-491a-8574-d43746f0e02f/metadata.json"
+[2026-10-10 13:52:05.470] DEBUG: [LibraryScan] "Books": Library item "Loose Book.pdf" is up-to-date
+[2026-10-10 13:52:05.475] DEBUG: Parsing metadata from epub at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Six/Series Book/Series Book.epub"
+[2026-10-10 13:52:05.476] ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 13:52:05.477] ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 13:52:05.477] DEBUG: [LibraryScan] "Books": "Series Book" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:52:05.478] DEBUG: [LibraryScan] "Books": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/b1cd9801-2a65-4975-93c4-24e292063119/metadata.json"
+[2026-10-10 13:52:05.479] DEBUG: [LibraryScan] "Books": Library item "Author Six/Series Book" is up-to-date
+[2026-10-10 13:52:05.485] DEBUG: [LibraryScan] "Books": "Audio Book" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:52:05.486] DEBUG: [LibraryScan] "Books": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/9363aba7-8c6e-4f2f-b3b4-ed56ed1de214/metadata.json"
+[2026-10-10 13:52:05.486] DEBUG: [LibraryScan] "Books": Library item "Author Two/Audio Book" is up-to-date
+[2026-10-10 13:52:05.487] DEBUG: [LibraryScan] "Books": Scan completed. 0 Added | 0 Updated | 0 Missing
+[2026-10-10 13:52:05.487] INFO: [LibraryScanner] Library scan "c2eb4064-d700-44e0-817c-bdf9a980d0f8" completed in 0:00 | 0 Added | 0 Updated | 0 Missing
+[2026-10-10 13:52:05.494] DEBUG: [ApiCacheManager] Books.afterUpdate: Clearing cache
+[2026-10-10 13:52:05.496] INFO: [LibraryScan] Scan log saved "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/logs/scans/2026-10-10_c2eb4064-d700-44e0-817c-bdf9a980d0f8.txt"
+[2026-10-10 13:52:05.497] INFO: [LibraryController] Scan complete
+[2026-10-10 13:52:07.633] DEBUG: [Watcher] File Added /tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Three/notes.txt
+[2026-10-10 13:52:07.634] DEBUG: [Watcher] Modified file in library "Books" and folder "942ff290-14e0-4252-a463-e1afbb9719a3" with relPath "/Author One/Book Three/notes.txt"
+[2026-10-10 13:52:07.635] DEBUG: [Watcher] Waiting to add file at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Three/notes.txt". mtimeMs=1791593525327.6294 lastMTimeMs=0 (loop 0)
+[2026-10-10 13:52:10.637] DEBUG: [Watcher] File finished adding at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Three/notes.txt"
+[2026-10-10 13:52:11.354] DEBUG: [ApiCacheManager] count: 0 size: 0
+[2026-10-10 13:52:11.358] DEBUG: [LibraryItemsBookFilters] countCacheKey: {"where":{"0":{}},"distinct":true,"attributes":null,"replacements":{},"include":{"0":{"model":"libraryItem","required":true,"where":{"libraryId":"fbb658f1-5a83-491d-af69-18e5b71afc44"},"include":{}},"1":{"model":"bookSeries","attributes":{"0":"id","1":"seriesId","2":"sequence","3":"createdAt"},"include":{"model":"series","attributes":{"0":"id","1":"name","2":"nameIgnorePrefix"}},"order":{"0":{"0":"createdAt","1":"ASC"}},"separate":true},"2":{"model":"bookAuthor","attributes":{"0":"authorId","1":"createdAt"},"include":{"model":"author","attributes":{"0":"id","1":"name"}},"order":{"0":{"0":"createdAt","1":"ASC"}},"separate":true}},"order":{},"subQuery":false}
+[2026-10-10 13:52:11.370] DEBUG: Loaded 7 of 7 items for libary page in 0.01s
+[2026-10-10 13:52:11.371] DEBUG: [ApiCacheManager] Cache miss: {"user":"root","url":"/libraries/fbb658f1-5a83-491d-af69-18e5b71afc44/items"}
+[2026-10-10 13:52:11.381] DEBUG: [ApiCacheManager] count: 1 size: 8166
+[2026-10-10 13:52:11.381] DEBUG: [ApiCacheManager] Cache hit: {"user":"root","url":"/libraries/fbb658f1-5a83-491d-af69-18e5b71afc44/items"}
+[2026-10-10 13:52:11.473] DEBUG: [ApiCacheManager] count: 1 size: 8166
+[2026-10-10 13:52:11.475] DEBUG: [LibraryItemsPodcastFilters] countCacheKey: {"where":{},"replacements":{"userId":"dd171222-626c-428e-8d25-8ad1f003b92b"},"distinct":true,"attributes":{"include":{}},"include":{"0":{"model":"libraryItem","required":true,"where":{"libraryId":"45c937db-7cca-454d-bba6-a7c80c99d71a"},"include":{}}},"order":{},"subQuery":false}
+[2026-10-10 13:52:11.479] DEBUG: Loaded 2 of 2 items for libary page in 0.00s
+[2026-10-10 13:52:11.480] DEBUG: [ApiCacheManager] Cache miss: {"user":"root","url":"/libraries/45c937db-7cca-454d-bba6-a7c80c99d71a/items"}
+[2026-10-10 13:52:11.491] DEBUG: [ApiCacheManager] count: 2 size: 10652
+[2026-10-10 13:52:11.491] DEBUG: [ApiCacheManager] Cache hit: {"user":"root","url":"/libraries/45c937db-7cca-454d-bba6-a7c80c99d71a/items"}
+[2026-10-10 13:52:11.532] DEBUG: [LibraryController] Library "Books" updating setting "audiobooksOnly" to "true"
+[2026-10-10 13:52:11.533] DEBUG: [LibraryController] Updated library "Books" with changed keys settings
+[2026-10-10 13:52:11.542] DEBUG: [ApiCacheManager] Books.afterUpdate: Clearing cache
+[2026-10-10 13:52:15.856] DEBUG: [Watcher] File Added /tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Four/Book Four/part1.mp3
+[2026-10-10 13:52:15.857] DEBUG: [Watcher] Modified file in library "Books" and folder "942ff290-14e0-4252-a463-e1afbb9719a3" with relPath "/Author Four/Book Four/part1.mp3"
+[2026-10-10 13:52:15.857] DEBUG: [Watcher] File Added /tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Five/Ebook Five/Ebook Five.pdf
+[2026-10-10 13:52:15.857] DEBUG: [Watcher] Modified file in library "Books" and folder "942ff290-14e0-4252-a463-e1afbb9719a3" with relPath "/Author Five/Ebook Five/Ebook Five.pdf"
+[2026-10-10 13:52:15.858] DEBUG: [Watcher] Waiting to add file at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Four/Book Four/part1.mp3". mtimeMs=1791593533549.601 lastMTimeMs=0 (loop 0)
+[2026-10-10 13:52:15.858] DEBUG: [Watcher] Waiting to add file at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Five/Ebook Five/Ebook Five.pdf". mtimeMs=1791593533549.601 lastMTimeMs=0 (loop 0)
+[2026-10-10 13:52:18.860] DEBUG: [Watcher] File finished adding at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Four/Book Four/part1.mp3"
+[2026-10-10 13:52:18.860] DEBUG: [Watcher] File finished adding at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author Five/Ebook Five/Ebook Five.pdf"
+[2026-10-10 13:52:25.866] DEBUG: [Scanner] Scanning file update groups in folder "942ff290-14e0-4252-a463-e1afbb9719a3" of library "Books"
+[2026-10-10 13:52:25.866] DEBUG: [Scanner] scanFolderUpdates fileUpdateGroup {
+  'Author One/Book Three': [ 'notes.txt' ],
+  'Author Four/Book Four': [ 'part1.mp3' ]
+}
+[2026-10-10 13:52:25.879] DEBUG: [LibraryScanner] Folder update for relative path "Author One/Book Three" is in library item "JSON Title" with id "c3e86a84-ed31-4964-b04e-907e71f5ffa6" - scan for updates
+[2026-10-10 13:52:25.898] DEBUG: [Scan] "Author One/Book Three": "Book Three" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:52:25.900] DEBUG: [Scan] "Author One/Book Three": Found metadata file "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/lib/books/Author One/Book Three/metadata.json"
+[2026-10-10 13:52:25.951] DEBUG: [ApiCacheManager] book.afterUpdate: Clearing cache
+[2026-10-10 13:52:25.953] DEBUG: [Scan] "Author One/Book Three": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/c3e86a84-ed31-4964-b04e-907e71f5ffa6/metadata.json"
+[2026-10-10 13:52:25.953] DEBUG: [Scan] "Author One/Book Three": Book "JSON Title" has no audio files and no ebook file. Setting library item as missing
+[2026-10-10 13:52:25.963] DEBUG: [ApiCacheManager] libraryItem.afterUpdate: Clearing cache
+[2026-10-10 13:52:25.974] DEBUG: [LibraryScanner] Folder update group must be a new item "Author Four/Book Four" in library "Books"
+[2026-10-10 13:52:26.016] DEBUG: [AudioFileScanner] Smart track order for "Author Four/Book Four" using track key trackNumFromFilename
+[2026-10-10 13:52:26.016] DEBUG: [Scan] "Author Four/Book Four": "Book Four" Getting metadata with precedence [folderStructure, audioMetatags, nfoFile, txtFiles, opfFile, absMetadata]
+[2026-10-10 13:52:26.033] DEBUG: [ApiCacheManager] Author Four.afterCreate: Clearing cache
+[2026-10-10 13:52:26.041] DEBUG: [ApiCacheManager] bookAuthor.afterCreate: Clearing cache
+[2026-10-10 13:52:26.041] DEBUG: [LibraryItemsBookFilters] book.afterCreate: Clearing count cache
+[2026-10-10 13:52:26.041] DEBUG: [ApiCacheManager] book.afterCreate: Clearing cache
+[2026-10-10 13:52:26.047] DEBUG: [ApiCacheManager] libraryItem.afterCreate: Clearing cache
+[2026-10-10 13:52:26.050] DEBUG: [Scan] "Author Four/Book Four": Success saving abmetadata to "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/3609af51-5f86-410c-a5c7-caef34b39469/scratchpad/run-dnew/metadata/items/dbcb3a98-a933-49f3-a1a7-d4f9bdb812e1/metadata.json"
+[2026-10-10 13:52:26.050] DEBUG: [Scan] "Author Four/Book Four": Created new library item "Author Four/Book Four" with id "dbcb3a98-a933-49f3-a1a7-d4f9bdb812e1"
+[2026-10-10 13:52:26.050] DEBUG: [LibraryScanner] Folder scan results { 'Author One/Book Three': 2, 'Author Four/Book Four': 1 }
+[2026-10-10 13:52:33.557] DEBUG: [ApiCacheManager] count: 0 size: 0
+[2026-10-10 13:52:33.561] DEBUG: [LibraryItemsBookFilters] countCacheKey: {"where":{"0":{}},"distinct":true,"attributes":null,"replacements":{},"include":{"0":{"model":"libraryItem","required":true,"where":{"libraryId":"fbb658f1-5a83-491d-af69-18e5b71afc44"},"include":{}},"1":{"model":"bookSeries","attributes":{"0":"id","1":"seriesId","2":"sequence","3":"createdAt"},"include":{"model":"series","attributes":{"0":"id","1":"name","2":"nameIgnorePrefix"}},"order":{"0":{"0":"createdAt","1":"ASC"}},"separate":true},"2":{"model":"bookAuthor","attributes":{"0":"authorId","1":"createdAt"},"include":{"model":"author","attributes":{"0":"id","1":"name"}},"order":{"0":{"0":"createdAt","1":"ASC"}},"separate":true}},"order":{},"subQuery":false}
+[2026-10-10 13:52:33.580] DEBUG: Loaded 8 of 8 items for libary page in 0.02s
+[2026-10-10 13:52:33.581] DEBUG: [ApiCacheManager] Cache miss: {"user":"root","url":"/libraries/fbb658f1-5a83-491d-af69-18e5b71afc44/items"}
+[2026-10-10 13:52:33.592] DEBUG: [ApiCacheManager] count: 1 size: 9229
+[2026-10-10 13:52:33.592] DEBUG: [ApiCacheManager] Cache hit: {"user":"root","url":"/libraries/fbb658f1-5a83-491d-af69-18e5b71afc44/items"}

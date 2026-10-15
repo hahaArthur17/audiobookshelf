@@ -1,0 +1,25 @@
+== LibraryFile.metadata (agent: 59 errors, 50 outside LibraryFile)
+total errors: 59
+     18 server/scanner/LibraryItemScanData.ts
+     12 server/scanner/BookScanner.ts
+      7 server/objects/files/LibraryFile.ts
+      6 server/scanner/PodcastScanner.ts
+      5 server/objects/files/EBookFile.ts
+      4 server/scanner/AbsMetadataFileScanner.ts
+      3 server/scanner/AudioFileScanner.ts
+      2 server/managers/PodcastManager.ts
+      1 server/scanner/OpfFileScanner.ts
+      1 server/scanner/NfoFileScanner.ts
+== AudioFile.metadata (agent: 14 errors, 11 outside AudioFile)
+total errors: 14
+      4 server/scanner/AudioFileScanner.ts
+      3 server/scanner/PodcastScanner.ts
+      3 server/objects/files/AudioFile.ts
+      2 server/objects/files/AudioTrack.ts
+      1 server/scanner/BookScanner.ts
+      1 server/managers/CoverManager.ts
+== PodcastEpisodeDownload.libraryItem (agent: 13 errors, 12 outside the class)
+total errors: 13
+     11 server/managers/PodcastManager.ts
+      1 server/utils/ffmpegHelpers.ts
+      1 server/objects/PodcastEpisodeDownload.ts

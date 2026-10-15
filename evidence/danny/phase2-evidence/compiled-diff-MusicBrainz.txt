@@ -1,0 +1,35 @@
+--- /tmp/abs-base2/dist-server/server/providers/MusicBrainz.js	2026-10-03 16:15:06.874769932 +1300
++++ dist-server/server/providers/MusicBrainz.js	2026-10-03 15:34:12.952664691 +1300
+@@ -1,8 +1,12 @@
+ "use strict";
+-const axios = require('axios');
+-const packageJson = require('../../package.json');
+-const Logger = require('../Logger');
+-const { isNullOrNaN } = require('../utils/index');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const axios_1 = __importDefault(require("axios"));
++const packageJson = require("../../package.json");
++const Logger = require("../Logger");
++const utils = require("../utils/index");
++const { isNullOrNaN } = utils;
+ class MusicBrainz {
+     constructor() { }
+     get userAgentString() {
+@@ -32,12 +36,14 @@
+             limit: isNullOrNaN(options.limit) ? 15 : Number(options.limit),
+             fmt: 'json'
+         };
++        // NOTE: this config was passed as a 3rd argument to axios.get, which only accepts (url, config),
++        // so the User-Agent header is never sent (existing behaviour)
+         const config = {
+             headers: {
+                 'User-Agent': this.userAgentString
+             }
+         };
+-        return axios.get('https://musicbrainz.org/ws/2/recording', { params: query }, config).then((response) => {
++        return axios_1.default.get('https://musicbrainz.org/ws/2/recording', { params: query }).then((response) => {
+             return response.data.recordings || [];
+         }).catch((error) => {
+             Logger.error(`[MusicBrainz] search request error`, error);

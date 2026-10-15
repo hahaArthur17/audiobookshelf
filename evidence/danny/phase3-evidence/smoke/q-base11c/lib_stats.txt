@@ -1,0 +1,134 @@
+STATUS 200
+LOCATION 
+{
+ "authorsWithCount": [
+  {
+   "count": 1,
+   "id": "MASK",
+   "name": "Author Two"
+  },
+  {
+   "count": 1,
+   "id": "MASK",
+   "name": "Tag Author"
+  },
+  {
+   "count": 1,
+   "id": "MASK",
+   "name": "JSON Author"
+  },
+  {
+   "count": 1,
+   "id": "MASK",
+   "name": "Author Six"
+  },
+  {
+   "count": 1,
+   "id": "MASK",
+   "name": "OPF Author"
+  },
+  {
+   "count": 1,
+   "id": "MASK",
+   "name": "NFO Author"
+  }
+ ],
+ "genresWithCount": [
+  {
+   "count": 1,
+   "genre": "Thriller"
+  },
+  {
+   "count": 1,
+   "genre": "Science Fiction"
+  },
+  {
+   "count": 1,
+   "genre": "Mystery"
+  },
+  {
+   "count": 1,
+   "genre": "Fantasy"
+  }
+ ],
+ "largestItems": [
+  {
+   "id": "MASK",
+   "size": 32088,
+   "title": "Audio Book"
+  },
+  {
+   "id": "MASK",
+   "size": 17281,
+   "title": "Tagged Book Album"
+  },
+  {
+   "id": "MASK",
+   "size": 4536,
+   "title": "Only"
+  },
+  {
+   "id": "MASK",
+   "size": 737,
+   "title": "OPF Title"
+  },
+  {
+   "id": "MASK",
+   "size": 288,
+   "title": "JSON Title"
+  },
+  {
+   "id": "MASK",
+   "size": 117,
+   "title": "NFO Title"
+  },
+  {
+   "id": "MASK",
+   "size": 6,
+   "title": "Loose Book"
+  }
+ ],
+ "longestItems": [
+  {
+   "duration": 4.127346,
+   "id": "MASK",
+   "title": "Tagged Book Album"
+  },
+  {
+   "duration": 2,
+   "id": "MASK",
+   "title": "Audio Book"
+  },
+  {
+   "duration": 1.07102,
+   "id": "MASK",
+   "title": "Only"
+  },
+  {
+   "duration": 0,
+   "id": "MASK",
+   "title": "Loose Book"
+  },
+  {
+   "duration": 0,
+   "id": "MASK",
+   "title": "JSON Title"
+  },
+  {
+   "duration": 0,
+   "id": "MASK",
+   "title": "NFO Title"
+  },
+  {
+   "duration": 0,
+   "id": "MASK",
+   "title": "OPF Title"
+  }
+ ],
+ "numAudioTracks": 5,
+ "totalAuthors": 6,
+ "totalDuration": 7.198366,
+ "totalGenres": 4,
+ "totalItems": 7,
+ "totalSize": 55053
+}

@@ -1,0 +1,2 @@
+server/controllers/AuthorController.ts:110:        payload[key as 'name' | 'description' | 'asin'] = req.body[key]
+server/controllers/PodcastController.ts:417:        updatePayload[key as 'title' | 'subtitle' | 'description' | 'pubDate' | 'episode' | 'season' | 'episodeType'] = req.body[key]

@@ -1,0 +1,402 @@
+2d1
+< const { Request, Response, NextFunction } = require("express");
+11,13c10,12
+< const { reqSupportsWebp, clampPositiveInt } = require("../utils/index");
+< const { ScanResult, AudioMimeType } = require("../utils/constants");
+< const { getAudioMimeTypeFromExtname, encodeUriPath } = require("../utils/fileUtils");
+---
+> const utils = require("../utils/index");
+> const constants = require("../utils/constants");
+> const fileUtils = require("../utils/fileUtils");
+20a20,22
+> const { reqSupportsWebp, clampPositiveInt } = utils;
+> const { ScanResult, AudioMimeType } = constants;
+> const { getAudioMimeTypeFromExtname, encodeUriPath } = fileUtils;
+33c35
+<         const includeEntities = (req.query.include || "").split(",");
+---
+>         const includeEntities = (req.query.include || '').split(',');
+36c38
+<             if (includeEntities.includes("progress")) {
+---
+>             if (includeEntities.includes('progress')) {
+40c42
+<             if (includeEntities.includes("rssfeed")) {
+---
+>             if (includeEntities.includes('rssfeed')) {
+44c46
+<             if (item.mediaType === "book" && req.user.isAdminOrUp && includeEntities.includes("share")) {
+---
+>             if (item.mediaType === 'book' && req.user.isAdminOrUp && includeEntities.includes('share')) {
+47c49
+<             if (item.mediaType === "podcast" && includeEntities.includes("downloads")) {
+---
+>             if (item.mediaType === 'podcast' && includeEntities.includes('downloads')) {
+65c67,68
+<             mediaItemIds.push(...req.libraryItem.media.podcastEpisodes.map((ep) => ep.id));
+---
+>             const podcast = req.libraryItem.media;
+>             mediaItemIds.push(...podcast.podcastEpisodes.map((ep) => ep.id));
+67a71
+>             const book = req.libraryItem.media;
+69,70c73,74
+<             if (req.libraryItem.media.authors?.length) {
+<                 authorIds.push(...req.libraryItem.media.authors.map((au) => au.id));
+---
+>             if (book.authors?.length) {
+>                 authorIds.push(...book.authors.map((au) => au.id));
+72,73c76,77
+<             if (req.libraryItem.media.series?.length) {
+<                 seriesIds.push(...req.libraryItem.media.series.map((se) => se.id));
+---
+>             if (book.series?.length) {
+>                 seriesIds.push(...book.series.map((se) => se.id));
+94,95c98,99
+<             if (error.code === "ENOENT") {
+<                 return res.status(404).send("File not found");
+---
+>             if (error.code === 'ENOENT') {
+>                 return res.status(404).send('File not found');
+98c102
+<                 return res.status(500).send("Download failed");
+---
+>                 return res.status(500).send('Download failed');
+114c118
+<                     res.setHeader("Content-Type", audioMimeType);
+---
+>                     res.setHeader('Content-Type', audioMimeType);
+138c142,143
+<             if (mediaPayload.autoDownloadEpisodes !== undefined && req.libraryItem.media.autoDownloadEpisodes !== mediaPayload.autoDownloadEpisodes) {
+---
+>             const podcast = req.libraryItem.media;
+>             if (mediaPayload.autoDownloadEpisodes !== undefined && podcast.autoDownloadEpisodes !== mediaPayload.autoDownloadEpisodes) {
+141c146
+<             else if (mediaPayload.autoDownloadSchedule !== undefined && req.libraryItem.media.autoDownloadSchedule !== mediaPayload.autoDownloadSchedule) {
+---
+>             else if (mediaPayload.autoDownloadSchedule !== undefined && podcast.autoDownloadSchedule !== mediaPayload.autoDownloadSchedule) {
+146c151
+<                 return res.status(400).send("Invalid auto download schedule cron expression");
+---
+>                 return res.status(400).send('Invalid auto download schedule cron expression');
+151c156,157
+<             const seriesUpdateData = await req.libraryItem.media.updateSeriesFromRequest(mediaPayload.metadata.series, req.libraryItem.libraryId);
+---
+>             const book = req.libraryItem.media;
+>             const seriesUpdateData = await book.updateSeriesFromRequest(mediaPayload.metadata.series, req.libraryItem.libraryId);
+166,167c172,174
+<             const authorNames = mediaPayload.metadata.authors.map((au) => (typeof au.name === "string" ? au.name.trim() : null)).filter((au) => au);
+<             const authorUpdateData = await req.libraryItem.media.updateAuthorsFromRequest(authorNames, req.libraryItem.libraryId);
+---
+>             const book = req.libraryItem.media;
+>             const authorNames = mediaPayload.metadata.authors.map((au) => (typeof au.name === 'string' ? au.name.trim() : null)).filter((au) => au);
+>             const authorUpdateData = await book.updateAuthorsFromRequest(authorNames, req.libraryItem.libraryId);
+181c188
+<             req.libraryItem.changed("updatedAt", true);
+---
+>             req.libraryItem.changed('updatedAt', true);
+188c195
+<             SocketAuthority.libraryItemEmitter("item_updated", req.libraryItem);
+---
+>             SocketAuthority.libraryItemEmitter('item_updated', req.libraryItem);
+210c217
+<             return res.status(400).send("Invalid request no file or url");
+---
+>             return res.status(400).send('Invalid request no file or url');
+216c223
+<             return res.status(500).send("Unknown error occurred");
+---
+>             return res.status(500).send('Unknown error occurred');
+219c226
+<         req.libraryItem.media.changed("coverPath", true);
+---
+>         req.libraryItem.media.changed('coverPath', true);
+222c229
+<             req.libraryItem.changed("updatedAt", true);
+---
+>             req.libraryItem.changed('updatedAt', true);
+224c231
+<             SocketAuthority.libraryItemEmitter("item_updated", req.libraryItem);
+---
+>             SocketAuthority.libraryItemEmitter('item_updated', req.libraryItem);
+233c240
+<             return res.status(400).send("Invalid request no cover path");
+---
+>             return res.status(400).send('Invalid request no cover path');
+239,241c246,249
+<         if (validationResult.updated) {
+<             req.libraryItem.media.coverPath = validationResult.cover;
+<             req.libraryItem.media.changed("coverPath", true);
+---
+>         const validCoverResult = validationResult;
+>         if (validCoverResult.updated) {
+>             req.libraryItem.media.coverPath = validCoverResult.cover;
+>             req.libraryItem.media.changed('coverPath', true);
+243c251
+<             req.libraryItem.changed("updatedAt", true);
+---
+>             req.libraryItem.changed('updatedAt', true);
+245c253
+<             SocketAuthority.libraryItemEmitter("item_updated", req.libraryItem);
+---
+>             SocketAuthority.libraryItemEmitter('item_updated', req.libraryItem);
+255c263
+<             req.libraryItem.media.changed("coverPath", true);
+---
+>             req.libraryItem.media.changed('coverPath', true);
+257c265
+<             req.libraryItem.changed("updatedAt", true);
+---
+>             req.libraryItem.changed('updatedAt', true);
+260c268
+<             SocketAuthority.libraryItemEmitter("item_updated", req.libraryItem);
+---
+>             SocketAuthority.libraryItemEmitter('item_updated', req.libraryItem);
+267c275
+<             res.set("Cache-Control", "private, max-age=86400");
+---
+>             res.set('Cache-Control', 'private, max-age=86400');
+280c288
+<                 return res.status(204).header({ "X-Accel-Redirect": encodedURI }).send();
+---
+>                 return res.status(204).header({ 'X-Accel-Redirect': encodedURI }).send();
+285c293
+<             format: format || (reqSupportsWebp(req) ? "webp" : "jpeg"),
+---
+>             format: format || (reqSupportsWebp(req) ? 'webp' : 'jpeg'),
+302a311
+>         const podcast = req.libraryItem.media;
+304c313
+<         if (!req.libraryItem.media.podcastEpisodes.some((ep) => ep.id === episodeId)) {
+---
+>         if (!podcast.podcastEpisodes.some((ep) => ep.id === episodeId)) {
+315a325
+>         const book = req.libraryItem.media;
+320c330
+<         if (orderedFileData.some((fileData) => !fileData?.ino || !req.libraryItem.media.audioFiles.some((af) => af.ino === fileData.ino))) {
+---
+>         if (orderedFileData.some((fileData) => !fileData?.ino || !book.audioFiles.some((af) => af.ino === fileData.ino))) {
+326c336
+<             const audioFile = req.libraryItem.media.audioFiles.find((af) => af.ino === fileData.ino);
+---
+>             const audioFile = book.audioFiles.find((af) => af.ino === fileData.ino);
+338,341c348,351
+<         req.libraryItem.media.audioFiles = updatedAudioFiles;
+<         req.libraryItem.media.changed("audioFiles", true);
+<         await req.libraryItem.media.save();
+<         SocketAuthority.libraryItemEmitter("item_updated", req.libraryItem);
+---
+>         book.audioFiles = updatedAudioFiles;
+>         book.changed('audioFiles', true);
+>         await book.save();
+>         SocketAuthority.libraryItemEmitter('item_updated', req.libraryItem);
+347c357
+<         const matchOptions = ["provider", "title", "author", "isbn", "asin"];
+---
+>         const matchOptions = ['provider', 'title', 'author', 'isbn', 'asin'];
+349c359
+<             if (reqBody[key] && typeof reqBody[key] === "string") {
+---
+>             if (reqBody[key] && typeof reqBody[key] === 'string') {
+370c380
+<             return res.status(400).send("Invalid request body");
+---
+>             return res.status(400).send('Invalid request body');
+384c394
+<             Logger.info(`[LibraryItemController] (${hardDelete ? "Hard" : "Soft"}) deleting Library Item "${libraryItem.media.title}" with id "${libraryItem.id}"`);
+---
+>             Logger.info(`[LibraryItemController] (${hardDelete ? 'Hard' : 'Soft'}) deleting Library Item "${libraryItem.media.title}" with id "${libraryItem.id}"`);
+389c399,400
+<                 mediaItemIds.push(...libraryItem.media.podcastEpisodes.map((ep) => ep.id));
+---
+>                 const podcast = libraryItem.media;
+>                 mediaItemIds.push(...podcast.podcastEpisodes.map((ep) => ep.id));
+393,394c404,406
+<                 if (libraryItem.media.series?.length) {
+<                     seriesIds.push(...libraryItem.media.series.map((se) => se.id));
+---
+>                 const book = libraryItem.media;
+>                 if (book.series?.length) {
+>                     seriesIds.push(...book.series.map((se) => se.id));
+396,397c408,409
+<                 if (libraryItem.media.authors?.length) {
+<                     authorIds.push(...libraryItem.media.authors.map((au) => au.id));
+---
+>                 if (book.authors?.length) {
+>                     authorIds.push(...book.authors.map((au) => au.id));
+454c466,467
+<                 const seriesUpdateData = await libraryItem.media.updateSeriesFromRequest(mediaPayload.metadata.series, libraryItem.libraryId);
+---
+>                 const book = libraryItem.media;
+>                 const seriesUpdateData = await book.updateSeriesFromRequest(mediaPayload.metadata.series, libraryItem.libraryId);
+468,469c481,483
+<                 const authorNames = mediaPayload.metadata.authors.map((au) => (typeof au.name === "string" ? au.name.trim() : null)).filter((au) => au);
+<                 const authorUpdateData = await libraryItem.media.updateAuthorsFromRequest(authorNames, libraryItem.libraryId);
+---
+>                 const book = libraryItem.media;
+>                 const authorNames = mediaPayload.metadata.authors.map((au) => (typeof au.name === 'string' ? au.name.trim() : null)).filter((au) => au);
+>                 const authorUpdateData = await book.updateAuthorsFromRequest(authorNames, libraryItem.libraryId);
+482c496
+<                 libraryItem.changed("updatedAt", true);
+---
+>                 libraryItem.changed('updatedAt', true);
+486c500
+<                 SocketAuthority.libraryItemEmitter("item_updated", libraryItem);
+---
+>                 SocketAuthority.libraryItemEmitter('item_updated', libraryItem);
+504c518
+<             return res.status(403).send("Invalid payload");
+---
+>             return res.status(403).send('Invalid payload');
+535c549
+<         if (reqBodyOptions.provider && typeof reqBodyOptions.provider === "string") {
+---
+>         if (reqBodyOptions.provider && typeof reqBodyOptions.provider === 'string') {
+558c572
+<         SocketAuthority.clientEmitter(req.user.id, "batch_quickmatch_complete", result);
+---
+>         SocketAuthority.clientEmitter(req.user.id, 'batch_quickmatch_complete', result);
+572c586
+<             attributes: ["id", "libraryId", "isFile"]
+---
+>             attributes: ['id', 'libraryId', 'isFile']
+599a614
+>         const scanResultValues = ScanResult;
+601c616
+<             result: Object.keys(ScanResult).find((key) => ScanResult[key] == result)
+---
+>             result: Object.keys(ScanResult).find((key) => scanResultValues[key] == result)
+624c639,640
+<         if (!Array.isArray(req.body.chapters) || req.body.chapters.some((c) => !c.title || typeof c.title !== "string" || c.start === undefined || typeof c.start !== "number" || c.end === undefined || typeof c.end !== "number")) {
+---
+>         const book = req.libraryItem.media;
+>         if (!Array.isArray(req.body.chapters) || req.body.chapters.some((c) => !c.title || typeof c.title !== 'string' || c.start === undefined || typeof c.start !== 'number' || c.end === undefined || typeof c.end !== 'number')) {
+630,631c646,647
+<         if (chapters.length !== req.libraryItem.media.chapters.length) {
+<             req.libraryItem.media.chapters = chapters.map((c, index) => {
+---
+>         if (chapters.length !== book.chapters.length) {
+>             book.chapters = chapters.map((c, index) => {
+643c659
+<                 const currentChapter = req.libraryItem.media.chapters[index];
+---
+>                 const currentChapter = book.chapters[index];
+653,654c669,670
+<             req.libraryItem.media.changed("chapters", true);
+<             await req.libraryItem.media.save();
+---
+>             book.changed('chapters', true);
+>             await book.save();
+656c672
+<             SocketAuthority.libraryItemEmitter("item_updated", req.libraryItem);
+---
+>             SocketAuthority.libraryItemEmitter('item_updated', req.libraryItem);
+681c697
+<             return res.status(204).header({ "X-Accel-Redirect": encodedURI }).send();
+---
+>             return res.status(204).header({ 'X-Accel-Redirect': encodedURI }).send();
+685c701
+<             res.setHeader("Content-Type", audioMimeType);
+---
+>             res.setHeader('Content-Type', audioMimeType);
+696c712
+<         req.libraryItem.changed("libraryFiles", true);
+---
+>         req.libraryItem.changed('libraryFiles', true);
+698,704c714,721
+<             if (req.libraryItem.media.audioFiles.some((af) => af.ino === req.params.fileid)) {
+<                 req.libraryItem.media.audioFiles = req.libraryItem.media.audioFiles.filter((af) => af.ino !== req.params.fileid);
+<                 req.libraryItem.media.changed("audioFiles", true);
+<             }
+<             else if (req.libraryItem.media.ebookFile?.ino === req.params.fileid) {
+<                 req.libraryItem.media.ebookFile = null;
+<                 req.libraryItem.media.changed("ebookFile", true);
+---
+>             const book = req.libraryItem.media;
+>             if (book.audioFiles.some((af) => af.ino === req.params.fileid)) {
+>                 book.audioFiles = book.audioFiles.filter((af) => af.ino !== req.params.fileid);
+>                 book.changed('audioFiles', true);
+>             }
+>             else if (book.ebookFile?.ino === req.params.fileid) {
+>                 book.ebookFile = null;
+>                 book.changed('ebookFile', true);
+706c723
+<             if (!req.libraryItem.media.hasMediaFiles) {
+---
+>             if (!book.hasMediaFiles) {
+711c728,729
+<             const episodeToRemove = req.libraryItem.media.podcastEpisodes.find((ep) => ep.audioFile.ino === req.params.fileid);
+---
+>             const podcast = req.libraryItem.media;
+>             const episodeToRemove = podcast.podcastEpisodes.find((ep) => ep.audioFile.ino === req.params.fileid);
+722c740
+<             req.libraryItem.media.podcastEpisodes = req.libraryItem.media.podcastEpisodes.filter((ep) => ep.audioFile.ino !== req.params.fileid);
+---
+>             podcast.podcastEpisodes = podcast.podcastEpisodes.filter((ep) => ep.audioFile.ino !== req.params.fileid);
+728c746
+<         SocketAuthority.libraryItemEmitter("item_updated", req.libraryItem);
+---
+>         SocketAuthority.libraryItemEmitter('item_updated', req.libraryItem);
+733c751
+<         const ua = uaParserJs(req.headers["user-agent"]);
+---
+>         const ua = uaParserJs(req.headers['user-agent']);
+742c760
+<             return res.status(204).header({ "X-Accel-Redirect": encodedURI }).send();
+---
+>             return res.status(204).header({ 'X-Accel-Redirect': encodedURI }).send();
+746c764
+<             const isAppleMobileBrowser = ua.device.vendor === "Apple" && ua.device.type === "mobile" && ua.engine.name === "WebKit";
+---
+>             const isAppleMobileBrowser = ua.device.vendor === 'Apple' && ua.device.type === 'mobile' && ua.engine.name === 'WebKit';
+748c766
+<                 audioMimeType = "audio/m4b";
+---
+>                 audioMimeType = 'audio/m4b';
+750c768
+<             res.setHeader("Content-Type", audioMimeType);
+---
+>             res.setHeader('Content-Type', audioMimeType);
+767c785
+<                 return res.status(400).send("Invalid ebook file id");
+---
+>                 return res.status(400).send('Invalid ebook file id');
+782c800
+<             return res.status(204).header({ "X-Accel-Redirect": encodedURI }).send();
+---
+>             return res.status(204).header({ 'X-Accel-Redirect': encodedURI }).send();
+797a816
+>         const book = req.libraryItem.media;
+800c819
+<             return res.status(400).send("Invalid ebook file id");
+---
+>             return res.status(400).send('Invalid ebook file id');
+818,820c837,839
+<         req.libraryItem.media.ebookFile = primaryEbookFile;
+<         req.libraryItem.media.changed("ebookFile", true);
+<         await req.libraryItem.media.save();
+---
+>         book.ebookFile = primaryEbookFile;
+>         book.changed('ebookFile', true);
+>         await book.save();
+827,828c846,847
+<         req.libraryItem.changed("libraryFiles", true);
+<         req.libraryItem.isMissing = !req.libraryItem.media.hasMediaFiles;
+---
+>         req.libraryItem.changed('libraryFiles', true);
+>         req.libraryItem.isMissing = !book.hasMediaFiles;
+830c849
+<         SocketAuthority.libraryItemEmitter("item_updated", req.libraryItem);
+---
+>         SocketAuthority.libraryItemEmitter('item_updated', req.libraryItem);
+847c866
+<         if (req.path.includes("/play")) {
+---
+>         if (req.path.includes('/play')) {
+849c868
+<         else if (req.method == "DELETE" && !req.user.canDelete) {
+---
+>         else if (req.method == 'DELETE' && !req.user.canDelete) {
+853c872
+<         else if ((req.method == "PATCH" || req.method == "POST") && !req.user.canUpdate) {
+---
+>         else if ((req.method == 'PATCH' || req.method == 'POST') && !req.user.canUpdate) {

@@ -1,0 +1,31 @@
+== branch
+danny/phase3
+== log
+78b3c0b1 phase3 batch 11c-3: LibraryController to TypeScript
+cf79d521 phase3 batch 11c-2: OidcQuery
+ca74c5a5 phase3 batch 11c-1: typed query values
+81ad6a7f phase3 batch 11b-3: scanner dynamic keys
+f5a43f82 phase3 batch 11b-2: lazy models in Database
+4fc58fd8 phase3 batch 11b-1: Sequelize class statics
+18b19b45 phase3 batch 11a: honest null types, FilteredLibraryItem, FsExtra casts
+ac6f1d06 phase3 batch 10: packaging
+== status
+== files changed since 81ad6a7f
+ MIGRATION.md                                       | 107 +++-
+ server/Auth.ts                                     |   5 +-
+ server/auth/OidcAuthStrategy.ts                    |  36 +-
+ server/controllers/AuthorController.ts             |  15 +-
+ server/controllers/CollectionController.ts         |   7 +-
+ server/controllers/FileSystemController.ts         |   6 +-
+ .../{LibraryController.js => LibraryController.ts} | 550 ++++++++++++---------
+ server/controllers/MeController.ts                 |   5 +-
+ server/controllers/MiscController.ts               |   6 +-
+ server/controllers/PodcastController.ts            |   5 +-
+ server/controllers/SeriesController.ts             |   7 +-
+ server/controllers/SessionController.ts            |   8 +-
+ server/controllers/ShareController.ts              |   6 +-
+ server/controllers/UserController.ts               |   6 +-
+ server/models/Library.ts                           |   3 +-
+ server/utils/queries/seriesFilters.ts              |   2 +-
+ server/utils/queryValue.ts                         |  39 ++
+ 17 files changed, 504 insertions(+), 309 deletions(-)

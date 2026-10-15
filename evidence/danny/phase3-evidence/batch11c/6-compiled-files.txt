@@ -1,0 +1,14 @@
+Files /tmp/abs-base-b11c/dist-server/server/auth/OidcAuthStrategy.js and /tmp/abs-new-b11c/dist-server/server/auth/OidcAuthStrategy.js differ
+Files /tmp/abs-base-b11c/dist-server/server/Auth.js and /tmp/abs-new-b11c/dist-server/server/Auth.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/AuthorController.js and /tmp/abs-new-b11c/dist-server/server/controllers/AuthorController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/CollectionController.js and /tmp/abs-new-b11c/dist-server/server/controllers/CollectionController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/FileSystemController.js and /tmp/abs-new-b11c/dist-server/server/controllers/FileSystemController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js and /tmp/abs-new-b11c/dist-server/server/controllers/LibraryController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/MeController.js and /tmp/abs-new-b11c/dist-server/server/controllers/MeController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/MiscController.js and /tmp/abs-new-b11c/dist-server/server/controllers/MiscController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/PodcastController.js and /tmp/abs-new-b11c/dist-server/server/controllers/PodcastController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/SeriesController.js and /tmp/abs-new-b11c/dist-server/server/controllers/SeriesController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/SessionController.js and /tmp/abs-new-b11c/dist-server/server/controllers/SessionController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/ShareController.js and /tmp/abs-new-b11c/dist-server/server/controllers/ShareController.js differ
+Files /tmp/abs-base-b11c/dist-server/server/controllers/UserController.js and /tmp/abs-new-b11c/dist-server/server/controllers/UserController.js differ
+Only in /tmp/abs-new-b11c/dist-server/server/utils: queryValue.js

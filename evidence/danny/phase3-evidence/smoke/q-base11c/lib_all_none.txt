@@ -1,0 +1,75 @@
+STATUS 200
+LOCATION 
+{
+ "libraries": [
+  {
+   "createdAt": "MASK",
+   "displayOrder": 1,
+   "folders": [
+    {
+     "addedAt": "MASK",
+     "fullPath": "ROOT/lib/books",
+     "id": "MASK",
+     "libraryId": "MASK"
+    }
+   ],
+   "icon": "database",
+   "id": "MASK",
+   "lastScan": "MASK",
+   "lastScanVersion": "MASK",
+   "lastUpdate": "MASK",
+   "mediaType": "book",
+   "name": "Books",
+   "provider": "google",
+   "settings": {
+    "audiobooksOnly": false,
+    "autoScanCronExpression": null,
+    "coverAspectRatio": 1,
+    "disableWatcher": false,
+    "epubsAllowScriptedContent": false,
+    "hideSingleBookSeries": false,
+    "markAsFinishedPercentComplete": null,
+    "markAsFinishedTimeRemaining": 10,
+    "metadataPrecedence": [
+     "folderStructure",
+     "audioMetatags",
+     "nfoFile",
+     "txtFiles",
+     "opfFile",
+     "absMetadata"
+    ],
+    "onlyShowLaterBooksInContinueSeries": false,
+    "skipMatchingMediaWithAsin": false,
+    "skipMatchingMediaWithIsbn": false
+   }
+  },
+  {
+   "createdAt": "MASK",
+   "displayOrder": 2,
+   "folders": [
+    {
+     "addedAt": "MASK",
+     "fullPath": "ROOT/lib/podcasts",
+     "id": "MASK",
+     "libraryId": "MASK"
+    }
+   ],
+   "icon": "database",
+   "id": "MASK",
+   "lastScan": "MASK",
+   "lastScanVersion": "MASK",
+   "lastUpdate": "MASK",
+   "mediaType": "podcast",
+   "name": "Pods",
+   "provider": "google",
+   "settings": {
+    "autoScanCronExpression": null,
+    "coverAspectRatio": 1,
+    "disableWatcher": false,
+    "markAsFinishedPercentComplete": null,
+    "markAsFinishedTimeRemaining": 10,
+    "podcastSearchRegion": "us"
+   }
+  }
+ ]
+}

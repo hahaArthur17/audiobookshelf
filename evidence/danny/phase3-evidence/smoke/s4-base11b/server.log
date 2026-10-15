@@ -1,0 +1,68 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-s4-6kZd/config, METADATA_PATH=/tmp/abs-s4-6kZd/metadata, PORT=3334, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 14:05:07.306] INFO: === Starting Server ===
+[2026-10-10 14:05:07.306] INFO: [Server] Init v2.37.0
+[2026-10-10 14:05:07.308] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 14:05:07.309] INFO: [Server] Platform: linux
+[2026-10-10 14:05:07.309] INFO: [Server] Arch: x64
+[2026-10-10 14:05:07.310] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 14:05:07.310] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-s4-6kZd/config/absdatabase.sqlite
+[2026-10-10 14:05:07.310] INFO: [Database] Initializing db at "/tmp/abs-s4-6kZd/config/absdatabase.sqlite"
+[2026-10-10 14:05:07.320] INFO: [Database] Db connection was successful
+[2026-10-10 14:05:07.347] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 14:05:07.723] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 14:05:07.725] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 14:05:07.731] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 14:05:07.739] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 14:05:07.744] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 14:05:07.749] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 14:05:07.754] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 14:05:07.787] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 14:05:07.807] INFO: [Database] running ANALYZE
+[2026-10-10 14:05:07.814] INFO: [Database] ANALYZE completed
+[2026-10-10 14:05:07.814] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 14:05:07.814] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 14:05:07.822] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 14:05:07.827] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 14:05:07.827] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 14:05:07.839] INFO: Listening on port :3334
+[2026-10-10 14:05:08.066] INFO: Received ping
+[2026-10-10 14:05:08.077] INFO: [Server] Initializing new server
+[2026-10-10 14:05:08.134] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 14:05:08.175] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 14:05:08.182] INFO: [Watcher] "Books" Ready
+[2026-10-10 14:05:08.197] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 14:05:08.199] INFO: [Watcher] "Pods" Ready
+[2026-10-10 14:05:08.208] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 14:05:08.209] INFO: [LibraryScanner] Starting (forced) library scan cdc8325e-3812-403f-b05e-94cfe2b8c8fd for Books
+[2026-10-10 14:05:08.214] INFO: [LibraryScanner] Starting library scan ea8e19e3-6f25-40a4-8077-dc746c3fb60c for Pods
+[2026-10-10 14:05:08.344] INFO: [LibraryScanner] Library scan "ea8e19e3-6f25-40a4-8077-dc746c3fb60c" completed in 0:00 | 2 Added | 0 Updated | 0 Missing
+[2026-10-10 14:05:08.351] INFO: [LibraryScan] Scan log saved "/tmp/abs-s4-6kZd/metadata/logs/scans/2026-10-10_ea8e19e3-6f25-40a4-8077-dc746c3fb60c.txt"
+[2026-10-10 14:05:08.352] INFO: [LibraryController] Scan complete
+[2026-10-10 14:05:08.427] ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "/tmp/abs-s4-6kZd/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/tmp/abs-base-b11b/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/tmp/abs-base-b11b/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 14:05:08.429] ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/tmp/abs-base-b11b/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/tmp/abs-base-b11b/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 14:05:08.590] INFO: [LibraryScanner] Library scan "cdc8325e-3812-403f-b05e-94cfe2b8c8fd" completed in 0:00 | 7 Added | 0 Updated | 0 Missing
+[2026-10-10 14:05:08.597] INFO: [LibraryScan] Scan log saved "/tmp/abs-s4-6kZd/metadata/logs/scans/2026-10-10_cdc8325e-3812-403f-b05e-94cfe2b8c8fd.txt"
+[2026-10-10 14:05:08.597] INFO: [LibraryController] Scan complete
+[2026-10-10 14:05:14.373] INFO: [LibraryScanner] Starting (forced) library scan 7af1d257-e9a7-4320-99b1-771e9c460d22 for Books
+[2026-10-10 14:05:14.379] INFO: [LibraryScanner] Starting (forced) library scan 76cd3082-bcb3-4e48-a1b7-a4b20cb935d6 for Pods
+[2026-10-10 14:05:14.390] INFO: [LibraryScanner] Library scan "76cd3082-bcb3-4e48-a1b7-a4b20cb935d6" completed in 0:00 | 0 Added | 0 Updated | 0 Missing
+[2026-10-10 14:05:14.417] INFO: [LibraryScan] Scan log saved "/tmp/abs-s4-6kZd/metadata/logs/scans/2026-10-10_76cd3082-bcb3-4e48-a1b7-a4b20cb935d6.txt"
+[2026-10-10 14:05:14.419] INFO: [LibraryController] Scan complete
+[2026-10-10 14:05:14.462] ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "/tmp/abs-s4-6kZd/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/tmp/abs-base-b11b/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/tmp/abs-base-b11b/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 14:05:14.462] ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/tmp/abs-base-b11b/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/tmp/abs-base-b11b/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 14:05:14.471] INFO: [LibraryScanner] Library scan "7af1d257-e9a7-4320-99b1-771e9c460d22" completed in 0:00 | 0 Added | 0 Updated | 0 Missing
+[2026-10-10 14:05:14.476] INFO: [LibraryScan] Scan log saved "/tmp/abs-s4-6kZd/metadata/logs/scans/2026-10-10_7af1d257-e9a7-4320-99b1-771e9c460d22.txt"
+[2026-10-10 14:05:14.477] INFO: [LibraryController] Scan complete

@@ -1,0 +1,3 @@
+STATUS 302
+LOCATION Location: http://127.0.0.1:9/authorize?client_id=cid&scope=openid%20profile%20email&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3404%2Fundefined%2Fauth%2Fopenid%2Fmobile-redirect&state=st11&code_challenge=c1&code_challenge_method=S256
+TEXT Found. Redirecting to http://127.0.0.1:9/authorize?client_id=cid&scope=openid%20profile%20email&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3404%2Fundefined%2Fauth%2Fopenid%2Fmobile-redirect&state=st11&code_challenge=c1&code_challenge_method=S256

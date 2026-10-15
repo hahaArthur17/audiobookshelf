@@ -1,0 +1,2135 @@
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/Backup.js dist-server/server/objects/Backup.js
+--- /tmp/abs-base3/dist-server/server/objects/Backup.js	2026-10-03 22:28:21.318255385 +1300
++++ dist-server/server/objects/Backup.js	2026-10-03 22:28:12.471020728 +1300
+@@ -1,7 +1,10 @@
+ "use strict";
+-const Path = require('path');
+-const date = require('../libs/dateAndTime');
+-const version = require('../../package.json').version;
++const Path = require("path");
++const dateAndTime = require("../libs/dateAndTime");
++const packageJson = require("../../package.json");
++// Typed view of the untyped vendored date-and-time
++const date = dateAndTime;
++const version = packageJson.version;
+ class Backup {
+     constructor(data = null) {
+         this.id = null;
+@@ -29,6 +32,7 @@
+     construct(data) {
+         this.id = data.details[0];
+         this.key = data.details[1];
++        // Loose comparison with the number 1 (the key is a string), like the JS
+         if (this.key == 1)
+             this.key = null; // v2.2.23 and below backups stored '1' here
+         this.createdAt = Number(data.details[2]);
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/DailyLog.js dist-server/server/objects/DailyLog.js
+--- /tmp/abs-base3/dist-server/server/objects/DailyLog.js	2026-10-03 22:28:20.817242200 +1300
++++ dist-server/server/objects/DailyLog.js	2026-10-03 22:28:12.473020782 +1300
+@@ -1,13 +1,16 @@
+ "use strict";
+-const Path = require('path');
+-const date = require('../libs/dateAndTime');
+-const fs = require('../libs/fsExtra');
+-const fileUtils = require('../utils/fileUtils');
+-const Logger = require('../Logger');
++const Path = require("path");
++const dateAndTime = require("../libs/dateAndTime");
++const fsExtra = require("../libs/fsExtra");
++const fileUtils = require("../utils/fileUtils");
++const Logger = require("../Logger");
++// Typed views of the untyped vendored date-and-time and fs-extra
++const date = dateAndTime;
++const fs = fsExtra;
+ class DailyLog {
+     /**
+      *
+-     * @param {string} dailyLogDirPath Path to daily logs /metadata/logs/daily
++     * @param dailyLogDirPath Path to daily logs /metadata/logs/daily
+      */
+     constructor(dailyLogDirPath) {
+         this.id = date.format(new Date(), 'YYYY-MM-DD');
+@@ -15,9 +18,7 @@
+         this.filename = this.id + '.txt';
+         this.fullPath = Path.join(this.dailyLogDirPath, this.filename);
+         this.createdAt = Date.now();
+-        /** @type {import('../managers/LogManager').LogObject[]} */
+         this.logs = [];
+-        /** @type {string[]} */
+         this.bufferedLogLines = [];
+         this.locked = false;
+     }
+@@ -50,7 +51,7 @@
+     }
+     /**
+      *
+-     * @param {import('../managers/LogManager').LogObject} logObj
++     * @param logObj
+      */
+     appendLog(logObj) {
+         this.logs.push(logObj);
+@@ -59,7 +60,7 @@
+     /**
+      * Append log to daily log file
+      *
+-     * @param {string} line
++     * @param line
+      */
+     async appendLogLine(line) {
+         if (this.locked) {
+@@ -91,7 +92,7 @@
+         if (logLines.length && !logLines[logLines.length - 1])
+             logLines = logLines.slice(0, -1);
+         // JSON parse log lines
+-        this.logs = logLines.map(t => {
++        this.logs = logLines.map((t) => {
+             if (!t) {
+                 hasFailures = true;
+                 return null;
+@@ -104,7 +105,7 @@
+                 hasFailures = true;
+                 return null;
+             }
+-        }).filter(l => !!l);
++        }).filter((l) => !!l);
+         // Rewrite log file to remove errors
+         if (hasFailures) {
+             const newLogLines = this.logs.map(l => JSON.stringify(l)).join('\n') + '\n';
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/DeviceInfo.js dist-server/server/objects/DeviceInfo.js
+--- /tmp/abs-base3/dist-server/server/objects/DeviceInfo.js	2026-10-03 22:28:21.100249652 +1300
++++ dist-server/server/objects/DeviceInfo.js	2026-10-03 22:28:12.477020888 +1300
+@@ -1,8 +1,10 @@
+ "use strict";
+-const uuidv4 = require('uuid').v4;
+-const { stripAllTags } = require('../utils/htmlSanitizer');
++const uuid = require("uuid");
++const htmlSanitizer = require("../utils/htmlSanitizer");
++const uuidv4 = uuid.v4;
++const { stripAllTags } = htmlSanitizer;
+ class DeviceInfo {
+-    /** @type {string[]} Fields to sanitize when loading from stored data */
++    /** Fields to sanitize when loading from stored data */
+     static stringFields = ['deviceId', 'clientVersion', 'manufacturer', 'model', 'sdkVersion', 'clientName', 'deviceName'];
+     constructor(deviceInfo = null) {
+         this.id = null;
+@@ -27,9 +29,12 @@
+         }
+     }
+     construct(deviceInfo) {
+-        for (const key in deviceInfo) {
+-            if (deviceInfo[key] !== undefined && this[key] !== undefined) {
+-                this[key] = DeviceInfo.stringFields.includes(key) ? stripAllTags(deviceInfo[key]) : deviceInfo[key];
++        // Index this object and the stored data by key
++        const self = this;
++        const values = deviceInfo;
++        for (const key in values) {
++            if (values[key] !== undefined && self[key] !== undefined) {
++                self[key] = DeviceInfo.stringFields.includes(key) ? stripAllTags(values[key]) : values[key];
+             }
+         }
+     }
+@@ -51,9 +56,11 @@
+             clientName: this.clientName,
+             deviceName: this.deviceName
+         };
++        // Index the JSON object by key
++        const values = obj;
+         for (const key in obj) {
+-            if (obj[key] === null || obj[key] === undefined) {
+-                delete obj[key];
++            if (values[key] === null || values[key] === undefined) {
++                delete values[key];
+             }
+         }
+         return obj;
+@@ -117,20 +124,24 @@
+     update(deviceInfo) {
+         const deviceInfoJson = deviceInfo.toJSON ? deviceInfo.toJSON() : deviceInfo;
+         const existingDeviceInfoJson = this.toJSON();
++        // Index this object and both JSON objects by key
++        const self = this;
++        const newValues = deviceInfoJson;
++        const existingValues = existingDeviceInfoJson;
+         let hasUpdates = false;
+         for (const key in deviceInfoJson) {
+             if (['id', 'deviceId'].includes(key))
+                 continue;
+-            if (deviceInfoJson[key] !== existingDeviceInfoJson[key]) {
+-                this[key] = deviceInfoJson[key];
++            if (newValues[key] !== existingValues[key]) {
++                self[key] = newValues[key];
+                 hasUpdates = true;
+             }
+         }
+         for (const key in existingDeviceInfoJson) {
+             if (['id', 'deviceId'].includes(key))
+                 continue;
+-            if (existingDeviceInfoJson[key] && !deviceInfoJson[key]) {
+-                this[key] = null;
++            if (existingValues[key] && !newValues[key]) {
++                self[key] = null;
+                 hasUpdates = true;
+             }
+         }
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/files/AudioFile.js dist-server/server/objects/files/AudioFile.js
+--- /tmp/abs-base3/dist-server/server/objects/files/AudioFile.js	2026-10-03 22:28:21.096249547 +1300
++++ dist-server/server/objects/files/AudioFile.js	2026-10-03 22:28:12.499021477 +1300
+@@ -1,12 +1,13 @@
+ "use strict";
+-const { AudioMimeType } = require('../../utils/constants');
+-const AudioMetaTags = require('../metadata/AudioMetaTags');
+-const FileMetadata = require('../metadata/FileMetadata');
++const constants = require("../../utils/constants");
++const AudioMetaTags = require("../metadata/AudioMetaTags");
++const FileMetadata = require("../metadata/FileMetadata");
++const { AudioMimeType } = constants;
+ class AudioFile {
+     constructor(data) {
+         this.index = null;
+         this.ino = null;
+-        /** @type {FileMetadata} */
++        // Typed FileMetadata (as the JSDoc did); construct or setDataFromProbe sets it before use
+         this.metadata = null;
+         this.addedAt = null;
+         this.updatedAt = null;
+@@ -25,7 +26,7 @@
+         this.chapters = [];
+         this.embeddedCoverArt = null;
+         // Tags scraped from the audio file
+-        /** @type {AudioMetaTags} */
++        // Typed AudioMetaTags (as the JSDoc did); construct or setDataFromProbe sets it before use
+         this.metaTags = null;
+         this.manuallyVerified = false;
+         this.exclude = false;
+@@ -91,9 +92,11 @@
+         this.metaTags = new AudioMetaTags(data.metaTags || {});
+     }
+     get mimeType() {
++        // Index the mime type map by any format string; unknown formats read undefined, like the JS
++        const mimeTypes = AudioMimeType;
+         const format = this.metadata.format.toUpperCase();
+-        if (AudioMimeType[format]) {
+-            return AudioMimeType[format];
++        if (mimeTypes[format]) {
++            return mimeTypes[format];
+         }
+         else {
+             return AudioMimeType.MP3;
+@@ -119,6 +122,7 @@
+         this.channels = probeData.channels;
+         this.channelLayout = probeData.channelLayout;
+         this.chapters = probeData.chapters || [];
++        // Probe data from prober.probe always has audioMetaTags (MediaProbeData.setData)
+         this.metaTags = probeData.audioMetaTags;
+         this.embeddedCoverArt = probeData.embeddedCoverArt;
+     }
+@@ -150,13 +154,16 @@
+     }
+     /**
+      *
+-     * @param {AudioFile} scannedAudioFile
+-     * @returns {boolean} true if updates were made
++     * @param scannedAudioFile
++     * @returns true if updates were made
+      */
+     updateFromScan(scannedAudioFile) {
+         let hasUpdated = false;
+         const newjson = scannedAudioFile.toJSON();
+         const ignoreKeys = ['manuallyVerified', 'ctimeMs', 'addedAt', 'updatedAt'];
++        // Index this object and the new JSON by key
++        const self = this;
++        const newValues = newjson;
+         for (const key in newjson) {
+             if (key === 'metadata') {
+                 if (this.metadata.update(newjson[key])) {
+@@ -174,8 +181,8 @@
+                     hasUpdated = true;
+                 }
+             }
+-            else if (!ignoreKeys.includes(key) && this[key] !== newjson[key]) {
+-                this[key] = newjson[key];
++            else if (!ignoreKeys.includes(key) && self[key] !== newValues[key]) {
++                self[key] = newValues[key];
+                 hasUpdated = true;
+             }
+         }
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/files/EBookFile.js dist-server/server/objects/files/EBookFile.js
+--- /tmp/abs-base3/dist-server/server/objects/files/EBookFile.js	2026-10-03 22:28:21.221252834 +1300
++++ dist-server/server/objects/files/EBookFile.js	2026-10-03 22:28:12.501021530 +1300
+@@ -1,8 +1,9 @@
+ "use strict";
+-const FileMetadata = require('../metadata/FileMetadata');
++const FileMetadata = require("../metadata/FileMetadata");
+ class EBookFile {
+     constructor(file) {
+         this.ino = null;
++        // Typed FileMetadata; construct or setData sets it before use
+         this.metadata = null;
+         this.ebookFormat = null;
+         this.addedAt = null;
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/files/LibraryFile.js dist-server/server/objects/files/LibraryFile.js
+--- /tmp/abs-base3/dist-server/server/objects/files/LibraryFile.js	2026-10-03 22:28:21.115250046 +1300
++++ dist-server/server/objects/files/LibraryFile.js	2026-10-03 22:28:12.503021583 +1300
+@@ -1,11 +1,13 @@
+ "use strict";
+-const Path = require('path');
+-const { getFileTimestampsWithIno, filePathToPOSIX } = require('../../utils/fileUtils');
+-const globals = require('../../utils/globals');
+-const FileMetadata = require('../metadata/FileMetadata');
++const Path = require("path");
++const fileUtils = require("../../utils/fileUtils");
++const globals = require("../../utils/globals");
++const FileMetadata = require("../metadata/FileMetadata");
++const { getFileTimestampsWithIno, filePathToPOSIX } = fileUtils;
+ class LibraryFile {
+     constructor(file) {
+         this.ino = null;
++        // Typed FileMetadata; construct or setDataFromPath sets it before use
+         this.metadata = null;
+         this.isSupplementary = null;
+         this.addedAt = null;
+@@ -22,6 +24,7 @@
+         this.updatedAt = file.updatedAt;
+     }
+     toJSON() {
++        // Typed as set: toJSON is only called on files that construct or setDataFromPath filled in (isSupplementary may still be null)
+         return {
+             ino: this.ino,
+             metadata: this.metadata.toJSON(),
+@@ -57,7 +60,8 @@
+         return this.metadata.ext === '.opf';
+     }
+     async setDataFromPath(path, relPath) {
+-        var fileTsData = await getFileTimestampsWithIno(path);
++        // NOTE: getFileTimestampsWithIno returns false when stat fails; then ino is undefined and no timestamps are set
++        var fileTsData = (await getFileTimestampsWithIno(path));
+         var fileMetadata = new FileMetadata();
+         fileMetadata.setData(fileTsData);
+         fileMetadata.filename = Path.basename(relPath);
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/metadata/AudioMetaTags.js dist-server/server/objects/metadata/AudioMetaTags.js
+--- /tmp/abs-base3/dist-server/server/objects/metadata/AudioMetaTags.js	2026-10-03 22:28:21.094249494 +1300
++++ dist-server/server/objects/metadata/AudioMetaTags.js	2026-10-03 22:28:12.507021690 +1300
+@@ -44,10 +44,12 @@
+     }
+     toJSON() {
+         // Only return the tags that are actually set
++        // Index this object by key
++        const self = this;
+         const json = {};
+-        for (const key in this) {
+-            if (key.startsWith('tag') && this[key]) {
+-                json[key] = this[key];
++        for (const key in self) {
++            if (key.startsWith('tag') && self[key]) {
++                json[key] = self[key];
+             }
+         }
+         return json;
+@@ -217,10 +219,12 @@
+             tagMusicBrainzAlbumArtistId: payload.file_tag_musicbrainz_albumartistid || null,
+             tagMusicBrainzArtistId: payload.file_tag_musicbrainz_artistid || null
+         };
++        // Index this object by key
++        const self = this;
+         let hasUpdates = false;
+         for (const key in dataMap) {
+-            if (dataMap[key] !== this[key]) {
+-                this[key] = dataMap[key];
++            if (dataMap[key] !== self[key]) {
++                self[key] = dataMap[key];
+                 hasUpdates = true;
+             }
+         }
+@@ -232,8 +236,11 @@
+     isEqual(audioFileMetadata) {
+         if (!audioFileMetadata || !audioFileMetadata.toJSON)
+             return false;
++        // Index both objects by key
++        const other = audioFileMetadata;
++        const self = this;
+         for (const key in audioFileMetadata.toJSON()) {
+-            if (audioFileMetadata[key] !== this[key])
++            if (other[key] !== self[key])
+                 return false;
+         }
+         return true;
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/metadata/FileMetadata.js dist-server/server/objects/metadata/FileMetadata.js
+--- /tmp/abs-base3/dist-server/server/objects/metadata/FileMetadata.js	2026-10-03 22:28:21.094249494 +1300
++++ dist-server/server/objects/metadata/FileMetadata.js	2026-10-03 22:28:12.510021771 +1300
+@@ -10,6 +10,7 @@
+         this.ctimeMs = null;
+         this.birthtimeMs = null;
+         if (metadata) {
++            // Missing fields are copied as undefined, like the JS
+             this.construct(metadata);
+         }
+         // Temp flag used in scans
+@@ -26,6 +27,7 @@
+         this.birthtimeMs = metadata.birthtimeMs;
+     }
+     toJSON() {
++        // Typed as set: toJSON is only called on metadata that construct or setData filled in
+         return {
+             filename: this.filename,
+             ext: this.ext,
+@@ -46,22 +48,29 @@
+         return this.ext.slice(1).toLowerCase();
+     }
+     get filenameNoExt() {
++        // Non-null: only read on files that were constructed with a filename and ext
+         return this.filename.replace(this.ext, '');
+     }
+     update(payload) {
++        // Index this object and the payload by key
++        const self = this;
++        const values = payload;
+         var hasUpdates = false;
+-        for (const key in payload) {
+-            if (this[key] !== undefined && this[key] !== payload[key]) {
+-                this[key] = payload[key];
++        for (const key in values) {
++            if (self[key] !== undefined && self[key] !== values[key]) {
++                self[key] = values[key];
+                 hasUpdates = true;
+             }
+         }
+         return hasUpdates;
+     }
+     setData(payload) {
+-        for (const key in payload) {
+-            if (this[key] !== undefined) {
+-                this[key] = payload[key];
++        // Index this object and the payload by key
++        const self = this;
++        const values = payload;
++        for (const key in values) {
++            if (self[key] !== undefined) {
++                self[key] = values[key];
+             }
+         }
+     }
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/Notification.js dist-server/server/objects/Notification.js
+--- /tmp/abs-base3/dist-server/server/objects/Notification.js	2026-10-03 22:28:21.037247995 +1300
++++ dist-server/server/objects/Notification.js	2026-10-03 22:28:12.480020969 +1300
+@@ -1,5 +1,6 @@
+ "use strict";
+-const uuidv4 = require("uuid").v4;
++const uuid = require("uuid");
++const uuidv4 = uuid.v4;
+ class Notification {
+     constructor(notification = null) {
+         this.id = null;
+@@ -70,6 +71,8 @@
+             this.numConsecutiveFailedAttempts = 0;
+         }
+         const keysToUpdate = ['libraryId', 'eventName', 'urls', 'titleTemplate', 'bodyTemplate', 'enabled', 'type'];
++        // Index this object by key
++        const self = this;
+         var hasUpdated = false;
+         for (const key of keysToUpdate) {
+             if (payload[key] !== undefined) {
+@@ -80,7 +83,7 @@
+                     }
+                 }
+                 else if (payload[key] !== this[key]) {
+-                    this[key] = payload[key];
++                    self[key] = payload[key];
+                     hasUpdated = true;
+                 }
+             }
+@@ -99,6 +102,7 @@
+         var updatedTemplate = templateText;
+         while ((match = ptrn.exec(templateText)) != null) {
+             if (data[match[1]]) {
++                // Event data values are not all strings; replace coerces the replacement to a string, like the JS
+                 updatedTemplate = updatedTemplate.replace(match[0], data[match[1]]);
+             }
+         }
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/PlaybackSession.js dist-server/server/objects/PlaybackSession.js
+--- /tmp/abs-base3/dist-server/server/objects/PlaybackSession.js	2026-10-03 22:28:21.101249678 +1300
++++ dist-server/server/objects/PlaybackSession.js	2026-10-03 22:28:12.483021049 +1300
+@@ -1,8 +1,12 @@
+ "use strict";
+-const date = require('../libs/dateAndTime');
+-const uuidv4 = require('uuid').v4;
+-const serverVersion = require('../../package.json').version;
+-const DeviceInfo = require('./DeviceInfo');
++const dateAndTime = require("../libs/dateAndTime");
++const uuid = require("uuid");
++const packageJson = require("../../package.json");
++const DeviceInfo = require("./DeviceInfo");
++// Typed view of the untyped vendored date-and-time
++const date = dateAndTime;
++const uuidv4 = uuid.v4;
++const serverVersion = packageJson.version;
+ class PlaybackSession {
+     constructor(session) {
+         this.id = null;
+@@ -71,7 +75,7 @@
+     }
+     /**
+      * Session data to send to clients
+-     * @param {import('../models/LibraryItem')} [libraryItem]
++     * @param [libraryItem]
+      * @returns
+      */
+     toJSONForClient(libraryItem) {
+@@ -144,7 +148,8 @@
+         this.startTime = session.startTime || 0;
+         this.currentTime = session.currentTime || 0;
+         this.startedAt = session.startedAt;
+-        this.updatedAt = session.updatedAt || session.startedAt;
++        // Copied as given (possibly undefined), like the JS
++        this.updatedAt = (session.updatedAt || session.startedAt);
+         // Local playback sessions dont set this date field so set using updatedAt
+         if (!this.date && session.updatedAt) {
+             this.date = date.format(new Date(session.updatedAt), 'YYYY-MM-DD');
+@@ -180,12 +185,12 @@
+     }
+     /**
+      *
+-     * @param {import('../models/LibraryItem')} libraryItem
+-     * @param {*} userId
+-     * @param {*} mediaPlayer
+-     * @param {*} deviceInfo
+-     * @param {*} startTime
+-     * @param {*} episodeId
++     * @param libraryItem
++     * @param userId
++     * @param mediaPlayer
++     * @param deviceInfo
++     * @param startTime
++     * @param episodeId
+      */
+     setData(libraryItem, userId, mediaPlayer, deviceInfo, startTime, episodeId = null) {
+         this.id = uuidv4();
+@@ -196,6 +201,7 @@
+         this.episodeId = episodeId;
+         this.mediaType = libraryItem.mediaType;
+         this.mediaMetadata = libraryItem.media.oldMetadataToJSON();
++        // Book media ignores the episode id; podcast sessions always pass one
+         this.chapters = libraryItem.media.getChapters(episodeId);
+         this.displayTitle = libraryItem.media.getPlaybackTitle(episodeId);
+         this.displayAuthor = libraryItem.media.getPlaybackAuthor();
+@@ -213,6 +219,7 @@
+         this.updatedAt = Date.now();
+     }
+     addListeningTime(timeListened) {
++        // isNaN coerces its argument
+         if (!timeListened || isNaN(timeListened))
+             return;
+         if (!this.date) {
+@@ -220,6 +227,7 @@
+             this.date = date.format(new Date(), 'YYYY-MM-DD');
+             this.dayOfWeek = date.format(new Date(), 'dddd');
+         }
++        // timeListening is null before the first update (null + n is n); parseFloat coerces numbers to strings
+         this.timeListening += Number.parseFloat(timeListened);
+         this.updatedAt = Date.now();
+     }
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/PodcastEpisodeDownload.js dist-server/server/objects/PodcastEpisodeDownload.js
+--- /tmp/abs-base3/dist-server/server/objects/PodcastEpisodeDownload.js	2026-10-03 22:28:21.188251966 +1300
++++ dist-server/server/objects/PodcastEpisodeDownload.js	2026-10-03 22:28:12.485021102 +1300
+@@ -1,15 +1,18 @@
+ "use strict";
+-const Path = require('path');
+-const uuidv4 = require('uuid').v4;
+-const { sanitizeFilename, filePathToPOSIX } = require('../utils/fileUtils');
+-const globals = require('../utils/globals');
++const Path = require("path");
++const uuid = require("uuid");
++const fileUtils = require("../utils/fileUtils");
++const globals = require("../utils/globals");
++const uuidv4 = uuid.v4;
++const { sanitizeFilename, filePathToPOSIX } = fileUtils;
+ class PodcastEpisodeDownload {
+     constructor() {
+         this.id = null;
+-        /** @type {import('../utils/podcastUtils').RssPodcastEpisode} */
++        // Typed RssPodcastEpisode (as the JSDoc did); setData sets it before use
+         this.rssPodcastEpisode = null;
++        // Typed string; setData sets it before use
+         this.url = null;
+-        /** @type {import('../models/LibraryItem')} */
++        // Typed LibraryItem (as the JSDoc did); setData sets it before use
+         this.libraryItem = null;
+         this.libraryId = null;
+         this.isAutoDownload = false;
+@@ -61,6 +64,7 @@
+         return this.rssPodcastEpisode.title;
+     }
+     get targetPath() {
++        // setData sets targetFilename to a string before the getters are used
+         return filePathToPOSIX(Path.join(this.libraryItem.path, this.targetFilename));
+     }
+     get targetRelPath() {
+@@ -75,7 +79,7 @@
+         return new Date(this.rssPodcastEpisode.publishedAt).getFullYear();
+     }
+     /**
+-     * @param {string} title
++     * @param title
+      */
+     getSanitizedFilename(title) {
+         const appendage = this.appendRandomId ? ` (${this.id})` : '';
+@@ -83,7 +87,7 @@
+         return sanitizeFilename(filename);
+     }
+     /**
+-     * @param {boolean} appendRandomId
++     * @param appendRandomId
+      */
+     setAppendRandomId(appendRandomId) {
+         this.appendRandomId = appendRandomId;
+@@ -91,10 +95,10 @@
+     }
+     /**
+      *
+-     * @param {import('../utils/podcastUtils').RssPodcastEpisode} rssPodcastEpisode - from rss feed
+-     * @param {import('../models/LibraryItem')} libraryItem
+-     * @param {*} isAutoDownload
+-     * @param {*} libraryId
++     * @param rssPodcastEpisode - from rss feed
++     * @param libraryItem
++     * @param isAutoDownload
++     * @param libraryId
+      */
+     setData(rssPodcastEpisode, libraryItem, isAutoDownload, libraryId) {
+         this.id = uuidv4();
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/settings/EmailSettings.js dist-server/server/objects/settings/EmailSettings.js
+--- /tmp/abs-base3/dist-server/server/objects/settings/EmailSettings.js	2026-10-03 22:28:21.039248047 +1300
++++ dist-server/server/objects/settings/EmailSettings.js	2026-10-03 22:28:12.514021878 +1300
+@@ -1,13 +1,7 @@
+ "use strict";
+-const Logger = require('../../Logger');
+-const { areEquivalent, copyValue, isNullOrNaN } = require('../../utils');
+-/**
+- * @typedef EreaderDeviceObject
+- * @property {string} name
+- * @property {string} email
+- * @property {string} availabilityOption
+- * @property {string[]} users
+- */
++const Logger = require("../../Logger");
++const utils = require("../../utils");
++const { areEquivalent, copyValue, isNullOrNaN } = utils;
+ // REF: https://nodemailer.com/smtp/
+ class EmailSettings {
+     constructor(settings = null) {
+@@ -20,7 +14,6 @@
+         this.pass = null;
+         this.testAddress = null;
+         this.fromAddress = null;
+-        /** @type {EreaderDeviceObject[]} */
+         this.ereaderDevices = [];
+         if (settings) {
+             this.construct(settings);
+@@ -72,6 +65,7 @@
+             payload.ereaderDevices = undefined;
+         if (payload.ereaderDevices?.length) {
+             // Validate ereader devices
++            // filter removes the null (invalid) devices
+             payload.ereaderDevices = payload.ereaderDevices
+                 .map((device) => {
+                 if (!device.name || !device.email) {
+@@ -93,11 +87,14 @@
+         }
+         let hasUpdates = false;
+         const json = this.toJSON();
++        // Index this object and the JSON by key
++        const self = this;
++        const jsonValues = json;
+         for (const key in json) {
+             if (key === 'id')
+                 continue;
+-            if (payload[key] !== undefined && !areEquivalent(payload[key], json[key])) {
+-                this[key] = copyValue(payload[key]);
++            if (payload[key] !== undefined && !areEquivalent(payload[key], jsonValues[key])) {
++                self[key] = copyValue(payload[key]);
+                 hasUpdates = true;
+             }
+         }
+@@ -130,9 +127,8 @@
+     }
+     /**
+      *
+-     * @param {EreaderDeviceObject} device
+-     * @param {import('../../models/User')} user
+-     * @returns {boolean}
++     * @param device
++     * @param user
+      */
+     checkUserCanAccessDevice(device, user) {
+         let deviceAvailability = device.availabilityOption || 'adminOrUp';
+@@ -151,8 +147,7 @@
+     /**
+      * Get ereader devices accessible to user
+      *
+-     * @param {import('../../models/User')} user
+-     * @returns {EreaderDeviceObject[]}
++     * @param user
+      */
+     getEReaderDevices(user) {
+         return this.ereaderDevices.filter((device) => this.checkUserCanAccessDevice(device, user));
+@@ -160,8 +155,7 @@
+     /**
+      * Get ereader device by name
+      *
+-     * @param {string} deviceName
+-     * @returns {EreaderDeviceObject}
++     * @param deviceName
+      */
+     getEReaderDevice(deviceName) {
+         return this.ereaderDevices.find((d) => d.name === deviceName);
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/settings/NotificationSettings.js dist-server/server/objects/settings/NotificationSettings.js
+--- /tmp/abs-base3/dist-server/server/objects/settings/NotificationSettings.js	2026-10-03 22:28:21.038248021 +1300
++++ dist-server/server/objects/settings/NotificationSettings.js	2026-10-03 22:28:12.516021931 +1300
+@@ -1,7 +1,8 @@
+ "use strict";
+-const Logger = require('../../Logger');
+-const Notification = require('../Notification');
+-const { isNullOrNaN } = require('../../utils');
++const Logger = require("../../Logger");
++const Notification = require("../Notification");
++const utils = require("../../utils");
++const { isNullOrNaN } = utils;
+ class NotificationSettings {
+     constructor(settings = null) {
+         this.id = 'notification-settings';
+@@ -38,15 +39,14 @@
+         return !!this.appriseApiUrl;
+     }
+     /**
+-     * @param {string} eventName
+-     * @returns {boolean} - TRUE if there are active notifications for the event
++     * @param eventName
++     * @returns - TRUE if there are active notifications for the event
+      */
+     getHasActiveNotificationsForEvent(eventName) {
+         return this.notifications.some((n) => n.eventName === eventName && n.enabled);
+     }
+     /**
+-     * @param {string} eventName
+-     * @returns {Notification[]}
++     * @param eventName
+      */
+     getActiveNotificationsForEvent(eventName) {
+         return this.notifications.filter((n) => n.eventName === eventName && n.enabled);
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/settings/ServerSettings.js dist-server/server/objects/settings/ServerSettings.js
+--- /tmp/abs-base3/dist-server/server/objects/settings/ServerSettings.js	2026-10-03 22:28:21.162251283 +1300
++++ dist-server/server/objects/settings/ServerSettings.js	2026-10-03 22:28:12.521022065 +1300
+@@ -1,10 +1,12 @@
+ "use strict";
+-const Path = require('path');
+-const packageJson = require('../../../package.json');
+-const { BookshelfView } = require('../../utils/constants');
+-const Logger = require('../../Logger');
+-const User = require('../../models/User');
+-const { sanitize } = require('../../utils/htmlSanitizer');
++const Path = require("path");
++const packageJson = require("../../../package.json");
++const constants = require("../../utils/constants");
++const Logger = require("../../Logger");
++const User = require("../../models/User");
++const htmlSanitizer = require("../../utils/htmlSanitizer");
++const { BookshelfView } = constants;
++const { sanitize } = htmlSanitizer;
+ const PATCHABLE_SETTINGS_KEYS = new Set([
+     'scannerParseSubtitle',
+     'scannerFindCovers',
+@@ -31,7 +33,6 @@
+     static patchableSettingsKeys = PATCHABLE_SETTINGS_KEYS;
+     constructor(settings) {
+         this.id = 'server-settings';
+-        /** @type {string} JWT secret key ONLY used when JWT_SECRET_KEY is not set in ENV */
+         this.tokenSecret = null;
+         // Scanner
+         this.scannerParseSubtitle = false;
+@@ -98,16 +99,20 @@
+         }
+     }
+     construct(settings) {
++        // Copied as given (possibly undefined), like the JS
+         this.tokenSecret = settings.tokenSecret;
+         this.scannerFindCovers = !!settings.scannerFindCovers;
+         this.scannerCoverProvider = settings.scannerCoverProvider || 'google';
++        // Copied as given (possibly undefined), like the JS
+         this.scannerParseSubtitle = settings.scannerParseSubtitle;
+         this.scannerPreferMatchedMetadata = !!settings.scannerPreferMatchedMetadata;
+         this.scannerDisableWatcher = !!settings.scannerDisableWatcher;
+         this.storeCoverWithItem = !!settings.storeCoverWithItem;
+         this.storeMetadataWithItem = !!settings.storeMetadataWithItem;
+         this.metadataFileFormat = settings.metadataFileFormat || 'json';
++        // isNaN coerces its argument (undefined is NaN)
+         this.rateLimitLoginRequests = !isNaN(settings.rateLimitLoginRequests) ? Number(settings.rateLimitLoginRequests) : 10;
++        // isNaN coerces its argument (undefined is NaN)
+         this.rateLimitLoginWindow = !isNaN(settings.rateLimitLoginWindow) ? Number(settings.rateLimitLoginWindow) : 10 * 60 * 1000; // 10 Minutes
+         this.allowIframe = !!settings.allowIframe;
+         this.backupPath = settings.backupPath || Path.join(global.MetadataPath, 'backups');
+@@ -170,6 +175,7 @@
+         }
+         if (settings.homeBookshelfView == undefined) {
+             // homeBookshelfView was added in 2.1.3
++            // Copied as given (possibly undefined), like the JS
+             this.homeBookshelfView = settings.bookshelfView;
+         }
+         if (settings.metadataFileFormat == undefined) {
+@@ -252,7 +258,7 @@
+     }
+     /**
+      * Host timezone used by cron schedulers (not persisted in settings)
+-     * @returns {string} IANA timezone name, e.g. "America/New_York"
++     * @returns IANA timezone name, e.g. "America/New_York"
+      */
+     static getHostTimeZone() {
+         try {
+@@ -319,19 +325,21 @@
+     /**
+      * Update server settings
+      *
+-     * @param {Object} payload
+-     * @returns {boolean} true if updates were made
++     * @param payload
++     * @returns true if updates were made
+      */
+     update(payload) {
++        // Index this object by key
++        const self = this;
+         let hasUpdates = false;
+         for (const key in payload) {
+             if (!PATCHABLE_SETTINGS_KEYS.has(key))
+                 continue;
+-            if (this[key] !== payload[key]) {
++            if (self[key] !== payload[key]) {
+                 if (key === 'logLevel') {
+                     Logger.setLogLevel(payload[key]);
+                 }
+-                this[key] = payload[key];
++                self[key] = payload[key];
+                 hasUpdates = true;
+             }
+         }
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/Stream.js dist-server/server/objects/Stream.js
+--- /tmp/abs-base3/dist-server/server/objects/Stream.js	2026-10-03 22:28:21.308255123 +1300
++++ dist-server/server/objects/Stream.js	2026-10-03 22:28:12.493021316 +1300
+@@ -1,21 +1,25 @@
+ "use strict";
+-const EventEmitter = require('events');
+-const Path = require('path');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const fs = require('../libs/fsExtra');
+-const Ffmpeg = require('../libs/fluentFfmpeg');
+-const { secondsToTimestamp } = require('../utils/index');
+-const { writeConcatFile } = require('../utils/ffmpegHelpers');
+-const { AudioMimeType } = require('../utils/constants');
+-const hlsPlaylistGenerator = require('../utils/generators/hlsPlaylistGenerator');
+-const AudioTrack = require('./files/AudioTrack');
++const EventEmitter = require("events");
++const Path = require("path");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const fsExtra = require("../libs/fsExtra");
++const Ffmpeg = require("../libs/fluentFfmpeg");
++const utils = require("../utils/index");
++const ffmpegHelpers = require("../utils/ffmpegHelpers");
++const constants = require("../utils/constants");
++const hlsPlaylistGenerator = require("../utils/generators/hlsPlaylistGenerator");
++const AudioTrack = require("./files/AudioTrack");
++// Typed view of the untyped vendored fs-extra
++const fs = fsExtra;
++const { secondsToTimestamp } = utils;
++const { writeConcatFile } = ffmpegHelpers;
++const { AudioMimeType } = constants;
+ class Stream extends EventEmitter {
+     constructor(sessionId, streamPath, user, libraryItem, episodeId, startTime, transcodeOptions = {}) {
+         super();
+         this.id = sessionId;
+         this.user = user;
+-        /** @type {import('../models/LibraryItem')} */
+         this.libraryItem = libraryItem;
+         this.episodeId = episodeId;
+         this.transcodeOptions = transcodeOptions;
+@@ -34,12 +38,10 @@
+         this.segmentsCreated = new Set();
+         this.furthestSegmentCreated = 0;
+     }
+-    /**
+-     * @returns {import('../models/PodcastEpisode') | null}
+-     */
+     get episode() {
+         if (!this.libraryItem.isPodcast)
+             return null;
++        // Media of a podcast library item is a Podcast
+         return this.libraryItem.media.podcastEpisodes.find((ep) => ep.id === this.episodeId);
+     }
+     get mediaTitle() {
+@@ -49,6 +51,7 @@
+         return this.libraryItem.media.getPlaybackDuration(this.episodeId);
+     }
+     get tracks() {
++        // getTrackList only reads the episode id for podcasts (null for books)
+         return this.libraryItem.getTrackList(this.episodeId);
+     }
+     get tracksAudioFileType() {
+@@ -99,6 +102,7 @@
+         return `/hls/${this.id}/output.m3u8`;
+     }
+     get isAACEncodable() {
++        // includes(null) is false
+         return ['mp4', 'm4a', 'm4b'].includes(this.tracksAudioFileType);
+     }
+     get transcodeForceAAC() {
+@@ -208,7 +212,7 @@
+     }
+     startLoop() {
+         this.clientEmit('stream_progress', { stream: this.id, chunks: [], numSegments: 0, percent: '0%' });
+-        clearInterval(this.loop);
++        clearInterval(this.loop); // clearInterval ignores null
+         var intervalId = setInterval(() => {
+             if (!this.isTranscodeComplete) {
+                 this.checkFiles();
+@@ -223,7 +227,6 @@
+     }
+     async start() {
+         Logger.info(`[STREAM] START STREAM - Num Segments: ${this.numSegments}`);
+-        /** @type {import('../libs/fluentFfmpeg/index').FfmpegCommand} */
+         this.ffmpeg = Ffmpeg();
+         this.furthestSegmentCreated = 0;
+         const adjustedStartTime = Math.max(this.startTime - this.maxSeekBackTime, 0);
+@@ -251,11 +254,13 @@
+         }
+         const logLevel = process.env.NODE_ENV === 'production' ? 'error' : 'warning';
+         let audioCodec = 'copy';
++        // includes(null) is false
+         if (this.transcodeForceAAC || this.mimeTypesToForceAAC.includes(this.tracksMimeType) || this.codecsToForceAAC.includes(this.tracksCodec)) {
+             Logger.debug(`[Stream] Forcing AAC for tracks with mime type ${this.tracksMimeType} and codec ${this.tracksCodec}`);
+             audioCodec = 'aac';
+         }
+         const codecOptions = [`-loglevel ${logLevel}`, '-map 0:a'];
++        // includes(null) is false
+         if (['ac3', 'eac3'].includes(this.tracksCodec) && this.tracks.length > 0 && this.tracks[0].bitRate && this.tracks[0].channels) {
+             // In case for ac3/eac3 it needs to be passed the bitrate and channels to avoid ffmpeg errors
+             codecOptions.push(`-c:a ${audioCodec}`, `-b:a ${this.tracks[0].bitRate}`, `-ac ${this.tracks[0].channels}`);
+@@ -299,7 +304,7 @@
+                 // This is an intentional SIGKILL
+                 Logger.info('[FFMPEG] Transcode Killed');
+                 this.ffmpeg = null;
+-                clearInterval(this.loop);
++                clearInterval(this.loop); // clearInterval ignores null
+             }
+             else {
+                 Logger.error('Ffmpeg Err', '"' + err.message + '"');
+@@ -327,12 +332,12 @@
+             }
+             this.isTranscodeComplete = true;
+             this.ffmpeg = null;
+-            clearInterval(this.loop);
++            clearInterval(this.loop); // clearInterval ignores null
+         });
+         this.ffmpeg.run();
+     }
+     async close(errorMessage = null) {
+-        clearInterval(this.loop);
++        clearInterval(this.loop); // clearInterval ignores null
+         Logger.info('Closing Stream', this.id);
+         if (this.ffmpeg) {
+             this.ffmpeg.kill('SIGKILL');
+@@ -352,7 +357,7 @@
+         this.emit('closed');
+     }
+     cancelTranscode() {
+-        clearInterval(this.loop);
++        clearInterval(this.loop); // clearInterval ignores null
+         if (this.ffmpeg) {
+             this.ffmpeg.kill('SIGKILL');
+         }
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/Task.js dist-server/server/objects/Task.js
+--- /tmp/abs-base3/dist-server/server/objects/Task.js	2026-10-03 22:28:21.177251677 +1300
++++ dist-server/server/objects/Task.js	2026-10-03 22:28:12.494021343 +1300
+@@ -1,46 +1,24 @@
+ "use strict";
+-const uuidv4 = require('uuid').v4;
+-/**
+- * @typedef TaskString
+- * @property {string} text
+- * @property {string} key
+- * @property {string[]} [subs]
+- */
++const uuid = require("uuid");
++const uuidv4 = uuid.v4;
+ class Task {
+     constructor() {
+-        /** @type {string} */
+         this.id = null;
+-        /** @type {string} */
+         this.action = null; // e.g. embed-metadata, encode-m4b, etc
+-        /** @type {Object} custom data */
+         this.data = null; // additional info for the action like libraryItemId
+-        /** @type {string} */
+         this.title = null;
+-        /** @type {string} - Used for translation */
+         this.titleKey = null;
+-        /** @type {string[]} - Used for translation */
+         this.titleSubs = null;
+-        /** @type {string} */
+         this.description = null;
+-        /** @type {string} - Used for translation */
+         this.descriptionKey = null;
+-        /** @type {string[]} - Used for translation */
+         this.descriptionSubs = null;
+-        /** @type {string} */
+         this.error = null;
+-        /** @type {string} - Used for translation */
+         this.errorKey = null;
+-        /** @type {string[]} - Used for translation */
+         this.errorSubs = null;
+-        /** @type {boolean} client should keep the task visible after success */
+         this.showSuccess = false;
+-        /** @type {boolean} */
+         this.isFailed = false;
+-        /** @type {boolean} */
+         this.isFinished = false;
+-        /** @type {number} */
+         this.startedAt = null;
+-        /** @type {number} */
+         this.finishedAt = null;
+     }
+     toJSON() {
+@@ -67,11 +45,11 @@
+     /**
+      * Set initial task data
+      *
+-     * @param {string} action
+-     * @param {TaskString} titleString
+-     * @param {TaskString|null} descriptionString
+-     * @param {boolean} showSuccess
+-     * @param {Object} [data]
++     * @param action
++     * @param titleString
++     * @param descriptionString
++     * @param showSuccess
++     * @param [data]
+      */
+     setData(action, titleString, descriptionString, showSuccess, data = {}) {
+         this.id = uuidv4();
+@@ -89,7 +67,7 @@
+     /**
+      * Set task as failed
+      *
+-     * @param {TaskString} messageString
++     * @param messageString
+      */
+     setFailed(messageString) {
+         this.error = messageString.text;
+@@ -102,8 +80,8 @@
+     /**
+      * Set task as finished
+      *
+-     * @param {TaskString} [newDescriptionString] update description
+-     * @param {boolean} [clearDescription] clear description
++     * @param [newDescriptionString] update description
++     * @param [clearDescription] clear description
+      */
+     setFinished(newDescriptionString = null, clearDescription = false) {
+         if (newDescriptionString) {
+diff -ruwB /tmp/abs-base3/dist-server/server/objects/TrackProgressMonitor.js dist-server/server/objects/TrackProgressMonitor.js
+--- /tmp/abs-base3/dist-server/server/objects/TrackProgressMonitor.js	2026-10-03 22:28:21.331255728 +1300
++++ dist-server/server/objects/TrackProgressMonitor.js	2026-10-03 22:28:12.495021370 +1300
+@@ -1,26 +1,12 @@
+ "use strict";
+ class TrackProgressMonitor {
+     /**
+-     * @callback TrackStartedCallback
+-     * @param {number} trackIndex - The index of the track that started.
+-     */
+-    /**
+-     * @callback ProgressCallback
+-     * @param {number} trackIndex - The index of the current track.
+-     * @param {number} progressInTrack - The current track progress in percent.
+-     * @param {number} totalProgress - The total progress in percent.
+-     */
+-    /**
+-     * @callback TrackFinishedCallback
+-     * @param {number} trackIndex - The index of the track that finished.
+-     */
+-    /**
+      * Creates a new TrackProgressMonitor.
+      * @constructor
+-     * @param {number[]} trackDurations - The durations of the tracks in seconds.
+-     * @param {TrackStartedCallback} trackStartedCallback - The callback to call when a track starts.
+-     * @param {ProgressCallback} progressCallback - The callback to call when progress is updated.
+-     * @param {TrackFinishedCallback} trackFinishedCallback - The callback to call when a track finishes.
++     * @param trackDurations - The durations of the tracks in seconds.
++     * @param trackStartedCallback - The callback to call when a track starts.
++     * @param progressCallback - The callback to call when progress is updated.
++     * @param trackFinishedCallback - The callback to call when a track finishes.
+      */
+     constructor(trackDurations, trackStartedCallback, progressCallback, trackFinishedCallback) {
+         this.trackDurations = trackDurations;
+@@ -63,7 +49,7 @@
+     }
+     /**
+      * Updates the track progress based on the total progress.
+-     * @param {number} totalProgress - The total progress in percent.
++     * @param totalProgress - The total progress in percent.
+      */
+     update(totalProgress) {
+         while (this.#outsideCurrentTrack(totalProgress) && !this.allTracksFinished)
+Only in dist-server/server/objects: types.js
+diff -ruwB /tmp/abs-base3/dist-server/server/auth/LocalAuthStrategy.js dist-server/server/auth/LocalAuthStrategy.js
+--- /tmp/abs-base3/dist-server/server/auth/LocalAuthStrategy.js	2026-10-03 22:28:21.013247364 +1300
++++ dist-server/server/auth/LocalAuthStrategy.js	2026-10-03 22:28:10.018955019 +1300
+@@ -1,10 +1,10 @@
+ "use strict";
+-const passport = require('passport');
+-const LocalStrategy = require('../libs/passportLocal');
+-const Database = require('../Database');
+-const Logger = require('../Logger');
+-const bcrypt = require('../libs/bcryptjs');
+-const requestIp = require('../libs/requestIp');
++const passport = require("passport");
++const LocalStrategy = require("../libs/passportLocal");
++const Database = require("../Database");
++const Logger = require("../Logger");
++const bcrypt = require("../libs/bcryptjs");
++const requestIp = require("../libs/requestIp");
+ /**
+  * Local authentication strategy using username/password
+  */
+@@ -15,7 +15,6 @@
+     }
+     /**
+      * Get the passport strategy instance
+-     * @returns {LocalStrategy}
+      */
+     getStrategy() {
+         if (!this.strategy) {
+@@ -38,10 +37,10 @@
+     }
+     /**
+      * Verify user credentials
+-     * @param {import('express').Request} req
+-     * @param {string} username
+-     * @param {string} password
+-     * @param {Function} done - Passport callback
++     * @param req
++     * @param username
++     * @param password
++     * @param done - Passport callback
+      */
+     async verifyCredentials(req, username, password, done) {
+         // Load the user given it's username
+@@ -88,9 +87,9 @@
+     }
+     /**
+      * Log failed login attempts
+-     * @param {import('express').Request} req
+-     * @param {string} username
+-     * @param {string} message
++     * @param req
++     * @param username
++     * @param message
+      */
+     logFailedLoginAttempt(req, username, message) {
+         if (!req || !username || !message)
+@@ -99,8 +98,8 @@
+     }
+     /**
+      * Hash a password with bcrypt
+-     * @param {string} password
+-     * @returns {Promise<string>} hash
++     * @param password
++     * @returns hash
+      */
+     hashPassword(password) {
+         return new Promise((resolve) => {
+@@ -116,22 +115,22 @@
+     }
+     /**
+      * Compare password with user's hashed password
+-     * @param {string} password
+-     * @param {import('../models/User')} user
+-     * @returns {Promise<boolean>}
++     * @param password
++     * @param user
+      */
+     comparePassword(password, user) {
+         if (user.type === 'root' && !password && !user.pash)
+             return true;
+         if (!password || !user.pash)
+             return false;
++        // Without a callback compare returns a promise
+         return bcrypt.compare(password, user.pash);
+     }
+     /**
+      * Change user password
+-     * @param {import('../models/User')} user
+-     * @param {string} password
+-     * @param {string} newPassword
++     * @param user
++     * @param password
++     * @param newPassword
+      */
+     async changePassword(user, password, newPassword) {
+         // Only root can have an empty password
+diff -ruwB /tmp/abs-base3/dist-server/server/auth/OidcAuthStrategy.js dist-server/server/auth/OidcAuthStrategy.js
+--- /tmp/abs-base3/dist-server/server/auth/OidcAuthStrategy.js	2026-10-03 22:28:21.016247442 +1300
++++ dist-server/server/auth/OidcAuthStrategy.js	2026-10-03 22:28:10.046793409 +1300
+@@ -1,11 +1,14 @@
+ "use strict";
+-const { Request, Response } = require('express');
+-const passport = require('passport');
+-const OpenIDClient = require('openid-client');
+-const axios = require('axios');
+-const Database = require('../Database');
+-const Logger = require('../Logger');
+-const { getRequestOrigin } = require('../utils/requestUtils');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const passport = require("passport");
++const OpenIDClient = require("openid-client");
++const axios_1 = __importDefault(require("axios"));
++const Database = require("../Database");
++const Logger = require("../Logger");
++const requestUtils = require("../utils/requestUtils");
++const { getRequestOrigin } = requestUtils;
+ /**
+  * OpenID Connect authentication strategy
+  */
+@@ -19,10 +22,10 @@
+     }
+     /**
+      * Get the passport strategy instance
+-     * @returns {OpenIDClient.Strategy}
+      */
+     getStrategy() {
+         if (!this.strategy) {
++            // Typed with the internal fields read in getAuthorizationUrl
+             this.strategy = new OpenIDClient.Strategy({
+                 client: this.getClient(),
+                 params: {
+@@ -35,7 +38,6 @@
+     }
+     /**
+      * Get the OpenID Connect client
+-     * @returns {OpenIDClient.Client}
+      */
+     getClient() {
+         if (!this.client) {
+@@ -44,6 +46,7 @@
+             }
+             // Custom req timeout see: https://github.com/panva/node-openid-client/blob/main/docs/README.md#customizing
+             OpenIDClient.custom.setHttpOptionsDefaults({ timeout: 10000 });
++            // Settings were checked valid above; a null logout URL is passed through, like the JS
+             const openIdIssuerClient = new OpenIDClient.Issuer({
+                 issuer: global.ServerSettings.authOpenIDIssuerURL,
+                 authorization_endpoint: global.ServerSettings.authOpenIDAuthorizationURL,
+@@ -52,6 +55,7 @@
+                 jwks_uri: global.ServerSettings.authOpenIDJwksURL,
+                 end_session_endpoint: global.ServerSettings.authOpenIDLogoutURL
+             }).Client;
++            // Settings were checked valid above
+             this.client = new openIdIssuerClient({
+                 client_id: global.ServerSettings.authOpenIDClientID,
+                 client_secret: global.ServerSettings.authOpenIDClientSecret,
+@@ -62,7 +66,6 @@
+     }
+     /**
+      * Get the scope string for the OpenID Connect request
+-     * @returns {string}
+      */
+     getScope() {
+         let scope = 'openid profile email';
+@@ -94,12 +97,13 @@
+     }
+     /**
+      * Verify callback for OpenID Connect authentication
+-     * @param {Object} tokenset
+-     * @param {Object} userinfo
+-     * @param {Function} done - Passport callback
++     * @param tokenset
++     * @param userinfo
++     * @param done - Passport callback
+      */
+     async verifyCallback(tokenset, userinfo, done) {
+         let isNewUser = false;
++        // Starts as null; typed as the user so the reads below type check (see the NOTE below)
+         let user = null;
+         try {
+             Logger.debug(`[OidcAuth] openid callback userinfo=`, JSON.stringify(userinfo, null, 2));
+@@ -109,7 +113,8 @@
+             if (!this.validateGroupClaim(userinfo)) {
+                 throw new Error(`Group claim ${Database.serverSettings.authOpenIDGroupClaim} not found or empty in userinfo`);
+             }
+-            user = await Database.userModel.findUserFromOpenIdUserInfo(userinfo);
++            // The { error } result is checked right below
++            user = (await Database.userModel.findUserFromOpenIdUserInfo(userinfo));
+             if (user?.error) {
+                 throw new Error('Invalid userinfo or already linked');
+             }
+@@ -124,6 +129,7 @@
+                     Logger.warn(`[User] openid: User not found and auto-register is disabled`);
+                 }
+             }
++            // NOTE: when no user was found and auto-register is off, user is null and this read throws a TypeError, so the 'User not active or not found' error is never thrown for that case (the login still fails)
+             if (!user.isActive) {
+                 throw new Error('User not active or not found');
+             }
+@@ -134,6 +140,7 @@
+             return done(null, user);
+         }
+         catch (error) {
++            // Errors thrown above are Error objects
+             Logger.error(`[OidcAuth] openid callback error: ${error?.message}\n${error?.stack}`);
+             // Remove new user if an error occurs
+             if (isNewUser && user) {
+@@ -144,8 +151,7 @@
+     }
+     /**
+      * Validates the presence and content of the group claim in userinfo.
+-     * @param {Object} userinfo
+-     * @returns {boolean}
++     * @param userinfo
+      */
+     validateGroupClaim(userinfo) {
+         const groupClaimName = Database.serverSettings.authOpenIDGroupClaim;
+@@ -160,8 +166,8 @@
+     }
+     /**
+      * Sets the user group based on group claim in userinfo.
+-     * @param {import('../models/User')} user
+-     * @param {Object} userinfo
++     * @param user
++     * @param userinfo
+      */
+     async setUserGroup(user, userinfo) {
+         const groupClaimName = Database.serverSettings.authOpenIDGroupClaim;
+@@ -170,6 +176,7 @@
+             return;
+         if (!userinfo[groupClaimName])
+             throw new Error(`Group claim ${groupClaimName} not found in userinfo`);
++        // The group claim is a list of group names
+         const groupsList = userinfo[groupClaimName].map((group) => group.toLowerCase());
+         const rolesInOrderOfPriority = ['admin', 'user', 'guest'];
+         let userType = rolesInOrderOfPriority.find((role) => groupsList.includes(role));
+@@ -196,8 +203,8 @@
+     }
+     /**
+      * Updates user permissions based on the advanced permissions claim.
+-     * @param {import('../models/User')} user
+-     * @param {Object} userinfo
++     * @param user
++     * @param userinfo
+      */
+     async updateUserPermissions(user, userinfo) {
+         const absPermissionsClaim = Database.serverSettings.authOpenIDAdvancedPermsClaim;
+@@ -215,25 +222,26 @@
+     }
+     /**
+      * Generate PKCE parameters for the authorization request
+-     * @param {Request} req
+-     * @param {boolean} isMobileFlow
+-     * @returns {Object|{error: string}}
++     * @param req
++     * @param isMobileFlow
+      */
+     generatePkce(req, isMobileFlow) {
++        // Query params are read as strings
++        const query = req.query;
+         if (isMobileFlow) {
+-            if (!req.query.code_challenge) {
++            if (!query.code_challenge) {
+                 return {
+                     error: 'code_challenge required for mobile flow (PKCE)'
+                 };
+             }
+-            if (req.query.code_challenge_method && req.query.code_challenge_method !== 'S256') {
++            if (query.code_challenge_method && query.code_challenge_method !== 'S256') {
+                 return {
+                     error: 'Only S256 code_challenge_method method supported'
+                 };
+             }
+             return {
+-                code_challenge: req.query.code_challenge,
+-                code_challenge_method: req.query.code_challenge_method || 'S256'
++                code_challenge: query.code_challenge,
++                code_challenge_method: query.code_challenge_method || 'S256'
+             };
+         }
+         else {
+@@ -244,8 +252,7 @@
+     }
+     /**
+      * Check if a redirect URI is valid
+-     * @param {string} uri
+-     * @returns {boolean}
++     * @param uri
+      */
+     isValidRedirectUri(uri) {
+         // Check if the redirect_uri is in the whitelist
+@@ -254,35 +261,36 @@
+     /**
+      * Get the authorization URL for OpenID Connect
+      * Calls client manually because the strategy does not support forwarding the code challenge for the mobile flow
+-     * @param {Request} req
+-     * @returns {{ authorizationUrl: string }|{status: number, error: string}}
++     * @param req
+      */
+     getAuthorizationUrl(req) {
++        // Query params are read as strings
++        const query = req.query;
+         const client = this.getClient();
+         const strategy = this.getStrategy();
+         const sessionKey = strategy._key;
+         try {
+             const { origin } = getRequestOrigin(req);
+             const hostUrl = new URL(origin);
+-            const isMobileFlow = req.query.response_type === 'code' || req.query.redirect_uri || req.query.code_challenge;
++            const isMobileFlow = query.response_type === 'code' || query.redirect_uri || query.code_challenge;
+             // Only allow code flow (for mobile clients)
+-            if (req.query.response_type && req.query.response_type !== 'code') {
+-                Logger.debug(`[OidcAuth] OIDC Invalid response_type=${req.query.response_type}`);
++            if (query.response_type && query.response_type !== 'code') {
++                Logger.debug(`[OidcAuth] OIDC Invalid response_type=${query.response_type}`);
+                 return {
+                     status: 400,
+                     error: 'Invalid response_type, only code supported'
+                 };
+             }
+             // Generate a state on web flow or if no state supplied
+-            const state = !isMobileFlow || !req.query.state ? OpenIDClient.generators.random() : req.query.state;
++            const state = !isMobileFlow || !query.state ? OpenIDClient.generators.random() : query.state;
+             // Redirect URL for the SSO provider
+             let redirectUri;
+             if (isMobileFlow) {
+                 // Mobile required redirect uri
+                 // If it is in the whitelist, we will save into this.openIdAuthSession and set the redirect uri to /auth/openid/mobile-redirect
+                 //    where we will handle the redirect to it
+-                if (!req.query.redirect_uri || !this.isValidRedirectUri(req.query.redirect_uri)) {
+-                    Logger.debug(`[OidcAuth] Invalid redirect_uri=${req.query.redirect_uri}`);
++                if (!query.redirect_uri || !this.isValidRedirectUri(query.redirect_uri)) {
++                    Logger.debug(`[OidcAuth] Invalid redirect_uri=${query.redirect_uri}`);
+                     return {
+                         status: 400,
+                         error: 'Invalid redirect_uri'
+@@ -290,12 +298,12 @@
+                 }
+                 // We cannot save the supplied redirect_uri in the session, because it the mobile client uses browser instead of the API
+                 //   for the request to mobile-redirect and as such the session is not shared
+-                this.openIdAuthSession.set(state, { mobile_redirect_uri: req.query.redirect_uri });
++                this.openIdAuthSession.set(state, { mobile_redirect_uri: query.redirect_uri });
+                 redirectUri = new URL(`${global.ServerSettings.authOpenIDSubfolderForRedirectURLs}/auth/openid/mobile-redirect`, hostUrl).toString();
+             }
+             else {
+                 redirectUri = new URL(`${global.ServerSettings.authOpenIDSubfolderForRedirectURLs}/auth/openid/callback`, hostUrl).toString();
+-                if (req.query.state) {
++                if (query.state) {
+                     Logger.debug(`[OidcAuth] Invalid state - not allowed on web openid flow`);
+                     return {
+                         status: 400,
+@@ -313,13 +321,15 @@
+                     error: pkceData.error
+                 };
+             }
+-            req.session[sessionKey] = {
+-                ...req.session[sessionKey],
++            // Index the session by the strategy's session key
++            const session = req.session;
++            session[sessionKey] = {
++                ...session[sessionKey],
+                 state: state,
+                 max_age: strategy._params.max_age,
+                 response_type: 'code',
+                 code_verifier: pkceData.code_verifier, // not null if web flow
+-                mobile: req.query.redirect_uri, // Used in the abs callback later, set mobile if redirect_uri is filled out
++                mobile: query.redirect_uri, // Used in the abs callback later, set mobile if redirect_uri is filled out
+                 sso_redirect_uri: redirectUri // Save the redirect_uri (for the SSO Provider) for the callback
+             };
+             const authorizationUrl = client.authorizationUrl({
+@@ -337,23 +347,26 @@
+             };
+         }
+         catch (error) {
++            // Errors thrown above are Error objects
+             Logger.error(`[OidcAuth] Error generating authorization URL: ${error}\n${error?.stack}`);
+             return {
+                 status: 500,
++                // Error object (see above)
+                 error: error.message || 'Unknown error'
+             };
+         }
+     }
+     /**
+      * Get the end session URL for logout
+-     * @param {Request} req
+-     * @param {string} idToken
+-     * @param {string} authMethod
+-     * @returns {string|null}
++     * @param req
++     * @param idToken
++     * @param authMethod
+      */
+     getEndSessionUrl(req, idToken, authMethod) {
+         const client = this.getClient();
+-        if (client.issuer.end_session_endpoint && client.issuer.end_session_endpoint.length > 0) {
++        // The issuer exposes its metadata fields directly (end_session_endpoint is a string or unset)
++        const issuer = client.issuer;
++        if (issuer.end_session_endpoint && issuer.end_session_endpoint.length > 0) {
+             let postLogoutRedirectUri = null;
+             if (authMethod === 'openid') {
+                 const { origin } = getRequestOrigin(req);
+@@ -371,24 +384,15 @@
+             //   (The URL needs to be whitelisted in the config of the SSO/ID provider)
+             return client.endSessionUrl({
+                 id_token_hint: idToken,
++                // undefined and null both leave the parameter out
+                 post_logout_redirect_uri: postLogoutRedirectUri
+             });
+         }
+         return null;
+     }
+     /**
+-     * @typedef {Object} OpenIdIssuerConfig
+-     * @property {string} issuer
+-     * @property {string} authorization_endpoint
+-     * @property {string} token_endpoint
+-     * @property {string} userinfo_endpoint
+-     * @property {string} end_session_endpoint
+-     * @property {string} jwks_uri
+-     * @property {string} id_token_signing_alg_values_supported
+-     *
+      * Get OpenID Connect configuration from an issuer URL
+-     * @param {string} issuerUrl
+-     * @returns {Promise<OpenIdIssuerConfig|{status: number, error: string}>}
++     * @param issuerUrl
+      */
+     async getIssuerConfig(issuerUrl) {
+         // Strip trailing slash
+@@ -410,7 +414,8 @@
+             };
+         }
+         try {
+-            const { data } = await axios.get(configUrl.toString());
++            // configUrl was set in the try block above (it returns otherwise)
++            const { data } = await axios_1.default.get(configUrl.toString());
+             return {
+                 issuer: data.issuer,
+                 authorization_endpoint: data.authorization_endpoint,
+@@ -431,38 +436,42 @@
+     }
+     /**
+      * Handle mobile redirect for OAuth2 callback
+-     * @param {Request} req
+-     * @param {Response} res
++     * @param req
++     * @param res
+      */
+     handleMobileRedirect(req, res) {
+         try {
+             // Extract the state parameter from the request
++            // Query params are read as strings
+             const { state, code } = req.query;
+             // Check if the state provided is in our list
+             if (!state || !this.openIdAuthSession.has(state)) {
+                 Logger.error('[OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch');
+                 return res.status(400).send('State parameter mismatch');
+             }
++            // has(state) was checked above
+             let mobile_redirect_uri = this.openIdAuthSession.get(state).mobile_redirect_uri;
+             if (!mobile_redirect_uri) {
+                 Logger.error('[OidcAuth] No redirect URI');
+                 return res.status(400).send('No redirect URI');
+             }
+             this.openIdAuthSession.delete(state);
++            // encodeURIComponent stringifies undefined, like the JS
+             const redirectUri = `${mobile_redirect_uri}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
+             // Redirect to the overwrite URI saved in the map
+             res.redirect(redirectUri);
+         }
+         catch (error) {
++            // Errors thrown above are Error objects
+             Logger.error(`[OidcAuth] Error in /auth/openid/mobile-redirect route: ${error}\n${error?.stack}`);
+             res.status(500).send('Internal Server Error');
+         }
+     }
+     /**
+      * Validates if a callback URL is safe for redirect (same-origin only)
+-     * @param {string} callbackUrl - The callback URL to validate
+-     * @param {Request} req - Express request object to get current host
+-     * @returns {boolean} - True if the URL is safe (same-origin), false otherwise
++     * @param callbackUrl - The callback URL to validate
++     * @param req - Express request object to get current host
++     * @returns - True if the URL is safe (same-origin), false otherwise
+      */
+     isValidWebCallbackUrl(callbackUrl, req) {
+         if (!callbackUrl)
+diff -ruwB /tmp/abs-base3/dist-server/server/auth/TokenManager.js dist-server/server/auth/TokenManager.js
+--- /tmp/abs-base3/dist-server/server/auth/TokenManager.js	2026-10-03 22:28:21.002247074 +1300
++++ dist-server/server/auth/TokenManager.js	2026-10-03 22:28:10.101566071 +1300
+@@ -1,28 +1,30 @@
+ "use strict";
+-const { Op } = require('sequelize');
+-const uuid = require('uuid');
+-const Database = require('../Database');
+-const Logger = require('../Logger');
+-const requestIp = require('../libs/requestIp');
+-const jwt = require('../libs/jsonwebtoken');
+-const { isRequestSecure } = require('../utils/requestUtils');
++const sequelize = require("sequelize");
++const uuid = require("uuid");
++const DatabaseModule = require("../Database");
++const Logger = require("../Logger");
++const requestIp = require("../libs/requestIp");
++const jwt = require("../libs/jsonwebtoken");
++const requestUtils = require("../utils/requestUtils");
++const { Op } = sequelize;
++const { isRequestSecure } = requestUtils;
++// Same object; typed so the sequelize static query methods on the models are accepted
++const Database = DatabaseModule;
+ class TokenManager {
+-    /** @type {string} JWT secret key */
++    /** JWT secret key */
+     static TokenSecret = null;
+     constructor() {
+-        /** @type {number} Refresh token expiry in seconds */
++        // Each `as string` below: parseInt(undefined) is NaN, like the JS
+         this.RefreshTokenExpiry = parseInt(process.env.REFRESH_TOKEN_EXPIRY) || 30 * 24 * 60 * 60; // 30 days
+-        /** @type {number} Access token expiry in seconds */
+         this.AccessTokenExpiry = parseInt(process.env.ACCESS_TOKEN_EXPIRY) || 1 * 60 * 60; // 1 hour
+-        /** @type {number} Grace period in seconds during which a rotated (old) refresh token is still accepted */
+         this.RefreshTokenGracePeriod = parseInt(process.env.REFRESH_TOKEN_GRACE_PERIOD) || 10 * 60; // 10 minutes
+-        if (parseInt(process.env.REFRESH_TOKEN_EXPIRY) > 0) {
++        if (parseInt(process.env.REFRESH_TOKEN_EXPIRY) > 0) { // parseInt(undefined) is NaN
+             Logger.info(`[TokenManager] Refresh token expiry set from ENV variable to ${this.RefreshTokenExpiry} seconds`);
+         }
+-        if (parseInt(process.env.ACCESS_TOKEN_EXPIRY) > 0) {
++        if (parseInt(process.env.ACCESS_TOKEN_EXPIRY) > 0) { // parseInt(undefined) is NaN
+             Logger.info(`[TokenManager] Access token expiry set from ENV variable to ${this.AccessTokenExpiry} seconds`);
+         }
+-        if (parseInt(process.env.REFRESH_TOKEN_GRACE_PERIOD) > 0) {
++        if (parseInt(process.env.REFRESH_TOKEN_GRACE_PERIOD) > 0) { // parseInt(undefined) is NaN
+             Logger.info(`[TokenManager] Refresh token grace period set from ENV variable to ${this.RefreshTokenGracePeriod} seconds`);
+         }
+     }
+@@ -42,6 +44,7 @@
+         else if (!Database.serverSettings.tokenSecret) {
+             // Generate new token secret and store it on server settings
+             Logger.info('[TokenManager] JWT secret key not found, generating one');
++            // Required here like the JS; typed as the node crypto module
+             TokenManager.TokenSecret = require('crypto').randomBytes(256).toString('base64');
+             Database.serverSettings.tokenSecret = TokenManager.TokenSecret;
+             await Database.updateServerSettings();
+@@ -53,9 +56,9 @@
+     }
+     /**
+      * Sets the refresh token cookie
+-     * @param {import('express').Request} req
+-     * @param {import('express').Response} res
+-     * @param {string} refreshToken
++     * @param req
++     * @param res
++     * @param refreshToken
+      */
+     setRefreshTokenCookie(req, res, refreshToken) {
+         res.cookie('refresh_token', refreshToken, {
+@@ -69,8 +72,7 @@
+     /**
+      * Whether a decoded JWT payload may authenticate API/socket requests (not refresh-only credentials).
+      *
+-     * @param {Object} decoded
+-     * @returns {boolean}
++     * @param decoded
+      */
+     static isBearerAccessTokenPayload(decoded) {
+         if (!decoded?.userId)
+@@ -83,8 +85,8 @@
+      * Function to validate a jwt token for a given user
+      * Used to authenticate socket connections
+      *
+-     * @param {string} token
+-     * @returns {Object} tokens data
++     * @param token
++     * @returns tokens data
+      */
+     static validateAccessToken(token) {
+         try {
+@@ -100,8 +102,7 @@
+      * TODO: Old method with no expiration
+      * @deprecated
+      *
+-     * @param {{ id:string, username:string }} user
+-     * @returns {string}
++     * @param user
+      */
+     static generateAccessToken(user) {
+         return jwt.sign({ userId: user.id, username: user.username }, TokenManager.TokenSecret);
+@@ -111,8 +112,7 @@
+      * TODO: Old method with no expiration
+      * @deprecated
+      *
+-     * @param {{ id:string, username:string }} user
+-     * @returns {string}
++     * @param user
+      */
+     generateAccessToken(user) {
+         return TokenManager.generateAccessToken(user);
+@@ -120,8 +120,7 @@
+     /**
+      * Generate access token for a given user
+      *
+-     * @param {{ id:string, username:string }} user
+-     * @returns {string}
++     * @param user
+      */
+     generateTempAccessToken(user) {
+         const payload = {
+@@ -144,8 +143,7 @@
+     /**
+      * Generate refresh token for a given user
+      *
+-     * @param {{ id:string, username:string }} user
+-     * @returns {string}
++     * @param user
+      */
+     generateRefreshToken(user) {
+         const payload = {
+@@ -168,9 +166,8 @@
+     /**
+      * Create tokens and session for a given user
+      *
+-     * @param {{ id:string, username:string }} user
+-     * @param {import('express').Request} req
+-     * @returns {Promise<{ accessToken:string, refreshToken:string, session:import('../models/Session') }>}
++     * @param user
++     * @param req
+      */
+     async createTokensAndSession(user, req) {
+         const ipAddress = requestIp.getClientIp(req);
+@@ -189,12 +186,11 @@
+     /**
+      * Rotate tokens for a given session
+      *
+-     * @param {import('../models/Session')} session
+-     * @param {import('../models/User')} user
+-     * @param {import('express').Request} req
+-     * @param {import('express').Response} res
+-     * @param {boolean} gracePeriod - whether to use the grace period
+-     * @returns {Promise<{ accessToken:string, refreshToken:string }>}
++     * @param session
++     * @param user
++     * @param req
++     * @param res
++     * @param gracePeriod - whether to use the grace period
+      */
+     async rotateTokensForSession(session, user, req, res, gracePeriod = true) {
+         const previousRefreshToken = session.refreshToken;
+@@ -227,7 +223,8 @@
+         });
+         if (numUpdated === 0) {
+             Logger.debug(`[TokenManager] Race condition in rotateTokensForSession for user ${user.id}, getting new token`);
+-            const updatedSession = await Database.sessionModel.findOne({ where: { id: session.id } });
++            // NOTE: if the session row was deleted in the meantime findOne returns null and the reads below throw
++            const updatedSession = (await Database.sessionModel.findOne({ where: { id: session.id } }));
+             newRefreshToken = updatedSession.refreshToken;
+             session.refreshToken = updatedSession.refreshToken;
+             session.expiresAt = updatedSession.expiresAt;
+@@ -250,12 +247,13 @@
+     /**
+      * Check if the jwt is valid
+      *
+-     * @param {Object} jwt_payload
+-     * @param {Function} done - passportjs callback
++     * @param jwt_payload
++     * @param done - passportjs callback
+      */
+     async jwtAuthCheck(jwt_payload, done) {
+         if (jwt_payload.type === 'api') {
+             // Api key based authentication
++            // API key tokens are signed with a keyId
+             const apiKey = await Database.apiKeyModel.getById(jwt_payload.keyId);
+             if (!apiKey?.isActive) {
+                 done(null, null);
+@@ -289,6 +287,7 @@
+                 return;
+             }
+             // load user by id from the jwt token
++            // isBearerAccessTokenPayload checked that userId is set
+             const user = await Database.userModel.getUserByIdOrOldId(jwt_payload.userId);
+             if (!user?.isActive) {
+                 // deny login
+@@ -311,10 +310,9 @@
+     /**
+      * Handle refresh token
+      *
+-     * @param {string} refreshToken
+-     * @param {import('express').Request} req
+-     * @param {import('express').Response} res
+-     * @returns {Promise<{ accessToken?:string, refreshToken?:string, user?:import('../models/User'), error?:string }>}
++     * @param refreshToken
++     * @param req
++     * @param res
+      */
+     async handleRefreshToken(refreshToken, req, res) {
+         try {
+@@ -326,11 +324,12 @@
+                     error: 'Invalid token type'
+                 };
+             }
+-            let session = await Database.sessionModel.findOne({
++            // Typed with the refresh token columns
++            let session = (await Database.sessionModel.findOne({
+                 where: {
+                     [Op.or]: [{ refreshToken: refreshToken }, { lastRefreshToken: refreshToken }]
+                 }
+-            });
++            }));
+             if (!session) {
+                 Logger.error(`[TokenManager] Failed to refresh token. Session not found`);
+                 return {
+@@ -389,6 +388,7 @@
+             };
+         }
+         catch (error) {
++            // jwt.verify and the queries throw Error objects
+             if (error.name === 'TokenExpiredError') {
+                 Logger.info(`[TokenManager] Refresh token expired, cleaning up session`);
+                 // Clean up the expired session from database
+@@ -399,19 +399,22 @@
+                     Logger.info(`[TokenManager] Expired session cleaned up`);
+                 }
+                 catch (cleanupError) {
++                    // The query throws Error objects
+                     Logger.error(`[TokenManager] Error cleaning up expired session: ${cleanupError.message}`);
+                 }
+                 return {
+                     error: 'Refresh token expired'
+                 };
+             }
+-            else if (error.name === 'JsonWebTokenError') {
++            else if (error.name === 'JsonWebTokenError') { // Error object (see above)
++                // Error object (see above)
+                 Logger.error(`[TokenManager] Invalid refresh token format: ${error.message}`);
+                 return {
+                     error: 'Invalid refresh token'
+                 };
+             }
+             else {
++                // Error object (see above)
+                 Logger.error(`[TokenManager] Refresh token error: ${error.message}`);
+                 return {
+                     error: 'Invalid refresh token'
+@@ -423,22 +426,24 @@
+      * Invalidate all JWT sessions for a given user
+      * If user is current user and refresh token is valid, rotate tokens for the current session
+      *
+-     * @param {import('../models/User')} user
+-     * @param {import('express').Request} req
+-     * @param {import('express').Response} res
+-     * @returns {Promise<{ accessToken:string, refreshToken:string }|null>} new tokens for the current session if kept alive
++     * @param user
++     * @param req
++     * @param res
++     * @returns new tokens for the current session if kept alive
+      */
+     async invalidateJwtSessionsForUser(user, req, res) {
+         const currentRefreshToken = req.cookies.refresh_token || req.headers['x-refresh-token'];
++        // Only called from authenticated routes, so req.user is set
+         if (req.user.id === user.id && currentRefreshToken) {
+             // Current user is the same as the user to invalidate sessions for
+             // So rotate token for current session
+-            const currentSession = await Database.sessionModel.findOne({
++            // Typed with the refresh token columns
++            const currentSession = (await Database.sessionModel.findOne({
+                 where: {
+                     userId: user.id,
+                     [Op.or]: [{ refreshToken: currentRefreshToken }, { lastRefreshToken: currentRefreshToken }]
+                 }
+-            });
++            }));
+             if (currentSession) {
+                 const newTokens = await this.rotateTokensForSession(currentSession, user, req, res, false);
+                 // Invalidate all sessions for the user except the current one
+@@ -467,7 +472,7 @@
+     /**
+      * Destroy all JWT sessions for the user that owns this refresh token
+      *
+-     * @param {string} refreshToken
++     * @param refreshToken
+      */
+     async invalidateAllSessionsForRefreshToken(refreshToken) {
+         if (!refreshToken)
+@@ -485,8 +490,7 @@
+     /**
+      * Invalidate a refresh token - used for logout
+      *
+-     * @param {string} refreshToken
+-     * @returns {Promise<boolean>}
++     * @param refreshToken
+      */
+     async invalidateRefreshToken(refreshToken) {
+         if (!refreshToken) {
+@@ -499,6 +503,7 @@
+             return true;
+         }
+         catch (error) {
++            // The query throws Error objects
+             Logger.error(`[TokenManager] Error invalidating refresh token: ${error.message}`);
+             return false;
+         }
+Only in dist-server/server/auth: types.js
+diff -ruwB /tmp/abs-base3/dist-server/server/routers/ApiRouter.js dist-server/server/routers/ApiRouter.js
+--- /tmp/abs-base3/dist-server/server/routers/ApiRouter.js	2026-10-03 22:28:21.349256201 +1300
++++ dist-server/server/routers/ApiRouter.js	2026-10-03 22:28:12.613024525 +1300
+@@ -1,56 +1,54 @@
+ "use strict";
+-const express = require('express');
+-const Path = require('path');
+-const sequelize = require('sequelize');
+-const Logger = require('../Logger');
+-const Database = require('../Database');
+-const SocketAuthority = require('../SocketAuthority');
+-const fs = require('../libs/fsExtra');
+-const date = require('../libs/dateAndTime');
+-const CacheManager = require('../managers/CacheManager');
+-const RssFeedManager = require('../managers/RssFeedManager');
+-const LibraryController = require('../controllers/LibraryController');
+-const UserController = require('../controllers/UserController');
+-const CollectionController = require('../controllers/CollectionController');
+-const PlaylistController = require('../controllers/PlaylistController');
+-const MeController = require('../controllers/MeController');
+-const BackupController = require('../controllers/BackupController');
+-const LibraryItemController = require('../controllers/LibraryItemController');
+-const SeriesController = require('../controllers/SeriesController');
+-const FileSystemController = require('../controllers/FileSystemController');
+-const AuthorController = require('../controllers/AuthorController');
+-const SessionController = require('../controllers/SessionController');
+-const PodcastController = require('../controllers/PodcastController');
+-const NotificationController = require('../controllers/NotificationController');
+-const EmailController = require('../controllers/EmailController');
+-const SearchController = require('../controllers/SearchController');
+-const CacheController = require('../controllers/CacheController');
+-const ToolsController = require('../controllers/ToolsController');
+-const RSSFeedController = require('../controllers/RSSFeedController');
+-const CustomMetadataProviderController = require('../controllers/CustomMetadataProviderController');
+-const MiscController = require('../controllers/MiscController');
+-const ShareController = require('../controllers/ShareController');
+-const StatsController = require('../controllers/StatsController');
+-const ApiKeyController = require('../controllers/ApiKeyController');
++const express = require("express");
++const Path = require("path");
++const sequelize = require("sequelize");
++const Logger = require("../Logger");
++const DatabaseModule = require("../Database");
++const SocketAuthority = require("../SocketAuthority");
++const fsExtra = require("../libs/fsExtra");
++const dateAndTime = require("../libs/dateAndTime");
++const CacheManager = require("../managers/CacheManager");
++const RssFeedManager = require("../managers/RssFeedManager");
++const LibraryController = require("../controllers/LibraryController");
++const UserController = require("../controllers/UserController");
++const CollectionController = require("../controllers/CollectionController");
++const PlaylistController = require("../controllers/PlaylistController");
++const MeController = require("../controllers/MeController");
++const BackupController = require("../controllers/BackupController");
++const LibraryItemController = require("../controllers/LibraryItemController");
++const SeriesController = require("../controllers/SeriesController");
++const FileSystemController = require("../controllers/FileSystemController");
++const AuthorController = require("../controllers/AuthorController");
++const SessionController = require("../controllers/SessionController");
++const PodcastController = require("../controllers/PodcastController");
++const NotificationController = require("../controllers/NotificationController");
++const EmailController = require("../controllers/EmailController");
++const SearchController = require("../controllers/SearchController");
++const CacheController = require("../controllers/CacheController");
++const ToolsController = require("../controllers/ToolsController");
++const RSSFeedController = require("../controllers/RSSFeedController");
++const CustomMetadataProviderController = require("../controllers/CustomMetadataProviderController");
++const MiscController = require("../controllers/MiscController");
++const ShareController = require("../controllers/ShareController");
++const StatsController = require("../controllers/StatsController");
++const ApiKeyController = require("../controllers/ApiKeyController");
++// Typed views of the untyped vendored fs-extra and date-and-time
++const fs = fsExtra;
++const date = dateAndTime;
++// Same object; typed for the queries here
++const Database = DatabaseModule;
+ class ApiRouter {
+     constructor(Server) {
+-        /** @type {import('../Auth')} */
+         this.auth = Server.auth;
+-        /** @type {import('../managers/PlaybackSessionManager')} */
+         this.playbackSessionManager = Server.playbackSessionManager;
+-        /** @type {import('../managers/AbMergeManager')} */
+         this.abMergeManager = Server.abMergeManager;
+-        /** @type {import('../managers/BackupManager')} */
+         this.backupManager = Server.backupManager;
+-        /** @type {import('../managers/PodcastManager')} */
+         this.podcastManager = Server.podcastManager;
+-        /** @type {import('../managers/AudioMetadataManager')} */
+         this.audioMetadataManager = Server.audioMetadataManager;
+-        /** @type {import('../managers/CronManager')} */
+         this.cronManager = Server.cronManager;
+-        /** @type {import('../managers/EmailManager')} */
+         this.emailManager = Server.emailManager;
+         this.apiCacheManager = Server.apiCacheManager;
++        // Same app; typed so the routes accept the JS controller handlers
+         this.router = express();
+         this.router.disable('x-powered-by');
+         this.init();
+@@ -335,9 +333,9 @@
+     //
+     /**
+      * Remove library item and associated entities
+-     * @param {string} libraryItemId
+-     * @param {string[]} mediaItemIds array of bookId or podcastEpisodeId
+-     * @param {string} libraryId
++     * @param libraryItemId
++     * @param mediaItemIds array of bookId or podcastEpisodeId
++     * @param libraryId
+      */
+     async handleDeleteLibraryItem(libraryItemId, mediaItemIds, libraryId) {
+         const numProgressRemoved = await Database.mediaProgressModel.destroy({
+@@ -371,7 +369,7 @@
+     /**
+      * After deleting book(s), remove empty series
+      *
+-     * @param {string[]} seriesIds
++     * @param seriesIds
+      */
+     async checkRemoveEmptySeries(seriesIds) {
+         if (!seriesIds?.length)
+@@ -392,6 +390,7 @@
+                     required: false // Ensure it includes series even if no books exist
+                 },
+                 transaction
++                // Sequelize accepts an array of where conditions at runtime; its types do not
+             })).map((s) => ({ id: s.id, name: s.name, libraryId: s.libraryId }));
+             if (seriesToRemove.length) {
+                 await Database.seriesModel.destroy({
+@@ -415,6 +414,7 @@
+         }
+         catch (error) {
+             await transaction.rollback();
++            // The queries throw Error objects
+             Logger.error(`[ApiRouter] Error removing empty series: ${error.message}`);
+         }
+     }
+@@ -422,8 +422,7 @@
+      * Remove authors with no books and unset asin, description and imagePath
+      * Note: Other implementation is in BookScanner.checkAuthorsRemovedFromBooks (can be merged)
+      *
+-     * @param {string[]} authorIds
+-     * @returns {Promise<void>}
++     * @param authorIds
+      */
+     async checkRemoveAuthorsWithNoBooks(authorIds) {
+         if (!authorIds?.length)
+@@ -450,6 +449,7 @@
+                 attributes: ['id', 'name', 'libraryId'],
+                 raw: true,
+                 transaction
++                // Sequelize accepts an array of where conditions at runtime; its types do not
+             })).map((au) => ({ id: au.id, name: au.name, libraryId: au.libraryId }));
+             if (bookAuthorsToRemove.length) {
+                 await Database.authorModel.destroy({
+@@ -470,15 +470,18 @@
+         }
+         catch (error) {
+             await transaction.rollback();
++            // The queries throw Error objects
+             Logger.error(`[ApiRouter] Error removing authors: ${error.message}`);
+         }
+     }
+     async getUserListeningSessionsHelper(userId) {
+         const userSessions = await Database.getPlaybackSessions({ userId });
++        // Stored sessions always have updatedAt
+         return userSessions.sort((a, b) => b.updatedAt - a.updatedAt);
+     }
+     async getUserItemListeningSessionsHelper(userId, mediaItemId) {
+         const userSessions = await Database.getPlaybackSessions({ userId, mediaItemId });
++        // Stored sessions always have updatedAt
+         return userSessions.sort((a, b) => b.updatedAt - a.updatedAt);
+     }
+     async getUserListeningStatsHelpers(userId) {
+@@ -492,7 +495,9 @@
+             today: 0,
+             recentSessions: listeningSessions.slice(0, 10)
+         };
+-        listeningSessions.forEach((s) => {
++        // Same array; typed as the stats read the sessions (see ListeningStatsSession)
++        const sessionsForStats = listeningSessions;
++        sessionsForStats.forEach((s) => {
+             let sessionTimeListening = s.timeListening;
+             if (typeof sessionTimeListening == 'string') {
+                 sessionTimeListening = Number(sessionTimeListening);
+@@ -515,6 +520,7 @@
+                     id: s.libraryItemId,
+                     timeListening: sessionTimeListening,
+                     mediaMetadata: s.mediaMetadata,
++                    // NOTE: PlaybackSession has no lastUpdate field (it is updatedAt), so lastUpdate is always undefined
+                     lastUpdate: s.lastUpdate
+                 };
+             }
+diff -ruwB /tmp/abs-base3/dist-server/server/routers/HlsRouter.js dist-server/server/routers/HlsRouter.js
+--- /tmp/abs-base3/dist-server/server/routers/HlsRouter.js	2026-10-03 22:28:21.349256201 +1300
++++ dist-server/server/routers/HlsRouter.js	2026-10-03 22:28:12.616024605 +1300
+@@ -1,9 +1,11 @@
+ "use strict";
+-const express = require('express');
+-const Path = require('path');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const fs = require('../libs/fsExtra');
++const express = require("express");
++const Path = require("path");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const fsExtra = require("../libs/fsExtra");
++// Typed view of the untyped vendored fs-extra
++const fs = fsExtra;
+ class HlsRouter {
+     constructor(auth, playbackSessionManager) {
+         this.auth = auth;
+@@ -25,9 +27,9 @@
+      * Used to prevent arbitrary file reads
+      * @see https://nodejs.org/api/path.html#pathrelativefrom-to
+      *
+-     * @param {string} streamDir
+-     * @param {string} filepath
+-     * @returns {boolean}
++     * @param streamDir
++     * @param filepath
++     * @returns falsy when the path is not inside streamDir
+      */
+     validateStreamFilePath(streamDir, filepath) {
+         const relative = Path.relative(streamDir, filepath);
+@@ -37,8 +39,8 @@
+      * GET /hls/:stream/:file
+      * File must have extname .ts or .m3u8
+      *
+-     * @param {express.Request} req
+-     * @param {express.Response} res
++     * @param req
++     * @param res
+      */
+     async streamFileRequest(req, res) {
+         const streamId = req.params.stream;
+diff -ruwB /tmp/abs-base3/dist-server/server/routers/PublicRouter.js dist-server/server/routers/PublicRouter.js
+--- /tmp/abs-base3/dist-server/server/routers/PublicRouter.js	2026-10-03 22:28:21.312255228 +1300
++++ dist-server/server/routers/PublicRouter.js	2026-10-03 22:28:12.622024765 +1300
+@@ -1,10 +1,9 @@
+ "use strict";
+-const express = require('express');
+-const ShareController = require('../controllers/ShareController');
+-const SessionController = require('../controllers/SessionController');
++const express = require("express");
++const ShareController = require("../controllers/ShareController");
++const SessionController = require("../controllers/SessionController");
+ class PublicRouter {
+     constructor(playbackSessionManager) {
+-        /** @type {import('../managers/PlaybackSessionManager')} */
+         this.playbackSessionManager = playbackSessionManager;
+         this.router = express();
+         this.router.disable('x-powered-by');

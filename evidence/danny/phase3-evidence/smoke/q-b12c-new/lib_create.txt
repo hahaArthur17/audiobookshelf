@@ -1,0 +1,37 @@
+STATUS 200
+LOCATION 
+{
+ "createdAt": "MASK",
+ "displayOrder": 3,
+ "folders": [
+  {
+   "addedAt": "MASK",
+   "fullPath": "ROOT/lib/extra",
+   "id": "MASK",
+   "libraryId": "MASK"
+  }
+ ],
+ "icon": "database",
+ "id": "MASK",
+ "lastScan": null,
+ "lastUpdate": "MASK",
+ "mediaType": "book",
+ "name": "Extra",
+ "provider": "google",
+ "settings": {
+  "audiobooksOnly": false,
+  "autoScanCronExpression": "0 0 * * *",
+  "coverAspectRatio": 0,
+  "disableWatcher": false,
+  "epubsAllowScriptedContent": false,
+  "hideSingleBookSeries": false,
+  "markAsFinishedPercentComplete": 50,
+  "markAsFinishedTimeRemaining": 10,
+  "metadataPrecedence": [
+   "folderStructure"
+  ],
+  "onlyShowLaterBooksInContinueSeries": false,
+  "skipMatchingMediaWithAsin": false,
+  "skipMatchingMediaWithIsbn": false
+ }
+}

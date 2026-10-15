@@ -1,0 +1,88 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-base/config, METADATA_PATH=/tmp/abs-base/metadata, PORT=3334, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 21:13:58.737] INFO: === Starting Server ===
+[2026-10-10 21:13:58.738] INFO: [Server] Init v2.37.0
+[2026-10-10 21:13:58.738] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 21:13:58.738] INFO: [Server] Platform: linux
+[2026-10-10 21:13:58.738] INFO: [Server] Arch: x64
+[2026-10-10 21:13:58.745] INFO: [BinaryManager] Found valid executable ffmpeg at /home/danny/Code/compx574/audiobookshelf/ffmpeg
+[2026-10-10 21:13:58.748] INFO: [BinaryManager] Found valid executable ffprobe at /home/danny/Code/compx574/audiobookshelf/ffprobe
+[2026-10-10 21:13:58.749] INFO: [BinaryManager] libnusqlite3 not found or not a valid version
+[2026-10-10 21:13:58.750] INFO: [BinaryManager] Installing binaries: libnusqlite3
+[2026-10-10 21:13:59.743] INFO: [BinaryManager] Binaries installed to /tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/430aaee7-a062-41eb-9ebd-6c5e305b6d77/scratchpad/abs-base
+[2026-10-10 21:13:59.747] INFO: [BinaryManager] Found valid executable ffmpeg at /home/danny/Code/compx574/audiobookshelf/ffmpeg
+[2026-10-10 21:13:59.749] INFO: [BinaryManager] Found valid executable ffprobe at /home/danny/Code/compx574/audiobookshelf/ffprobe
+[2026-10-10 21:13:59.750] INFO: [BinaryManager] Found valid library libnusqlite3 at /tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/430aaee7-a062-41eb-9ebd-6c5e305b6d77/scratchpad/abs-base/libnusqlite3.so
+[2026-10-10 21:13:59.750] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-10 21:13:59.751] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-base/config/absdatabase.sqlite
+[2026-10-10 21:13:59.751] INFO: [Database] Initializing db at "/tmp/abs-base/config/absdatabase.sqlite"
+[2026-10-10 21:13:59.760] INFO: [Database] Loading extension /tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/430aaee7-a062-41eb-9ebd-6c5e305b6d77/scratchpad/abs-base/libnusqlite3.so
+[2026-10-10 21:13:59.760] INFO: [Database] Successfully loaded extension /tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/430aaee7-a062-41eb-9ebd-6c5e305b6d77/scratchpad/abs-base/libnusqlite3.so
+[2026-10-10 21:13:59.760] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-10 21:13:59.760] INFO: [Database] Db connection was successful
+[2026-10-10 21:13:59.783] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 21:14:00.084] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 21:14:00.084] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 21:14:00.089] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 21:14:00.093] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 21:14:00.097] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 21:14:00.102] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 21:14:00.107] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 21:14:00.112] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 21:14:00.132] INFO: [Database] running ANALYZE
+[2026-10-10 21:14:00.137] INFO: [Database] ANALYZE completed
+[2026-10-10 21:14:00.138] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 21:14:00.138] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 21:14:00.144] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 21:14:00.147] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 21:14:00.147] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 21:14:00.155] INFO: Listening on port :3334
+[2026-10-10 21:15:19.771] INFO: [Server] Initializing new server
+[2026-10-10 21:15:23.348] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 21:15:23.476] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io ZvN_L5j9pntDZHfRAAAB
+[2026-10-10 21:16:00.779] INFO: [Watcher] Initializing watcher for "Original Books".
+[2026-10-10 21:16:00.788] INFO: [Watcher] "Original Books" Ready
+[2026-10-10 21:16:06.452] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 21:16:06.452] INFO: [LibraryScanner] Starting (forced) library scan 9a9d5141-b280-4e40-a96f-eb80089e7386 for Original Books
+[2026-10-10 21:16:06.583] WARN: Cover image not found in manifest for epub at "/tmp/abs-fe/books/Ebook Author/EPUB Book/EPUB Book.epub"
+[2026-10-10 21:16:06.614] WARN: Cover image not found in manifest for epub at "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 21:16:06.718] INFO: [LibraryScanner] Library scan "9a9d5141-b280-4e40-a96f-eb80089e7386" completed in 0:00 | 8 Added | 0 Updated | 0 Missing
+[2026-10-10 21:16:06.728] INFO: [LibraryScan] Scan log saved "/tmp/abs-base/metadata/logs/scans/2026-10-10_9a9d5141-b280-4e40-a96f-eb80089e7386.txt"
+[2026-10-10 21:16:06.729] INFO: [LibraryController] Scan complete
+[2026-10-10 21:16:16.623] INFO: [LibraryItemController] User "root" requested download for item "Combo Book" ebook at "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 21:16:16.624] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 21:17:12.250] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-base/metadata/items/db27aa7c-c4f8-4758-acde-33149d84aaa6"
+[2026-10-10 21:17:12.305] INFO: [LibraryItemController] Deleting library item from file system at "/tmp/abs-fe/books/Loose Book.pdf"
+[2026-10-10 21:17:22.299] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-base/metadata/items/5bb4d691-fe1e-47cf-b32d-5b333b33d5b7"
+[2026-10-10 21:17:24.616] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Loose Book.pdf" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Loose Book.pdf'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Loose Book.pdf'
+}
+[2026-10-10 21:17:24.616] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Loose Book.pdf" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Loose Book.pdf'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Loose Book.pdf'
+}
+[2026-10-10 21:17:24.616] INFO: [LibraryScanner] File update group "Loose Book.pdf" does not exist - ignoring
+[2026-10-10 21:17:48.889] INFO: [SocketAuthority] Socket ZvN_L5j9pntDZHfRAAAB disconnected from client "root" after 145413ms (Reason: client namespace disconnect)
+[2026-10-10 21:17:48.929] INFO: [TokenManager] Refresh token invalidated, 1 sessions deleted
+[2026-10-10 21:17:52.714] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 21:18:10.215] INFO: [Watcher] Removed watcher for "Original Books"
+[2026-10-10 21:18:10.218] INFO: [LibraryController] Removing 6 library items in library "Original Books"
+[2026-10-10 21:18:10.218] INFO: [LibraryController] Removing library item "a649075b-7d1c-4dec-baab-a4739d4387d5" from library "Original Books"
+[2026-10-10 21:18:10.225] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-base/metadata/items/a649075b-7d1c-4dec-baab-a4739d4387d5"
+[2026-10-10 21:18:10.235] INFO: [LibraryController] Removing library item "c3521c40-3fe9-4060-ad78-00659d53a253" from library "Original Books"
+[2026-10-10 21:18:10.244] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-base/metadata/items/c3521c40-3fe9-4060-ad78-00659d53a253"
+[2026-10-10 21:18:10.250] INFO: [LibraryController] Removing library item "b81dafd9-de8f-44b5-ae3b-da1d51d7207a" from library "Original Books"
+[2026-10-10 21:18:10.266] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-base/metadata/items/b81dafd9-de8f-44b5-ae3b-da1d51d7207a"
+[2026-10-10 21:18:10.275] INFO: [LibraryController] Removing library item "51896bb8-0d8d-43be-a10d-0b96aa964841" from library "Original Books"
+[2026-10-10 21:18:10.286] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-base/metadata/items/51896bb8-0d8d-43be-a10d-0b96aa964841"
+[2026-10-10 21:18:10.293] INFO: [LibraryController] Removing library item "2dd255f9-1c7e-406f-8c91-53591a88468d" from library "Original Books"
+[2026-10-10 21:18:10.303] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-base/metadata/items/2dd255f9-1c7e-406f-8c91-53591a88468d"
+[2026-10-10 21:18:10.309] INFO: [LibraryController] Removing library item "aadf1d8e-bc77-4641-84a1-5d947a0d525a" from library "Original Books"
+[2026-10-10 21:18:10.320] INFO: [ApiRouter] Removed 1 media progress entries for library item "aadf1d8e-bc77-4641-84a1-5d947a0d525a"
+[2026-10-10 21:18:10.322] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-base/metadata/items/aadf1d8e-bc77-4641-84a1-5d947a0d525a"
+[2026-10-10 21:18:10.330] INFO: [LibraryController] Updated 0 playback sessions to remove library id

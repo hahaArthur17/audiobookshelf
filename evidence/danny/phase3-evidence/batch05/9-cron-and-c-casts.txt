@@ -1,0 +1,59 @@
+--- original CronManager.js
+166:          this.executePodcastCron(expression, libraryItemIds)
+179:  async executePodcastCron(expression) {
+--- cast(c) lines with 2 lines after
+server/managers/NotificationManager.ts:152:      // cast(c): passed on as in the JS (see NOTE above)
+server/managers/NotificationManager.ts-153-      const success = intentionallyFail ? false : await this.sendNotification(notification, eventData as EventData)
+server/managers/NotificationManager.ts-154-
+--
+server/managers/CronManager.ts:259:        // cast(c): read as in the JS (see NOTE above)
+server/managers/CronManager.ts-260-        const podcastTitle = libraryItem.media.title || (libraryItem.media as { metadata?: { title?: string } }).metadata?.title
+server/managers/CronManager.ts-261-        Logger.info(`[CronManager] Added podcast "${podcastTitle}" to auto dl episode cron "${cronMatchingExpression.expression}"`)
+--
+server/managers/RssFeedManager.ts:110:      // cast(c): assigned as in the JS (see NOTE above)
+server/managers/RssFeedManager.ts-111-      feed.entity = (await feed.getEntity({
+server/managers/RssFeedManager.ts-112-        attributes: ['id', 'updatedAt', 'mediaId', 'mediaType']
+--
+server/managers/RssFeedManager.ts:144:      // cast(c): assigned as in the JS (see NOTE above)
+server/managers/RssFeedManager.ts-145-      feed.entity = (await feed.getEntity({
+server/managers/RssFeedManager.ts-146-        attributes: ['id', 'updatedAt'],
+--
+server/managers/RssFeedManager.ts:205:      // cast(c): assigned as in the JS (see NOTE above)
+server/managers/RssFeedManager.ts-206-      feed = (await feed.updateFeedForEntity()) as Feed
+server/managers/RssFeedManager.ts-207-    }
+--
+server/managers/PodcastManager.ts:605:        // cast(c): read as in the JS (see NOTE above)
+server/managers/PodcastManager.ts-606-        const libraryItemFolderStats = (await getFileTimestampsWithIno(podcastPath)) as Exclude<Awaited<ReturnType<typeof getFileTimestampsWithIno>>, false>
+server/managers/PodcastManager.ts-607-
+--
+server/managers/PodcastManager.ts:632:            // cast(c): passed on as in the JS (see NOTE above)
+server/managers/PodcastManager.ts-633-            relPath: podcastFilename as string,
+server/managers/PodcastManager.ts-634-            mediaId: podcast.id,
+--
+server/managers/MigrationManager.ts:73:  // cast(c): read as in the JS (see NOTE above)
+server/managers/MigrationManager.ts-74-  constructor(sequelize: sequelizeModule.Sequelize, isDatabaseNew: boolean, configPath = (global as typeof globalThis & { configPath?: string }).configPath) {
+server/managers/MigrationManager.ts-75-    if (!sequelize || !(sequelize instanceof Sequelize)) throw new Error('Sequelize instance is required for MigrationManager.')
+--
+server/scanner/AudioFileScanner.ts:173:    // cast(c): read as in the JS (see NOTE above)
+server/scanner/AudioFileScanner.ts-174-    const { title, author, series, publishedYear } = mediaMetadataFromScan as MediaMetadataFromScan & { author?: string; series?: string }
+server/scanner/AudioFileScanner.ts-175-    // setDataFromPath sets the filename and path of scanned files
+--
+server/scanner/AudioFileScanner.ts:184:    // cast(c): called as in the JS (see NOTE above)
+server/scanner/AudioFileScanner.ts-185-    if (publishedYear) partbasename = (partbasename as string & { replace(searchValue: string): string }).replace(publishedYear)
+server/scanner/AudioFileScanner.ts-186-
+--
+server/scanner/PodcastScanner.ts:450:      // cast(c): read as in the JS (see NOTE above)
+server/scanner/PodcastScanner.ts-451-      asin: (libraryItem.media as Podcast & { asin?: string }).asin,
+server/scanner/PodcastScanner.ts-452-      language: libraryItem.media.language,
+--
+server/scanner/MediaProbeData.ts:85:    // cast(c): read as in the JS (see NOTE above)
+server/scanner/MediaProbeData.ts-86-    this.audioStream = data.audio_stream as ProbeStreamInfo
+server/scanner/MediaProbeData.ts-87-    this.videoStream = this.embeddedCoverArt ? null : data.video_stream || null
+--
+server/scanner/LibraryItemScanner.ts:155:    // cast(c): read as in the JS (see NOTE above)
+server/scanner/LibraryItemScanner.ts-156-    const libraryItemStats = (await fileUtils.getFileTimestampsWithIno(libraryItemData.path)) as Exclude<Awaited<ReturnType<typeof fileUtils.getFileTimestampsWithIno>>, false>
+server/scanner/LibraryItemScanner.ts-157-    return new LibraryItemScanData({
+--
+server/scanner/LibraryScanner.ts:231:            // cast(c): pushed as in the JS (see NOTE above)
+server/scanner/LibraryScanner.ts-232-            libraryItemsUpdated.push(libraryItem as LibraryItem.LibraryItemExpanded)
+server/scanner/LibraryScanner.ts-233-          }

@@ -1,0 +1,36 @@
+== managers/ApiCacheManager.ts:140
+128:       // cast(b): express types send as returning the response; the caching send returns nothing, as in the JS
+== managers/RssFeedManager.ts:113
+110:       // cast(c): assigned as in the JS (see NOTE above)
+== managers/RssFeedManager.ts:158
+144:       // cast(c): assigned as in the JS (see NOTE above)
+147:         // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+== managers/RssFeedManager.ts:159
+144:       // cast(c): assigned as in the JS (see NOTE above)
+147:         // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+== managers/EmailManager.ts:42
+36:     // cast(d): the from and to addresses are null when not set; nodemailer types them as optional, the null is passed on as in the JS
+== managers/EmailManager.ts:76
+64:     // cast(d): the from address is null when not set; nodemailer types it as optional, the null is passed on as in the JS
+== scanner/AudioFileScanner.ts:176
+173:     // cast(c): read as in the JS (see NOTE above)
+== scanner/AudioFileScanner.ts:218
+216:     // cast(d): an error result only has error, which is checked first; the other reads come after that check
+== scanner/PodcastScanner.ts:49
+42:     // cast(d): the media of a podcast library item is a podcast (with its episodes included)
+== scanner/PodcastScanner.ts:354
+348:     // cast(b): created with the nested podcast (the association sets mediaId) and the scanned LibraryFile objects (serialized with toJSON)
+350:       // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+== scanner/PodcastScanner.ts:365
+350:       // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+362:     // cast(d): the media of the new podcast library item is the podcast created above
+== scanner/BookScanner.ts:118
+98:     // cast(d): the media of a book library item is a book (with its authors and series included)
+== scanner/BookScanner.ts:632
+621:     // cast(b): created with the nested book, book series and book authors (the associations set the ids) and the scanned LibraryFile objects (serialized with toJSON)
+626:           // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+== scanner/BookScanner.ts:639
+626:           // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+633:           // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+== scanner/BookScanner.ts:695
+675:     // cast(d): the media of the new book library item is the book created above

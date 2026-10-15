@@ -1,0 +1,214 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-DkBP/config, METADATA_PATH=/tmp/abs-q/qwork-DkBP/metadata, PORT=13472, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 18:31:35.049] INFO: === Starting Server ===
+[2026-10-10 18:31:35.050] INFO: [Server] Init v2.37.0
+[2026-10-10 18:31:35.050] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 18:31:35.050] INFO: [Server] Platform: linux
+[2026-10-10 18:31:35.050] INFO: [Server] Arch: x64
+[2026-10-10 18:31:35.054] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 18:31:35.055] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-q/qwork-DkBP/config/absdatabase.sqlite
+[2026-10-10 18:31:35.055] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-DkBP/config/absdatabase.sqlite"
+[2026-10-10 18:31:35.063] INFO: [Database] Db connection was successful
+[2026-10-10 18:31:35.191] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 18:31:35.739] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 18:31:35.740] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 18:31:35.748] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 18:31:35.754] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 18:31:35.760] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 18:31:35.767] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 18:31:35.775] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 18:31:35.784] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 18:31:35.830] INFO: [Database] running ANALYZE
+[2026-10-10 18:31:35.838] INFO: [Database] ANALYZE completed
+[2026-10-10 18:31:35.838] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 18:31:35.838] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 18:31:35.844] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 18:31:35.847] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 18:31:35.847] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 18:31:35.855] INFO: Listening on port :13472
+[2026-10-10 18:31:36.822] INFO: Received ping
+[2026-10-10 18:31:36.832] INFO: [Server] Initializing new server
+[2026-10-10 18:31:36.904] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 18:31:36.979] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 18:31:36.987] INFO: [Watcher] "Books" Ready
+[2026-10-10 18:31:37.003] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 18:31:37.005] INFO: [Watcher] "Pods" Ready
+[2026-10-10 18:31:37.015] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 18:31:37.015] INFO: [LibraryScanner] Starting (forced) library scan 22d1cc0c-3a6d-4274-8a53-b855b287866e for Books
+[2026-10-10 18:31:37.021] INFO: [LibraryScanner] Starting library scan 3048fb21-f2c0-458e-9edf-35bb03fa5445 for Pods
+[2026-10-10 18:31:37.223] INFO: [LibraryScanner] Library scan "3048fb21-f2c0-458e-9edf-35bb03fa5445" completed in 0:00 | 2 Added | 0 Updated | 0 Missing
+[2026-10-10 18:31:37.235] INFO: [LibraryScan] Scan log saved "/tmp/abs-q/qwork-DkBP/metadata/logs/scans/2026-10-10_3048fb21-f2c0-458e-9edf-35bb03fa5445.txt"
+[2026-10-10 18:31:37.236] INFO: [LibraryController] Scan complete
+[2026-10-10 18:31:37.271] ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "/tmp/abs-q/qwork-DkBP/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 18:31:37.272] ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 18:31:37.402] INFO: [LibraryScanner] Library scan "22d1cc0c-3a6d-4274-8a53-b855b287866e" completed in 0:00 | 7 Added | 0 Updated | 0 Missing
+[2026-10-10 18:31:37.407] INFO: [LibraryScan] Scan log saved "/tmp/abs-q/qwork-DkBP/metadata/logs/scans/2026-10-10_22d1cc0c-3a6d-4274-8a53-b855b287866e.txt"
+[2026-10-10 18:31:37.407] INFO: [LibraryController] Scan complete
+[2026-10-10 18:31:43.337] INFO: [MiscController] Enabling active auth method "openid"
+[2026-10-10 18:31:43.961] ERROR: [LibraryItem] Library item not found with id "nope"
+[2026-10-10 18:31:44.006] FATAL: [Server] Unhandled rejection: TypeError: (optionalString(...) || "").split is not a function
+    at ApiRouter.findOne (/home/danny/Code/compx574/audiobookshelf/dist-server/server/controllers/LibraryItemController.js:49:75)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/home/danny/Code/compx574/audiobookshelf/dist-server/server/controllers/LibraryItemController.js:1059:9) 
+promise: Promise {
+  <rejected> TypeError: (optionalString(...) || "").split is not a function
+      at ApiRouter.findOne (/home/danny/Code/compx574/audiobookshelf/dist-server/server/controllers/LibraryItemController.js:49:75)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/home/danny/Code/compx574/audiobookshelf/dist-server/server/controllers/LibraryItemController.js:1059:9)
+}
+=== restart after f_inc_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-DkBP/config, METADATA_PATH=/tmp/abs-q/qwork-DkBP/metadata, PORT=13472, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 18:31:45.293] INFO: === Starting Server ===
+[2026-10-10 18:31:45.293] INFO: [Server] Init v2.37.0
+[2026-10-10 18:31:45.294] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 18:31:45.294] INFO: [Server] Platform: linux
+[2026-10-10 18:31:45.294] INFO: [Server] Arch: x64
+[2026-10-10 18:31:45.294] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 18:31:45.295] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-DkBP/config/absdatabase.sqlite"
+[2026-10-10 18:31:45.308] INFO: [Database] Db connection was successful
+[2026-10-10 18:31:45.310] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 18:31:45.355] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 18:31:45.485] WARN: Removed 1 sessions that were 3 seconds or less
+[2026-10-10 18:31:45.491] INFO: [Database] running ANALYZE
+[2026-10-10 18:31:45.497] INFO: [Database] ANALYZE completed
+[2026-10-10 18:31:45.497] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 18:31:45.498] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 18:31:45.508] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 18:31:45.508] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 18:31:45.512] INFO: [ShareManager] Loaded permanent media item share "4b247441-d6af-47f2-b898-52b5e388279a"
+[2026-10-10 18:31:45.516] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 18:31:45.517] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 18:31:45.521] INFO: Listening on port :13472
+[2026-10-10 18:31:45.524] INFO: [Watcher] "Pods" Ready
+[2026-10-10 18:31:45.525] INFO: [Watcher] "Books" Ready
+[2026-10-10 18:31:46.061] INFO: Received ping
+[2026-10-10 18:31:48.138] ERROR: [LibraryItemController] startPlaybackSession cannot playback 36d3a07e-fbf1-4c4c-8331-7593992289dc
+[2026-10-10 18:31:48.190] INFO: [PlaybackSessionManager] startSession: Closing open session "Tagged Book Album" for user "root" (Device: null null / null)
+[2026-10-10 18:31:48.235] ERROR: [LibraryItemController] startPlaybackSession episode nope not found for item a2d37cf0-0ce0-4a22-85c2-ac56db6f1545
+[2026-10-10 18:31:48.286] ERROR: [LibraryItemController] startEpisodePlaybackSession invalid media type 9266fe15-b3f3-4456-8ec1-3222c67b516d
+[2026-10-10 18:31:48.382] ERROR: [LibraryItemController] getMetadataObject: Invalid library item "OPF Title"
+[2026-10-10 18:31:48.432] ERROR: [LibraryItemController] getMetadataObject: Invalid library item "My Show"
+[2026-10-10 18:31:48.565] ERROR: [LibraryItemController] Library file "nope" does not exist for library item
+[2026-10-10 18:31:48.711] ERROR: [LibraryItemController] Library file "nope" does not exist for library item
+[2026-10-10 18:31:48.758] INFO: [LibraryItemController] User "root" requested download for item "OPF Title" file at "/tmp/abs-q/qwork-DkBP/lib/books/Author One/Book One/Book One.pdf"
+[2026-10-10 18:31:48.759] INFO: [LibraryItemController] Downloaded file "/tmp/abs-q/qwork-DkBP/lib/books/Author One/Book One/Book One.pdf"
+[2026-10-10 18:31:48.802] INFO: [LibraryItemController] User "root" requested download for item "Tagged Book Album" file at "/tmp/abs-q/qwork-DkBP/lib/books/Tag Author/Tagged Book/02.mp3"
+[2026-10-10 18:31:48.803] INFO: [LibraryItemController] Downloaded file "/tmp/abs-q/qwork-DkBP/lib/books/Tag Author/Tagged Book/02.mp3"
+[2026-10-10 18:31:48.848] INFO: [LibraryItemController] User "root" requested download for item "OPF Title" ebook at "/tmp/abs-q/qwork-DkBP/lib/books/Author One/Book One/Book One.pdf"
+[2026-10-10 18:31:48.849] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-q/qwork-DkBP/lib/books/Author One/Book One/Book One.pdf"
+[2026-10-10 18:31:48.898] INFO: [LibraryItemController] User "root" requested download for item "Only" ebook at "/tmp/abs-q/qwork-DkBP/lib/books/Author Six/Series Book/Series Book.epub"
+[2026-10-10 18:31:48.899] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-q/qwork-DkBP/lib/books/Author Six/Series Book/Series Book.epub"
+[2026-10-10 18:31:48.946] ERROR: [LibraryItemController] Invalid ebook file id "531360"
+[2026-10-10 18:31:48.997] ERROR: [LibraryItemController] No ebookFile for library item "My Show"
+[2026-10-10 18:31:49.046] ERROR: [LibraryItemController] No ebookFile for library item "Tagged Book Album"
+[2026-10-10 18:31:49.089] ERROR: [LibraryItemController] Invalid media type for ebook file status update
+[2026-10-10 18:31:49.135] ERROR: [LibraryItemController] Invalid ebook file id "531360"
+[2026-10-10 18:31:49.180] INFO: [LibraryItemController] Updating ebook file "Book One.pdf" to supplementary
+[2026-10-10 18:31:49.287] ERROR: [LibraryItemController] No ebookFile for library item "OPF Title"
+[2026-10-10 18:31:49.331] INFO: [LibraryItemController] Updating ebook file "Book One.pdf" to primary
+[2026-10-10 18:31:49.438] INFO: [LibraryItemController] Updating ebook file "Series Book.epub" to supplementary
+[2026-10-10 18:31:49.546] INFO: [LibraryItemController] User "root" requested download for item "Loose Book" at "/tmp/abs-q/qwork-DkBP/lib/books/Loose Book.pdf"
+[2026-10-10 18:31:49.547] INFO: [LibraryItemController] Downloaded item "Loose Book" at "/tmp/abs-q/qwork-DkBP/lib/books/Loose Book.pdf"
+[2026-10-10 18:31:49.594] INFO: [LibraryItemController] User "root" requested download for item "OPF Title" at "/tmp/abs-q/qwork-DkBP/lib/books/Author One/Book One"
+[2026-10-10 18:31:49.607] INFO: 1211 total bytes
+[2026-10-10 18:31:49.607] INFO: [LibraryItemController] Downloaded item "OPF Title" at "/tmp/abs-q/qwork-DkBP/lib/books/Author One/Book One"
+[2026-10-10 18:31:49.658] ERROR: [LibraryItemController] updateTracks invalid media type a2d37cf0-0ce0-4a22-85c2-ac56db6f1545
+[2026-10-10 18:31:49.706] ERROR: [LibraryItemController] updateTracks invalid orderedFileData 9266fe15-b3f3-4456-8ec1-3222c67b516d
+[2026-10-10 18:31:49.749] ERROR: [LibraryItemController] updateTracks invalid orderedFileData 9266fe15-b3f3-4456-8ec1-3222c67b516d
+[2026-10-10 18:31:49.794] ERROR: [LibraryItemController] updateTracks invalid orderedFileData 9266fe15-b3f3-4456-8ec1-3222c67b516d
+[2026-10-10 18:31:49.939] ERROR: [LibraryItemController] Invalid library item
+[2026-10-10 18:31:49.982] ERROR: [LibraryItemController] Invalid payload
+[2026-10-10 18:31:50.027] ERROR: [LibraryItemController] Invalid payload
+[2026-10-10 18:31:50.315] ERROR: [fileUtils] Failed to download file "/tmp/abs-q/qwork-DkBP/metadata/items/9266fe15-b3f3-4456-8ec1-3222c67b516d/cover" Error: Call to 127.0.0.1 is blocked.
+    at agent.createConnection (/home/danny/Code/compx574/audiobookshelf/node_modules/ssrf-req-filter/lib/index.js:31:13)
+    at Agent.createSocket (node:_http_agent:400:26)
+    at Agent.addRequest (node:_http_agent:340:10)
+    at new ClientRequest (node:_http_client:403:16)
+    at Object.request (node:http:102:10)
+    at RedirectableRequest._performRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:326:24)
+    at new RedirectableRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:100:8)
+    at Object.request (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:532:14)
+    at dispatchHttpRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/axios/lib/adapters/http.js:262:25)
+    at new Promise (<anonymous>)
+[2026-10-10 18:31:50.315] ERROR: [CoverManager] Download image file failed for "http://127.0.0.1:9/c.jpg" Error: Call to 127.0.0.1 is blocked.
+    at agent.createConnection (/home/danny/Code/compx574/audiobookshelf/node_modules/ssrf-req-filter/lib/index.js:31:13)
+    at Agent.createSocket (node:_http_agent:400:26)
+    at Agent.addRequest (node:_http_agent:340:10)
+    at new ClientRequest (node:_http_client:403:16)
+    at Object.request (node:http:102:10)
+    at RedirectableRequest._performRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:326:24)
+    at new RedirectableRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:100:8)
+    at Object.request (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:532:14)
+    at dispatchHttpRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/axios/lib/adapters/http.js:262:25)
+    at new Promise (<anonymous>)
+[2026-10-10 18:31:50.366] INFO: [CoverManager] Uploaded libraryItem cover "/tmp/abs-q/qwork-DkBP/metadata/items/9266fe15-b3f3-4456-8ec1-3222c67b516d/cover.jpg" for "Tagged Book Album"
+[2026-10-10 18:31:50.546] INFO: [CoverManager] Uploaded libraryItem cover "/tmp/abs-q/qwork-DkBP/metadata/items/a2d37cf0-0ce0-4a22-85c2-ac56db6f1545/cover.jpg" for "My Show"
+[2026-10-10 18:31:50.661] ERROR: [CoverManager] validate cover path is not a library item file "/nope.jpg"
+[2026-10-10 18:31:51.157] INFO: [ApiRouter] Series "JSON Series" is now empty. Removing series
+[2026-10-10 18:31:51.187] INFO: [ApiRouter] Removed author "JSON Author" with no books
+[2026-10-10 18:31:51.366] INFO: [ApiRouter] Series "New Series" is now empty. Removing series
+[2026-10-10 18:31:51.397] INFO: [ApiRouter] Removed author "New Author" with no books
+[2026-10-10 18:31:51.552] ERROR: [LibraryItemController] Invalid auto download schedule cron expression "bad cron" for library item "My Show"
+[2026-10-10 18:31:51.611] INFO: [CronManager] Stopping & removing podcast episode cron for 0 * * * *
+[2026-10-10 18:31:51.748] ERROR: [fileUtils] Failed to download file "/tmp/abs-q/qwork-DkBP/metadata/items/9266fe15-b3f3-4456-8ec1-3222c67b516d/cover" Error: Call to 127.0.0.1 is blocked.
+    at agent.createConnection (/home/danny/Code/compx574/audiobookshelf/node_modules/ssrf-req-filter/lib/index.js:31:13)
+    at Agent.createSocket (node:_http_agent:400:26)
+    at Agent.addRequest (node:_http_agent:340:10)
+    at new ClientRequest (node:_http_client:403:16)
+    at Object.request (node:http:102:10)
+    at RedirectableRequest._performRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:326:24)
+    at new RedirectableRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:100:8)
+    at Object.request (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:532:14)
+    at dispatchHttpRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/axios/lib/adapters/http.js:262:25)
+    at new Promise (<anonymous>)
+[2026-10-10 18:31:51.748] ERROR: [CoverManager] Download image file failed for "http://127.0.0.1:9/c.jpg" Error: Call to 127.0.0.1 is blocked.
+    at agent.createConnection (/home/danny/Code/compx574/audiobookshelf/node_modules/ssrf-req-filter/lib/index.js:31:13)
+    at Agent.createSocket (node:_http_agent:400:26)
+    at Agent.addRequest (node:_http_agent:340:10)
+    at new ClientRequest (node:_http_client:403:16)
+    at Object.request (node:http:102:10)
+    at RedirectableRequest._performRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:326:24)
+    at new RedirectableRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:100:8)
+    at Object.request (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:532:14)
+    at dispatchHttpRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/axios/lib/adapters/http.js:262:25)
+    at new Promise (<anonymous>)
+[2026-10-10 18:31:51.791] ERROR: [LibraryItemController] Batch update failed. Invalid payload
+[2026-10-10 18:31:51.834] ERROR: [LibraryItemController] Batch update failed. Each update payload must have a unique library item id
+[2026-10-10 18:31:51.880] ERROR: [LibraryItemController] Batch update failed. Not all library items found
+[2026-10-10 18:31:51.964] WARN: [LibraryItemController] Invalid auto download schedule cron expression "bad" for library item "My Show" - skipping update
+[2026-10-10 18:31:51.983] INFO: [ApiRouter] Removed author "Other Author" with no books
+[2026-10-10 18:31:52.306] WARN: [LibraryItemController] Re-scanning file library items not yet supported
+[2026-10-10 18:31:52.454] ERROR: [LibraryItemController] Re-scanning file library items not yet supported
+[2026-10-10 18:31:52.499] ERROR: [LibraryItemController] Library file "nope" does not exist for library item
+[2026-10-10 18:31:52.558] INFO: [LibraryItemController] User "root" requested file delete at "/tmp/abs-q/qwork-DkBP/lib/books/Author One/Book One/metadata.opf"
+[2026-10-10 18:31:52.609] INFO: [LibraryItemController] User "root" requested file delete at "/tmp/abs-q/qwork-DkBP/lib/books/Author One/Book One/Book One.pdf"
+[2026-10-10 18:31:52.708] INFO: [LibraryItemController] User "root" requested file delete at "/tmp/abs-q/qwork-DkBP/lib/books/Author Six/Series Book/Series Book.mp3"
+[2026-10-10 18:31:52.813] INFO: [LibraryItemController] User "root" requested file delete at "/tmp/abs-q/qwork-DkBP/lib/podcasts/My Show/ep1.mp3"
+[2026-10-10 18:31:52.916] ERROR: [LibraryItem] Library item not found with id "nope"
+[2026-10-10 18:31:52.964] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-DkBP/metadata/items/ef6d20b5-1b81-4eda-9e82-15de43f8a8bc"
+[2026-10-10 18:31:53.028] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-DkBP/metadata/items/027c9705-60fd-450e-bc05-ae5d4a458bd8"
+[2026-10-10 18:31:53.036] INFO: [LibraryItemController] Deleting library item from file system at "/tmp/abs-q/qwork-DkBP/lib/books/Loose Book.pdf"
+[2026-10-10 18:31:53.086] ERROR: [LibraryItem] Library item not found with id "027c9705-60fd-450e-bc05-ae5d4a458bd8"
+[2026-10-10 18:31:53.136] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-DkBP/metadata/items/a60a4ff5-a781-4975-849a-69d6688918fb"
+[2026-10-10 18:31:53.197] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-DkBP/metadata/items/6c21e300-5db4-4bf7-8a99-3edb4bfd8b60"
+[2026-10-10 18:31:53.219] INFO: [ApiRouter] Removed author "Author Six" with no books
+[2026-10-10 18:31:53.354] INFO: [LibraryItemController] (Soft) deleting Library Item "Tagged Book Album" with id "9266fe15-b3f3-4456-8ec1-3222c67b516d"
+[2026-10-10 18:31:53.363] INFO: [ApiRouter] Removed 1 media progress entries for library item "9266fe15-b3f3-4456-8ec1-3222c67b516d"
+[2026-10-10 18:31:53.365] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-DkBP/metadata/items/9266fe15-b3f3-4456-8ec1-3222c67b516d"
+[2026-10-10 18:31:53.427] INFO: [LibraryItemController] (Hard) deleting Library Item "My Show" with id "a2d37cf0-0ce0-4a22-85c2-ac56db6f1545"
+[2026-10-10 18:31:53.432] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-DkBP/metadata/items/a2d37cf0-0ce0-4a22-85c2-ac56db6f1545"
+[2026-10-10 18:31:53.441] INFO: [LibraryItemController] Deleting library item from file system at "/tmp/abs-q/qwork-DkBP/lib/podcasts/My Show"
+[2026-10-10 18:31:53.442] INFO: [LibraryItemController] (Hard) deleting Library Item "New Title" with id "d9200ade-1993-4115-b124-d3224d099e54"
+[2026-10-10 18:31:53.456] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-DkBP/metadata/items/d9200ade-1993-4115-b124-d3224d099e54"
+[2026-10-10 18:31:53.464] INFO: [LibraryItemController] Deleting library item from file system at "/tmp/abs-q/qwork-DkBP/lib/books/Author One/Book Three"
+[2026-10-10 18:31:53.482] INFO: [ApiRouter] Series "S2" is now empty. Removing series
+[2026-10-10 18:31:53.491] INFO: [ApiRouter] Removed author "A2" with no books

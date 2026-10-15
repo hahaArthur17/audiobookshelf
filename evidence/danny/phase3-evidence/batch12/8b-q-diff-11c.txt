@@ -1,0 +1,85 @@
+ORDER ONLY lib_pers_none.txt
+=== DIFF lib_pers_once.txt
+--- 
++++ 
+@@ -397,19 +397,19 @@
+       "asin": null,
+-      "authorName": "OPF Author",
+-      "authorNameLF": "Author, OPF",
+-      "description": "OPF description",
++      "authorName": "JSON Author",
++      "authorNameLF": "Author, JSON",
++      "description": "JSON description",
+       "explicit": false,
+       "genres": [
+-       "Fantasy"
++       "Science Fiction"
+       ],
+-      "isbn": "9781234567897",
+-      "language": "en",
+-      "narratorName": "Reader One",
++      "isbn": null,
++      "language": "English",
++      "narratorName": "JSON Narrator",
+       "publishedDate": null,
+-      "publishedYear": "2001",
+-      "publisher": "OPF Publisher",
+-      "seriesName": "OPF Series #2",
++      "publishedYear": "1998",
++      "publisher": "JSON Publisher",
++      "seriesName": "JSON Series #1",
+       "subtitle": null,
+-      "title": "OPF Title",
+-      "titleIgnorePrefix": "OPF Title"
++      "title": "JSON Title",
++      "titleIgnorePrefix": "JSON Title"
+      },
+@@ -418,4 +418,6 @@
+      "numTracks": 0,
+-     "size": 8,
+-     "tags": []
++     "size": 10,
++     "tags": [
+=== DIFF lib_pers_twice.txt
+--- 
++++ 
+@@ -397,19 +397,19 @@
+       "asin": null,
+-      "authorName": "OPF Author",
+-      "authorNameLF": "Author, OPF",
+-      "description": "OPF description",
++      "authorName": "JSON Author",
++      "authorNameLF": "Author, JSON",
++      "description": "JSON description",
+       "explicit": false,
+       "genres": [
+-       "Fantasy"
++       "Science Fiction"
+       ],
+-      "isbn": "9781234567897",
+-      "language": "en",
+-      "narratorName": "Reader One",
++      "isbn": null,
++      "language": "English",
++      "narratorName": "JSON Narrator",
+       "publishedDate": null,
+-      "publishedYear": "2001",
+-      "publisher": "OPF Publisher",
+-      "seriesName": "OPF Series #2",
++      "publishedYear": "1998",
++      "publisher": "JSON Publisher",
++      "seriesName": "JSON Series #1",
+       "subtitle": null,
+-      "title": "OPF Title",
+-      "titleIgnorePrefix": "OPF Title"
++      "title": "JSON Title",
++      "titleIgnorePrefix": "JSON Title"
+      },
+@@ -418,4 +418,6 @@
+      "numTracks": 0,
+-     "size": 8,
+-     "tags": []
++     "size": 10,
++     "tags": [
+ORDER ONLY lib_stats.txt
+requests 194 identical 190 order-only 2 different 2 | status codes identical

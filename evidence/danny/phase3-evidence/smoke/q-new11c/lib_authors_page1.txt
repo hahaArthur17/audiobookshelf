@@ -1,0 +1,36 @@
+STATUS 200
+LOCATION 
+{
+ "limit": 2,
+ "minified": false,
+ "page": 1,
+ "results": [
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Six, Author",
+   "libraryId": "MASK",
+   "name": "Author Six",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Author, NFO",
+   "libraryId": "MASK",
+   "name": "NFO Author",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  }
+ ],
+ "sortBy": "numBooks",
+ "sortDesc": false,
+ "total": 6
+}

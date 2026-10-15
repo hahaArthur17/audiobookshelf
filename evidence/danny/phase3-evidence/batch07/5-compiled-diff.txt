@@ -1,0 +1,22 @@
+Files /tmp/out-base-b7/server/controllers/ApiKeyController.js and /tmp/out-new-b7/server/controllers/ApiKeyController.js differ
+Files /tmp/out-base-b7/server/controllers/AuthorController.js and /tmp/out-new-b7/server/controllers/AuthorController.js differ
+Files /tmp/out-base-b7/server/controllers/BackupController.js and /tmp/out-new-b7/server/controllers/BackupController.js differ
+Files /tmp/out-base-b7/server/controllers/CacheController.js and /tmp/out-new-b7/server/controllers/CacheController.js differ
+Files /tmp/out-base-b7/server/controllers/CollectionController.js and /tmp/out-new-b7/server/controllers/CollectionController.js differ
+Files /tmp/out-base-b7/server/controllers/CustomMetadataProviderController.js and /tmp/out-new-b7/server/controllers/CustomMetadataProviderController.js differ
+Files /tmp/out-base-b7/server/controllers/EmailController.js and /tmp/out-new-b7/server/controllers/EmailController.js differ
+Files /tmp/out-base-b7/server/controllers/FileSystemController.js and /tmp/out-new-b7/server/controllers/FileSystemController.js differ
+Files /tmp/out-base-b7/server/controllers/MeController.js and /tmp/out-new-b7/server/controllers/MeController.js differ
+Files /tmp/out-base-b7/server/controllers/MiscController.js and /tmp/out-new-b7/server/controllers/MiscController.js differ
+Files /tmp/out-base-b7/server/controllers/NotificationController.js and /tmp/out-new-b7/server/controllers/NotificationController.js differ
+Files /tmp/out-base-b7/server/controllers/PlaylistController.js and /tmp/out-new-b7/server/controllers/PlaylistController.js differ
+Files /tmp/out-base-b7/server/controllers/PodcastController.js and /tmp/out-new-b7/server/controllers/PodcastController.js differ
+Files /tmp/out-base-b7/server/controllers/RSSFeedController.js and /tmp/out-new-b7/server/controllers/RSSFeedController.js differ
+Files /tmp/out-base-b7/server/controllers/SeriesController.js and /tmp/out-new-b7/server/controllers/SeriesController.js differ
+Files /tmp/out-base-b7/server/controllers/SessionController.js and /tmp/out-new-b7/server/controllers/SessionController.js differ
+Files /tmp/out-base-b7/server/controllers/ShareController.js and /tmp/out-new-b7/server/controllers/ShareController.js differ
+Files /tmp/out-base-b7/server/controllers/StatsController.js and /tmp/out-new-b7/server/controllers/StatsController.js differ
+Files /tmp/out-base-b7/server/controllers/ToolsController.js and /tmp/out-new-b7/server/controllers/ToolsController.js differ
+Only in /tmp/out-new-b7/server/controllers: types.js
+Files /tmp/out-base-b7/server/controllers/UserController.js and /tmp/out-new-b7/server/controllers/UserController.js differ
+Files /tmp/out-base-b7/server/routers/ApiRouter.js and /tmp/out-new-b7/server/routers/ApiRouter.js differ

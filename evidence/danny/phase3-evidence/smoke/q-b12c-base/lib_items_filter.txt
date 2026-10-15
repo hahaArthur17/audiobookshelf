@@ -1,0 +1,67 @@
+STATUS 200
+LOCATION 
+{
+ "collapseseries": false,
+ "filterBy": "genres.VGhyaWxsZXI=",
+ "include": "",
+ "limit": 0,
+ "mediaType": "book",
+ "minified": false,
+ "offset": 0,
+ "page": 0,
+ "results": [
+  {
+   "addedAt": "MASK",
+   "birthtimeMs": "MASK",
+   "ctimeMs": "MASK",
+   "folderId": "MASK",
+   "id": "MASK",
+   "ino": "MASK",
+   "isFile": false,
+   "isInvalid": false,
+   "isMissing": false,
+   "libraryId": "MASK",
+   "media": {
+    "coverPath": null,
+    "duration": 4.127346,
+    "id": "MASK",
+    "metadata": {
+     "abridged": false,
+     "asin": null,
+     "authorName": "Tag Author",
+     "authorNameLF": "Author, Tag",
+     "description": "Tagged description",
+     "explicit": false,
+     "genres": [
+      "Thriller"
+     ],
+     "isbn": null,
+     "language": null,
+     "narratorName": "Tag Narrator",
+     "publishedDate": null,
+     "publishedYear": "2010",
+     "publisher": "Tag Pub",
+     "seriesName": "",
+     "subtitle": null,
+     "title": "Tagged Book Album",
+     "titleIgnorePrefix": "Tagged Book Album"
+    },
+    "numAudioFiles": 2,
+    "numChapters": 2,
+    "numTracks": 2,
+    "size": 17281,
+    "tags": []
+   },
+   "mediaType": "book",
+   "mtimeMs": "MASK",
+   "numFiles": 2,
+   "oldLibraryItemId": null,
+   "path": "ROOT/lib/books/Tag Author/Tagged Book",
+   "relPath": "Tag Author/Tagged Book",
+   "size": 17281,
+   "updatedAt": "MASK"
+  }
+ ],
+ "sortDesc": false,
+ "total": 1
+}

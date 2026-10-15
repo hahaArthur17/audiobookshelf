@@ -1,0 +1,881 @@
+diff -ru /tmp/out-base-b8/server/migrations/v2.15.0-series-column-unique.js /tmp/out-new-b8/server/migrations/v2.15.0-series-column-unique.js
+--- /tmp/out-base-b8/server/migrations/v2.15.0-series-column-unique.js	2026-10-10 10:07:10.725637393 +1300
++++ /tmp/out-new-b8/server/migrations/v2.15.0-series-column-unique.js	2026-10-10 10:07:15.605588167 +1300
+@@ -1,18 +1,10 @@
+ "use strict";
+ /**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+-/**
+  * This upward migration script cleans any duplicate series in the `Series` table and
+  * adds a unique index on the `name` and `libraryId` columns.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+@@ -21,7 +13,8 @@
+     logger.info('[2.15.0 migration] Reindexing NOCASE indices to fix potential hidden corruption issues');
+     await queryInterface.sequelize.query('REINDEX NOCASE;');
+     // Check if the unique index already exists
+-    const seriesIndexes = await queryInterface.showIndex('Series');
++    // cast(b): Sequelize types showIndex as Promise<object>; it resolves to the list of index rows
++    const seriesIndexes = (await queryInterface.showIndex('Series'));
+     if (seriesIndexes.some((index) => index.name === 'unique_series_name_per_library')) {
+         logger.info('[2.15.0 migration] Unique index on Series.name and Series.libraryId already exists');
+         logger.info('[2.15.0 migration] UPGRADE END: 2.15.0-series-column-unique ');
+@@ -35,12 +28,13 @@
+     // 3. Update `bookSeries` table to point to the most recent series.
+     // 4. Delete the older series.
+     // Use the queryInterface to get the series table and find duplicates in the `name` and `libraryId` column
+-    const [duplicates] = await queryInterface.sequelize.query(`
++    // cast(b): Sequelize types raw query rows as unknown; the rows have the selected columns
++    const [duplicates] = (await queryInterface.sequelize.query(`
+     SELECT name, libraryId
+     FROM Series
+     GROUP BY name, libraryId
+     HAVING COUNT(name) > 1
+-  `);
++  `));
+     // Print out how many duplicates were found
+     logger.info(`[2.15.0 migration] Found ${duplicates.length} duplicate series`);
+     // Iterate over each duplicate series
+@@ -48,7 +42,8 @@
+         // Report the series name that is being deleted
+         logger.info(`[2.15.0 migration] Deduplicating series "${duplicate.name}" in library ${duplicate.libraryId}`);
+         // Determine any duplicate book IDs in the `bookSeries` table for the same series
+-        const [duplicateBookIds] = await queryInterface.sequelize.query(`
++        // cast(b): Sequelize types raw query rows as unknown; the rows have the selected columns
++        const [duplicateBookIds] = (await queryInterface.sequelize.query(`
+         SELECT bookId
+         FROM BookSeries
+         WHERE seriesId IN (
+@@ -63,12 +58,13 @@
+                 name: duplicate.name,
+                 libraryId: duplicate.libraryId
+             }
+-        });
++        }));
+         // Iterate over the duplicate book IDs if there is at least one and only keep the first row that has this bookId and seriesId
+         for (const { bookId } of duplicateBookIds) {
+             logger.info(`[2.15.0 migration] Deduplicating bookId ${bookId} in series "${duplicate.name}" of library ${duplicate.libraryId}`);
+             // Get all rows of `BookSeries` table that have the same `bookId` and `seriesId`. Sort by `sequence` with nulls sorted last
+-            const [duplicateBookSeries] = await queryInterface.sequelize.query(`
++            // cast(b): Sequelize types raw query rows as unknown; the rows have the selected columns
++            const [duplicateBookSeries] = (await queryInterface.sequelize.query(`
+             SELECT id
+             FROM BookSeries
+             WHERE bookId = :bookId
+@@ -84,7 +80,7 @@
+                     name: duplicate.name,
+                     libraryId: duplicate.libraryId
+                 }
+-            });
++            }));
+             // remove the first element from the array
+             duplicateBookSeries.shift();
+             // Delete the remaining duplicate rows
+@@ -112,6 +108,7 @@
+                 name: duplicate.name,
+                 libraryId: duplicate.libraryId
+             },
++            // cast(b): sequelize sets QueryTypes on the Sequelize prototype at runtime; its types only export it from the module
+             type: queryInterface.sequelize.QueryTypes.SELECT
+         });
+         if (mostRecentSeries) {
+@@ -158,8 +155,8 @@
+ /**
+  * This removes the unique index on the `Series` table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+diff -ru /tmp/out-base-b8/server/migrations/v2.15.1-reindex-nocase.js /tmp/out-new-b8/server/migrations/v2.15.1-reindex-nocase.js
+--- /tmp/out-base-b8/server/migrations/v2.15.1-reindex-nocase.js	2026-10-10 10:07:10.725637393 +1300
++++ /tmp/out-new-b8/server/migrations/v2.15.1-reindex-nocase.js	2026-10-10 10:07:15.605588167 +1300
+@@ -1,17 +1,9 @@
+ "use strict";
+ /**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+-/**
+  * This upward migration script fixes old database corruptions due to the a bad sqlite extension introduced in v2.12.0.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+@@ -24,8 +16,8 @@
+ /**
+  * This downward migration script is a no-op.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+diff -ru /tmp/out-base-b8/server/migrations/v2.15.2-index-creation.js /tmp/out-new-b8/server/migrations/v2.15.2-index-creation.js
+--- /tmp/out-base-b8/server/migrations/v2.15.2-index-creation.js	2026-10-10 10:07:10.726637384 +1300
++++ /tmp/out-new-b8/server/migrations/v2.15.2-index-creation.js	2026-10-10 10:07:15.606588157 +1300
+@@ -1,24 +1,17 @@
+ "use strict";
+ /**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+-/**
+  * This upward migration script adds indexes to speed up queries on the `BookAuthor`, `BookSeries`, and `podcastEpisodes` tables.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+     logger.info('[2.15.2 migration] UPGRADE BEGIN: 2.15.2-index-creation');
+     // Create index for bookAuthors
+     logger.info('[2.15.2 migration] Creating index for bookAuthors');
+-    const bookAuthorsIndexes = await queryInterface.showIndex('bookAuthors');
++    // cast(b): Sequelize types showIndex as Promise<object>; it resolves to the list of index rows
++    const bookAuthorsIndexes = (await queryInterface.showIndex('bookAuthors'));
+     if (!bookAuthorsIndexes.some((index) => index.name === 'bookAuthor_authorId')) {
+         await queryInterface.addIndex('bookAuthors', ['authorId'], {
+             name: 'bookAuthor_authorId'
+@@ -29,7 +22,8 @@
+     }
+     // Create index for bookSeries
+     logger.info('[2.15.2 migration] Creating index for bookSeries');
+-    const bookSeriesIndexes = await queryInterface.showIndex('bookSeries');
++    // cast(b): Sequelize types showIndex as Promise<object>; it resolves to the list of index rows
++    const bookSeriesIndexes = (await queryInterface.showIndex('bookSeries'));
+     if (!bookSeriesIndexes.some((index) => index.name === 'bookSeries_seriesId')) {
+         await queryInterface.addIndex('bookSeries', ['seriesId'], {
+             name: 'bookSeries_seriesId'
+@@ -43,7 +37,8 @@
+     await queryInterface.removeIndex('podcastEpisodes', 'podcast_episodes_created_at');
+     // Create index for podcastEpisode and createdAt
+     logger.info('[2.15.2 migration] Creating index for podcastEpisode and createdAt');
+-    const podcastEpisodesIndexes = await queryInterface.showIndex('podcastEpisodes');
++    // cast(b): Sequelize types showIndex as Promise<object>; it resolves to the list of index rows
++    const podcastEpisodesIndexes = (await queryInterface.showIndex('podcastEpisodes'));
+     if (!podcastEpisodesIndexes.some((index) => index.name === 'podcastEpisode_createdAt_podcastId')) {
+         await queryInterface.addIndex('podcastEpisodes', ['createdAt', 'podcastId'], {
+             name: 'podcastEpisode_createdAt_podcastId'
+@@ -58,8 +53,8 @@
+ /**
+  * This downward migration script removes the newly created indexes and re-adds the old index on the `podcastEpisodes` table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+diff -ru /tmp/out-base-b8/server/migrations/v2.17.0-uuid-replacement.js /tmp/out-new-b8/server/migrations/v2.17.0-uuid-replacement.js
+--- /tmp/out-base-b8/server/migrations/v2.17.0-uuid-replacement.js	2026-10-10 10:07:10.726637384 +1300
++++ /tmp/out-new-b8/server/migrations/v2.17.0-uuid-replacement.js	2026-10-10 10:07:15.606588157 +1300
+@@ -1,17 +1,9 @@
+ "use strict";
+ /**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+-/**
+  * This upward migration script changes table columns with data type UUIDv4 to UUID to match associated models.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+@@ -51,8 +43,8 @@
+ /**
+  * This downward migration script changes table columns data type back to UUIDv4.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+@@ -66,6 +58,7 @@
+         type: 'UUIDV4'
+     });
+     logger.info('[2.17.0 migration] Changing mediaItemShares.mediaItemId column to UUIDV4');
++    // NOTE: unlike up, down does not check tableExists('mediaItemShares'), so a downgrade of a database without that table throws here
+     await queryInterface.changeColumn('mediaItemShares', 'mediaItemId', {
+         type: 'UUIDV4'
+     });
+diff -ru /tmp/out-base-b8/server/migrations/v2.17.3-fk-constraints.js /tmp/out-new-b8/server/migrations/v2.17.3-fk-constraints.js
+--- /tmp/out-base-b8/server/migrations/v2.17.3-fk-constraints.js	2026-10-10 10:07:10.727637374 +1300
++++ /tmp/out-new-b8/server/migrations/v2.17.3-fk-constraints.js	2026-10-10 10:07:15.607588147 +1300
+@@ -1,18 +1,10 @@
+ "use strict";
+ /**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+-/**
+  * This upward migration script changes foreign key constraints for the
+  * libraryItems, feeds, mediaItemShares, playbackSessions, playlistMediaItems, and mediaProgresses tables.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+@@ -95,8 +87,8 @@
+ /**
+  * This downward migration script is a no-op.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+@@ -107,20 +99,8 @@
+     logger.info('[2.17.3 migration] DOWNGRADE END: 2.17.3-fk-constraints');
+ }
+ /**
+- * @typedef ConstraintUpdateObj
+- * @property {string} field - The field to update
+- * @property {string} onDelete - The onDelete constraint
+- * @property {string} onUpdate - The onUpdate constraint
+- */
+-/**
+- * @typedef SequelizeFKObj
+- * @property {{ model: string, key: string }} references
+- * @property {string} onDelete
+- * @property {string} onUpdate
+- */
+-/**
+- * @param {Object} fk - The foreign key object from PRAGMA foreign_key_list
+- * @returns {SequelizeFKObj} - The foreign key object formatted for Sequelize
++ * @param fk - The foreign key object from PRAGMA foreign_key_list
++ * @returns The foreign key object formatted for Sequelize
+  */
+ const formatFKsPragmaToSequelizeFK = (fk) => {
+     return {
+@@ -132,17 +112,11 @@
+         onUpdate: fk['on_update']
+     };
+ };
+-/**
+- *
+- * @param {import('sequelize').QueryInterface} queryInterface
+- * @param {string} tableName
+- * @param {ConstraintUpdateObj[]} constraints
+- * @returns {Promise<Record<string, SequelizeFKObj>|null>}
+- */
+ async function getUpdatedForeignKeys(queryInterface, tableName, constraints) {
+     const execQuery = queryInterface.sequelize.query.bind(queryInterface.sequelize);
+     const quotedTableName = queryInterface.quoteIdentifier(tableName);
+-    const foreignKeys = await execQuery(`PRAGMA foreign_key_list(${quotedTableName});`);
++    // cast(b): Sequelize types a raw query result as [rows, metadata]; the sqlite dialect returns only the rows for PRAGMA foreign_key_list
++    const foreignKeys = (await execQuery(`PRAGMA foreign_key_list(${quotedTableName});`));
+     let hasUpdates = false;
+     const foreignKeysByColName = foreignKeys.reduce((prev, curr) => {
+         const fk = formatFKsPragmaToSequelizeFK(curr);
+@@ -159,9 +133,9 @@
+ /**
+  * Extends the Sequelize describeTable function to include the updated foreign key constraints
+  *
+- * @param {import('sequelize').QueryInterface} queryInterface
+- * @param {String} tableName
+- * @param {Record<string, SequelizeFKObj>} updatedForeignKeys
++ * @param queryInterface
++ * @param tableName
++ * @param updatedForeignKeys
+  */
+ async function describeTableWithFKs(queryInterface, tableName, updatedForeignKeys) {
+     const tableDescription = await queryInterface.describeTable(tableName);
+@@ -181,10 +155,10 @@
+  * @see https://www.sqlite.org/lang_altertable.html#otheralter
+  * @see https://sequelize.org/docs/v6/other-topics/query-interface/#changing-and-removing-columns-in-sqlite
+  *
+- * @param {import('sequelize').QueryInterface} queryInterface
+- * @param {string} tableName
+- * @param {ConstraintUpdateObj[]} constraints
+- * @returns {Promise<boolean>} - Return false if no changes are needed, true otherwise
++ * @param queryInterface
++ * @param tableName
++ * @param constraints
++ * @returns Return false if no changes are needed, true otherwise
+  */
+ async function changeConstraints(queryInterface, tableName, constraints) {
+     const updatedForeignKeys = await getUpdatedForeignKeys(queryInterface, tableName, constraints);
+@@ -197,6 +171,7 @@
+     const quotedBackupTableName = queryInterface.quoteIdentifier(backupTableName);
+     try {
+         const tableDescriptionWithFks = await describeTableWithFKs(queryInterface, tableName, updatedForeignKeys);
++        // cast(b): Sequelize types queryGenerator as unknown; the sqlite query generator's attributesToSQL returns the column SQL by name
+         const attributes = queryInterface.queryGenerator.attributesToSQL(tableDescriptionWithFks);
+         // Create the backup table
+         await queryInterface.createTable(backupTableName, attributes);
+@@ -211,6 +186,7 @@
+         await queryInterface.renameTable(backupTableName, tableName);
+         // Validate that all foreign key constraints are correct
+         const result = await execQuery(`PRAGMA foreign_key_check(${quotedTableName});`, {
++            // cast(b): sequelize sets QueryTypes on the Sequelize class at runtime; its types only export it from the module
+             type: queryInterface.sequelize.Sequelize.QueryTypes.SELECT
+         });
+         // There are foreign key violations, exit
+diff -ru /tmp/out-base-b8/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.js /tmp/out-new-b8/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.js
+--- /tmp/out-base-b8/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.js	2026-10-10 10:07:10.727637374 +1300
++++ /tmp/out-new-b8/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.js	2026-10-10 10:07:15.607588147 +1300
+@@ -1,20 +1,12 @@
+ "use strict";
+ /**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+-/**
+  * This upward migration adds an subfolder setting for OIDC redirect URIs.
+  * It updates existing OIDC setups to set this option to None (empty subfolder), so they continue to work as before.
+  * IF OIDC is not enabled, no action is taken (i.e. the subfolder is left undefined),
+  * so that future OIDC setups will use the default subfolder.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+@@ -33,8 +25,8 @@
+ /**
+  * This downward migration script removes the subfolder setting for OIDC redirect URIs.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+@@ -59,12 +51,14 @@
+     }
+     let serverSettings = null;
+     try {
++        // cast(b): Sequelize types raw query rows as unknown; the query selects the value column
+         serverSettings = JSON.parse(result[0][0].value);
+     }
+     catch (error) {
+         logger.error('[2.17.4 migration] Error parsing server settings:', error);
+         throw error;
+     }
++    // set by the try block (the catch rethrows)
+     return serverSettings;
+ }
+ async function updateServerSettings(queryInterface, logger, serverSettings) {
+diff -ru /tmp/out-base-b8/server/migrations/v2.17.5-remove-host-from-feed-urls.js /tmp/out-new-b8/server/migrations/v2.17.5-remove-host-from-feed-urls.js
+--- /tmp/out-base-b8/server/migrations/v2.17.5-remove-host-from-feed-urls.js	2026-10-10 10:07:10.728637363 +1300
++++ /tmp/out-new-b8/server/migrations/v2.17.5-remove-host-from-feed-urls.js	2026-10-10 10:07:15.608588137 +1300
+@@ -1,20 +1,12 @@
+ "use strict";
+-/**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+ const migrationVersion = '2.17.5';
+ const migrationName = `${migrationVersion}-remove-host-from-feed-urls`;
+ const loggerPrefix = `[${migrationVersion} migration]`;
+ /**
+  * This upward migration removes the host (serverAddress) from URL columns in the feeds and feedEpisodes tables.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+@@ -39,8 +31,8 @@
+ /**
+  * This downward migration script adds the host (serverAddress) back to URL columns in the feeds and feedEpisodes tables.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+diff -ru /tmp/out-base-b8/server/migrations/v2.17.6-share-add-isdownloadable.js /tmp/out-new-b8/server/migrations/v2.17.6-share-add-isdownloadable.js
+--- /tmp/out-base-b8/server/migrations/v2.17.6-share-add-isdownloadable.js	2026-10-10 10:07:10.728637363 +1300
++++ /tmp/out-new-b8/server/migrations/v2.17.6-share-add-isdownloadable.js	2026-10-10 10:07:15.608588137 +1300
+@@ -1,20 +1,12 @@
+ "use strict";
+-/**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a Sequelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+ const migrationVersion = '2.17.6';
+ const migrationName = `${migrationVersion}-share-add-isdownloadable`;
+ const loggerPrefix = `[${migrationVersion} migration]`;
+ /**
+  * This migration script adds the isDownloadable column to the mediaItemShares table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     logger.info(`${loggerPrefix} UPGRADE BEGIN: ${migrationName}`);
+@@ -23,6 +15,7 @@
+         if (!tableDescription.isDownloadable) {
+             logger.info(`${loggerPrefix} Adding isDownloadable column to mediaItemShares table`);
+             await queryInterface.addColumn('mediaItemShares', 'isDownloadable', {
++                // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+                 type: queryInterface.sequelize.Sequelize.DataTypes.BOOLEAN,
+                 defaultValue: false,
+                 allowNull: false
+@@ -41,8 +34,8 @@
+ /**
+  * This migration script removes the isDownloadable column from the mediaItemShares table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     logger.info(`${loggerPrefix} DOWNGRADE BEGIN: ${migrationName}`);
+diff -ru /tmp/out-base-b8/server/migrations/v2.17.7-add-indices.js /tmp/out-new-b8/server/migrations/v2.17.7-add-indices.js
+--- /tmp/out-base-b8/server/migrations/v2.17.7-add-indices.js	2026-10-10 10:07:10.728637363 +1300
++++ /tmp/out-new-b8/server/migrations/v2.17.7-add-indices.js	2026-10-10 10:07:15.608588137 +1300
+@@ -1,20 +1,12 @@
+ "use strict";
+-/**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+ const migrationVersion = '2.17.7';
+ const migrationName = `${migrationVersion}-add-indices`;
+ const loggerPrefix = `[${migrationVersion} migration]`;
+ /**
+  * This upward migration adds some indices to the libraryItems and books tables to improve query performance
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+@@ -26,8 +18,8 @@
+ /**
+  * This downward migration script removes the indices added in the upward migration script
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+@@ -51,6 +43,7 @@
+         logger.info(`${loggerPrefix} added index [${columns.join(', ')}] to table "${tableName}"`);
+     }
+     catch (error) {
++        // cast(d): catch variable is unknown
+         if (error.name === 'SequelizeDatabaseError' && error.message.includes('already exists')) {
+             logger.info(`${loggerPrefix} index [${columns.join(', ')}] for table "${tableName}" already exists`);
+         }
+diff -ru /tmp/out-base-b8/server/migrations/v2.19.1-copy-title-to-library-items.js /tmp/out-new-b8/server/migrations/v2.19.1-copy-title-to-library-items.js
+--- /tmp/out-base-b8/server/migrations/v2.19.1-copy-title-to-library-items.js	2026-10-10 10:07:10.729637353 +1300
++++ /tmp/out-new-b8/server/migrations/v2.19.1-copy-title-to-library-items.js	2026-10-10 10:07:15.609588127 +1300
+@@ -1,13 +1,5 @@
+ "use strict";
+-const util = require('util');
+-/**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
++const util = require("util");
+ const migrationVersion = '2.19.1';
+ const migrationName = `${migrationVersion}-copy-title-to-library-items`;
+ const loggerPrefix = `[${migrationVersion} migration]`;
+@@ -16,16 +8,18 @@
+  * and creates a new index on the title column. In addition it sets a trigger on the books table to update the title column
+  * in the libraryItems table when a book is updated.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+     logger.info(`${loggerPrefix} UPGRADE BEGIN: ${migrationName}`);
++    // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+     await addColumn(queryInterface, logger, 'libraryItems', 'title', { type: queryInterface.sequelize.Sequelize.STRING, allowNull: true });
+     await copyColumn(queryInterface, logger, 'books', 'title', 'id', 'libraryItems', 'title', 'mediaId');
+     await addTrigger(queryInterface, logger, 'books', 'title', 'id', 'libraryItems', 'title', 'mediaId');
+     await addIndex(queryInterface, logger, 'libraryItems', ['libraryId', 'mediaType', { name: 'title', collate: 'NOCASE' }]);
++    // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+     await addColumn(queryInterface, logger, 'libraryItems', 'titleIgnorePrefix', { type: queryInterface.sequelize.Sequelize.STRING, allowNull: true });
+     await copyColumn(queryInterface, logger, 'books', 'titleIgnorePrefix', 'id', 'libraryItems', 'titleIgnorePrefix', 'mediaId');
+     await addTrigger(queryInterface, logger, 'books', 'titleIgnorePrefix', 'id', 'libraryItems', 'titleIgnorePrefix', 'mediaId');
+@@ -37,8 +31,8 @@
+  * This downward migration script removes the title column from the libraryItems table, removes the trigger on the books table,
+  * and removes the index on the title column.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+@@ -55,20 +49,22 @@
+ /**
+  * Utility function to add an index to a table. If the index already z`exists, it logs a message and continues.
+  *
+- * @param {import('sequelize').QueryInterface} queryInterface
+- * @param {import ('../Logger')} logger
+- * @param {string} tableName
+- * @param {string[]} columns
++ * @param queryInterface
++ * @param logger
++ * @param tableName
++ * @param columns - column names, or { name, collate } objects for a collated column
+  */
+ async function addIndex(queryInterface, logger, tableName, columns) {
+     const columnString = columns.map((column) => util.inspect(column)).join(', ');
+     const indexName = convertToSnakeCase(`${tableName}_${columns.map((column) => (typeof column === 'string' ? column : column.name)).join('_')}`);
+     try {
+         logger.info(`${loggerPrefix} adding index on [${columnString}] to table ${tableName}. index name: ${indexName}"`);
++        // cast(b): Sequelize types addIndex attributes as string[], but it passes them on as index fields, which may be { name, collate } objects
+         await queryInterface.addIndex(tableName, columns);
+         logger.info(`${loggerPrefix} added index on [${columnString}] to table ${tableName}. index name: ${indexName}"`);
+     }
+     catch (error) {
++        // cast(d): catch variable is unknown
+         if (error.name === 'SequelizeDatabaseError' && error.message.includes('already exists')) {
+             logger.info(`${loggerPrefix} index [${columnString}] for table "${tableName}" already exists`);
+         }
+diff -ru /tmp/out-base-b8/server/migrations/v2.19.4-improve-podcast-queries.js /tmp/out-new-b8/server/migrations/v2.19.4-improve-podcast-queries.js
+--- /tmp/out-base-b8/server/migrations/v2.19.4-improve-podcast-queries.js	2026-10-10 10:07:10.730637343 +1300
++++ /tmp/out-new-b8/server/migrations/v2.19.4-improve-podcast-queries.js	2026-10-10 10:07:15.610588117 +1300
+@@ -1,13 +1,6 @@
+ "use strict";
+-const util = require('util');
+-/**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
++// util is not used; kept as a side-effect import so the module still requires it, as the JavaScript did
++require("util");
+ const migrationVersion = '2.19.4';
+ const migrationName = `${migrationVersion}-improve-podcast-queries`;
+ const loggerPrefix = `[${migrationVersion} migration]`;
+@@ -17,17 +10,19 @@
+  * It also copies the title and titleIgnorePrefix columns from the podcasts table to the libraryItems table,
+  * and adds triggers to update them when the corresponding columns in the podcasts table are updated.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+     logger.info(`${loggerPrefix} UPGRADE BEGIN: ${migrationName}`);
+     // Add numEpisodes column to podcasts table
++    // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+     await addColumn(queryInterface, logger, 'podcasts', 'numEpisodes', { type: queryInterface.sequelize.Sequelize.INTEGER, allowNull: false, defaultValue: 0 });
+     // Populate numEpisodes column with the number of episodes for each podcast
+     await populateNumEpisodes(queryInterface, logger);
+     // Add podcastId column to mediaProgresses table
++    // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+     await addColumn(queryInterface, logger, 'mediaProgresses', 'podcastId', { type: queryInterface.sequelize.Sequelize.UUID, allowNull: true });
+     // Populate podcastId column with the podcastId for each mediaProgress
+     await populatePodcastId(queryInterface, logger);
+@@ -43,8 +38,8 @@
+  * This downward migration removes the triggers on the podcasts table,
+  * the numEpisodes column from the podcasts table, and the podcastId column from the mediaProgresses table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+diff -ru /tmp/out-base-b8/server/migrations/v2.20.0-improve-author-sort-queries.js /tmp/out-new-b8/server/migrations/v2.20.0-improve-author-sort-queries.js
+--- /tmp/out-base-b8/server/migrations/v2.20.0-improve-author-sort-queries.js	2026-10-10 10:07:10.731637333 +1300
++++ /tmp/out-new-b8/server/migrations/v2.20.0-improve-author-sort-queries.js	2026-10-10 10:07:15.611588107 +1300
+@@ -1,14 +1,7 @@
+ "use strict";
+-const util = require('util');
+-const { Sequelize } = require('sequelize');
+-/**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
++const util = require("util");
++const sequelize = require("sequelize");
++const { Sequelize } = sequelize;
+ const migrationVersion = '2.20.0';
+ const migrationName = `${migrationVersion}-improve-author-sort-queries`;
+ const loggerPrefix = `[${migrationVersion} migration]`;
+@@ -18,7 +11,9 @@
+ const authors = 'authors';
+ const podcastEpisodes = 'podcastEpisodes';
+ const columns = [
++    // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+     { name: 'authorNamesFirstLast', source: `${authors}.name`, spec: { type: Sequelize.STRING, allowNull: true } },
++    // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+     { name: 'authorNamesLastFirst', source: `${authors}.lastFirst`, spec: { type: Sequelize.STRING, allowNull: true } }
+ ];
+ const authorsSort = `${bookAuthors}.createdAt ASC`;
+@@ -32,8 +27,8 @@
+  *
+  * It also adds an index on publishedAt to the podcastEpisodes table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     const helper = new MigrationHelper(queryInterface, logger);
+@@ -57,8 +52,8 @@
+  *
+  * It also removes the index on publishedAt from the podcastEpisodes table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+@@ -199,10 +194,12 @@
+         const indexName = convertToSnakeCase(`${tableName}_${columns.map((column) => (typeof column === 'string' ? column : column.name)).join('_')}`);
+         try {
+             this.logger.info(`${loggerPrefix} adding index on [${columnString}] to table ${tableName}. index name: ${indexName}"`);
++            // cast(b): Sequelize types addIndex attributes as string[], but it passes them on as index fields, which may be { name, collate } objects
+             await this.queryInterface.addIndex(tableName, columns);
+             this.logger.info(`${loggerPrefix} added index on [${columnString}] to table ${tableName}. index name: ${indexName}"`);
+         }
+         catch (error) {
++            // cast(d): catch variable is unknown
+             if (error.name === 'SequelizeDatabaseError' && error.message.includes('already exists')) {
+                 this.logger.info(`${loggerPrefix} index [${columnString}] for table "${tableName}" already exists`);
+             }
+diff -ru /tmp/out-base-b8/server/migrations/v2.26.0-create-auth-tables.js /tmp/out-new-b8/server/migrations/v2.26.0-create-auth-tables.js
+--- /tmp/out-base-b8/server/migrations/v2.26.0-create-auth-tables.js	2026-10-10 10:07:10.732637323 +1300
++++ /tmp/out-new-b8/server/migrations/v2.26.0-create-auth-tables.js	2026-10-10 10:07:15.612588096 +1300
+@@ -1,20 +1,12 @@
+ "use strict";
+-/**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a suquelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+ const migrationVersion = '2.26.0';
+ const migrationName = `${migrationVersion}-create-auth-tables`;
+ const loggerPrefix = `[${migrationVersion} migration]`;
+ /**
+  * This upward migration creates a sessions table and apiKeys table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     // Upwards migration script
+@@ -26,6 +18,7 @@
+     else {
+         // Create table
+         logger.info(`${loggerPrefix} creating table "sessions"`);
++        // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+         const DataTypes = queryInterface.sequelize.Sequelize.DataTypes;
+         await queryInterface.createTable('sessions', {
+             id: {
+@@ -72,6 +65,7 @@
+     else {
+         // Create table
+         logger.info(`${loggerPrefix} creating table "apiKeys"`);
++        // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+         const DataTypes = queryInterface.sequelize.Sequelize.DataTypes;
+         await queryInterface.createTable('apiKeys', {
+             id: {
+@@ -129,8 +123,8 @@
+ /**
+  * This downward migration script removes the sessions table and apiKeys table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     // Downward migration script
+diff -ru /tmp/out-base-b8/server/migrations/v2.33.0-add-discover-query-indexes.js /tmp/out-new-b8/server/migrations/v2.33.0-add-discover-query-indexes.js
+--- /tmp/out-base-b8/server/migrations/v2.33.0-add-discover-query-indexes.js	2026-10-10 10:07:10.732637323 +1300
++++ /tmp/out-new-b8/server/migrations/v2.33.0-add-discover-query-indexes.js	2026-10-10 10:07:15.612588096 +1300
+@@ -1,12 +1,4 @@
+ "use strict";
+-/**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface
+- * @property {import('../Logger')} logger
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context
+- */
+ const migrationVersion = '2.33.0';
+ const migrationName = `${migrationVersion}-add-discover-query-indexes`;
+ const loggerPrefix = `[${migrationVersion} migration]`;
+@@ -37,7 +29,8 @@
+     logger.info(`${loggerPrefix} DOWNGRADE END: ${migrationName}`);
+ }
+ async function addIndexIfMissing(queryInterface, logger, index) {
+-    const existing = await queryInterface.showIndex(index.table);
++    // cast(b): Sequelize types showIndex as Promise<object>; it resolves to the list of index rows
++    const existing = (await queryInterface.showIndex(index.table));
+     if (existing.some((i) => i.name === index.name)) {
+         logger.info(`${loggerPrefix} index ${index.name} already exists on ${index.table}`);
+         return;
+@@ -50,7 +43,8 @@
+     logger.info(`${loggerPrefix} added index ${index.name}`);
+ }
+ async function removeIndexIfExists(queryInterface, logger, index) {
+-    const existing = await queryInterface.showIndex(index.table);
++    // cast(b): Sequelize types showIndex as Promise<object>; it resolves to the list of index rows
++    const existing = (await queryInterface.showIndex(index.table));
+     if (!existing.some((i) => i.name === index.name)) {
+         logger.info(`${loggerPrefix} index ${index.name} does not exist on ${index.table}`);
+         return;
+diff -ru /tmp/out-base-b8/server/migrations/v2.35.0-add-last-refresh-token.js /tmp/out-new-b8/server/migrations/v2.35.0-add-last-refresh-token.js
+--- /tmp/out-base-b8/server/migrations/v2.35.0-add-last-refresh-token.js	2026-10-10 10:07:10.732637323 +1300
++++ /tmp/out-new-b8/server/migrations/v2.35.0-add-last-refresh-token.js	2026-10-10 10:07:15.613588087 +1300
+@@ -1,20 +1,12 @@
+ "use strict";
+-/**
+- * @typedef MigrationContext
+- * @property {import('sequelize').QueryInterface} queryInterface - a Sequelize QueryInterface object.
+- * @property {import('../Logger')} logger - a Logger object.
+- *
+- * @typedef MigrationOptions
+- * @property {MigrationContext} context - an object containing the migration context.
+- */
+ const migrationVersion = '2.35.0';
+ const migrationName = `${migrationVersion}-add-last-refresh-token`;
+ const loggerPrefix = `[${migrationVersion} migration]`;
+ /**
+  * This migration script adds lastRefreshToken and lastRefreshTokenExpiresAt columns to the sessions table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function up({ context: { queryInterface, logger } }) {
+     logger.info(`${loggerPrefix} UPGRADE BEGIN: ${migrationName}`);
+@@ -23,6 +15,7 @@
+         if (!tableDescription.lastRefreshToken) {
+             logger.info(`${loggerPrefix} Adding lastRefreshToken column to sessions table`);
+             await queryInterface.addColumn('sessions', 'lastRefreshToken', {
++                // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+                 type: queryInterface.sequelize.Sequelize.DataTypes.STRING,
+                 allowNull: true
+             });
+@@ -33,6 +26,7 @@
+         if (!tableDescription.lastRefreshTokenExpiresAt) {
+             logger.info(`${loggerPrefix} Adding lastRefreshTokenExpiresAt column to sessions table`);
+             await queryInterface.addColumn('sessions', 'lastRefreshTokenExpiresAt', {
++                // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+                 type: queryInterface.sequelize.Sequelize.DataTypes.DATE,
+                 allowNull: true
+             });
+@@ -49,8 +43,8 @@
+ /**
+  * This migration script removes the lastRefreshToken and lastRefreshTokenExpiresAt columns from the sessions table.
+  *
+- * @param {MigrationOptions} options - an object containing the migration context.
+- * @returns {Promise<void>} - A promise that resolves when the migration is complete.
++ * @param options - an object containing the migration context.
++ * @returns A promise that resolves when the migration is complete.
+  */
+ async function down({ context: { queryInterface, logger } }) {
+     logger.info(`${loggerPrefix} DOWNGRADE BEGIN: ${migrationName}`);

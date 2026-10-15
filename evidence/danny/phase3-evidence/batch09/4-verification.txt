@@ -1,0 +1,67 @@
+---log
+2069c8db phase3 batch 9b: remove InitializedDatabase
+3b5baef7 phase3 batch 9: server top-level files
+dd0b7b2f phase3 batch 8: server/migrations
+90330ca2 phase3 batch 7: server/controllers
+d9bb5d74 phase3: name exception 4 of rule 17
+bef5fe3d phase3 batch 3c: replace QueryFindOptions
+---status
+---stat batch 9
+3b5baef7 phase3 batch 9: server top-level files
+
+ MIGRATION.md                                      |  76 ++++-
+ index.js => index.ts                              |  46 ++-
+ package-lock.json                                 |  35 ++
+ package.json                                      |   2 +
+ server/{Auth.js => Auth.ts}                       | 196 ++++++-----
+ server/{Database.js => Database.ts}               | 379 ++++++++++++----------
+ server/{Logger.js => Logger.ts}                   |  84 +++--
+ server/{Server.js => Server.ts}                   | 206 ++++++++----
+ server/{SocketAuthority.js => SocketAuthority.ts} | 167 ++++++----
+ server/{Watcher.js => Watcher.ts}                 | 176 +++++-----
+ server/controllers/MiscController.ts              |   3 +-
+ server/controllers/SessionController.ts           |   3 +-
+ server/models/Setting.ts                          |   4 +-
+ server/objects/settings/ServerSettings.ts         |   3 +-
+ server/utils/types.ts                             |   4 +
+ tsconfig.server.json                              |   2 +-
+ 16 files changed, 883 insertions(+), 503 deletions(-)
+---stat batch 9b
+2069c8db phase3 batch 9b: remove InitializedDatabase
+
+ MIGRATION.md                                       |  26 ++++-
+ server/Database.ts                                 | 116 ++++++++++-----------
+ server/Server.ts                                   |   3 +-
+ server/controllers/CollectionController.ts         |   4 +-
+ server/controllers/PlaylistController.ts           |   7 +-
+ server/controllers/PodcastController.ts            |   4 +-
+ server/managers/ApiCacheManager.ts                 |   4 +-
+ server/managers/PodcastManager.ts                  |   4 +-
+ server/managers/ShareManager.ts                    |   7 +-
+ server/routers/ApiRouter.ts                        |   6 +-
+ server/utils/migrations/dbMigration.ts             |  27 ++---
+ server/utils/queries/adminStats.ts                 |   6 +-
+ server/utils/queries/libraryItemsBookFilters.ts    |   5 +-
+ server/utils/queries/libraryItemsPodcastFilters.ts |   5 +-
+ server/utils/queries/seriesFilters.ts              |   5 +-
+ server/utils/queries/userStats.ts                  |   6 +-
+ server/utils/types.ts                              |   8 --
+ 17 files changed, 116 insertions(+), 127 deletions(-)
+---remaining-js
+prod.js
+server/controllers/LibraryController.js
+server/controllers/LibraryItemController.js
+tailwind.config.js
+---ts-count
+190
+---build-tail
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+---error-count
+0
+---test
+  356 passing (2s)
+---entry
+-rw-rw-r-- 1 danny danny 3291 Oct 10 11:10 dist-server/index.js

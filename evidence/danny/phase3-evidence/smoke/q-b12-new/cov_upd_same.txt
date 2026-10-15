@@ -1,0 +1,6 @@
+STATUS 200
+LOCATION 
+{
+ "cover": "ROOT/lib/books/Author One/Book Three/cover.jpg",
+ "success": true
+}

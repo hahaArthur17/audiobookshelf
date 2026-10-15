@@ -1,0 +1,475 @@
+STATUS 200
+LOCATION 
+{
+ "audioTracks": [
+  {
+   "addedAt": "MASK",
+   "bitRate": 32000,
+   "channelLayout": "mono",
+   "channels": 1,
+   "chapters": [],
+   "codec": "mp3",
+   "contentUrl": "/api/items/UUID/file/531389",
+   "discNumFromFilename": null,
+   "discNumFromMeta": null,
+   "duration": 2.063673,
+   "embeddedCoverArt": null,
+   "error": null,
+   "exclude": false,
+   "format": "MP2/3 (MPEG audio layer 2/3)",
+   "index": 1,
+   "ino": "MASK",
+   "language": null,
+   "manuallyVerified": false,
+   "metaTags": {
+    "tagAlbum": "Tagged Book Album",
+    "tagAlbumArtist": "Tag Author",
+    "tagArtist": "Tag Author",
+    "tagComment": "Tagged description",
+    "tagComposer": "Tag Narrator",
+    "tagDate": "2010",
+    "tagEncoder": "Lavf60.16.100",
+    "tagGenre": "Thriller",
+    "tagPublisher": "Tag Pub",
+    "tagTitle": "Chapter One",
+    "tagTrack": "1/2"
+   },
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".mp3",
+    "filename": "01.mp3",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Tag Author/Tagged Book/01.mp3",
+    "relPath": "01.mp3",
+    "size": 8710
+   },
+   "mimeType": "audio/mpeg",
+   "startOffset": 0,
+   "timeBase": "1/14112000",
+   "title": "01.mp3",
+   "trackNumFromFilename": 1,
+   "trackNumFromMeta": 1,
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "bitRate": 32000,
+   "channelLayout": "mono",
+   "channels": 1,
+   "chapters": [],
+   "codec": "mp3",
+   "contentUrl": "/api/items/UUID/file/531391",
+   "discNumFromFilename": null,
+   "discNumFromMeta": null,
+   "duration": 2.063673,
+   "embeddedCoverArt": null,
+   "error": null,
+   "exclude": false,
+   "format": "MP2/3 (MPEG audio layer 2/3)",
+   "index": 2,
+   "ino": "MASK",
+   "language": null,
+   "manuallyVerified": false,
+   "metaTags": {
+    "tagAlbum": "Tagged Book Album",
+    "tagArtist": "Tag Author",
+    "tagEncoder": "Lavf60.16.100",
+    "tagTitle": "Chapter Two",
+    "tagTrack": "2/2"
+   },
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".mp3",
+    "filename": "02.mp3",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Tag Author/Tagged Book/02.mp3",
+    "relPath": "02.mp3",
+    "size": 8571
+   },
+   "mimeType": "audio/mpeg",
+   "startOffset": 2.063673,
+   "timeBase": "1/14112000",
+   "title": "02.mp3",
+   "trackNumFromFilename": 2,
+   "trackNumFromMeta": 2,
+   "updatedAt": "MASK"
+  }
+ ],
+ "bookId": "MASK",
+ "chapters": [
+  {
+   "end": 2.063673,
+   "id": "MASK",
+   "start": 0,
+   "title": "Chapter One"
+  },
+  {
+   "end": 4.127346,
+   "id": "MASK",
+   "start": 2.063673,
+   "title": "Chapter Two"
+  }
+ ],
+ "coverPath": null,
+ "currentTime": 1,
+ "date": "MASK",
+ "dayOfWeek": "MASK",
+ "deviceInfo": {
+  "clientName": "qrun",
+  "clientVersion": "2.37.0",
+  "deviceId": "MASK",
+  "deviceName": "",
+  "id": "MASK",
+  "ipAddress": "::1",
+  "manufacturer": "",
+  "model": "",
+  "sdkVersion": "",
+  "userId": "MASK"
+ },
+ "displayAuthor": "Tag Author",
+ "displayTitle": "Tagged Book Album",
+ "duration": 4.127346,
+ "episodeId": null,
+ "id": "MASK",
+ "libraryId": "MASK",
+ "libraryItem": {
+  "addedAt": "MASK",
+  "birthtimeMs": "MASK",
+  "ctimeMs": "MASK",
+  "folderId": "MASK",
+  "id": "MASK",
+  "ino": "MASK",
+  "isFile": false,
+  "isInvalid": false,
+  "isMissing": false,
+  "lastScan": "MASK",
+  "libraryFiles": [
+   {
+    "addedAt": "MASK",
+    "fileType": "audio",
+    "ino": "MASK",
+    "isSupplementary": null,
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".mp3",
+     "filename": "01.mp3",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Tag Author/Tagged Book/01.mp3",
+     "relPath": "01.mp3",
+     "size": 8710
+    },
+    "updatedAt": "MASK"
+   },
+   {
+    "addedAt": "MASK",
+    "fileType": "audio",
+    "ino": "MASK",
+    "isSupplementary": null,
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".mp3",
+     "filename": "02.mp3",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Tag Author/Tagged Book/02.mp3",
+     "relPath": "02.mp3",
+     "size": 8571
+    },
+    "updatedAt": "MASK"
+   }
+  ],
+  "libraryId": "MASK",
+  "media": {
+   "audioFiles": [
+    {
+     "addedAt": "MASK",
+     "bitRate": 32000,
+     "channelLayout": "mono",
+     "channels": 1,
+     "chapters": [],
+     "codec": "mp3",
+     "discNumFromFilename": null,
+     "discNumFromMeta": null,
+     "duration": 2.063673,
+     "embeddedCoverArt": null,
+     "error": null,
+     "exclude": false,
+     "format": "MP2/3 (MPEG audio layer 2/3)",
+     "index": 1,
+     "ino": "MASK",
+     "language": null,
+     "manuallyVerified": false,
+     "metaTags": {
+      "tagAlbum": "Tagged Book Album",
+      "tagAlbumArtist": "Tag Author",
+      "tagArtist": "Tag Author",
+      "tagComment": "Tagged description",
+      "tagComposer": "Tag Narrator",
+      "tagDate": "2010",
+      "tagEncoder": "Lavf60.16.100",
+      "tagGenre": "Thriller",
+      "tagPublisher": "Tag Pub",
+      "tagTitle": "Chapter One",
+      "tagTrack": "1/2"
+     },
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".mp3",
+      "filename": "01.mp3",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/books/Tag Author/Tagged Book/01.mp3",
+      "relPath": "01.mp3",
+      "size": 8710
+     },
+     "mimeType": "audio/mpeg",
+     "timeBase": "1/14112000",
+     "trackNumFromFilename": 1,
+     "trackNumFromMeta": 1,
+     "updatedAt": "MASK"
+    },
+    {
+     "addedAt": "MASK",
+     "bitRate": 32000,
+     "channelLayout": "mono",
+     "channels": 1,
+     "chapters": [],
+     "codec": "mp3",
+     "discNumFromFilename": null,
+     "discNumFromMeta": null,
+     "duration": 2.063673,
+     "embeddedCoverArt": null,
+     "error": null,
+     "exclude": false,
+     "format": "MP2/3 (MPEG audio layer 2/3)",
+     "index": 2,
+     "ino": "MASK",
+     "language": null,
+     "manuallyVerified": false,
+     "metaTags": {
+      "tagAlbum": "Tagged Book Album",
+      "tagArtist": "Tag Author",
+      "tagEncoder": "Lavf60.16.100",
+      "tagTitle": "Chapter Two",
+      "tagTrack": "2/2"
+     },
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".mp3",
+      "filename": "02.mp3",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/books/Tag Author/Tagged Book/02.mp3",
+      "relPath": "02.mp3",
+      "size": 8571
+     },
+     "mimeType": "audio/mpeg",
+     "timeBase": "1/14112000",
+     "trackNumFromFilename": 2,
+     "trackNumFromMeta": 2,
+     "updatedAt": "MASK"
+    }
+   ],
+   "chapters": [
+    {
+     "end": 2.063673,
+     "id": "MASK",
+     "start": 0,
+     "title": "Chapter One"
+    },
+    {
+     "end": 4.127346,
+     "id": "MASK",
+     "start": 2.063673,
+     "title": "Chapter Two"
+    }
+   ],
+   "coverPath": null,
+   "duration": 4.127346,
+   "ebookFile": null,
+   "id": "MASK",
+   "libraryItemId": "MASK",
+   "metadata": {
+    "abridged": false,
+    "asin": null,
+    "authorName": "Tag Author",
+    "authorNameLF": "Author, Tag",
+    "authors": [
+     {
+      "id": "MASK",
+      "name": "Tag Author"
+     }
+    ],
+    "description": "Tagged description",
+    "descriptionPlain": "Tagged description",
+    "explicit": false,
+    "genres": [
+     "Thriller"
+    ],
+    "isbn": null,
+    "language": null,
+    "narratorName": "Tag Narrator",
+    "narrators": [
+     "Tag Narrator"
+    ],
+    "publishedDate": null,
+    "publishedYear": "2010",
+    "publisher": "Tag Pub",
+    "series": [],
+    "seriesName": "",
+    "subtitle": null,
+    "title": "Tagged Book Album",
+    "titleIgnorePrefix": "Tagged Book Album"
+   },
+   "numAudioFiles": 2,
+   "numChapters": 2,
+   "numTracks": 2,
+   "size": 17281,
+   "tags": [],
+   "tracks": [
+    {
+     "addedAt": "MASK",
+     "bitRate": 32000,
+     "channelLayout": "mono",
+     "channels": 1,
+     "chapters": [],
+     "codec": "mp3",
+     "contentUrl": "/api/items/UUID/file/531389",
+     "discNumFromFilename": null,
+     "discNumFromMeta": null,
+     "duration": 2.063673,
+     "embeddedCoverArt": null,
+     "error": null,
+     "exclude": false,
+     "format": "MP2/3 (MPEG audio layer 2/3)",
+     "index": 1,
+     "ino": "MASK",
+     "language": null,
+     "manuallyVerified": false,
+     "metaTags": {
+      "tagAlbum": "Tagged Book Album",
+      "tagAlbumArtist": "Tag Author",
+      "tagArtist": "Tag Author",
+      "tagComment": "Tagged description",
+      "tagComposer": "Tag Narrator",
+      "tagDate": "2010",
+      "tagEncoder": "Lavf60.16.100",
+      "tagGenre": "Thriller",
+      "tagPublisher": "Tag Pub",
+      "tagTitle": "Chapter One",
+      "tagTrack": "1/2"
+     },
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".mp3",
+      "filename": "01.mp3",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/books/Tag Author/Tagged Book/01.mp3",
+      "relPath": "01.mp3",
+      "size": 8710
+     },
+     "mimeType": "audio/mpeg",
+     "startOffset": 0,
+     "timeBase": "1/14112000",
+     "title": "01.mp3",
+     "trackNumFromFilename": 1,
+     "trackNumFromMeta": 1,
+     "updatedAt": "MASK"
+    },
+    {
+     "addedAt": "MASK",
+     "bitRate": 32000,
+     "channelLayout": "mono",
+     "channels": 1,
+     "chapters": [],
+     "codec": "mp3",
+     "contentUrl": "/api/items/UUID/file/531391",
+     "discNumFromFilename": null,
+     "discNumFromMeta": null,
+     "duration": 2.063673,
+     "embeddedCoverArt": null,
+     "error": null,
+     "exclude": false,
+     "format": "MP2/3 (MPEG audio layer 2/3)",
+     "index": 2,
+     "ino": "MASK",
+     "language": null,
+     "manuallyVerified": false,
+     "metaTags": {
+      "tagAlbum": "Tagged Book Album",
+      "tagArtist": "Tag Author",
+      "tagEncoder": "Lavf60.16.100",
+      "tagTitle": "Chapter Two",
+      "tagTrack": "2/2"
+     },
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".mp3",
+      "filename": "02.mp3",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/books/Tag Author/Tagged Book/02.mp3",
+      "relPath": "02.mp3",
+      "size": 8571
+     },
+     "mimeType": "audio/mpeg",
+     "startOffset": 2.063673,
+     "timeBase": "1/14112000",
+     "title": "02.mp3",
+     "trackNumFromFilename": 2,
+     "trackNumFromMeta": 2,
+     "updatedAt": "MASK"
+    }
+   ]
+  },
+  "mediaType": "book",
+  "mtimeMs": "MASK",
+  "numFiles": 2,
+  "oldLibraryItemId": null,
+  "path": "ROOT/lib/books/Tag Author/Tagged Book",
+  "relPath": "Tag Author/Tagged Book",
+  "scanVersion": "2.37.0",
+  "size": 17281,
+  "updatedAt": "MASK"
+ },
+ "libraryItemId": "MASK",
+ "mediaMetadata": {
+  "abridged": false,
+  "asin": null,
+  "authors": [
+   {
+    "id": "MASK",
+    "name": "Tag Author"
+   }
+  ],
+  "description": "Tagged description",
+  "explicit": false,
+  "genres": [
+   "Thriller"
+  ],
+  "isbn": null,
+  "language": null,
+  "narrators": [
+   "Tag Narrator"
+  ],
+  "publishedDate": null,
+  "publishedYear": "2010",
+  "publisher": "Tag Pub",
+  "series": [],
+  "subtitle": null,
+  "title": "Tagged Book Album"
+ },
+ "mediaPlayer": "html5",
+ "mediaType": "book",
+ "playMethod": 0,
+ "serverVersion": "2.37.0",
+ "startTime": "MASK",
+ "startedAt": "MASK",
+ "timeListening": "MASK",
+ "updatedAt": "MASK",
+ "userId": "MASK"
+}

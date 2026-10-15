@@ -1,0 +1,245 @@
+--- /tmp/abs-base/dist-server/server/finders/BookFinder.js	2026-10-03 10:54:50.142233679 +1300
++++ dist-server/server/finders/BookFinder.js	2026-10-03 10:42:00.504506929 +1300
+@@ -1,17 +1,31 @@
+ "use strict";
+-const OpenLibrary = require('../providers/OpenLibrary');
+-const GoogleBooks = require('../providers/GoogleBooks');
+-const Audible = require('../providers/Audible');
+-const iTunes = require('../providers/iTunes');
+-const Audnexus = require('../providers/Audnexus');
+-const FantLab = require('../providers/FantLab');
+-const AudiobookCovers = require('../providers/AudiobookCovers');
+-const CustomProviderAdapter = require('../providers/CustomProviderAdapter');
+-const Logger = require('../Logger');
+-const { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN } = require('../utils/index');
+-const htmlSanitizer = require('../utils/htmlSanitizer');
++const OpenLibrary = require("../providers/OpenLibrary");
++const GoogleBooks = require("../providers/GoogleBooks");
++const Audible = require("../providers/Audible");
++const iTunes = require("../providers/iTunes");
++const Audnexus = require("../providers/Audnexus");
++const FantLab = require("../providers/FantLab");
++const AudiobookCovers = require("../providers/AudiobookCovers");
++const CustomProviderAdapter = require("../providers/CustomProviderAdapter");
++const Logger = require("../Logger");
++const utils = require("../utils/index");
++const { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN } = utils;
++const htmlSanitizer = require("../utils/htmlSanitizer");
++function isProviderError(response) {
++    return !!response.errorCode;
++}
+ class BookFinder {
+     #providerResponseTimeout = 10000;
++    openLibrary;
++    googleBooks;
++    audible;
++    iTunesApi;
++    audnexus;
++    fantLab;
++    audiobookCovers;
++    customProviderAdapter;
++    providers;
++    verbose;
+     constructor() {
+         this.openLibrary = new OpenLibrary();
+         this.googleBooks = new GoogleBooks();
+@@ -25,7 +39,7 @@
+         this.verbose = false;
+     }
+     async findByISBN(isbn) {
+-        var book = await this.openLibrary.isbnLookup(isbn);
++        var book = (await this.openLibrary.isbnLookup(isbn));
+         if (book.errorCode) {
+             Logger.error('Book not found');
+         }
+@@ -35,7 +49,9 @@
+         var searchTitle = cleanTitleForCompares(title);
+         var searchAuthor = cleanAuthorForCompares(author);
+         return books
+-            .map((b) => {
++            .map((book) => {
++            // Scoring fields are added to the provider result in place
++            const b = book;
+             b.cleanedTitle = cleanTitleForCompares(b.title);
+             b.titleDistance = levenshteinDistance(b.cleanedTitle, title);
+             // Total length of search (title or both title & author)
+@@ -83,7 +99,7 @@
+                     if (this.verbose)
+                         Logger.debug(`Exact author was included in "${b.author}", Search: "${b.includesAuthor}"`);
+                 }
+-                else if (b.authorDistance > maxAuthorDistance) {
++                else if (b.authorDistance !== undefined && b.authorDistance > maxAuthorDistance) {
+                     if (this.verbose)
+                         Logger.debug(`Filtering out search result "${b.author}", author distance = ${b.authorDistance}: "${b.author}"/"${author}"`);
+                     return false;
+@@ -104,10 +120,10 @@
+      * @returns {Promise<Object[]>}
+      */
+     async getOpenLibResults(title, author, maxTitleDistance, maxAuthorDistance) {
+-        var books = await this.openLibrary.searchTitle(title, this.#providerResponseTimeout);
++        var books = (await this.openLibrary.searchTitle(title, this.#providerResponseTimeout));
+         if (this.verbose)
+             Logger.debug(`OpenLib Book Search Results: ${books.length || 0}`);
+-        if (books.errorCode) {
++        if (isProviderError(books)) {
+             Logger.error(`OpenLib Search Error ${books.errorCode}`);
+             return [];
+         }
+@@ -128,10 +144,10 @@
+      * @returns {Promise<Object[]>}
+      */
+     async getGoogleBooksResults(title, author) {
+-        var books = await this.googleBooks.search(title, author, this.#providerResponseTimeout);
++        var books = (await this.googleBooks.search(title, author, this.#providerResponseTimeout));
+         if (this.verbose)
+             Logger.debug(`GoogleBooks Book Search Results: ${books.length || 0}`);
+-        if (books.errorCode) {
++        if (isProviderError(books)) {
+             Logger.error(`GoogleBooks Search Error ${books.errorCode}`);
+             return [];
+         }
+@@ -145,10 +161,10 @@
+      * @returns {Promise<Object[]>}
+      */
+     async getFantLabResults(title, author) {
+-        var books = await this.fantLab.search(title, author, this.#providerResponseTimeout);
++        var books = (await this.fantLab.search(title, author, this.#providerResponseTimeout));
+         if (this.verbose)
+             Logger.debug(`FantLab Book Search Results: ${books.length || 0}`);
+-        if (books.errorCode) {
++        if (isProviderError(books)) {
+             Logger.error(`FantLab Search Error ${books.errorCode}`);
+             return [];
+         }
+@@ -183,7 +199,7 @@
+      */
+     async getAudibleResults(title, author, asin, provider) {
+         const region = provider.includes('.') ? provider.split('.').pop() : '';
+-        const books = await this.audible.search(title, author, asin, region, this.#providerResponseTimeout);
++        const books = (await this.audible.search(title, author, asin, region, this.#providerResponseTimeout));
+         if (this.verbose)
+             Logger.debug(`Audible Book Search Results: ${books.length || 0}`);
+         if (!books)
+@@ -200,7 +216,7 @@
+      */
+     async getCustomProviderResults(title, author, isbn, providerSlug) {
+         try {
+-            const books = await this.customProviderAdapter.search(title, author, isbn, providerSlug, 'book', this.#providerResponseTimeout);
++            const books = (await this.customProviderAdapter.search(title, author, isbn, providerSlug, 'book', this.#providerResponseTimeout));
+             if (this.verbose)
+                 Logger.debug(`Custom provider '${providerSlug}' Search Results: ${books.length || 0}`);
+             return books;
+@@ -211,6 +227,11 @@
+         }
+     }
+     static TitleCandidates = class {
++        candidates;
++        cleanAuthor;
++        priorities;
++        positions;
++        currentPosition;
+         constructor(cleanAuthor) {
+             this.candidates = new Set();
+             this.cleanAuthor = cleanAuthor;
+@@ -258,7 +279,7 @@
+             candidates.sort((a, b) => {
+                 // Candidates that include only digits are also likely low quality
+                 const onlyDigits = /^\d+$/;
+-                const includesOnlyDigitsDiff = onlyDigits.test(a) - onlyDigits.test(b);
++                const includesOnlyDigitsDiff = Number(onlyDigits.test(a)) - Number(onlyDigits.test(b));
+                 if (includesOnlyDigitsDiff)
+                     return includesOnlyDigitsDiff;
+                 // transformed candidates receive higher priority
+@@ -289,6 +310,9 @@
+         }
+     };
+     static AuthorCandidates = class {
++        audnexus;
++        candidates;
++        cleanAuthor;
+         constructor(cleanAuthor, audnexus) {
+             this.audnexus = audnexus;
+             this.candidates = new Set();
+@@ -365,9 +389,9 @@
+      */
+     async search(libraryItem, provider, title, author, isbn, asin, options = {}) {
+         let books = [];
+-        const maxTitleDistance = !isNaN(options.titleDistance) ? Number(options.titleDistance) : 4;
+-        const maxAuthorDistance = !isNaN(options.authorDistance) ? Number(options.authorDistance) : 4;
+-        const maxFuzzySearches = !isNaN(options.maxFuzzySearches) ? Number(options.maxFuzzySearches) : 5;
++        const maxTitleDistance = !isNaN(Number(options.titleDistance)) ? Number(options.titleDistance) : 4;
++        const maxAuthorDistance = !isNaN(Number(options.authorDistance)) ? Number(options.authorDistance) : 4;
++        const maxFuzzySearches = !isNaN(Number(options.maxFuzzySearches)) ? Number(options.maxFuzzySearches) : 5;
+         let numFuzzySearches = 0;
+         // Custom providers are assumed to be correct
+         if (provider.startsWith('custom-')) {
+@@ -389,20 +413,20 @@
+             author = author?.trim().toLowerCase() || '';
+             const cleanAuthor = cleanAuthorForCompares(author);
+             // Now run up to maxFuzzySearches fuzzy searches
+-            let authorCandidates = new BookFinder.AuthorCandidates(cleanAuthor, this.audnexus);
++            const authorCandidateSet = new BookFinder.AuthorCandidates(cleanAuthor, this.audnexus);
+             // Remove underscores and parentheses with their contents, and replace with a separator
+             // Use negated character classes to prevent ReDoS vulnerability (input length validated at entry point)
+             const cleanTitle = title.replace(/\[[^\]]*\]|\([^)]*\)|{[^}]*}|_/g, ' - ');
+             // Split title into hypen-separated parts
+             const titleParts = cleanTitle.split(/ - | -|- /);
+             for (const titlePart of titleParts)
+-                authorCandidates.add(titlePart);
+-            authorCandidates = await authorCandidates.getCandidates();
++                authorCandidateSet.add(titlePart);
++            const authorCandidates = await authorCandidateSet.getCandidates();
+             loop_author: for (const authorCandidate of authorCandidates) {
+-                let titleCandidates = new BookFinder.TitleCandidates(authorCandidate);
++                const titleCandidateSet = new BookFinder.TitleCandidates(authorCandidate);
+                 for (const titlePart of titleParts)
+-                    titleCandidates.add(titlePart);
+-                titleCandidates = titleCandidates.getCandidates();
++                    titleCandidateSet.add(titlePart);
++                const titleCandidates = titleCandidateSet.getCandidates();
+                 for (const titleCandidate of titleCandidates) {
+                     if (titleCandidate == actualTitleQuery && authorCandidate == actualAuthorQuery)
+                         continue; // We already tried this
+@@ -595,10 +619,12 @@
+         return books;
+     }
+     async findCovers(provider, title, author, options = {}) {
++        // NOTE: options is passed in the isbn position of search() below (pre-existing behaviour, kept as-is)
++        const optionsAsIsbn = options;
+         let searchResults = [];
+         if (provider === 'all') {
+             for (const providerString of this.providers) {
+-                const providerResults = await this.search(null, providerString, title, author, options);
++                const providerResults = await this.search(null, providerString, title, author, optionsAsIsbn);
+                 Logger.debug(`[BookFinder] Found ${providerResults.length} covers from ${providerString}`);
+                 searchResults.push(...providerResults);
+             }
+@@ -607,13 +633,13 @@
+             // Best providers: google, fantlab, and audible.com
+             const bestProviders = ['google', 'fantlab', 'audible'];
+             for (const providerString of bestProviders) {
+-                const providerResults = await this.search(null, providerString, title, author, options);
++                const providerResults = await this.search(null, providerString, title, author, optionsAsIsbn);
+                 Logger.debug(`[BookFinder] Found ${providerResults.length} covers from ${providerString}`);
+                 searchResults.push(...providerResults);
+             }
+         }
+         else {
+-            searchResults = await this.search(null, provider, title, author, options);
++            searchResults = await this.search(null, provider, title, author, optionsAsIsbn);
+         }
+         Logger.debug(`[BookFinder] FindCovers search results: ${searchResults.length}`);
+         const covers = [];
+@@ -631,7 +657,6 @@
+         return this.audnexus.getChaptersByASIN(asin, region);
+     }
+ }
+-module.exports = new BookFinder();
+ function hasSubtitle(title) {
+     return title.includes(': ') || title.includes(' - ');
+ }
+@@ -683,3 +708,4 @@
+ function stripRedundantSpaces(str) {
+     return str.replace(/\s+/g, ' ').trim();
+ }
++module.exports = new BookFinder();

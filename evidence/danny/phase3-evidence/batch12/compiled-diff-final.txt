@@ -1,0 +1,14 @@
+2d1
+< const { Request, Response, NextFunction } = require("express");
+11,13c10,12
+< const { reqSupportsWebp, clampPositiveInt } = require("../utils/index");
+< const { ScanResult, AudioMimeType } = require("../utils/constants");
+< const { getAudioMimeTypeFromExtname, encodeUriPath } = require("../utils/fileUtils");
+---
+> const utils = require("../utils/index");
+> const constants = require("../utils/constants");
+> const fileUtils = require("../utils/fileUtils");
+20a20,22
+> const { reqSupportsWebp, clampPositiveInt } = utils;
+> const { ScanResult, AudioMimeType } = constants;
+> const { getAudioMimeTypeFromExtname, encodeUriPath } = fileUtils;

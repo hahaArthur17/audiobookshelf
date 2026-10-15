@@ -1,0 +1,59 @@
+STATUS 200
+LOCATION 
+{
+ "libraryItems": [
+  {
+   "addedAt": "MASK",
+   "birthtimeMs": "MASK",
+   "ctimeMs": "MASK",
+   "folderId": "MASK",
+   "id": "MASK",
+   "ino": "MASK",
+   "isFile": false,
+   "isInvalid": false,
+   "isMissing": false,
+   "libraryId": "MASK",
+   "media": {
+    "coverPath": null,
+    "duration": 0,
+    "ebookFormat": "pdf",
+    "id": "MASK",
+    "metadata": {
+     "abridged": false,
+     "asin": null,
+     "authorName": "OPF Author",
+     "authorNameLF": "Author, OPF",
+     "description": "OPF description",
+     "explicit": false,
+     "genres": [
+      "Fantasy"
+     ],
+     "isbn": "9781234567897",
+     "language": "en",
+     "narratorName": "Reader One",
+     "publishedDate": null,
+     "publishedYear": "2001",
+     "publisher": "OPF Publisher",
+     "seriesName": "OPF Series #2",
+     "subtitle": null,
+     "title": "OPF Title",
+     "titleIgnorePrefix": "OPF Title"
+    },
+    "numAudioFiles": 0,
+    "numChapters": 0,
+    "numTracks": 0,
+    "size": 8,
+    "tags": []
+   },
+   "mediaType": "book",
+   "mtimeMs": "MASK",
+   "numFiles": 4,
+   "oldLibraryItemId": null,
+   "path": "ROOT/lib/books/Author One/Book One",
+   "progressLastUpdate": 1791610346363,
+   "relPath": "Author One/Book One",
+   "size": 737,
+   "updatedAt": "MASK"
+  }
+ ]
+}

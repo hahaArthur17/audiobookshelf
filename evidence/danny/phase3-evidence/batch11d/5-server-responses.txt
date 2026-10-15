@@ -1,0 +1,11 @@
+== status
+{"app":"audiobookshelf","serverVersion":"2.37.0","isInit":false,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""},"ConfigPath":"<scratchpad>/smoke11d-d2og/config","MetadataPath":"<scratchpad>/smoke11d-d2og/metadata"} [200]
+== init
+OK [200]
+== status after init
+{"app":"audiobookshelf","serverVersion":"2.37.0","isInit":true,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""}} [200]
+== login
+[200]
+user: root type: root accessToken present: true Source: debian
+== login wrong password
+Unauthorized [401]

@@ -1,0 +1,465 @@
+STATUS 200
+LOCATION 
+{
+ "libraryItems": [
+  {
+   "addedAt": "MASK",
+   "birthtimeMs": "MASK",
+   "ctimeMs": "MASK",
+   "folderId": "MASK",
+   "id": "MASK",
+   "ino": "MASK",
+   "isFile": false,
+   "isInvalid": false,
+   "isMissing": false,
+   "lastScan": "MASK",
+   "libraryFiles": [
+    {
+     "addedAt": "MASK",
+     "fileType": "audio",
+     "ino": "MASK",
+     "isSupplementary": null,
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".mp3",
+      "filename": "ep1.mp3",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/podcasts/My Show/ep1.mp3",
+      "relPath": "ep1.mp3",
+      "size": 8626
+     },
+     "updatedAt": "MASK"
+    },
+    {
+     "addedAt": "MASK",
+     "fileType": "audio",
+     "ino": "MASK",
+     "isSupplementary": null,
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".mp3",
+      "filename": "ep2.mp3",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/podcasts/My Show/ep2.mp3",
+      "relPath": "ep2.mp3",
+      "size": 8562
+     },
+     "updatedAt": "MASK"
+    }
+   ],
+   "libraryId": "MASK",
+   "media": {
+    "autoDownloadEpisodes": true,
+    "autoDownloadSchedule": "5 * * * *",
+    "coverPath": null,
+    "episodes": [
+     {
+      "addedAt": "MASK",
+      "audioFile": {
+       "addedAt": "MASK",
+       "bitRate": 32000,
+       "channelLayout": "mono",
+       "channels": 1,
+       "chapters": [],
+       "codec": "mp3",
+       "discNumFromFilename": null,
+       "discNumFromMeta": null,
+       "duration": 2.063673,
+       "embeddedCoverArt": null,
+       "error": null,
+       "exclude": false,
+       "format": "MP2/3 (MPEG audio layer 2/3)",
+       "index": 1,
+       "ino": "MASK",
+       "language": null,
+       "manuallyVerified": false,
+       "metaTags": {
+        "tagAlbum": "My Show",
+        "tagArtist": "Show Host",
+        "tagComment": "First ep",
+        "tagDate": "2021",
+        "tagEncoder": "Lavf60.16.100",
+        "tagGenre": "Podcast",
+        "tagTitle": "Episode 1: Start",
+        "tagTrack": "1"
+       },
+       "metadata": {
+        "birthtimeMs": "MASK",
+        "ctimeMs": "MASK",
+        "ext": ".mp3",
+        "filename": "ep1.mp3",
+        "mtimeMs": "MASK",
+        "path": "ROOT/lib/podcasts/My Show/ep1.mp3",
+        "relPath": "ep1.mp3",
+        "size": 8626
+       },
+       "mimeType": "audio/mpeg",
+       "timeBase": "1/14112000",
+       "trackNumFromFilename": null,
+       "trackNumFromMeta": 1,
+       "updatedAt": "MASK"
+      },
+      "audioTrack": {
+       "addedAt": "MASK",
+       "bitRate": 32000,
+       "channelLayout": "mono",
+       "channels": 1,
+       "chapters": [],
+       "codec": "mp3",
+       "contentUrl": "/api/items/UUID/file/531412",
+       "discNumFromFilename": null,
+       "discNumFromMeta": null,
+       "duration": 2.063673,
+       "embeddedCoverArt": null,
+       "error": null,
+       "exclude": false,
+       "format": "MP2/3 (MPEG audio layer 2/3)",
+       "index": 1,
+       "ino": "MASK",
+       "language": null,
+       "manuallyVerified": false,
+       "metaTags": {
+        "tagAlbum": "My Show",
+        "tagArtist": "Show Host",
+        "tagComment": "First ep",
+        "tagDate": "2021",
+        "tagEncoder": "Lavf60.16.100",
+        "tagGenre": "Podcast",
+        "tagTitle": "Episode 1: Start",
+        "tagTrack": "1"
+       },
+       "metadata": {
+        "birthtimeMs": "MASK",
+        "ctimeMs": "MASK",
+        "ext": ".mp3",
+        "filename": "ep1.mp3",
+        "mtimeMs": "MASK",
+        "path": "ROOT/lib/podcasts/My Show/ep1.mp3",
+        "relPath": "ep1.mp3",
+        "size": 8626
+       },
+       "mimeType": "audio/mpeg",
+       "startOffset": 0,
+       "timeBase": "1/14112000",
+       "title": "ep1.mp3",
+       "trackNumFromFilename": null,
+       "trackNumFromMeta": 1,
+       "updatedAt": "MASK"
+      },
+      "chapters": [],
+      "description": "First ep",
+      "duration": 2.063673,
+      "enclosure": null,
+      "episode": "1",
+      "episodeType": null,
+      "guid": null,
+      "id": "MASK",
+      "index": null,
+      "libraryItemId": "MASK",
+      "oldEpisodeId": null,
+      "podcastId": "MASK",
+      "pubDate": "2021",
+      "publishedAt": "MASK",
+      "season": null,
+      "size": 8626,
+      "subtitle": null,
+      "title": "Episode 1: Start",
+      "updatedAt": "MASK"
+     },
+     {
+      "addedAt": "MASK",
+      "audioFile": {
+       "addedAt": "MASK",
+       "bitRate": 32000,
+       "channelLayout": "mono",
+       "channels": 1,
+       "chapters": [],
+       "codec": "mp3",
+       "discNumFromFilename": null,
+       "discNumFromMeta": null,
+       "duration": 2.063673,
+       "embeddedCoverArt": null,
+       "error": null,
+       "exclude": false,
+       "format": "MP2/3 (MPEG audio layer 2/3)",
+       "index": 1,
+       "ino": "MASK",
+       "language": null,
+       "manuallyVerified": false,
+       "metaTags": {
+        "tagAlbum": "My Show",
+        "tagArtist": "Show Host",
+        "tagEncoder": "Lavf60.16.100",
+        "tagTitle": "Episode 2: Next",
+        "tagTrack": "2"
+       },
+       "metadata": {
+        "birthtimeMs": "MASK",
+        "ctimeMs": "MASK",
+        "ext": ".mp3",
+        "filename": "ep2.mp3",
+        "mtimeMs": "MASK",
+        "path": "ROOT/lib/podcasts/My Show/ep2.mp3",
+        "relPath": "ep2.mp3",
+        "size": 8562
+       },
+       "mimeType": "audio/mpeg",
+       "timeBase": "1/14112000",
+       "trackNumFromFilename": null,
+       "trackNumFromMeta": 2,
+       "updatedAt": "MASK"
+      },
+      "audioTrack": {
+       "addedAt": "MASK",
+       "bitRate": 32000,
+       "channelLayout": "mono",
+       "channels": 1,
+       "chapters": [],
+       "codec": "mp3",
+       "contentUrl": "/api/items/UUID/file/531414",
+       "discNumFromFilename": null,
+       "discNumFromMeta": null,
+       "duration": 2.063673,
+       "embeddedCoverArt": null,
+       "error": null,
+       "exclude": false,
+       "format": "MP2/3 (MPEG audio layer 2/3)",
+       "index": 1,
+       "ino": "MASK",
+       "language": null,
+       "manuallyVerified": false,
+       "metaTags": {
+        "tagAlbum": "My Show",
+        "tagArtist": "Show Host",
+        "tagEncoder": "Lavf60.16.100",
+        "tagTitle": "Episode 2: Next",
+        "tagTrack": "2"
+       },
+       "metadata": {
+        "birthtimeMs": "MASK",
+        "ctimeMs": "MASK",
+        "ext": ".mp3",
+        "filename": "ep2.mp3",
+        "mtimeMs": "MASK",
+        "path": "ROOT/lib/podcasts/My Show/ep2.mp3",
+        "relPath": "ep2.mp3",
+        "size": 8562
+       },
+       "mimeType": "audio/mpeg",
+       "startOffset": 0,
+       "timeBase": "1/14112000",
+       "title": "ep2.mp3",
+       "trackNumFromFilename": null,
+       "trackNumFromMeta": 2,
+       "updatedAt": "MASK"
+      },
+      "chapters": [],
+      "description": null,
+      "duration": 2.063673,
+      "enclosure": null,
+      "episode": "2",
+      "episodeType": null,
+      "guid": null,
+      "id": "MASK",
+      "index": null,
+      "libraryItemId": "MASK",
+      "oldEpisodeId": null,
+      "podcastId": "MASK",
+      "pubDate": null,
+      "publishedAt": null,
+      "season": null,
+      "size": 8562,
+      "subtitle": null,
+      "title": "Episode 2: Next",
+      "updatedAt": "MASK"
+     }
+    ],
+    "id": "MASK",
+    "lastEpisodeCheck": null,
+    "libraryItemId": "MASK",
+    "maxEpisodesToKeep": 0,
+    "maxNewEpisodesToDownload": 3,
+    "metadata": {
+     "author": "Show Host",
+     "description": null,
+     "explicit": false,
+     "feedUrl": "http://127.0.0.1:9/feed.xml",
+     "genres": [
+      "Podcast"
+     ],
+     "imageUrl": null,
+     "itunesArtistId": null,
+     "itunesId": null,
+     "itunesPageUrl": null,
+     "language": null,
+     "releaseDate": null,
+     "title": "My Show",
+     "titleIgnorePrefix": "My Show",
+     "type": "episodic"
+    },
+    "numEpisodes": 2,
+    "size": 17188,
+    "tags": []
+   },
+   "mediaType": "podcast",
+   "mtimeMs": "MASK",
+   "numFiles": 2,
+   "oldLibraryItemId": null,
+   "path": "ROOT/lib/podcasts/My Show",
+   "relPath": "My Show",
+   "scanVersion": "2.37.0",
+   "size": 17188,
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "birthtimeMs": "MASK",
+   "ctimeMs": "MASK",
+   "folderId": "MASK",
+   "id": "MASK",
+   "ino": "MASK",
+   "isFile": false,
+   "isInvalid": false,
+   "isMissing": false,
+   "lastScan": "MASK",
+   "libraryFiles": [
+    {
+     "addedAt": "MASK",
+     "fileType": "ebook",
+     "ino": "MASK",
+     "isSupplementary": false,
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".pdf",
+      "filename": "Book Three.pdf",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/books/Author One/Book Three/Book Three.pdf",
+      "relPath": "Book Three.pdf",
+      "size": 10
+     },
+     "updatedAt": "MASK"
+    },
+    {
+     "addedAt": "MASK",
+     "fileType": "image",
+     "ino": "MASK",
+     "isSupplementary": null,
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".jpg",
+      "filename": "cover.jpg",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/books/Author One/Book Three/cover.jpg",
+      "relPath": "cover.jpg",
+      "size": 248
+     },
+     "updatedAt": "MASK"
+    },
+    {
+     "addedAt": "MASK",
+     "fileType": "metadata",
+     "ino": "MASK",
+     "isSupplementary": null,
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".json",
+      "filename": "metadata.json",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/books/Author One/Book Three/metadata.json",
+      "relPath": "metadata.json",
+      "size": 278
+     },
+     "updatedAt": "MASK"
+    }
+   ],
+   "libraryId": "MASK",
+   "media": {
+    "audioFiles": [],
+    "chapters": [],
+    "coverPath": "ROOT/metadata/items/UUID/cover.jpg",
+    "duration": 0,
+    "ebookFile": {
+     "addedAt": "MASK",
+     "ebookFormat": "pdf",
+     "fileType": "ebook",
+     "ino": "MASK",
+     "isSupplementary": null,
+     "metadata": {
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "ext": ".pdf",
+      "filename": "Book Three.pdf",
+      "mtimeMs": "MASK",
+      "path": "ROOT/lib/books/Author One/Book Three/Book Three.pdf",
+      "relPath": "Book Three.pdf",
+      "size": 10
+     },
+     "updatedAt": "MASK"
+    },
+    "ebookFormat": "pdf",
+    "id": "MASK",
+    "libraryItemId": "MASK",
+    "metadata": {
+     "abridged": false,
+     "asin": null,
+     "authorName": "A2",
+     "authorNameLF": "A2",
+     "authors": [
+      {
+       "id": "MASK",
+       "name": "A2"
+      }
+     ],
+     "description": "JSON description",
+     "descriptionPlain": "JSON description",
+     "explicit": false,
+     "genres": [
+      "Science Fiction"
+     ],
+     "isbn": null,
+     "language": "English",
+     "narratorName": "JSON Narrator",
+     "narrators": [
+      "JSON Narrator"
+     ],
+     "publishedDate": null,
+     "publishedYear": "1998",
+     "publisher": "P3",
+     "series": [
+      {
+       "id": "MASK",
+       "name": "S2",
+       "sequence": "1"
+      }
+     ],
+     "seriesName": "S2 #1",
+     "subtitle": null,
+     "title": "New Title",
+     "titleIgnorePrefix": "New Title"
+    },
+    "numAudioFiles": 0,
+    "numChapters": 0,
+    "numTracks": 0,
+    "size": 10,
+    "tags": [
+     "tag one"
+    ],
+    "tracks": []
+   },
+   "mediaType": "book",
+   "mtimeMs": "MASK",
+   "numFiles": 3,
+   "oldLibraryItemId": null,
+   "path": "ROOT/lib/books/Author One/Book Three",
+   "relPath": "Author One/Book Three",
+   "scanVersion": "2.37.0",
+   "size": 536,
+   "updatedAt": "MASK"
+  }
+ ]
+}

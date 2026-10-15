@@ -1,0 +1,20 @@
+== GET /api/me
+{"id":"UUID","username":"root","email":null,"type":"root","token":"JWT","mediaProgress":[],"seriesHideFromContinueListening":[],"bookmarks":[],"isActive":true,"isLocked":false,"lastSeen":null,"createdAt":TS,"permissions":{"download":true,"update":true,"delete":true,"upload":true,"createEreader":true,"accessAllLibraries":true,"accessAllTags":true,"accessExplicitContent":true,"selectedTagsNotAccessible":false},"librariesAccessible":[],"itemTagsSelected":[],"hasOpenIDLink":false} [200]
+== GET /api/libraries
+{"libraries":[]} [200]
+== GET /api/users
+{"users":[{"id":"UUID","username":"root","email":null,"type":"root","token":"JWT","seriesHideFromContinueListening":[],"isActive":true,"isLocked":false,"lastSeen":null,"createdAt":TS,"permissions":{"download":true,"update":true,"delete":true,"upload":true,"createEreader":true,"accessAllLibraries":true,"accessAllTags":true,"accessExplicitContent":true,"selectedTagsNotAccessible":false},"librariesAccessible":[],"itemTagsSelected":[],"hasOpenIDLink":false}]} [200]
+== GET /api/tags
+{"tags":[]} [200]
+== GET /api/genres
+{"genres":[]} [200]
+== create library
+{"id":"UUID","name":"Test","folders":[{"id":"UUID","fullPath":"TMP/lib","libraryId":"UUID","addedAt":TS}],"displayOrder":1,"icon":"database","mediaType":"book","provider":"google","settings":{"coverAspectRatio":1,"disableWatcher":false,"autoScanCronExpression":null,"skipMatchingMediaWithAsin":false,"skipMatchingMediaWithIsbn":false,"audiobooksOnly":false,"epubsAllowScriptedContent":false,"hideSingleBookSeries":false,"onlyShowLaterBooksInContinueSeries":false,"metadataPrecedence":["folderStructure","audioMetatags","nfoFile","txtFiles","opfFile","absMetadata"],"markAsFinishedPercentComplete":null,"markAsFinishedTimeRemaining":10},"lastScan":null,"createdAt":TS,"lastUpdate":TS}
+== scan
+OK [200]
+== items
+{"results":[],"total":0,"limit":0,"page":0,"sortDesc":false,"mediaType":"book","minified":false,"collapseseries":false,"include":"","offset":0} [200]
+== stats
+{"largestItems":[],"totalAuthors":0,"authorsWithCount":[],"totalGenres":0,"genresWithCount":[],"totalItems":0,"longestItems":[],"totalSize":0,"totalDuration":0,"numAudioTracks":0} [200]
+== server log ERROR and WARN lines
+ERROR: Root path has no media folders: TMP/lib

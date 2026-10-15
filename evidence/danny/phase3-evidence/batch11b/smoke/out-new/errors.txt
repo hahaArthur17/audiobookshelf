@@ -1,0 +1,4 @@
+ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "WORK/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "WORK/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive

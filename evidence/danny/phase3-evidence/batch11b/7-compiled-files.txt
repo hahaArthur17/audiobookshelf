@@ -1,0 +1,20 @@
+Files /tmp/abs-base-b11b/dist-server/server/Database.js and /tmp/abs-new-b11b/dist-server/server/Database.js differ
+Files /tmp/abs-base-b11b/dist-server/server/managers/MigrationManager.js and /tmp/abs-new-b11b/dist-server/server/managers/MigrationManager.js differ
+Files /tmp/abs-base-b11b/dist-server/server/migrations/v2.15.0-series-column-unique.js and /tmp/abs-new-b11b/dist-server/server/migrations/v2.15.0-series-column-unique.js differ
+Files /tmp/abs-base-b11b/dist-server/server/migrations/v2.17.3-fk-constraints.js and /tmp/abs-new-b11b/dist-server/server/migrations/v2.17.3-fk-constraints.js differ
+Files /tmp/abs-base-b11b/dist-server/server/migrations/v2.17.6-share-add-isdownloadable.js and /tmp/abs-new-b11b/dist-server/server/migrations/v2.17.6-share-add-isdownloadable.js differ
+Files /tmp/abs-base-b11b/dist-server/server/migrations/v2.19.1-copy-title-to-library-items.js and /tmp/abs-new-b11b/dist-server/server/migrations/v2.19.1-copy-title-to-library-items.js differ
+Files /tmp/abs-base-b11b/dist-server/server/migrations/v2.19.4-improve-podcast-queries.js and /tmp/abs-new-b11b/dist-server/server/migrations/v2.19.4-improve-podcast-queries.js differ
+Files /tmp/abs-base-b11b/dist-server/server/migrations/v2.20.0-improve-author-sort-queries.js and /tmp/abs-new-b11b/dist-server/server/migrations/v2.20.0-improve-author-sort-queries.js differ
+Files /tmp/abs-base-b11b/dist-server/server/migrations/v2.26.0-create-auth-tables.js and /tmp/abs-new-b11b/dist-server/server/migrations/v2.26.0-create-auth-tables.js differ
+Files /tmp/abs-base-b11b/dist-server/server/migrations/v2.35.0-add-last-refresh-token.js and /tmp/abs-new-b11b/dist-server/server/migrations/v2.35.0-add-last-refresh-token.js differ
+Files /tmp/abs-base-b11b/dist-server/server/scanner/AbsMetadataFileScanner.js and /tmp/abs-new-b11b/dist-server/server/scanner/AbsMetadataFileScanner.js differ
+Files /tmp/abs-base-b11b/dist-server/server/scanner/AudioFileScanner.js and /tmp/abs-new-b11b/dist-server/server/scanner/AudioFileScanner.js differ
+Files /tmp/abs-base-b11b/dist-server/server/scanner/BookScanner.js and /tmp/abs-new-b11b/dist-server/server/scanner/BookScanner.js differ
+Only in /tmp/abs-new-b11b/dist-server/server/scanner: dynamicKey.js
+Files /tmp/abs-base-b11b/dist-server/server/scanner/LibraryItemScanData.js and /tmp/abs-new-b11b/dist-server/server/scanner/LibraryItemScanData.js differ
+Files /tmp/abs-base-b11b/dist-server/server/scanner/LibraryScanner.js and /tmp/abs-new-b11b/dist-server/server/scanner/LibraryScanner.js differ
+Files /tmp/abs-base-b11b/dist-server/server/scanner/NfoFileScanner.js and /tmp/abs-new-b11b/dist-server/server/scanner/NfoFileScanner.js differ
+Files /tmp/abs-base-b11b/dist-server/server/scanner/OpfFileScanner.js and /tmp/abs-new-b11b/dist-server/server/scanner/OpfFileScanner.js differ
+Files /tmp/abs-base-b11b/dist-server/server/scanner/PodcastScanner.js and /tmp/abs-new-b11b/dist-server/server/scanner/PodcastScanner.js differ
+Files /tmp/abs-base-b11b/dist-server/server/scanner/Scanner.js and /tmp/abs-new-b11b/dist-server/server/scanner/Scanner.js differ

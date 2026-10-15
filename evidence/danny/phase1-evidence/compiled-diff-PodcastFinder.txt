@@ -1,0 +1,21 @@
+--- /tmp/abs-base/dist-server/server/finders/PodcastFinder.js	2026-10-03 10:54:50.142233679 +1300
++++ dist-server/server/finders/PodcastFinder.js	2026-10-03 10:42:00.509506844 +1300
+@@ -1,7 +1,8 @@
+ "use strict";
+-const Logger = require('../Logger');
+-const iTunes = require('../providers/iTunes');
++const Logger = require("../Logger");
++const iTunes = require("../providers/iTunes");
+ class PodcastFinder {
++    iTunesApi;
+     constructor() {
+         this.iTunesApi = new iTunes();
+     }
+@@ -15,6 +16,7 @@
+         if (!term)
+             return null;
+         Logger.debug(`[iTunes] Searching for podcast with term "${term}"`);
++        // iTunes.searchPodcasts JSDoc marks country as required, but it only spreads options into the query
+         const results = await this.iTunesApi.searchPodcasts(term, options);
+         Logger.debug(`[iTunes] Podcast search for "${term}" returned ${results.length} results`);
+         return results;

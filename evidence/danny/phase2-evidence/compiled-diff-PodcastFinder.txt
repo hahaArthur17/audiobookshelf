@@ -1,0 +1,42 @@
+--- /tmp/abs-base2/dist-server/server/finders/PodcastFinder.js	2026-10-03 16:15:06.618767543 +1300
++++ dist-server/server/finders/PodcastFinder.js	2026-10-03 15:34:12.806659527 +1300
+@@ -1,16 +1,11 @@
+ "use strict";
+-const Logger = require('../Logger');
+-const iTunes = require('../providers/iTunes');
++const Logger = require("../Logger");
++const iTunes = require("../providers/iTunes");
+ class PodcastFinder {
++    iTunesApi;
+     constructor() {
+         this.iTunesApi = new iTunes();
+     }
+-    /**
+-     *
+-     * @param {string} term
+-     * @param {{country:string}} options
+-     * @returns {Promise<import('../providers/iTunes').iTunesPodcastSearchResult[]>}
+-     */
+     async search(term, options = {}) {
+         if (!term)
+             return null;
+@@ -19,10 +14,6 @@
+         Logger.debug(`[iTunes] Podcast search for "${term}" returned ${results.length} results`);
+         return results;
+     }
+-    /**
+-     * @param {string} term
+-     * @returns {Promise<string[]>}
+-     */
+     async findCovers(term) {
+         if (!term)
+             return null;
+@@ -30,7 +21,7 @@
+         const results = await this.iTunesApi.searchPodcasts(term);
+         if (!results)
+             return [];
+-        return results.map((r) => r.cover).filter((r) => r);
++        return results.map((r) => r.cover).filter((r) => !!r);
+     }
+ }
+ module.exports = new PodcastFinder();

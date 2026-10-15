@@ -1,0 +1,78 @@
+STATUS 200
+LOCATION 
+{
+ "authors": [
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Author, OPF",
+   "libraryId": "MASK",
+   "name": "OPF Author",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Author, JSON",
+   "libraryId": "MASK",
+   "name": "JSON Author",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Author, NFO",
+   "libraryId": "MASK",
+   "name": "NFO Author",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Six, Author",
+   "libraryId": "MASK",
+   "name": "Author Six",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Two, Author",
+   "libraryId": "MASK",
+   "name": "Author Two",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Author, Tag",
+   "libraryId": "MASK",
+   "name": "Tag Author",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  }
+ ]
+}

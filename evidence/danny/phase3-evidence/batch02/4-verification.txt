@@ -1,0 +1,33 @@
+== git
+c9faa3c1 phase3 batch 2 and 4: server/objects, server/auth, server/routers
+7f280c67 phase3 batch 1 fixes
+e99cf142 phase3 batch 1: server/utils
+== diff stat
+ 30 files changed, 1711 insertions(+), 705 deletions(-)
+== changed outside objects/auth/routers
+MIGRATION.md
+package-lock.json
+package.json
+== tests touched
+none
+== added or modified (not renamed)
+M	MIGRATION.md
+M	package-lock.json
+M	package.json
+A	server/auth/types.ts
+D	server/objects/metadata/FileMetadata.js
+A	server/objects/metadata/FileMetadata.ts
+A	server/objects/types.ts
+== package.json diff
++    "@types/express-session": "^1.19.0",
++    "@types/passport": "^1.0.17",
+== tsconfig
+unchanged
+== any in code lines
+== ts directives
+0
+== as unknown as total
+36
+== as unknown as with no // within 6 lines above
+2026-10-03T22:28:15+13:00 label=batch2-4-done head=c9faa3c1 ts=90 js=101 err=0 tests= 356 passing (1s) 
+== bare field lines left in compiled output (expect none)

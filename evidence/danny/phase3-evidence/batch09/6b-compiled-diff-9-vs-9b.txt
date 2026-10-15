@@ -1,0 +1,12 @@
+diff -ruw /tmp/flt-mid-b9/server/Database.js /tmp/flt-new-b9/server/Database.js
+--- /tmp/flt-mid-b9/server/Database.js	2026-10-10 11:18:19.588600550 +1300
++++ /tmp/flt-new-b9/server/Database.js	2026-10-10 11:18:19.641589454 +1300
+@@ -23,7 +23,7 @@
+         this.supportsUnicodeFoldings = false;
+     }
+     get models() {
+-        return (this.sequelize?.models || {});
++        return this.sequelize?.models || {};
+     }
+     get userModel() {
+         return this.models.user;

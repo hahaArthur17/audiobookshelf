@@ -1,0 +1,25 @@
+Files /tmp/abs-base3/dist-server/server/objects/Backup.js and dist-server/server/objects/Backup.js differ
+Files /tmp/abs-base3/dist-server/server/objects/DailyLog.js and dist-server/server/objects/DailyLog.js differ
+Files /tmp/abs-base3/dist-server/server/objects/DeviceInfo.js and dist-server/server/objects/DeviceInfo.js differ
+Files /tmp/abs-base3/dist-server/server/objects/files/AudioFile.js and dist-server/server/objects/files/AudioFile.js differ
+Files /tmp/abs-base3/dist-server/server/objects/files/EBookFile.js and dist-server/server/objects/files/EBookFile.js differ
+Files /tmp/abs-base3/dist-server/server/objects/files/LibraryFile.js and dist-server/server/objects/files/LibraryFile.js differ
+Files /tmp/abs-base3/dist-server/server/objects/metadata/AudioMetaTags.js and dist-server/server/objects/metadata/AudioMetaTags.js differ
+Files /tmp/abs-base3/dist-server/server/objects/metadata/FileMetadata.js and dist-server/server/objects/metadata/FileMetadata.js differ
+Files /tmp/abs-base3/dist-server/server/objects/Notification.js and dist-server/server/objects/Notification.js differ
+Files /tmp/abs-base3/dist-server/server/objects/PlaybackSession.js and dist-server/server/objects/PlaybackSession.js differ
+Files /tmp/abs-base3/dist-server/server/objects/PodcastEpisodeDownload.js and dist-server/server/objects/PodcastEpisodeDownload.js differ
+Files /tmp/abs-base3/dist-server/server/objects/settings/EmailSettings.js and dist-server/server/objects/settings/EmailSettings.js differ
+Files /tmp/abs-base3/dist-server/server/objects/settings/NotificationSettings.js and dist-server/server/objects/settings/NotificationSettings.js differ
+Files /tmp/abs-base3/dist-server/server/objects/settings/ServerSettings.js and dist-server/server/objects/settings/ServerSettings.js differ
+Files /tmp/abs-base3/dist-server/server/objects/Stream.js and dist-server/server/objects/Stream.js differ
+Files /tmp/abs-base3/dist-server/server/objects/Task.js and dist-server/server/objects/Task.js differ
+Files /tmp/abs-base3/dist-server/server/objects/TrackProgressMonitor.js and dist-server/server/objects/TrackProgressMonitor.js differ
+Only in dist-server/server/objects: types.js
+Files /tmp/abs-base3/dist-server/server/auth/LocalAuthStrategy.js and dist-server/server/auth/LocalAuthStrategy.js differ
+Files /tmp/abs-base3/dist-server/server/auth/OidcAuthStrategy.js and dist-server/server/auth/OidcAuthStrategy.js differ
+Files /tmp/abs-base3/dist-server/server/auth/TokenManager.js and dist-server/server/auth/TokenManager.js differ
+Only in dist-server/server/auth: types.js
+Files /tmp/abs-base3/dist-server/server/routers/ApiRouter.js and dist-server/server/routers/ApiRouter.js differ
+Files /tmp/abs-base3/dist-server/server/routers/HlsRouter.js and dist-server/server/routers/HlsRouter.js differ
+Files /tmp/abs-base3/dist-server/server/routers/PublicRouter.js and dist-server/server/routers/PublicRouter.js differ

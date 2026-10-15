@@ -1,0 +1,21 @@
+server/objects/DeviceInfo.ts:78
+  - // cast(d) (2): this object and the stored data are read and written by key in the loop below (same objects)
+  + // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+server/objects/DeviceInfo.ts:176
+  - // cast(d) (3): this object and both JSON objects are read and written by key in the loop below (same objects)
+  + // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+server/objects/files/AudioFile.ts:242
+  - // cast(d) (2): this object and the new JSON are read and written by key in the loop below (same objects)
+  + // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+server/objects/metadata/AudioMetaTags.ts:339
+  - // cast(d) (2): both objects are read by key in the loop below (same objects; the tag fields are string | null)
+  + // cast(d): the other meta tags object is read by key in the loop below (same object; the tag fields are string | null)
+server/objects/metadata/FileMetadata.ts:72
+  - // cast(d) (2): this object and the payload are read and written by key in the loop below (same objects)
+  + // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+server/objects/metadata/FileMetadata.ts:86
+  - // cast(d) (2): this object and the payload are read and written by key in the loop below (same objects)
+  + // cast(d): this object is written by key in the loop below (same object; the class has no index signature)
+server/objects/settings/EmailSettings.ts:141
+  - // cast(d) (2): this object and the JSON are read and written by key in the loop below (same objects)
+  + // cast(d): this object is written by key in the loop below (same object; the class has no index signature)

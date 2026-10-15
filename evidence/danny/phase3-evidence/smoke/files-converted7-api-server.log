@@ -1,0 +1,46 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-smoke-Zsz6/config, METADATA_PATH=/tmp/abs-smoke-Zsz6/metadata, PORT=3333, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 00:20:12.292] INFO: === Starting Server ===
+[2026-10-10 00:20:12.292] INFO: [Server] Init v2.37.0
+[2026-10-10 00:20:12.292] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 00:20:12.292] INFO: [Server] Platform: linux
+[2026-10-10 00:20:12.293] INFO: [Server] Arch: x64
+[2026-10-10 00:20:12.334] INFO: [BinaryManager] Found valid executable ffmpeg at /home/danny/Code/compx574/audiobookshelf/ffmpeg
+[2026-10-10 00:20:12.334] INFO: [BinaryManager] Updating process.env.FFMPEG_PATH
+[2026-10-10 00:20:12.370] INFO: [BinaryManager] Found valid executable ffprobe at /home/danny/Code/compx574/audiobookshelf/ffprobe
+[2026-10-10 00:20:12.370] INFO: [BinaryManager] Updating process.env.FFPROBE_PATH
+[2026-10-10 00:20:12.371] INFO: [BinaryManager] Found valid library libnusqlite3 at /home/danny/Code/compx574/audiobookshelf/libnusqlite3.so
+[2026-10-10 00:20:12.371] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-10 00:20:12.371] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-smoke-Zsz6/config/absdatabase.sqlite
+[2026-10-10 00:20:12.371] INFO: [Database] Initializing db at "/tmp/abs-smoke-Zsz6/config/absdatabase.sqlite"
+[2026-10-10 00:20:12.380] INFO: [Database] Loading extension /home/danny/Code/compx574/audiobookshelf/libnusqlite3.so
+[2026-10-10 00:20:12.381] INFO: [Database] Successfully loaded extension /home/danny/Code/compx574/audiobookshelf/libnusqlite3.so
+[2026-10-10 00:20:12.381] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-10 00:20:12.381] INFO: [Database] Db connection was successful
+[2026-10-10 00:20:12.412] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 00:20:12.693] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 00:20:12.694] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 00:20:12.698] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 00:20:12.702] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 00:20:12.707] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 00:20:12.712] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 00:20:12.716] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 00:20:12.721] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 00:20:12.738] INFO: [Database] running ANALYZE
+[2026-10-10 00:20:12.743] INFO: [Database] ANALYZE completed
+[2026-10-10 00:20:12.743] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 00:20:12.743] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 00:20:12.748] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 00:20:12.750] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 00:20:12.750] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 00:20:12.757] INFO: Listening on port :3333
+[2026-10-10 00:20:13.078] INFO: Received ping
+[2026-10-10 00:20:13.089] INFO: [Server] Initializing new server
+[2026-10-10 00:20:13.141] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 00:20:13.206] INFO: [Watcher] Initializing watcher for "Test".
+[2026-10-10 00:20:13.210] INFO: [Watcher] "Test" Ready
+[2026-10-10 00:20:13.230] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 00:20:13.230] INFO: [LibraryScanner] Starting (forced) library scan afed68e5-5078-46e8-b74a-bffec508a32a for Test
+[2026-10-10 00:20:13.383] INFO: [LibraryScanner] Library scan "afed68e5-5078-46e8-b74a-bffec508a32a" completed in 0:00 | 5 Added | 0 Updated | 0 Missing
+[2026-10-10 00:20:13.390] INFO: [LibraryScan] Scan log saved "/tmp/abs-smoke-Zsz6/metadata/logs/scans/2026-10-10_afed68e5-5078-46e8-b74a-bffec508a32a.txt"
+[2026-10-10 00:20:13.390] INFO: [LibraryController] Scan complete

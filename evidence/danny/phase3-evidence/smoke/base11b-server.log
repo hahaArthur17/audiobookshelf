@@ -1,0 +1,46 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-smoke-mHQj/config, METADATA_PATH=/tmp/abs-smoke-mHQj/metadata, PORT=3333, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 14:04:42.569] INFO: === Starting Server ===
+[2026-10-10 14:04:42.569] INFO: [Server] Init v2.37.0
+[2026-10-10 14:04:42.570] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 14:04:42.570] INFO: [Server] Platform: linux
+[2026-10-10 14:04:42.570] INFO: [Server] Arch: x64
+[2026-10-10 14:04:42.609] INFO: [BinaryManager] ffmpeg not found or not a valid version
+[2026-10-10 14:04:42.643] INFO: [BinaryManager] ffprobe not found or not a valid version
+[2026-10-10 14:04:42.644] INFO: [BinaryManager] libnusqlite3 not found or not a valid version
+[2026-10-10 14:04:42.644] INFO: [BinaryManager] Installing binaries: ffmpeg, ffprobe, libnusqlite3
+[2026-10-10 14:04:46.901] INFO: [BinaryManager] Binaries installed to /tmp/abs-base-b11b
+[2026-10-10 14:04:46.943] INFO: [BinaryManager] Found valid executable ffmpeg at /tmp/abs-base-b11b/ffmpeg
+[2026-10-10 14:04:46.943] INFO: [BinaryManager] Updating process.env.FFMPEG_PATH
+[2026-10-10 14:04:46.980] INFO: [BinaryManager] Found valid executable ffprobe at /tmp/abs-base-b11b/ffprobe
+[2026-10-10 14:04:46.980] INFO: [BinaryManager] Updating process.env.FFPROBE_PATH
+[2026-10-10 14:04:46.982] INFO: [BinaryManager] Found valid library libnusqlite3 at /tmp/abs-base-b11b/libnusqlite3.so
+[2026-10-10 14:04:46.982] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-10 14:04:46.982] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-smoke-mHQj/config/absdatabase.sqlite
+[2026-10-10 14:04:46.982] INFO: [Database] Initializing db at "/tmp/abs-smoke-mHQj/config/absdatabase.sqlite"
+[2026-10-10 14:04:46.993] INFO: [Database] Loading extension /tmp/abs-base-b11b/libnusqlite3.so
+[2026-10-10 14:04:46.993] INFO: [Database] Successfully loaded extension /tmp/abs-base-b11b/libnusqlite3.so
+[2026-10-10 14:04:46.993] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-10 14:04:46.993] INFO: [Database] Db connection was successful
+[2026-10-10 14:04:47.018] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 14:04:47.337] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 14:04:47.338] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 14:04:47.343] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 14:04:47.348] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 14:04:47.352] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 14:04:47.357] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 14:04:47.362] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 14:04:47.368] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 14:04:47.390] INFO: [Database] running ANALYZE
+[2026-10-10 14:04:47.395] INFO: [Database] ANALYZE completed
+[2026-10-10 14:04:47.395] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 14:04:47.395] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 14:04:47.401] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 14:04:47.403] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 14:04:47.404] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 14:04:47.411] INFO: Listening on port :3333
+[2026-10-10 14:04:48.386] INFO: Received ping
+[2026-10-10 14:04:48.393] INFO: Received ping
+[2026-10-10 14:04:48.404] INFO: [Server] Initializing new server
+[2026-10-10 14:04:48.503] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 14:04:48.534] ERROR: [LocalAuth] Failed login attempt for username "root" from ip ::1 (Invalid password)

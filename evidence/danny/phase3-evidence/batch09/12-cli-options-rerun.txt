@@ -1,0 +1,14 @@
+[1] 50731
+== /tmp/abs-base-b9
+{"app":"audiobookshelf","serverVersion":"2.37.0","isInit":false,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""},"ConfigPath":"/tmp/abs-cli-G1BC/c","MetadataPath":"/tmp/abs-cli-G1BC/m"}
+[1]+  Terminated              ( cd $R && exec node dist-server/index.js --config $D/c --metadata $D/m --port 3398 --source docker > $D/log.txt 2>&1 )
+Running in production mode.
+Options: CONFIG_PATH=TMP/c, METADATA_PATH=TMP/m, PORT=3398, HOST=undefined, SOURCE=docker, ROUTER_BASE_PATH=/audiobookshelf
+stopped
+[1] 50795
+== /home/danny/Code/compx574/audiobookshelf
+{"app":"audiobookshelf","serverVersion":"2.37.0","isInit":false,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""},"ConfigPath":"/tmp/abs-cli-R23e/c","MetadataPath":"/tmp/abs-cli-R23e/m"}
+[1]+  Terminated              ( cd $R && exec node dist-server/index.js --config $D/c --metadata $D/m --port 3398 --source docker > $D/log.txt 2>&1 )
+Running in production mode.
+Options: CONFIG_PATH=TMP/c, METADATA_PATH=TMP/m, PORT=3398, HOST=undefined, SOURCE=docker, ROUTER_BASE_PATH=/audiobookshelf
+stopped

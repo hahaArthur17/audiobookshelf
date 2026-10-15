@@ -1,0 +1,16 @@
+--- git status and log
+bef5fe3d phase3 batch 3c: replace QueryFindOptions
+634aeaba phase3: fix batch 5 and 6 notes
+7fe92c59 phase3 batch 6: server/scanner
+5405f2f3 phase3 batch 5: server/managers
+--- tsconfig, eslint, test changes (expect none)
+--- QueryFindOptions matches in server (agent: 0)
+0
+--- tsc baseline 7fe92c59 (no output = 0 errors)
+--- tsc at 634aeaba alone (no output = 0 errors)
+--- tsc current (no output = 0 errors)
+--- npm test (tail)
+
+
+  356 passing (2s)
+

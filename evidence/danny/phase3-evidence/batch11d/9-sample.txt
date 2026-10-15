@@ -1,0 +1,368 @@
+PART 1: rewritten comments that lost at least half of their words
+- server/auth/OidcAuthStrategy.ts:437
+   old: // Error object (see above)
+   new: // cast(d): catch variable is unknown; errors thrown above are Error objects
+- server/auth/TokenManager.ts:476
+   old: // Error object (see above)
+   new: // cast(d): catch variable is unknown (see above)
+- server/auth/TokenManager.ts:482
+   old: // Error object (see above)
+   new: // cast(d): catch variable is unknown (see above)
+- server/objects/DeviceInfo.ts:177
+   old: // Index this object and both JSON objects by key
+   new: // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+- server/objects/PlaybackSession.ts:296
+   old: // Book media ignores the episode id; podcast sessions always pass one
+   new: // cast(d): a book ignores the id; for a podcast a null id finds no episode, so getChapters logs it and returns [], as in the JS
+- server/objects/Stream.ts:75
+   old: // Media of a podcast library item is a Podcast
+   new: // cast(d): isPodcast is checked just above (a getter does not narrow media), so media is a Podcast
+- server/objects/metadata/AudioMetaTags.ts:339
+   old: // Index both objects by key
+   new: // cast(d): the other meta tags object is read by key in the loop below (same object; the tag fields are string | null)
+- server/scanner/LibraryScanner.ts:69
+   old: // Libraries are loaded with their folders for scans
+   new: // cast(b): both callers load the library with its folders (findByIdWithFolders in CronManager and the LibraryController middleware); the association is optional in the model
+- server/scanner/Scanner.ts:395
+   old: // Only called for podcasts with a feed url
+   new: // NOTE: the match-episodes route (PodcastController quickMatchEpisodes) does not check feedURL; for a podcast without one getPodcastFeed calls null.startsWith and throws a TypeError
+   new: // cast(c): quickMatchLibraryItem checks feedURL before it calls this; the route passes a podcast without one (see NOTE above)
+- server/utils/libraryHelpers.ts:104
+   old: // Book library items give book json
+   new: // cast(d): toOldJSONMinified of a book library item; SeriesBookJson adds the sequence fields set below
+- server/utils/libraryHelpers.ts:319
+   old: // Only books with a filterSeriesSequence are kept above
+   new: // cast(d): the sequences are filtered by filterSeriesSequence above, so each is a set string
+- server/utils/migrations/dbMigration.ts:909
+   old: // deviceInfo is set, so the device string is too
+   new: // cast(d): getDeviceInfoString returns null only for a missing deviceInfo, which is checked just above
+- server/utils/migrations/dbMigration.ts:1529
+   old: // Books have no podcastEpisodes
+   new: // cast(d): media is Book | Podcast; Book has no podcastEpisodes, so for a book the read is undefined, as in the JS
+- server/utils/queries/libraryItemsBookFilters.ts:496
+   old: // Typed by assertion so the null check below is not narrowed away
+   new: // cast(d): with a plain null initialiser TypeScript narrows bookAttributes to null, so the later assignment and null check would not type check
+- server/utils/queries/libraryItemsPodcastFilters.ts:243
+   old: // mediaProgresses is loaded with the user for requests
+   new: // cast(d): mediaProgresses is already typed as set (NonAttribute<MediaProgress[]>); the cast changes no type
+- server/utils/queries/libraryItemsPodcastFilters.ts:588
+   old: // Rows of the queries above
+   new: // cast(b): query() types the rows as unknown[]; the row has the selected sum
+- server/utils/queries/libraryItemsPodcastFilters.ts:590
+   old: // Rows of the queries above
+   new: // cast(b): query() types the rows as unknown[]; the row has the selected sums and the count
+removed comment lines in hunks that also add lines: 451 | flagged hunks: 17
+
+PART 2: 541 added cast( comments in total, 15 with assumed:, showing 45
+====================================================================================================
+server/auth/OidcAuthStrategy.ts:250
+  old comment: // The group claim is a list of group names
+  comment : // cast(d): assumed: the provider sends the group claim as a list of group names (only its presence is checked above)
+    251|     const groupsList = (userinfo[groupClaimName] as string[]).map((group) => group.toLowerCase())
+    252|     const rolesInOrderOfPriority = ['admin', 'user', 'guest']
+    253| 
+====================================================================================================
+server/utils/index.ts:73
+  old comment: // The xml2js output shape is described by the caller
+  comment : // cast(d): assumed: the parsed XML has the shape the caller names in T (xml2js output is not checked)
+     74|         resolve(results as T)
+     75|       }
+     76|     })
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1267
+  old comment: // Entities of the old libraries db
+  comment : // cast(d): assumed: the old libraries db files hold old library objects (loadOldData parses the JSON without checking it)
+   1268|   const oldLibraries = await oldDbFiles.loadOldData('libraries') as OldLibrary[]
+   1269|   const newLibraryRecords = migrateLibraries(oldLibraries)
+   1270|   for (const model in newLibraryRecords) {
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1280
+  old comment: // Entities of the old settings db
+  comment : // cast(d): assumed: the old settings db files hold old settings objects (loadOldData parses the JSON without checking it)
+   1281|   const oldSettings = await oldDbFiles.loadOldData('settings') as OldSetting[]
+   1282|   const newSettings = migrateSettings(oldSettings)
+   1283|   Logger.info(`[dbMigration] Inserting ${newSettings.length} setting rows`)
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1291
+  old comment: // Entities of the old authors db
+  comment : // cast(d): assumed: the old authors db files hold old author objects (loadOldData parses the JSON without checking it)
+   1292|   const oldAuthors = await oldDbFiles.loadOldData('authors') as OldAuthor[]
+   1293|   const newAuthors = migrateAuthors(oldAuthors, oldLibraryItems)
+   1294|   Logger.info(`[dbMigration] Inserting ${newAuthors.length} author rows`)
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1302
+  old comment: // Entities of the old series db
+  comment : // cast(d): assumed: the old series db files hold old series objects (loadOldData parses the JSON without checking it)
+   1303|   const oldSeries = await oldDbFiles.loadOldData('series') as OldSeries[]
+   1304|   const newSeries = migrateSeries(oldSeries, oldLibraryItems)
+   1305|   Logger.info(`[dbMigration] Inserting ${newSeries.length} series rows`)
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1325
+  old comment: // Entities of the old library items db
+  comment : // cast(d): assumed: the old library items db files hold old library item objects (loadOldData parses the JSON without checking it)
+   1326|   const oldLibraryItems = await oldDbFiles.loadOldData('libraryItems') as OldLibraryItem[]
+   1327|   await handleMigrateAuthors(DatabaseModels, oldLibraryItems)
+   1328| 
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1343
+  old comment: // Entities of the old users db
+  comment : // cast(d): assumed: the old users db files hold old user objects (loadOldData parses the JSON without checking it)
+   1344|   const oldUsers = await oldDbFiles.loadOldData('users') as OldUser[]
+   1345|   const newUserRecords = migrateUsers(oldUsers)
+   1346|   for (const model in newUserRecords) {
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1356
+  old comment: // Entities of the old sessions db
+  comment : // cast(d): assumed: the old sessions db files hold old session objects (loadOldData parses the JSON without checking it)
+   1357|   const oldSessions = await oldDbFiles.loadOldData('sessions') as OldSession[]
+   1358| 
+   1359|   let chunkSize = 1000
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1376
+  old comment: // Entities of the old collections db
+  comment : // cast(d): assumed: the old collections db files hold old collection objects (loadOldData parses the JSON without checking it)
+   1377|   const oldCollections = await oldDbFiles.loadOldData('collections') as OldCollection[]
+   1378|   const newCollectionRecords = migrateCollections(oldCollections)
+   1379|   for (const model in newCollectionRecords) {
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1389
+  old comment: // Entities of the old playlists db
+  comment : // cast(d): assumed: the old playlists db files hold old playlist objects (loadOldData parses the JSON without checking it)
+   1390|   const oldPlaylists = await oldDbFiles.loadOldData('playlists') as OldPlaylist[]
+   1391|   const newPlaylistRecords = migratePlaylists(oldPlaylists)
+   1392|   for (const model in newPlaylistRecords) {
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1402
+  old comment: // Entities of the old feeds db
+  comment : // cast(d): assumed: the old feeds db files hold old feed objects (loadOldData parses the JSON without checking it)
+   1403|   const oldFeeds = await oldDbFiles.loadOldData('feeds') as OldFeed[]
+   1404|   const newFeedRecords = migrateFeeds(oldFeeds)
+   1405|   for (const model in newFeedRecords) {
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1509
+  old comment: // Entities of the old library items db
+  comment : // cast(d): assumed: the old library items db files hold old library item objects (loadOldData parses the JSON without checking it)
+   1510|   const oldLibraryItems = (await oldDbFiles.loadOldData('libraryItems')) as OldLibraryItem[]
+   1511|   const libraryItems = await models.libraryItem.findAllExpandedWhere()
+   1512| 
+====================================================================================================
+server/utils/migrations/dbMigration.ts:1573
+  old comment: // Entities of the old libraries db
+  comment : // cast(d): assumed: the old libraries db files hold old library objects (loadOldData parses the JSON without checking it)
+   1574|   const oldLibraries = (await oldDbFiles.loadOldData('libraries')) as OldLibrary[]
+   1575|   const libraries = await models.library.getAllWithFolders()
+   1576| 
+====================================================================================================
+server/utils/rateLimiterFactory.ts:66
+  old comment: // req.ip is set by express for socket requests
+  comment : // cast(d): assumed: express sets req.ip from the socket for every request (its type allows undefined)
+     67|         return (requestIp.getClientIp(req) || req.ip) as string
+     68|       },
+     69|       handler: (req, res) => {
+====================================================================================================
+server/utils/prober.ts:152
+  old comment: // A missing key reads undefined, as in the JS
+  comment : // cast(d): find returns undefined when no tag matches; the undefined key reads undefined, as in the JS
+    153|     const value = stream.tags[tagKey as string]
+    154|     if (value && value.trim()) return value.trim()
+    155|   }
+====================================================================================================
+server/utils/queries/libraryFilters.ts:562
+  old comment: // Rows of the podcast model
+  comment : // cast(d): findAll is bound (or wrapped by profile) above, which loses its generic row type; the rows are Podcast models
+    563|       for (const podcast of podcasts as import('../../models/Podcast')[]) {
+    564|         if (podcast.tags?.length) {
+    565|           podcast.tags.forEach((tag) => data.tags.add(tag))
+====================================================================================================
+server/scanner/LibraryItemScanData.ts:203
+  old comment: // Scanned library files have an extension (set by setDataFromPath)
+  comment : // cast(d): scanned library files have an extension (set by setDataFromPath)
+    204|     return this.libraryFiles.find(lf => lf.metadata.ext!.toLowerCase() === '.opf')
+    205|   }
+    206| 
+====================================================================================================
+server/managers/BackupManager.ts:431
+  old comment: // Loaded and new backups have a fullPath
+  comment : // cast(d): loaded and new backups have a fullPath
+    432|       await fs.remove(backup.fullPath!)
+    433|       this.backups = this.backups.filter((b) => b.id !== backup.id)
+    434|       Logger.info(`[BackupManager] Backup "${backup.id}" Removed`)
+====================================================================================================
+server/utils/parsers/parseOpfMetadata.ts:86
+  old comment: // xml2js puts child elements in arrays
+  comment : // cast(a): xml2js output is untyped; it puts child elements in arrays
+     87|   const tagValues = metadata[tag] as (string | XmlElement)[] | undefined
+     88|   if (!tagValues || !tagValues.length) return null
+     89|   let value: string | XmlElement | undefined = tagValues[0]
+====================================================================================================
+server/objects/metadata/AudioMetaTags.ts:135
+  old comment: // Index this object by key
+  comment : // cast(d): this object is read by key in the loop below (same object; the tag fields are string | null)
+    136|     const self = this as unknown as Record<string, string | null>
+    137|     const json: Record<string, string | null> = {}
+    138|     for (const key in self) {
+====================================================================================================
+server/utils/ffmpegHelpers.ts:161
+  old comment: // cast(d): setData sets url before the download is queued (5 reads below)
+  comment : // cast(d) (5): setData sets url before the download is queued (the url! reads of this axios call)
+    162|         response = await axios({
+    163|           url: podcastEpisodeDownload.url!,
+    164|           method: 'GET',
+====================================================================================================
+server/utils/queries/libraryFilters.ts:22
+  old comment: // The vendored fast-sort has untyped parameters, see SortInstance
+  comment : // cast(a): the vendored fast-sort has untyped parameters (see SortInstance)
+     23| const naturalSort = createNewSortInstance({
+     24|   comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+     25| }) as SortInstance
+====================================================================================================
+server/providers/Audnexus.ts:189
+  comment : // cast(d): catch variable is unknown; axios rejects with an error that may have a response (see RequestError)
+    190|       const requestError = error as RequestError
+    191|       if (requestError.response?.status === 429) {
+    192|         const retryAfter = parseInt(String(requestError.response.headers?.['retry-after']), 10) || 5
+====================================================================================================
+server/utils/queries/libraryItemsPodcastFilters.ts:233
+  old comment: // Typed as optional so it can be deleted
+  comment : // cast(d): typed with an optional libraryItem so it can be deleted below (same object)
+    234|       const podcast = podcastExpanded as Podcast & { libraryItem?: FilteredLibraryItem }
+    235| 
+    236|       delete podcast.libraryItem
+====================================================================================================
+server/utils/prober.ts:75
+  old comment: // The vendored module is an IIFE so its inferred type does not describe the output
+  comment : // cast(a): the vendored module is an IIFE, so its inferred type does not describe the output (see Ffprobe)
+     76| const ffprobe = nodeFfprobe as unknown as Ffprobe
+     77| 
+     78| 
+====================================================================================================
+server/routers/ApiRouter.ts:124
+  old comment: // Same app; typed so the routes accept the controller handlers (see ApiRouterApp)
+  comment : // cast(b): same app; typed so the routes accept the controller handlers, which express's RequestHandler rejects (see ApiRouterApp)
+    125|     this.router = express() as unknown as ApiRouterApp
+    126|     this.router.disable('x-powered-by')
+    127|     this.init()
+====================================================================================================
+server/auth/TokenManager.ts:467
+  old comment: // The query throws Error objects
+  comment : // cast(d): catch variable is unknown; the query throws Error objects
+    468|           Logger.error(`[TokenManager] Error cleaning up expired session: ${(cleanupError as Error).message}`)
+    469|         }
+    470| 
+====================================================================================================
+server/scanner/AudioFileScanner.ts:155
+  comment : // cast(d) (4): the track key was set above (TypeScript already narrows it); a null number sorts as 0 in the subtraction, as in the JS
+    156|         if (Dx === 0) Dx = a[trackKey!]! - b[trackKey!]!
+    157|         return Dx
+    158|       })
+====================================================================================================
+server/Watcher.ts:80
+  old comment: // the callers pass libraries loaded with their folders (getAllWithFolders, the library controller)
+  comment : // cast(b): the callers pass libraries loaded with their folders (getAllWithFolders, the library controller); the association is optional in the model
+     81|     const folderPaths = library.libraryFolders!.map((f) => f.path)
+     82|     folderPaths.forEach((fp) => {
+     83|       Logger.debug(`[Watcher] Init watcher for library folder path "${fp}"`)
+====================================================================================================
+server/utils/queries/libraryItemsPodcastFilters.ts:611
+  old comment: // Rows of the query above
+  comment : // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numItems)
+    612|     for (const row of genreResultRows as ValueCountRow[]) {
+    613|       genres.push({
+    614|         genre: row.value,
+====================================================================================================
+server/managers/BackupManager.ts:445
+  comment : // cast(d): dbPath is set by Database.init, which runs before backups are made
+    446|     const db = new sqlite3.Database(Database.dbPath!) as sqlite3.Database & { backup(filename: string): SqliteBackup }
+    447|     const dbFilePath = Path.join(global.ConfigPath, `absdatabase.${backup.id}.sqlite`)
+    448|     return new Promise<string>(async (resolve, reject) => {
+====================================================================================================
+server/scanner/BookScanner.ts:213
+  old comment: // Scanned library files have a path (set by setDataFromPath)
+  comment : // cast(d): scanned library files have a path (set by setDataFromPath)
+    214|       const coverMatch = libraryItemData.imageLibraryFiles.find((iFile) => /\/cover\.[^.\/]*$/.test(iFile.metadata.path!))
+    215|       media.coverPath = coverMatch?.metadata.path || libraryItemData.imageLibraryFiles[0].metadata.path
+    216|       hasMediaChanges = true
+====================================================================================================
+server/scanner/PodcastScanner.ts:387
+  old comment: // The folder or file name gives the title
+  comment : // cast(d): the folder or file name gives the title (LibraryItemScanData types it optional)
+    388|       title: libraryItemData.mediaMetadata.title!,
+    389|       titleIgnorePrefix: undefined,
+    390|       author: undefined,
+====================================================================================================
+server/routers/ApiRouter.ts:501
+  old comment: // Sequelize accepts an array of where conditions at runtime; its types do not
+  comment : // cast(b): Sequelize accepts an array of where conditions at runtime; its types do not
+    502|         } as unknown as FindOptions)
+    503|       ).map((s) => ({ id: s.id, name: s.name, libraryId: s.libraryId }))
+    504| 
+====================================================================================================
+server/managers/MigrationManager.ts:331
+  old comment: // migrationsDir is set by init
+  comment : // cast(d): migrationsDir is set by init
+    332|           const targetFile = path.join(this.migrationsDir!, file)
+    333|           await fs.copy(sourceFile, targetFile) // Asynchronously copy the files
+    334|         })
+====================================================================================================
+server/auth/OidcAuthStrategy.ts:542
+  old comment: // has(state) was checked above
+  comment : // cast(d): has(state) was checked above, so get returns the session
+    543|       let mobile_redirect_uri = this.openIdAuthSession.get(requiredString(state))!.mobile_redirect_uri
+    544| 
+    545|       if (!mobile_redirect_uri) {
+====================================================================================================
+server/models/Podcast.ts:390
+  old comment: // publishedAt is set (the comparison above is false for null)
+  comment : // cast(d): publishedAt is set (the comparison above is false for null)
+    391|         return episode.publishedAt!.valueOf()
+    392|       }
+    393|       return latest
+====================================================================================================
+server/utils/parsers/parseComicMetadata.ts:46
+  old comment: // filePaths is undefined when getFilePaths fails; sort then throws and the catch below returns null, as in the JS
+  comment : // cast(d): filePaths is undefined when getFilePaths fails; sort then throws and the catch below returns null, as in the JS
+     47|     const comicFilePaths = filePaths as string[]
+     48| 
+     49|     // Sort the file paths in a natural order to get the first image
+====================================================================================================
+server/utils/queries/seriesFilters.ts:79
+  old comment: // includes() is false for a null filterGroup
+  comment : // cast(d): filterGroup is string | null; includes() is false for null
+     80|     if (['genres', 'tags', 'narrators'].includes(filterGroup as string)) {
+     81|       attrQuery = `SELECT count(*) FROM books b, bookSeries bs WHERE bs.seriesId = series.id AND bs.bookId = b.id AND (SELECT count(*) FROM json_each(b.${filterGroup}) WHERE json_valid(b.${filterGroup
+     82|       userPermissionBookWhere.replacements.filterValue = filterValue
+====================================================================================================
+server/utils/areEquivalent.ts:53
+  old comment: // type1 === 'number' and the types match, so both are numbers
+  comment : // cast(d) (2): type1 === 'number' and the types match, so both are numbers
+     54|     return (isNaN(value1 as number) && isNaN(value2 as number));
+     55|   }
+     56| 
+====================================================================================================
+server/utils/queries/libraryItemsBookFilters.ts:1421
+  old comment: // Rows of the query above
+  comment : // cast(b): query() types the rows as unknown[]; the row has the selected sums and the count
+   1422|     const statResults = statResultRows as { totalSize: number | null; totalDuration: number | null; numAudioFiles: number | null; totalItems: number }[]
+   1423|     return {
+   1424|       totalSize: statResults?.[0]?.totalSize || 0,
+====================================================================================================
+server/objects/PlaybackSession.ts:327
+  old comment: // timeListening is null before the first update (null + n is n); parseFloat coerces numbers to strings
+  comment : // cast(d) (2): timeListening is null before the first update (null + n is n); parseFloat coerces numbers to strings
+    328|     (this.timeListening as number) += Number.parseFloat(timeListened as string)
+    329|     this.updatedAt = Date.now()
+    330|   }
+====================================================================================================
+server/utils/profiler.ts:28
+  old comment: // Set above when missing
+  comment : // cast(d): Map.get is typed as possibly undefined; the histogram is set above when missing
+     29|   const histogram = histograms.get(funcName) as ProfilerHistogram
+     30| 
+     31|   return async (...args: A) => {
+====================================================================================================
+server/auth/OidcAuthStrategy.ts:406
+  old comment: // Index the session by the strategy's session key
+  comment : // cast(b): express-session types the session without the strategy's key; it is indexed by that key here
+    407|       const session = req.session as unknown as Record<string, object | undefined>
+    408|       session[sessionKey] = {
+    409|         ...session[sessionKey],

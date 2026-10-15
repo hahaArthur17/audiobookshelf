@@ -1,0 +1,46 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-smoke-YGWo/config, METADATA_PATH=/tmp/abs-smoke-YGWo/metadata, PORT=3333, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 11:19:52.575] INFO: === Starting Server ===
+[2026-10-10 11:19:52.575] INFO: [Server] Init v2.37.0
+[2026-10-10 11:19:52.575] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 11:19:52.575] INFO: [Server] Platform: linux
+[2026-10-10 11:19:52.575] INFO: [Server] Arch: x64
+[2026-10-10 11:19:52.615] INFO: [BinaryManager] Found valid executable ffmpeg at /tmp/abs-base-b9/ffmpeg
+[2026-10-10 11:19:52.615] INFO: [BinaryManager] Updating process.env.FFMPEG_PATH
+[2026-10-10 11:19:52.649] INFO: [BinaryManager] Found valid executable ffprobe at /tmp/abs-base-b9/ffprobe
+[2026-10-10 11:19:52.649] INFO: [BinaryManager] Updating process.env.FFPROBE_PATH
+[2026-10-10 11:19:52.651] INFO: [BinaryManager] Found valid library libnusqlite3 at /tmp/abs-base-b9/libnusqlite3.so
+[2026-10-10 11:19:52.651] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-10 11:19:52.651] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-smoke-YGWo/config/absdatabase.sqlite
+[2026-10-10 11:19:52.651] INFO: [Database] Initializing db at "/tmp/abs-smoke-YGWo/config/absdatabase.sqlite"
+[2026-10-10 11:19:52.660] INFO: [Database] Loading extension /tmp/abs-base-b9/libnusqlite3.so
+[2026-10-10 11:19:52.660] INFO: [Database] Successfully loaded extension /tmp/abs-base-b9/libnusqlite3.so
+[2026-10-10 11:19:52.660] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-10 11:19:52.660] INFO: [Database] Db connection was successful
+[2026-10-10 11:19:52.686] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 11:19:53.005] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 11:19:53.006] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 11:19:53.012] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 11:19:53.018] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 11:19:53.023] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 11:19:53.029] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 11:19:53.034] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 11:19:53.040] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 11:19:53.058] INFO: [Database] running ANALYZE
+[2026-10-10 11:19:53.062] INFO: [Database] ANALYZE completed
+[2026-10-10 11:19:53.062] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 11:19:53.062] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 11:19:53.068] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 11:19:53.070] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 11:19:53.070] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 11:19:53.078] INFO: Listening on port :3333
+[2026-10-10 11:19:53.369] INFO: Received ping
+[2026-10-10 11:19:53.380] INFO: [Server] Initializing new server
+[2026-10-10 11:19:53.481] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 11:19:53.549] INFO: [Watcher] Initializing watcher for "Test".
+[2026-10-10 11:19:53.554] INFO: [Watcher] "Test" Ready
+[2026-10-10 11:19:53.571] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 11:19:53.571] INFO: [LibraryScanner] Starting (forced) library scan 23456cd8-d2dc-4b4c-9cc8-c9ac3d92d401 for Test
+[2026-10-10 11:19:53.720] INFO: [LibraryScanner] Library scan "23456cd8-d2dc-4b4c-9cc8-c9ac3d92d401" completed in 0:00 | 5 Added | 0 Updated | 0 Missing
+[2026-10-10 11:19:53.726] INFO: [LibraryScan] Scan log saved "/tmp/abs-smoke-YGWo/metadata/logs/scans/2026-10-10_23456cd8-d2dc-4b4c-9cc8-c9ac3d92d401.txt"
+[2026-10-10 11:19:53.726] INFO: [LibraryController] Scan complete

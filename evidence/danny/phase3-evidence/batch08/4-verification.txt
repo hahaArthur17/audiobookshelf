@@ -1,0 +1,79 @@
+dd0b7b2f phase3 batch 8: server/migrations
+90330ca2 phase3 batch 7: server/controllers
+d9bb5d74 phase3: name exception 4 of rule 17
+---status
+---stat
+ MIGRATION.md                                       |  38 +++++++-
+ server/migrations/types.d.ts                       |  19 ++++
+ ...n-unique.js => v2.15.0-series-column-unique.ts} |  47 +++++----
+ ...reindex-nocase.js => v2.15.1-reindex-nocase.ts} |  23 ++---
+ ...index-creation.js => v2.15.2-index-creation.ts} |  32 +++----
+ ...-replacement.js => v2.17.0-uuid-replacement.ts} |  24 ++---
+ ...fk-constraints.js => v2.17.3-fk-constraints.ts} | 105 +++++++++++----------
+ ...2.17.4-use-subfolder-for-oidc-redirect-uris.ts} |  40 ++++----
+ ...ls.js => v2.17.5-remove-host-from-feed-urls.ts} |  23 ++---
+ ...able.js => v2.17.6-share-add-isdownloadable.ts} |  27 +++---
+ ....17.7-add-indices.js => v2.17.7-add-indices.ts} |  31 +++---
+ ...s.js => v2.19.1-copy-title-to-library-items.ts} |  63 +++++++------
+ ...eries.js => v2.19.4-improve-podcast-queries.ts} |  51 +++++-----
+ ...s.js => v2.20.0-improve-author-sort-queries.ts} |  66 +++++++------
+ ...uth-tables.js => v2.26.0-create-auth-tables.ts} |  30 +++---
+ ...es.js => v2.33.0-add-discover-query-indexes.ts} |  33 ++++---
+ ...-token.js => v2.35.0-add-last-refresh-token.ts} |  30 +++---
+ 17 files changed, 357 insertions(+), 325 deletions(-)
+---protected
+---migrations-dir
+changelog.md
+readme.md
+types.d.ts
+v2.15.0-series-column-unique.ts
+v2.15.1-reindex-nocase.ts
+v2.15.2-index-creation.ts
+v2.17.0-uuid-replacement.ts
+v2.17.3-fk-constraints.ts
+v2.17.4-use-subfolder-for-oidc-redirect-uris.ts
+v2.17.5-remove-host-from-feed-urls.ts
+v2.17.6-share-add-isdownloadable.ts
+v2.17.7-add-indices.ts
+v2.19.1-copy-title-to-library-items.ts
+v2.19.4-improve-podcast-queries.ts
+v2.20.0-improve-author-sort-queries.ts
+v2.26.0-create-auth-tables.ts
+v2.33.0-add-discover-query-indexes.ts
+v2.35.0-add-last-refresh-token.ts
+---remaining-js
+index.js
+server/Auth.js
+server/controllers/LibraryController.js
+server/controllers/LibraryItemController.js
+server/Database.js
+server/Logger.js
+server/Server.js
+server/SocketAuthority.js
+server/Watcher.js
+---build-tail
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+---error-count
+0
+---test
+  356 passing (1s)
+---dist-migrations
+v2.15.0-series-column-unique.js
+v2.15.1-reindex-nocase.js
+v2.15.2-index-creation.js
+v2.17.0-uuid-replacement.js
+v2.17.3-fk-constraints.js
+v2.17.4-use-subfolder-for-oidc-redirect-uris.js
+v2.17.5-remove-host-from-feed-urls.js
+v2.17.6-share-add-isdownloadable.js
+v2.17.7-add-indices.js
+v2.19.1-copy-title-to-library-items.js
+v2.19.4-improve-podcast-queries.js
+v2.20.0-improve-author-sort-queries.js
+v2.26.0-create-auth-tables.js
+v2.33.0-add-discover-query-indexes.js
+v2.35.0-add-last-refresh-token.js
+---dist-count
+15

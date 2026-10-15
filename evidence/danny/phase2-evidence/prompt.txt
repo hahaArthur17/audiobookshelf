@@ -1,0 +1,9 @@
+Convert the metadata pipeline to TypeScript: server/finders/*.js (3 files), server/providers/*.js (9 files) and server/controllers/SearchController.js.
+Keep everything else in the repo as it is.
+Acceptance criteria:
+1. `npm run build:server` reports 0 "error TS".
+2. `npm test` shows 356 passing, 0 failing.
+3. No existing test is edited, skipped or deleted.
+4. Runtime behaviour is unchanged. Do not fix bugs you find, list them instead.
+5. Avoid blanket `any`; use meaningful types.
+Plan the work yourself and implement it end to end without waiting for my approval. Report when done.

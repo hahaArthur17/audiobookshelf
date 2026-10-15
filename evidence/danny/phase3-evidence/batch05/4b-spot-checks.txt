@@ -1,0 +1,43 @@
+--- CoverSearchManager onError signature and call
+55:   * @param onError - Callback for errors
+57:  async startSearch(requestId: string, searchParams: CoverSearchParams, onResult: OnResult, onComplete: () => void, onError: OnError) {
+77:        await this.searchPodcastCovers(requestId, title, abortController.signal, onResult, onError)
+79:        await this.searchBookCovers(requestId, provider, title, author, abortController.signal, onResult, onError)
+91:        // NOTE: onError takes (provider, errorMessage); the message is passed as the provider and the error message is undefined
+93:        onError((error as Error).message)
+118:  async searchPodcastCovers(requestId: string, title: string, signal: AbortSignal, onResult: OnResult, onError: OnError) {
+137:        onError('itunes', (error as Error).message)
+145:  async searchBookCovers(requestId: string, provider: string, title: string, author: string | null | undefined, signal: AbortSignal, onResult: OnResult, onError: OnError) {
+185:          onError(providerName, (error as Error).message)
+--- global.configPath vs global.ConfigPath
+server/utils/migrations/oldDbFiles.ts:88:  const dbPath = Path.join(global.ConfigPath, dbName, 'data')
+server/utils/migrations/oldDbFiles.ts:96:    libraryItems: Path.join(global.ConfigPath, 'libraryItems'),
+server/utils/migrations/oldDbFiles.ts:97:    users: Path.join(global.ConfigPath, 'users'),
+server/utils/migrations/oldDbFiles.ts:98:    sessions: Path.join(global.ConfigPath, 'sessions'),
+server/utils/migrations/oldDbFiles.ts:99:    libraries: Path.join(global.ConfigPath, 'libraries'),
+server/utils/migrations/oldDbFiles.ts:100:    settings: Path.join(global.ConfigPath, 'settings'),
+server/utils/migrations/oldDbFiles.ts:101:    collections: Path.join(global.ConfigPath, 'collections'),
+server/utils/migrations/oldDbFiles.ts:102:    playlists: Path.join(global.ConfigPath, 'playlists'),
+server/utils/migrations/oldDbFiles.ts:103:    authors: Path.join(global.ConfigPath, 'authors'),
+server/utils/migrations/oldDbFiles.ts:104:    series: Path.join(global.ConfigPath, 'series'),
+server/utils/migrations/oldDbFiles.ts:105:    feeds: Path.join(global.ConfigPath, 'feeds')
+server/utils/migrations/oldDbFiles.ts:109:    const oldDbPath = Path.join(global.ConfigPath, 'oldDb.zip')
+--- NotificationManager onTest
+134:  onTest() {
+135:    this.triggerNotification('onTest')
+139:   * @param eventData - not passed by onTest
+151:      // NOTE: onTest triggers without event data; getApprisePayload then reads template variables from undefined and throws
+--- Podcast model asin
+--- AudioFileScanner filename author/series reads
+172:    // NOTE: the filename metadata has authors and seriesName, not author and series, so those two are always undefined and never removed from the filename
+301:        key: 'authors'
+342:        } else if (mapping.key === 'authors') {
+344:          bookMetadata.authors = (parseNameString.parse(value)?.names || []) as string[]
+360:              bookMetadata.series = series as BookMetadataObject['series']
+375:                bookMetadata.series = seriesSplit.map((series, index) => ({
+379:                libraryScan.addLog(LogLevel.DEBUG, `Detected multiple series in series/series-part tags: ${bookMetadata.series.map((s) => `${s.name} #${s.sequence}`).join(', ')}`)
+385:            bookMetadata.series = [
+--- PodcastFinder search null
+11:  async search(term: string | null | undefined, options: { country?: string } = {}): Promise<iTunes.iTunesPodcastSearchResult[] | null> {
+12:    if (!term) return null
+20:    if (!term) return null

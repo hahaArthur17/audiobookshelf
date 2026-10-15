@@ -1,0 +1,126 @@
+--- /tmp/abs-base2/dist-server/server/controllers/SearchController.js	2026-10-03 16:15:06.763768897 +1300
++++ dist-server/server/controllers/SearchController.js	2026-10-03 15:34:12.669654682 +1300
+@@ -1,11 +1,11 @@
+ "use strict";
+-const { Request, Response } = require('express');
+-const Logger = require('../Logger');
+-const BookFinder = require('../finders/BookFinder');
+-const PodcastFinder = require('../finders/PodcastFinder');
+-const AuthorFinder = require('../finders/AuthorFinder');
+-const Database = require('../Database');
+-const { isValidASIN, getQueryParamAsString, ValidationError, NotFoundError } = require('../utils');
++const Logger = require("../Logger");
++const BookFinder = require("../finders/BookFinder");
++const PodcastFinder = require("../finders/PodcastFinder");
++const AuthorFinder = require("../finders/AuthorFinder");
++const Database = require("../Database");
++const utils = require("../utils");
++const { isValidASIN, getQueryParamAsString, ValidationError, NotFoundError } = utils;
+ // Provider name mappings for display purposes
+ const providerMap = {
+     all: 'All',
+@@ -27,19 +27,11 @@
+     'audible.es': 'Audible.es',
+     audnexus: 'Audnexus'
+ };
+-/**
+- * @typedef RequestUserObject
+- * @property {import('../models/User')} user
+- *
+- * @typedef {Request & RequestUserObject} RequestWithUser
+- */
+ class SearchController {
+     constructor() { }
+     /**
+      * Fetches a library item by ID
+-     * @param {string} id - Library item ID
+-     * @param {string} methodName - Name of the calling method for logging
+-     * @returns {Promise<import('../models/LibraryItem').LibraryItemExpanded>}
++     * @param id - Library item ID
+      */
+     static async fetchLibraryItem(id) {
+         const libraryItem = await Database.libraryItemModel.getExpandedById(id);
+@@ -50,8 +42,7 @@
+     }
+     /**
+      * Maps custom metadata providers to standardized format
+-     * @param {Array} providers - Array of custom provider objects
+-     * @returns {Array<{value: string, text: string}>}
++     * @param providers - Array of custom provider objects
+      */
+     static mapCustomProviders(providers) {
+         return providers.map((provider) => ({
+@@ -61,8 +52,7 @@
+     }
+     /**
+      * Static helper method to format provider for client (for use in array methods)
+-     * @param {string} providerValue - Provider identifier
+-     * @returns {{value: string, text: string}}
++     * @param providerValue - Provider identifier
+      */
+     static formatProvider(providerValue) {
+         return {
+@@ -72,9 +62,6 @@
+     }
+     /**
+      * GET: /api/search/books
+-     *
+-     * @param {RequestWithUser} req
+-     * @param {Response} res
+      */
+     async findBooks(req, res) {
+         try {
+@@ -98,12 +85,10 @@
+     }
+     /**
+      * GET: /api/search/covers
+-     *
+-     * @param {RequestWithUser} req
+-     * @param {Response} res
+      */
+     async findCovers(req, res) {
+         try {
++            // Widened to unknown values since the podcast param is also compared against a number
+             const query = req.query;
+             const podcast = query.podcast === '1' || query.podcast === 1;
+             const title = getQueryParamAsString(query, 'title', '', true);
+@@ -127,9 +112,6 @@
+     /**
+      * GET: /api/search/podcasts
+      * Find podcast RSS feeds given a term
+-     *
+-     * @param {RequestWithUser} req
+-     * @param {Response} res
+      */
+     async findPodcasts(req, res) {
+         try {
+@@ -150,9 +132,6 @@
+     /**
+      * GET: /api/search/authors
+      * Note: This endpoint is not currently used in the web client.
+-     *
+-     * @param {RequestWithUser} req
+-     * @param {Response} res
+      */
+     async findAuthor(req, res) {
+         try {
+@@ -170,9 +149,6 @@
+     }
+     /**
+      * GET: /api/search/chapters
+-     *
+-     * @param {RequestWithUser} req
+-     * @param {Response} res
+      */
+     async findChapters(req, res) {
+         try {
+@@ -203,9 +179,6 @@
+     /**
+      * GET: /api/search/providers
+      * Get all available metadata providers
+-     *
+-     * @param {RequestWithUser} req
+-     * @param {Response} res
+      */
+     async getAllProviders(req, res) {
+         const customProviders = await Database.customMetadataProviderModel.findAll();

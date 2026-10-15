@@ -1,0 +1,16 @@
+STATUS 200
+LOCATION 
+{
+ "TRACKTOTAL": "2",
+ "album": "Tagged Book Album",
+ "album_artist": "Tag Author",
+ "artist": "Tag Author",
+ "comment": "Tagged description",
+ "composer": "Tag Narrator",
+ "copyright": "Tag Pub",
+ "date": "MASK",
+ "description": "Tagged description",
+ "genre": "Thriller",
+ "publisher": "Tag Pub",
+ "title": "Tagged Book Album"
+}

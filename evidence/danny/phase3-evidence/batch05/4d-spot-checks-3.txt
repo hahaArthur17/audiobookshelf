@@ -1,0 +1,51 @@
+--- AuthorsWithCount query
+server/utils/queries/authorFilters.ts:26:  async getAuthorsWithCount(libraryId: string, limit: number) {
+server/utils/queries/authorFilters.ts-27-    const authors = await Database.bookAuthorModel.findAll({
+server/utils/queries/authorFilters.ts-28-      include: [
+server/utils/queries/authorFilters.ts-29-        {
+server/utils/queries/authorFilters.ts-30-          model: Database.authorModel,
+server/utils/queries/authorFilters.ts-31-          as: 'author', // Use the correct alias as defined in your associations
+server/utils/queries/authorFilters.ts-32-          attributes: ['name'],
+server/utils/queries/authorFilters.ts-33-          where: {
+server/utils/queries/authorFilters.ts-34-            libraryId: libraryId
+server/utils/queries/authorFilters.ts-35-          }
+server/utils/queries/authorFilters.ts-36-        }
+server/utils/queries/authorFilters.ts-37-      ],
+server/utils/queries/authorFilters.ts-38-      attributes: ['authorId', [Sequelize.fn('COUNT', Sequelize.col('authorId')), 'count']],
+server/utils/queries/authorFilters.ts-39-      group: ['authorId', 'author.id'], // Include 'author.id' to satisfy GROUP BY with JOIN
+server/utils/queries/authorFilters.ts-40-      order: [[Sequelize.literal('count'), 'DESC']],
+server/utils/queries/authorFilters.ts-41-      limit: limit
+server/utils/queries/authorFilters.ts-42-    })
+server/utils/queries/authorFilters.ts-43-    // author is included above
+server/utils/queries/authorFilters.ts-44-    return (authors as (BookAuthor & { author: Author })[]).map((au) => {
+server/utils/queries/authorFilters.ts-45-      return {
+server/utils/queries/authorFilters.ts-46-        id: au.authorId,
+server/utils/queries/authorFilters.ts-47-        name: au.author.name,
+server/utils/queries/authorFilters.ts-48-        count: au.get('count') // Use get method to access aliased attributes
+server/utils/queries/authorFilters.ts-49-      }
+server/utils/queries/authorFilters.ts-50-    })
+server/utils/queries/authorFilters.ts-51-  },
+server/utils/queries/authorFilters.ts-52-
+server/utils/queries/authorFilters.ts-53-  /**
+server/utils/queries/authorFilters.ts-54-   * Search authors
+--- LibraryItemScanData mediaMetadata
+39:  mediaMetadata: LibraryItemFilenameMetadata
+54:  declare mediaMetadata: LibraryItemFilenameMetadata
+75:    this.mediaMetadata = data.mediaMetadata
+388:    for (const key in this.mediaMetadata) {
+390:      if (keysToMap.includes(key) && (this.mediaMetadata as unknown as Record<string, unknown>)[key]) {
+392:        (bookMetadata as Record<string, unknown>)[key] = (this.mediaMetadata as unknown as Record<string, unknown>)[key]
+396:    if (this.mediaMetadata.authors?.length) {
+398:      bookMetadata.authors = this.mediaMetadata.authors as string[]
+400:    if (this.mediaMetadata.narrators?.length) {
+402:      bookMetadata.narrators = this.mediaMetadata.narrators as string[]
+404:    if (this.mediaMetadata.seriesName) {
+407:          name: this.mediaMetadata.seriesName,
+408:          sequence: this.mediaMetadata.seriesSequence || null
+--- batch03c folder
+total 12
+drwxrwxr-x  2 danny danny 4096 Oct  9 16:38 .
+drwxrwxr-x 17 danny danny 4096 Oct  9 21:49 ..
+-rw-rw-r--  1 danny danny 2285 Oct  9 16:38 1-prompt.txt
+-rw-rw-r--  1 danny danny    0 Oct  9 16:38 2-usage-before.txt
+-rw-rw-r--  1 danny danny    0 Oct  9 16:38 3-usage-after.txt

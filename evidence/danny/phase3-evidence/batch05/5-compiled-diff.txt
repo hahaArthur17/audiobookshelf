@@ -1,0 +1,35 @@
+Files BASE/server/managers/AbMergeManager.js and CUR/server/managers/AbMergeManager.js differ
+Files BASE/server/managers/ApiCacheManager.js and CUR/server/managers/ApiCacheManager.js differ
+Files BASE/server/managers/AudioMetadataManager.js and CUR/server/managers/AudioMetadataManager.js differ
+Files BASE/server/managers/BackupManager.js and CUR/server/managers/BackupManager.js differ
+Files BASE/server/managers/BinaryManager.js and CUR/server/managers/BinaryManager.js differ
+Files BASE/server/managers/CacheManager.js and CUR/server/managers/CacheManager.js differ
+Files BASE/server/managers/CoverManager.js and CUR/server/managers/CoverManager.js differ
+Files BASE/server/managers/CoverSearchManager.js and CUR/server/managers/CoverSearchManager.js differ
+Files BASE/server/managers/CronManager.js and CUR/server/managers/CronManager.js differ
+Files BASE/server/managers/EmailManager.js and CUR/server/managers/EmailManager.js differ
+Files BASE/server/managers/LogManager.js and CUR/server/managers/LogManager.js differ
+Files BASE/server/managers/MigrationManager.js and CUR/server/managers/MigrationManager.js differ
+Files BASE/server/managers/NotificationManager.js and CUR/server/managers/NotificationManager.js differ
+Files BASE/server/managers/PlaybackSessionManager.js and CUR/server/managers/PlaybackSessionManager.js differ
+Files BASE/server/managers/PodcastManager.js and CUR/server/managers/PodcastManager.js differ
+Files BASE/server/managers/RssFeedManager.js and CUR/server/managers/RssFeedManager.js differ
+Files BASE/server/managers/ShareManager.js and CUR/server/managers/ShareManager.js differ
+Files BASE/server/managers/TaskManager.js and CUR/server/managers/TaskManager.js differ
+Only in CUR/server/managers: types.js
+Files BASE/server/scanner/AbsMetadataFileScanner.js and CUR/server/scanner/AbsMetadataFileScanner.js differ
+Files BASE/server/scanner/AudioFileScanner.js and CUR/server/scanner/AudioFileScanner.js differ
+Files BASE/server/scanner/BookScanner.js and CUR/server/scanner/BookScanner.js differ
+Files BASE/server/scanner/LibraryItemScanData.js and CUR/server/scanner/LibraryItemScanData.js differ
+Files BASE/server/scanner/LibraryItemScanner.js and CUR/server/scanner/LibraryItemScanner.js differ
+Files BASE/server/scanner/LibraryScan.js and CUR/server/scanner/LibraryScan.js differ
+Files BASE/server/scanner/LibraryScanner.js and CUR/server/scanner/LibraryScanner.js differ
+Files BASE/server/scanner/MediaProbeData.js and CUR/server/scanner/MediaProbeData.js differ
+Files BASE/server/scanner/NfoFileScanner.js and CUR/server/scanner/NfoFileScanner.js differ
+Files BASE/server/scanner/OpfFileScanner.js and CUR/server/scanner/OpfFileScanner.js differ
+Files BASE/server/scanner/PodcastScanner.js and CUR/server/scanner/PodcastScanner.js differ
+Files BASE/server/scanner/ScanLogger.js and CUR/server/scanner/ScanLogger.js differ
+Files BASE/server/scanner/Scanner.js and CUR/server/scanner/Scanner.js differ
+Only in CUR/server/scanner: types.js
+Files BASE/server/SocketAuthority.js and CUR/server/SocketAuthority.js differ
+Files BASE/server/utils/ffmpegHelpers.js and CUR/server/utils/ffmpegHelpers.js differ

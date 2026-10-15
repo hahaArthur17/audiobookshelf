@@ -1,0 +1,279 @@
+== status after run2: 200 ==
+== run2 log ==
+Running in production mode.
+Options: CONFIG_PATH=TMP/config, METADATA_PATH=TMP/metadata, PORT=3399, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+INFO: === Starting Server ===
+INFO: [Server] Init v2.37.0
+INFO: [Server] Node.js Version: v24.11.0
+INFO: [Server] Platform: linux
+INFO: [Server] Arch: x64
+INFO: [BinaryManager] Skipping check for binaries
+INFO: [Database] Initializing db at "TMP/config/absdatabase.sqlite"
+INFO: [Database] Db connection was successful
+INFO: [MigrationManager] Migrating database up to version 2.37.0
+INFO: [MigrationManager] Migrations to run: v2.15.0-series-column-unique.js, v2.15.1-reindex-nocase.js, v2.15.2-index-creation.js, v2.17.0-uuid-replacement.js, v2.17.3-fk-constraints.js, v2.17.4-use-subfolder-for-oidc-redirect-uris.js, v2.17.5-remove-host-from-feed-urls.js, v2.17.6-share-add-isdownloadable.js, v2.17.7-add-indices.js, v2.19.1-copy-title-to-library-items.js, v2.19.4-improve-podcast-queries.js, v2.20.0-improve-author-sort-queries.js, v2.26.0-create-auth-tables.js, v2.33.0-add-discover-query-indexes.js, v2.35.0-add-last-refresh-token.js
+INFO: Created a backup of the original database.
+INFO: { event: 'migrating', name: 'v2.15.0-series-column-unique.js' }
+INFO: [2.15.0 migration] UPGRADE BEGIN: 2.15.0-series-column-unique 
+INFO: [2.15.0 migration] Reindexing NOCASE indices to fix potential hidden corruption issues
+INFO: [2.15.0 migration] Unique index on Series.name and Series.libraryId already exists
+INFO: [2.15.0 migration] UPGRADE END: 2.15.0-series-column-unique 
+INFO: {
+  event: 'migrated',
+  name: 'v2.15.0-series-column-unique.js',
+  durationSeconds: 0.015
+}
+INFO: { event: 'migrating', name: 'v2.15.1-reindex-nocase.js' }
+INFO: [2.15.1 migration] UPGRADE BEGIN: 2.15.1-reindex-nocase 
+INFO: [2.15.1 migration] Reindexing NOCASE indices to fix potential hidden corruption issues
+INFO: [2.15.1 migration] UPGRADE END: 2.15.1-reindex-nocase 
+INFO: {
+  event: 'migrated',
+  name: 'v2.15.1-reindex-nocase.js',
+  durationSeconds: 0.011
+}
+INFO: { event: 'migrating', name: 'v2.15.2-index-creation.js' }
+INFO: [2.15.2 migration] UPGRADE BEGIN: 2.15.2-index-creation
+INFO: [2.15.2 migration] Creating index for bookAuthors
+INFO: [2.15.2 migration] Index bookAuthor_authorId already exists
+INFO: [2.15.2 migration] Creating index for bookSeries
+INFO: [2.15.2 migration] Index bookSeries_seriesId already exists
+INFO: [2.15.2 migration] Deleting existing podcastEpisode index
+INFO: [2.15.2 migration] Creating index for podcastEpisode and createdAt
+INFO: [2.15.2 migration] Index podcastEpisode_createdAt_podcastId already exists
+INFO: [2.15.2 migration] UPGRADE END: 2.15.2-index-creation
+INFO: {
+  event: 'migrated',
+  name: 'v2.15.2-index-creation.js',
+  durationSeconds: 0.009
+}
+INFO: { event: 'migrating', name: 'v2.17.0-uuid-replacement.js' }
+INFO: [2.17.0 migration] UPGRADE BEGIN: 2.17.0-uuid-replacement
+INFO: [2.17.0 migration] Changing libraryItems.mediaId column to UUID
+INFO: [2.17.0 migration] Changing feeds.entityId column to UUID
+INFO: [2.17.0 migration] Changing mediaItemShares.mediaItemId column to UUID
+INFO: [2.17.0 migration] Changing playbackSessions.mediaItemId column to UUID
+INFO: [2.17.0 migration] Changing playlistMediaItems.mediaItemId column to UUID
+INFO: [2.17.0 migration] Changing mediaProgresses.mediaItemId column to UUID
+INFO: [2.17.0 migration] UPGRADE END: 2.17.0-uuid-replacement
+INFO: {
+  event: 'migrated',
+  name: 'v2.17.0-uuid-replacement.js',
+  durationSeconds: 0.145
+}
+INFO: { event: 'migrating', name: 'v2.17.3-fk-constraints.js' }
+INFO: [2.17.3 migration] UPGRADE BEGIN: 2.17.3-fk-constraints
+INFO: [2.17.3 migration] Updating libraryItems constraints
+ERROR: [2.17.3 migration] Migration failed - rolling back. Error: Error
+    at Database.<anonymous> (/home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/sequelize.js:315:28
+    at async SQLiteQueryInterface.renameTable (/home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/abstract/query-interface.js:139:12)
+    at async changeConstraints (REPO/dist-server/server/migrations/v2.17.3-fk-constraints.js:211:9)
+    at async Object.up (REPO/dist-server/server/migrations/v2.17.3-fk-constraints.js:30:13)
+    at async REPO/dist-server/server/libs/umzug/umzug.js:183:21
+    at async Umzug.runCommand (REPO/dist-server/server/libs/umzug/umzug.js:147:16) {
+  name: 'SequelizeDatabaseError',
+  parent: [Error: SQLITE_ERROR: error in trigger update_library_items_title: no such table: main.libraryItems] {
+    errno: 1,
+    code: 'SQLITE_ERROR',
+    sql: 'ALTER TABLE `libraryItems_13_backup` RENAME TO `libraryItems`;'
+  },
+  original: [Error: SQLITE_ERROR: error in trigger update_library_items_title: no such table: main.libraryItems] {
+    errno: 1,
+    code: 'SQLITE_ERROR',
+    sql: 'ALTER TABLE `libraryItems_13_backup` RENAME TO `libraryItems`;'
+  },
+  sql: 'ALTER TABLE `libraryItems_13_backup` RENAME TO `libraryItems`;',
+  parameters: {}
+}
+INFO: [2.17.3 migration] UPGRADE END: 2.17.3-fk-constraints
+INFO: {
+  event: 'migrated',
+  name: 'v2.17.3-fk-constraints.js',
+  durationSeconds: 0.01
+}
+INFO: {
+  event: 'migrating',
+  name: 'v2.17.4-use-subfolder-for-oidc-redirect-uris.js'
+}
+INFO: [2.17.4 migration] UPGRADE BEGIN: 2.17.4-use-subfolder-for-oidc-redirect-uris
+INFO: [2.17.4 migration] OIDC is not enabled, no action required
+INFO: [2.17.4 migration] UPGRADE END: 2.17.4-use-subfolder-for-oidc-redirect-uris
+INFO: {
+  event: 'migrated',
+  name: 'v2.17.4-use-subfolder-for-oidc-redirect-uris.js',
+  durationSeconds: 0.005
+}
+INFO: { event: 'migrating', name: 'v2.17.5-remove-host-from-feed-urls.js' }
+INFO: [2.17.5 migration] UPGRADE BEGIN: 2.17.5-remove-host-from-feed-urls
+INFO: [2.17.5 migration] Removing serverAddress from Feeds table URLs
+INFO: [2.17.5 migration] Removed serverAddress from Feeds table URLs
+INFO: [2.17.5 migration] Removing serverAddress from FeedEpisodes table URLs
+INFO: [2.17.5 migration] Removed serverAddress from FeedEpisodes table URLs
+INFO: [2.17.5 migration] UPGRADE END: 2.17.5-remove-host-from-feed-urls
+INFO: {
+  event: 'migrated',
+  name: 'v2.17.5-remove-host-from-feed-urls.js',
+  durationSeconds: 0.005
+}
+INFO: { event: 'migrating', name: 'v2.17.6-share-add-isdownloadable.js' }
+INFO: [2.17.6 migration] UPGRADE BEGIN: 2.17.6-share-add-isdownloadable
+INFO: [2.17.6 migration] isDownloadable column already exists in mediaItemShares table
+INFO: [2.17.6 migration] UPGRADE END: 2.17.6-share-add-isdownloadable
+INFO: {
+  event: 'migrated',
+  name: 'v2.17.6-share-add-isdownloadable.js',
+  durationSeconds: 0.005
+}
+INFO: { event: 'migrating', name: 'v2.17.7-add-indices.js' }
+INFO: [2.17.7 migration] UPGRADE BEGIN: 2.17.7-add-indices
+INFO: [2.17.7 migration] adding index [libraryId, mediaType, size] to table "libraryItems"
+INFO: [2.17.7 migration] added index [libraryId, mediaType, size] to table "libraryItems"
+INFO: [2.17.7 migration] adding index [duration] to table "books"
+INFO: [2.17.7 migration] index [duration] for table "books" already exists
+INFO: [2.17.7 migration] UPGRADE END: 2.17.7-add-indices
+INFO: {
+  event: 'migrated',
+  name: 'v2.17.7-add-indices.js',
+  durationSeconds: 0.011
+}
+INFO: { event: 'migrating', name: 'v2.19.1-copy-title-to-library-items.js' }
+INFO: [2.19.1 migration] UPGRADE BEGIN: 2.19.1-copy-title-to-library-items
+INFO: [2.19.1 migration] adding column "title" to table "libraryItems"
+INFO: [2.19.1 migration] column "title" already exists in table "libraryItems"
+INFO: [2.19.1 migration] copying column "title" from table "books" to table "libraryItems"
+INFO: [2.19.1 migration] copied column "title" from table "books" to table "libraryItems"
+INFO: [2.19.1 migration] adding trigger to update libraryItems.title when books.title is updated
+INFO: [2.19.1 migration] added trigger to update libraryItems.title when books.title is updated
+INFO: [2.19.1 migration] adding index on ['libraryId', 'mediaType', { name: 'title', collate: 'NOCASE' }] to table libraryItems. index name: library_items_library_id_media_type_title"
+INFO: [2.19.1 migration] added index on ['libraryId', 'mediaType', { name: 'title', collate: 'NOCASE' }] to table libraryItems. index name: library_items_library_id_media_type_title"
+INFO: [2.19.1 migration] adding column "titleIgnorePrefix" to table "libraryItems"
+INFO: [2.19.1 migration] column "titleIgnorePrefix" already exists in table "libraryItems"
+INFO: [2.19.1 migration] copying column "titleIgnorePrefix" from table "books" to table "libraryItems"
+INFO: [2.19.1 migration] copied column "titleIgnorePrefix" from table "books" to table "libraryItems"
+INFO: [2.19.1 migration] adding trigger to update libraryItems.titleIgnorePrefix when books.titleIgnorePrefix is updated
+INFO: [2.19.1 migration] added trigger to update libraryItems.titleIgnorePrefix when books.titleIgnorePrefix is updated
+INFO: [2.19.1 migration] adding index on ['libraryId', 'mediaType', { name: 'titleIgnorePrefix', collate: 'NOCASE' }] to table libraryItems. index name: library_items_library_id_media_type_title_ignore_prefix"
+INFO: [2.19.1 migration] added index on ['libraryId', 'mediaType', { name: 'titleIgnorePrefix', collate: 'NOCASE' }] to table libraryItems. index name: library_items_library_id_media_type_title_ignore_prefix"
+INFO: [2.19.1 migration] adding index on ['libraryId', 'mediaType', 'createdAt'] to table libraryItems. index name: library_items_library_id_media_type_created_at"
+INFO: [2.19.1 migration] added index on ['libraryId', 'mediaType', 'createdAt'] to table libraryItems. index name: library_items_library_id_media_type_created_at"
+INFO: [2.19.1 migration] UPGRADE END: 2.19.1-copy-title-to-library-items
+INFO: {
+  event: 'migrated',
+  name: 'v2.19.1-copy-title-to-library-items.js',
+  durationSeconds: 0.044
+}
+INFO: { event: 'migrating', name: 'v2.19.4-improve-podcast-queries.js' }
+INFO: [2.19.4 migration] UPGRADE BEGIN: 2.19.4-improve-podcast-queries
+INFO: [2.19.4 migration] adding column "numEpisodes" to table "podcasts"
+INFO: [2.19.4 migration] column "numEpisodes" already exists in table "podcasts"
+INFO: [2.19.4 migration] populating numEpisodes column in podcasts table
+INFO: [2.19.4 migration] populated numEpisodes column in podcasts table
+INFO: [2.19.4 migration] adding column "podcastId" to table "mediaProgresses"
+INFO: [2.19.4 migration] column "podcastId" already exists in table "mediaProgresses"
+INFO: [2.19.4 migration] populating podcastId column in mediaProgresses table
+INFO: [2.19.4 migration] populated podcastId column in mediaProgresses table
+INFO: [2.19.4 migration] copying column "title" from table "podcasts" to table "libraryItems"
+INFO: [2.19.4 migration] copied column "title" from table "podcasts" to table "libraryItems"
+INFO: [2.19.4 migration] copying column "titleIgnorePrefix" from table "podcasts" to table "libraryItems"
+INFO: [2.19.4 migration] copied column "titleIgnorePrefix" from table "podcasts" to table "libraryItems"
+INFO: [2.19.4 migration] adding trigger to update libraryItems.title when podcasts.title is updated
+INFO: [2.19.4 migration] added trigger to update libraryItems.title when podcasts.title is updated
+INFO: [2.19.4 migration] adding trigger to update libraryItems.titleIgnorePrefix when podcasts.titleIgnorePrefix is updated
+INFO: [2.19.4 migration] added trigger to update libraryItems.titleIgnorePrefix when podcasts.titleIgnorePrefix is updated
+INFO: [2.19.4 migration] UPGRADE END: 2.19.4-improve-podcast-queries
+INFO: {
+  event: 'migrated',
+  name: 'v2.19.4-improve-podcast-queries.js',
+  durationSeconds: 0.029
+}
+INFO: { event: 'migrating', name: 'v2.20.0-improve-author-sort-queries.js' }
+INFO: [2.20.0 migration] UPGRADE BEGIN: 2.20.0-improve-author-sort-queries
+INFO: [2.20.0 migration] adding authorNamesFirstLast, authorNamesLastFirst columns to libraryItems table
+INFO: [2.20.0 migration] adding column "authorNamesFirstLast" to table "libraryItems"
+INFO: [2.20.0 migration] column "authorNamesFirstLast" already exists in table "libraryItems"
+INFO: [2.20.0 migration] adding column "authorNamesLastFirst" to table "libraryItems"
+INFO: [2.20.0 migration] column "authorNamesLastFirst" already exists in table "libraryItems"
+INFO: [2.20.0 migration] added authorNamesFirstLast, authorNamesLastFirst columns to libraryItems table
+INFO: [2.20.0 migration] populating authorNamesFirstLast, authorNamesLastFirst columns in libraryItems table
+INFO: [2.20.0 migration] populated authorNamesFirstLast, authorNamesLastFirst columns in libraryItems table
+INFO: [2.20.0 migration] adding trigger to update libraryItems authorNamesFirstLast, authorNamesLastFirst on bookAuthors insert
+INFO: [2.20.0 migration] added trigger to update libraryItems authorNamesFirstLast, authorNamesLastFirst on bookAuthors insert
+INFO: [2.20.0 migration] adding trigger to update libraryItems authorNamesFirstLast, authorNamesLastFirst on bookAuthors delete
+INFO: [2.20.0 migration] added trigger to update libraryItems authorNamesFirstLast, authorNamesLastFirst on bookAuthors delete
+INFO: [2.20.0 migration] adding trigger to update libraryItems authorNamesFirstLast, authorNamesLastFirst on authors update
+INFO: [2.20.0 migration] added trigger to update libraryItems authorNamesFirstLast, authorNamesLastFirst on authors update
+INFO: [2.20.0 migration] adding index on ['libraryId', 'mediaType', { name: 'authorNamesFirstLast', collate: 'NOCASE' }] to table libraryItems. index name: library_items_library_id_media_type_author_names_first_last"
+INFO: [2.20.0 migration] added index on ['libraryId', 'mediaType', { name: 'authorNamesFirstLast', collate: 'NOCASE' }] to table libraryItems. index name: library_items_library_id_media_type_author_names_first_last"
+INFO: [2.20.0 migration] adding index on ['libraryId', 'mediaType', { name: 'authorNamesLastFirst', collate: 'NOCASE' }] to table libraryItems. index name: library_items_library_id_media_type_author_names_last_first"
+INFO: [2.20.0 migration] added index on ['libraryId', 'mediaType', { name: 'authorNamesLastFirst', collate: 'NOCASE' }] to table libraryItems. index name: library_items_library_id_media_type_author_names_last_first"
+INFO: [2.20.0 migration] adding index on ['publishedAt'] to table podcastEpisodes. index name: podcast_episodes_published_at"
+INFO: [2.20.0 migration] index ['publishedAt'] for table "podcastEpisodes" already exists
+INFO: [2.20.0 migration] UPGRADE END: 2.20.0-improve-author-sort-queries
+INFO: {
+  event: 'migrated',
+  name: 'v2.20.0-improve-author-sort-queries.js',
+  durationSeconds: 0.052
+}
+INFO: { event: 'migrating', name: 'v2.26.0-create-auth-tables.js' }
+INFO: [2.26.0 migration] UPGRADE BEGIN: 2.26.0-create-auth-tables
+INFO: [2.26.0 migration] table "sessions" already exists
+INFO: [2.26.0 migration] table "apiKeys" already exists
+INFO: [2.26.0 migration] UPGRADE END: 2.26.0-create-auth-tables
+INFO: {
+  event: 'migrated',
+  name: 'v2.26.0-create-auth-tables.js',
+  durationSeconds: 0.008
+}
+INFO: { event: 'migrating', name: 'v2.33.0-add-discover-query-indexes.js' }
+INFO: [2.33.0 migration] UPGRADE BEGIN: 2.33.0-add-discover-query-indexes
+INFO: [2.33.0 migration] adding index media_progresses_user_item_finished_time on mediaProgresses(userId, mediaItemId, isFinished, currentTime)
+INFO: [2.33.0 migration] added index media_progresses_user_item_finished_time
+INFO: [2.33.0 migration] index book_series_series_book already exists on bookSeries
+INFO: [2.33.0 migration] UPGRADE END: 2.33.0-add-discover-query-indexes
+INFO: {
+  event: 'migrated',
+  name: 'v2.33.0-add-discover-query-indexes.js',
+  durationSeconds: 0.012
+}
+INFO: { event: 'migrating', name: 'v2.35.0-add-last-refresh-token.js' }
+INFO: [2.35.0 migration] UPGRADE BEGIN: 2.35.0-add-last-refresh-token
+INFO: [2.35.0 migration] lastRefreshToken column already exists in sessions table
+INFO: [2.35.0 migration] lastRefreshTokenExpiresAt column already exists in sessions table
+INFO: [2.35.0 migration] UPGRADE END: 2.35.0-add-last-refresh-token
+INFO: {
+  event: 'migrated',
+  name: 'v2.35.0-add-last-refresh-token.js',
+  durationSeconds: 0.004
+}
+INFO: [MigrationManager] Migrations successfully applied to the original database.
+INFO: [Database] Db initialized with models: SequelizeMeta, user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+INFO: [Database] running ANALYZE
+INFO: [Database] ANALYZE completed
+INFO: [Server] Serving from base path "/audiobookshelf"
+INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+INFO: [BackupManager] 0 Backups Found
+INFO: [BackupManager] Auto Backups are disabled
+INFO: Listening on port :3399
+== db after run2 ==
+[('version', '2.37.0'), ('maxVersion', '2.37.0')]
+['v2.15.0-series-column-unique.js', 'v2.15.1-reindex-nocase.js', 'v2.15.2-index-creation.js', 'v2.17.0-uuid-replacement.js', 'v2.17.3-fk-constraints.js', 'v2.17.4-use-subfolder-for-oidc-redirect-uris.js', 'v2.17.5-remove-host-from-feed-urls.js', 'v2.17.6-share-add-isdownloadable.js', 'v2.17.7-add-indices.js', 'v2.19.1-copy-title-to-library-items.js', 'v2.19.4-improve-podcast-queries.js', 'v2.20.0-improve-author-sort-queries.js', 'v2.26.0-create-auth-tables.js', 'v2.33.0-add-discover-query-indexes.js', 'v2.35.0-add-last-refresh-token.js']
+== config/migrations ==
+v2.15.0-series-column-unique.js
+v2.15.1-reindex-nocase.js
+v2.15.2-index-creation.js
+v2.17.0-uuid-replacement.js
+v2.17.3-fk-constraints.js
+v2.17.4-use-subfolder-for-oidc-redirect-uris.js
+v2.17.5-remove-host-from-feed-urls.js
+v2.17.6-share-add-isdownloadable.js
+v2.17.7-add-indices.js
+v2.19.1-copy-title-to-library-items.js
+v2.19.4-improve-podcast-queries.js
+v2.20.0-improve-author-sort-queries.js
+v2.26.0-create-auth-tables.js
+v2.33.0-add-discover-query-indexes.js
+v2.35.0-add-last-refresh-token.js

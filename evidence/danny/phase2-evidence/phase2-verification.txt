@@ -1,0 +1,30 @@
+== date
+2026-10-03T16:14:59+13:00
+== branch and commit
+danny/phase2
+be5e9e44 workflow1 phase2: convert metadata pipeline (finders, providers, SearchController) to TypeScript (Claude Code, Opus 5.5, one prompt, no plan review)
+== tsc error count (strict, noEmit)
+0
+== diff stat vs baseline
+ .../{SearchController.js => SearchController.ts}   | 101 ++++----
+ .../finders/{AuthorFinder.js => AuthorFinder.ts}   |  44 ++--
+ server/finders/{BookFinder.js => BookFinder.ts}    | 280 ++++++++++-----------
+ .../finders/{PodcastFinder.js => PodcastFinder.ts} |  24 +-
+ server/providers/{Audible.js => Audible.ts}        | 135 +++++++---
+ .../{AudiobookCovers.js => AudiobookCovers.ts}     |  29 ++-
+ server/providers/{Audnexus.js => Audnexus.ts}      | 147 ++++++-----
+ ...ProviderAdapter.js => CustomProviderAdapter.ts} | 118 ++++++---
+ server/providers/{FantLab.js => FantLab.ts}        | 131 ++++++----
+ .../providers/{GoogleBooks.js => GoogleBooks.ts}   |  68 +++--
+ server/providers/MusicBrainz.js                    |  51 ----
+ server/providers/MusicBrainz.ts                    |  78 ++++++
+ server/providers/OpenLibrary.js                    | 121 ---------
+ server/providers/OpenLibrary.ts                    | 167 ++++++++++++
+ server/providers/{iTunes.js => iTunes.ts}          | 134 ++++++----
+ server/providers/types.ts                          |  43 ++++
+ 16 files changed, 1012 insertions(+), 659 deletions(-)
+== test dir diff vs baseline (empty = no change)
+== any / ts directives in scope
+none
+== unknown casts in scope
+server/finders/BookFinder.ts:609:    const optionsAsIsbn = options as unknown as string

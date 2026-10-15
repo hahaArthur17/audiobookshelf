@@ -1,0 +1,124 @@
+STATUS 200
+LOCATION 
+{
+ "createdAt": "MASK",
+ "expiresAt": null,
+ "id": "MASK",
+ "isDownloadable": false,
+ "mediaItemId": "MASK",
+ "mediaItemType": "book",
+ "playbackSession": {
+  "audioTracks": [
+   {
+    "codec": "mp3",
+    "contentUrl": "/audiobookshelf/public/share/slug1/track/1",
+    "duration": 2.063673,
+    "index": 1,
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".mp3",
+     "filename": "01.mp3",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Tag Author/Tagged Book/01.mp3",
+     "relPath": "01.mp3",
+     "size": 8710
+    },
+    "mimeType": "audio/mpeg",
+    "startOffset": 0,
+    "title": "01.mp3"
+   },
+   {
+    "codec": "mp3",
+    "contentUrl": "/audiobookshelf/public/share/slug1/track/2",
+    "duration": 2.063673,
+    "index": 2,
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".mp3",
+     "filename": "02.mp3",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Tag Author/Tagged Book/02.mp3",
+     "relPath": "02.mp3",
+     "size": 8571
+    },
+    "mimeType": "audio/mpeg",
+    "startOffset": 2.063673,
+    "title": "02.mp3"
+   }
+  ],
+  "bookId": "MASK",
+  "chapters": [
+   {
+    "end": 2.063673,
+    "id": "MASK",
+    "start": 0,
+    "title": "Chapter One"
+   },
+   {
+    "end": 4.127346,
+    "id": "MASK",
+    "start": 2.063673,
+    "title": "Chapter Two"
+   }
+  ],
+  "coverAspectRatio": 1,
+  "coverPath": null,
+  "currentTime": 0,
+  "date": "MASK",
+  "dayOfWeek": "MASK",
+  "deviceInfo": {
+   "clientName": "Abs Web Share",
+   "clientVersion": "2.37.0",
+   "deviceId": "MASK",
+   "id": "MASK",
+   "ipAddress": "::1"
+  },
+  "displayAuthor": "Tag Author",
+  "displayTitle": "Tagged Book Album",
+  "duration": 4.127346,
+  "episodeId": null,
+  "id": "MASK",
+  "libraryId": "MASK",
+  "libraryItem": null,
+  "libraryItemId": "MASK",
+  "mediaMetadata": {
+   "abridged": false,
+   "asin": null,
+   "authors": [
+    {
+     "id": "MASK",
+     "name": "Tag Author"
+    }
+   ],
+   "description": "Tagged description",
+   "explicit": false,
+   "genres": [
+    "Thriller"
+   ],
+   "isbn": null,
+   "language": null,
+   "narrators": [
+    "Tag Narrator"
+   ],
+   "publishedDate": null,
+   "publishedYear": "2010",
+   "publisher": "Tag Pub",
+   "series": [],
+   "subtitle": null,
+   "title": "Tagged Book Album"
+  },
+  "mediaPlayer": "web-share",
+  "mediaType": "book",
+  "playMethod": 0,
+  "serverVersion": "2.37.0",
+  "startTime": "MASK",
+  "startedAt": "MASK",
+  "timeListening": "MASK",
+  "updatedAt": "MASK",
+  "userId": null
+ },
+ "slug": "slug1",
+ "updatedAt": "MASK"
+}

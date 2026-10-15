@@ -1,0 +1,145 @@
+--- /tmp/abs-base2/dist-server/server/providers/Audnexus.js	2026-10-03 16:15:06.611767478 +1300
++++ dist-server/server/providers/Audnexus.js	2026-10-03 15:34:12.931178434 +1300
+@@ -1,18 +1,17 @@
+ "use strict";
+-const axios = require('axios').default;
+-const Throttle = require('p-throttle');
+-const Logger = require('../Logger');
+-const { levenshteinDistance } = require('../utils/index');
+-const { isValidASIN } = require('../utils/index');
+-/**
+- * @typedef AuthorSearchObj
+- * @property {string} asin
+- * @property {string} description
+- * @property {string} image
+- * @property {string} name
+- */
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const axios_1 = __importDefault(require("axios"));
++const Throttle = require("p-throttle");
++const Logger = require("../Logger");
++const utils = require("../utils/index");
++const { levenshteinDistance } = utils;
++const { isValidASIN } = utils;
+ class Audnexus {
+     static _instance = null;
++    baseUrl;
++    limiter;
+     constructor() {
+         // ensures Audnexus class is singleton
+         if (Audnexus._instance) {
+@@ -31,12 +30,6 @@
+         });
+         Audnexus._instance = this;
+     }
+-    /**
+-     *
+-     * @param {string} name
+-     * @param {string} region
+-     * @returns {Promise<{asin:string, name:string}[]>}
+-     */
+     authorASINsRequest(name, region) {
+         const searchParams = new URLSearchParams();
+         searchParams.set('name', name);
+@@ -44,19 +37,13 @@
+             searchParams.set('region', region);
+         const authorRequestUrl = `${this.baseUrl}/authors?${searchParams.toString()}`;
+         Logger.info(`[Audnexus] Searching for author "${authorRequestUrl}"`);
+-        return this._processRequest(this.limiter(() => axios.get(authorRequestUrl)))
++        return this._processRequest(this.limiter(() => axios_1.default.get(authorRequestUrl)))
+             .then((res) => res.data || [])
+             .catch((error) => {
+             Logger.error(`[Audnexus] Author ASIN request failed for ${name}`, error.message);
+             return [];
+         });
+     }
+-    /**
+-     *
+-     * @param {string} asin
+-     * @param {string} region
+-     * @returns {Promise<AuthorSearchObj>}
+-     */
+     authorRequest(asin, region) {
+         if (!isValidASIN(asin?.toUpperCase?.())) {
+             Logger.error(`[Audnexus] Invalid ASIN ${asin}`);
+@@ -67,19 +54,13 @@
+         if (region)
+             authorRequestUrl.searchParams.set('region', region);
+         Logger.info(`[Audnexus] Searching for author "${authorRequestUrl}"`);
+-        return this._processRequest(this.limiter(() => axios.get(authorRequestUrl.toString())))
++        return this._processRequest(this.limiter(() => axios_1.default.get(authorRequestUrl.toString())))
+             .then((res) => res.data)
+             .catch((error) => {
+             Logger.error(`[Audnexus] Author request failed for ${asin}`, error.message);
+             return null;
+         });
+     }
+-    /**
+-     *
+-     * @param {string} asin
+-     * @param {string} region
+-     * @returns {Promise<AuthorSearchObj>}
+-     */
+     async findAuthorByASIN(asin, region) {
+         const author = await this.authorRequest(asin, region);
+         return author
+@@ -91,21 +72,14 @@
+             }
+             : null;
+     }
+-    /**
+-     *
+-     * @param {string} name
+-     * @param {string} region
+-     * @param {number} maxLevenshtein
+-     * @returns {Promise<AuthorSearchObj>}
+-     */
+     async findAuthorByName(name, region, maxLevenshtein = 3) {
+         Logger.debug(`[Audnexus] Looking up author by name ${name}`);
+         const authorAsinObjs = await this.authorASINsRequest(name, region);
+         let closestMatch = null;
+         authorAsinObjs.forEach((authorAsinObj) => {
+-            authorAsinObj.levenshteinDistance = levenshteinDistance(authorAsinObj.name, name);
+-            if (!closestMatch || closestMatch.levenshteinDistance > authorAsinObj.levenshteinDistance) {
+-                closestMatch = authorAsinObj;
++            const scoredAuthorAsinObj = Object.assign(authorAsinObj, { levenshteinDistance: levenshteinDistance(authorAsinObj.name, name) });
++            if (!closestMatch || closestMatch.levenshteinDistance > scoredAuthorAsinObj.levenshteinDistance) {
++                closestMatch = scoredAuthorAsinObj;
+             }
+         });
+         if (!closestMatch || closestMatch.levenshteinDistance > maxLevenshtein) {
+@@ -122,19 +96,13 @@
+             name: author.name
+         };
+     }
+-    /**
+-     *
+-     * @param {string} asin
+-     * @param {string} region
+-     * @returns {Promise<Object>}
+-     */
+     getChaptersByASIN(asin, region) {
+         Logger.debug(`[Audnexus] Get chapters for ASIN ${asin}/${region}`);
+         asin = encodeURIComponent(asin.toUpperCase());
+         const chaptersRequestUrl = new URL(`${this.baseUrl}/books/${asin}/chapters`);
+         if (region)
+             chaptersRequestUrl.searchParams.set('region', region);
+-        return this._processRequest(this.limiter(() => axios.get(chaptersRequestUrl.toString())))
++        return this._processRequest(this.limiter(() => axios_1.default.get(chaptersRequestUrl.toString())))
+             .then((res) => res.data)
+             .catch((error) => {
+             Logger.error(`[Audnexus] Chapter ASIN request failed for ${asin}/${region}`, error.message);
+@@ -149,8 +117,9 @@
+             return await request();
+         }
+         catch (error) {
+-            if (error.response?.status === 429) {
+-                const retryAfter = parseInt(error.response.headers?.['retry-after'], 10) || 5;
++            const requestError = error;
++            if (requestError.response?.status === 429) {
++                const retryAfter = parseInt(String(requestError.response.headers?.['retry-after']), 10) || 5;
+                 Logger.warn(`[Audnexus] Rate limit exceeded. Retrying in ${retryAfter} seconds.`);
+                 await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+                 return this._processRequest(request);

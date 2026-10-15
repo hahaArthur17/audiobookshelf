@@ -1,0 +1,761 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:24.659] INFO: === Starting Server ===
+[2026-10-10 15:40:24.659] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:24.660] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:24.660] INFO: [Server] Platform: linux
+[2026-10-10 15:40:24.660] INFO: [Server] Arch: x64
+[2026-10-10 15:40:24.660] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:24.661] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite
+[2026-10-10 15:40:24.661] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:24.670] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:24.703] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 15:40:25.023] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:25.024] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 15:40:25.029] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 15:40:25.034] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 15:40:25.039] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 15:40:25.045] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 15:40:25.051] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 15:40:25.056] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 15:40:25.083] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:25.089] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:25.089] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:25.089] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 15:40:25.095] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:25.098] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:25.098] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:25.105] INFO: Listening on port :3343
+[2026-10-10 15:40:25.428] INFO: Received ping
+[2026-10-10 15:40:25.438] INFO: [Server] Initializing new server
+[2026-10-10 15:40:25.551] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 15:40:25.618] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:25.631] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:25.643] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:25.645] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:25.653] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 15:40:25.653] INFO: [LibraryScanner] Starting (forced) library scan 6048af86-74de-472c-8cef-0a6348094a77 for Books
+[2026-10-10 15:40:25.660] INFO: [LibraryScanner] Starting library scan 8cf6ff59-552d-498e-a1cf-74234ba56d56 for Pods
+[2026-10-10 15:40:25.792] INFO: [LibraryScanner] Library scan "8cf6ff59-552d-498e-a1cf-74234ba56d56" completed in 0:00 | 2 Added | 0 Updated | 0 Missing
+[2026-10-10 15:40:25.799] INFO: [LibraryScan] Scan log saved "/tmp/abs-q/qwork-oQtG/metadata/logs/scans/2026-10-10_8cf6ff59-552d-498e-a1cf-74234ba56d56.txt"
+[2026-10-10 15:40:25.799] INFO: [LibraryController] Scan complete
+[2026-10-10 15:40:25.862] ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "/tmp/abs-q/qwork-oQtG/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/tmp/abs-base-b11c/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/tmp/abs-base-b11c/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 15:40:25.863] ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/tmp/abs-base-b11c/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/tmp/abs-base-b11c/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 15:40:25.980] INFO: [LibraryScanner] Library scan "6048af86-74de-472c-8cef-0a6348094a77" completed in 0:00 | 7 Added | 0 Updated | 0 Missing
+[2026-10-10 15:40:25.987] INFO: [LibraryScan] Scan log saved "/tmp/abs-q/qwork-oQtG/metadata/logs/scans/2026-10-10_6048af86-74de-472c-8cef-0a6348094a77.txt"
+[2026-10-10 15:40:25.987] INFO: [LibraryController] Scan complete
+[2026-10-10 15:40:31.990] INFO: [MiscController] Enabling active auth method "openid"
+[2026-10-10 15:40:32.095] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/AuthorController.js:25:51)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/AuthorController.js:362:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/AuthorController.js:25:51)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/AuthorController.js:362:9)
+}
+=== restart after au_find_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:33.354] INFO: === Starting Server ===
+[2026-10-10 15:40:33.354] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:33.354] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:33.354] INFO: [Server] Platform: linux
+[2026-10-10 15:40:33.354] INFO: [Server] Arch: x64
+[2026-10-10 15:40:33.355] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:33.356] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:33.368] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:33.372] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:33.420] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:33.456] WARN: Removed 1 sessions that were 3 seconds or less
+[2026-10-10 15:40:33.462] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:33.467] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:33.467] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:33.468] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:33.471] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:33.472] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:33.473] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:33.476] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:33.477] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:33.480] INFO: Listening on port :3343
+[2026-10-10 15:40:33.482] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:33.483] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:34.149] INFO: Received ping
+[2026-10-10 15:40:34.338] WARN: [AuthorController] Author "Author Six" has invalid imagePath: null
+[2026-10-10 15:40:34.477] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/CollectionController.js:96:59)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/CollectionController.js:367:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/CollectionController.js:96:59)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/CollectionController.js:367:9)
+}
+=== restart after co_find_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:35.742] INFO: === Starting Server ===
+[2026-10-10 15:40:35.742] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:35.742] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:35.742] INFO: [Server] Platform: linux
+[2026-10-10 15:40:35.742] INFO: [Server] Arch: x64
+[2026-10-10 15:40:35.745] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:35.745] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:35.756] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:35.759] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:35.803] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:35.819] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:35.834] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:35.834] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:35.834] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:35.838] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:35.838] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:35.839] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:35.844] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:35.844] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:35.848] INFO: Listening on port :3343
+[2026-10-10 15:40:35.850] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:35.851] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:36.530] INFO: Received ping
+[2026-10-10 15:40:36.635] FATAL: [Server] Unhandled rejection: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received an instance of Array
+    at Object.isAbsolute (node:path:1323:5)
+    at ApiRouter.getPaths (/tmp/abs-base-b11c/dist-server/server/controllers/FileSystemController.js:20:31)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at /home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:284:15
+    at router.process_params (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:280:10)
+    at expressInit (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/middleware/init.js:40:5) {
+  code: 'ERR_INVALID_ARG_TYPE'
+} 
+promise: Promise {
+  <rejected> TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received an instance of Array
+      at Object.isAbsolute (node:path:1323:5)
+      at ApiRouter.getPaths (/tmp/abs-base-b11c/dist-server/server/controllers/FileSystemController.js:20:31)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at Route.dispatch (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:114:3)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at /home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:284:15
+      at router.process_params (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:346:12)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:280:10)
+      at expressInit (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/middleware/init.js:40:5) {
+    code: 'ERR_INVALID_ARG_TYPE'
+  }
+}
+=== restart after fs_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:37.901] INFO: === Starting Server ===
+[2026-10-10 15:40:37.902] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:37.902] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:37.902] INFO: [Server] Platform: linux
+[2026-10-10 15:40:37.902] INFO: [Server] Arch: x64
+[2026-10-10 15:40:37.904] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:37.905] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:37.915] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:37.918] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:37.974] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:37.997] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:38.071] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:38.071] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:38.072] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:38.075] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:38.076] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:38.077] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:38.081] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:38.081] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:38.085] INFO: Listening on port :3343
+[2026-10-10 15:40:38.089] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:38.091] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:38.691] INFO: Received ping
+TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.getTasks (/tmp/abs-base-b11c/dist-server/server/controllers/MiscController.js:97:56)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at /home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:284:15
+    at router.process_params (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:280:10)
+    at expressInit (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/middleware/init.js:40:5)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+[2026-10-10 15:40:39.023] INFO: [PodcastManager] checkAndDownloadNewEpisodes for "My Show" - Last episode check: Never
+[2026-10-10 15:40:39.026] ERROR: [podcastUtils] getPodcastFeed Error Error: Call to 127.0.0.1 is blocked.
+    at agent.createConnection (/home/danny/Code/compx574/audiobookshelf/node_modules/ssrf-req-filter/lib/index.js:31:13)
+    at Agent.createSocket (node:_http_agent:400:26)
+    at Agent.addRequest (node:_http_agent:340:10)
+    at new ClientRequest (node:_http_client:403:16)
+    at Object.request (node:http:102:10)
+    at RedirectableRequest._performRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:326:24)
+    at new RedirectableRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:100:8)
+    at Object.request (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:532:14)
+    at dispatchHttpRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/axios/lib/adapters/http.js:262:25)
+    at new Promise (<anonymous>)
+[2026-10-10 15:40:39.027] ERROR: [PodcastManager] checkPodcastForNewEpisodes invalid feed payload for My Show (ID: 794b0bdb-8db8-4dee-b8f6-331161ebc6b6) null
+[2026-10-10 15:40:39.027] INFO: [PodcastManager] No new episodes found for podcast "My Show"
+[2026-10-10 15:40:39.084] INFO: [PodcastManager] checkAndDownloadNewEpisodes for "My Show" - Last episode check: Sat Oct 10 2026 15:40:39 GMT+1300 (New Zealand Daylight Time)
+[2026-10-10 15:40:39.085] ERROR: [podcastUtils] getPodcastFeed Error Error: Call to 127.0.0.1 is blocked.
+    at agent.createConnection (/home/danny/Code/compx574/audiobookshelf/node_modules/ssrf-req-filter/lib/index.js:31:13)
+    at Agent.createSocket (node:_http_agent:400:26)
+    at Agent.addRequest (node:_http_agent:340:10)
+    at new ClientRequest (node:_http_client:403:16)
+    at Object.request (node:http:102:10)
+    at RedirectableRequest._performRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:326:24)
+    at new RedirectableRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:100:8)
+    at Object.request (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:532:14)
+    at dispatchHttpRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/axios/lib/adapters/http.js:262:25)
+    at new Promise (<anonymous>)
+[2026-10-10 15:40:39.085] ERROR: [PodcastManager] checkPodcastForNewEpisodes invalid feed payload for My Show (ID: 794b0bdb-8db8-4dee-b8f6-331161ebc6b6) null
+[2026-10-10 15:40:39.085] INFO: [PodcastManager] No new episodes found for podcast "My Show"
+[2026-10-10 15:40:39.139] INFO: [PodcastManager] checkAndDownloadNewEpisodes for "My Show" - Last episode check: Sat Oct 10 2026 15:40:39 GMT+1300 (New Zealand Daylight Time)
+[2026-10-10 15:40:39.139] ERROR: [podcastUtils] getPodcastFeed Error Error: Call to 127.0.0.1 is blocked.
+    at agent.createConnection (/home/danny/Code/compx574/audiobookshelf/node_modules/ssrf-req-filter/lib/index.js:31:13)
+    at Agent.createSocket (node:_http_agent:400:26)
+    at Agent.addRequest (node:_http_agent:340:10)
+    at new ClientRequest (node:_http_client:403:16)
+    at Object.request (node:http:102:10)
+    at RedirectableRequest._performRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:326:24)
+    at new RedirectableRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:100:8)
+    at Object.request (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:532:14)
+    at dispatchHttpRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/axios/lib/adapters/http.js:262:25)
+    at new Promise (<anonymous>)
+[2026-10-10 15:40:39.140] ERROR: [PodcastManager] checkPodcastForNewEpisodes invalid feed payload for My Show (ID: 794b0bdb-8db8-4dee-b8f6-331161ebc6b6) null
+[2026-10-10 15:40:39.140] INFO: [PodcastManager] No new episodes found for podcast "My Show"
+[2026-10-10 15:40:39.193] INFO: [PodcastManager] checkAndDownloadNewEpisodes for "My Show" - Last episode check: Sat Oct 10 2026 15:40:39 GMT+1300 (New Zealand Daylight Time)
+[2026-10-10 15:40:39.193] ERROR: [podcastUtils] getPodcastFeed Error Error: Call to 127.0.0.1 is blocked.
+    at agent.createConnection (/home/danny/Code/compx574/audiobookshelf/node_modules/ssrf-req-filter/lib/index.js:31:13)
+    at Agent.createSocket (node:_http_agent:400:26)
+    at Agent.addRequest (node:_http_agent:340:10)
+    at new ClientRequest (node:_http_client:403:16)
+    at Object.request (node:http:102:10)
+    at RedirectableRequest._performRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:326:24)
+    at new RedirectableRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:100:8)
+    at Object.request (/home/danny/Code/compx574/audiobookshelf/node_modules/follow-redirects/index.js:532:14)
+    at dispatchHttpRequest (/home/danny/Code/compx574/audiobookshelf/node_modules/axios/lib/adapters/http.js:262:25)
+    at new Promise (<anonymous>)
+[2026-10-10 15:40:39.193] ERROR: [PodcastManager] checkPodcastForNewEpisodes invalid feed payload for My Show (ID: 794b0bdb-8db8-4dee-b8f6-331161ebc6b6) null
+[2026-10-10 15:40:39.193] INFO: [PodcastManager] No new episodes found for podcast "My Show"
+[2026-10-10 15:40:39.345] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/SeriesController.js:19:14)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/SeriesController.js:84:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/SeriesController.js:19:14)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/SeriesController.js:84:9)
+}
+=== restart after se_find_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:40.604] INFO: === Starting Server ===
+[2026-10-10 15:40:40.604] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:40.604] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:40.604] INFO: [Server] Platform: linux
+[2026-10-10 15:40:40.604] INFO: [Server] Arch: x64
+[2026-10-10 15:40:40.605] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:40.606] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:40.615] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:40.618] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:40.659] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:40.672] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:40.682] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:40.683] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:40.684] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:40.687] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:40.687] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:40.688] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:40.691] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:40.692] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:40.696] INFO: Listening on port :3343
+[2026-10-10 15:40:40.698] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:40.699] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:41.398] INFO: Received ping
+[2026-10-10 15:40:41.507] WARN: [SessionController] Invalid "user" query string "notauuid"
+[2026-10-10 15:40:41.550] WARN: [SessionController] Invalid "user" query string "41d6ad72-add6-481c-887d-ba6ce769b656,41d6ad72-add6-481c-887d-ba6ce769b656"
+[2026-10-10 15:40:41.634] WARN: [SessionController] Invalid "sort" query string "bogus" (Must be one of "displayTitle|duration|playMethod|startTime|currentTime|timeListening|updatedAt|createdAt")
+[2026-10-10 15:40:41.676] WARN: [SessionController] Invalid "sort" query string "duration,updatedAt" (Must be one of "displayTitle|duration|playMethod|startTime|currentTime|timeListening|updatedAt|createdAt")
+[2026-10-10 15:40:41.737] INFO: [ShareManager] Adding new open share playback session "Tagged Book Album"
+[2026-10-10 15:40:41.792] INFO: [ShareManager] Adding new open share playback session "Tagged Book Album"
+[2026-10-10 15:40:41.844] INFO: [ShareManager] Adding new open share playback session "Tagged Book Album"
+[2026-10-10 15:40:41.898] INFO: [ShareManager] Adding new open share playback session "Tagged Book Album"
+[2026-10-10 15:40:42.025] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.findAll (/tmp/abs-base-b11c/dist-server/server/controllers/UserController.js:16:52)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/UserController.js:433:9)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at /home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:284:15
+    at router.process_params (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:346:12) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.findAll (/tmp/abs-base-b11c/dist-server/server/controllers/UserController.js:16:52)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/UserController.js:433:9)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at Route.dispatch (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:114:3)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at /home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:284:15
+      at router.process_params (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/index.js:346:12)
+}
+=== restart after users_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:43.291] INFO: === Starting Server ===
+[2026-10-10 15:40:43.291] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:43.291] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:43.292] INFO: [Server] Platform: linux
+[2026-10-10 15:40:43.292] INFO: [Server] Arch: x64
+[2026-10-10 15:40:43.294] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:43.295] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:43.305] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:43.308] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:43.351] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:43.363] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:43.437] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:43.437] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:43.438] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:43.446] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:43.446] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:43.447] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:43.452] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:43.453] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:43.457] INFO: Listening on port :3343
+[2026-10-10 15:40:43.459] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:43.460] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:44.079] INFO: Received ping
+[2026-10-10 15:40:44.137] WARN: [OidcAuth] Rejected callback URL to different origin: http://localhost/login (expected http://localhost:3343)
+[2026-10-10 15:40:44.137] WARN: [Auth] Rejected invalid callback URL: http://localhost/login
+[2026-10-10 15:40:44.176] WARN: [OidcAuth] Rejected callback URL to different origin: http://evil.example/login (expected http://localhost:3343)
+[2026-10-10 15:40:44.176] WARN: [Auth] Rejected invalid callback URL: http://evil.example/login
+[2026-10-10 15:40:44.215] ERROR: [OidcAuth] Invalid callback URL format: http://localhost/a,http://localhost/b TypeError: callbackUrl.startsWith is not a function
+    at OidcAuthStrategy.isValidWebCallbackUrl (/tmp/abs-base-b11c/dist-server/server/auth/OidcAuthStrategy.js:485:29)
+    at Auth.paramsToCookies (/tmp/abs-base-b11c/dist-server/server/Auth.js:205:40)
+    at /tmp/abs-base-b11c/dist-server/server/Auth.js:320:39
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at /home/danny/Code/compx574/audiobookshelf/node_modules/express-rate-limit/dist/index.cjs:807:7
+    at async /home/danny/Code/compx574/audiobookshelf/node_modules/express-rate-limit/dist/index.cjs:691:5
+[2026-10-10 15:40:44.215] WARN: [Auth] Rejected invalid callback URL: http://localhost/a,http://localhost/b
+[2026-10-10 15:40:44.729] ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+[2026-10-10 15:40:44.767] ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+[2026-10-10 15:40:44.847] ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+[2026-10-10 15:40:44.927] ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+[2026-10-10 15:40:44.967] ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+[2026-10-10 15:40:45.084] ERROR: [OidcAuth] Invalid callback URL format: /audiobookshelf/login,/audiobookshelf/x TypeError: callbackUrl.startsWith is not a function
+    at OidcAuthStrategy.isValidWebCallbackUrl (/tmp/abs-base-b11c/dist-server/server/auth/OidcAuthStrategy.js:485:29)
+    at Auth.paramsToCookies (/tmp/abs-base-b11c/dist-server/server/Auth.js:205:40)
+    at /tmp/abs-base-b11c/dist-server/server/Auth.js:320:39
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at /home/danny/Code/compx574/audiobookshelf/node_modules/express-rate-limit/dist/index.cjs:807:7
+    at async /home/danny/Code/compx574/audiobookshelf/node_modules/express-rate-limit/dist/index.cjs:691:5
+[2026-10-10 15:40:45.084] WARN: [Auth] Rejected invalid callback URL: /audiobookshelf/login,/audiobookshelf/x
+[2026-10-10 15:40:45.408] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.findAll (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:185:56) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.findAll (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:185:56)
+}
+=== restart after lib_all_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:46.684] INFO: === Starting Server ===
+[2026-10-10 15:40:46.684] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:46.684] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:46.686] INFO: [Server] Platform: linux
+[2026-10-10 15:40:46.686] INFO: [Server] Arch: x64
+[2026-10-10 15:40:46.687] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:46.687] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:46.699] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:46.702] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:46.754] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:46.769] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:46.862] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:46.862] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:46.864] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:46.869] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:46.869] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:46.870] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:46.874] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:46.874] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:46.878] INFO: Listening on port :3343
+[2026-10-10 15:40:46.881] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:46.881] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:47.469] INFO: Received ping
+[2026-10-10 15:40:47.586] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:207:56)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:207:56)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9)
+}
+=== restart after lib_one_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:48.848] INFO: === Starting Server ===
+[2026-10-10 15:40:48.849] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:48.849] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:48.849] INFO: [Server] Platform: linux
+[2026-10-10 15:40:48.849] INFO: [Server] Arch: x64
+[2026-10-10 15:40:48.853] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:48.854] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:48.868] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:48.871] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:48.923] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:48.937] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:48.966] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:48.966] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:48.966] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:48.971] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:48.971] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:48.972] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:48.976] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:48.977] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:48.981] INFO: Listening on port :3343
+[2026-10-10 15:40:48.983] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:48.983] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:49.638] INFO: Received ping
+[2026-10-10 15:40:50.253] FATAL: [Server] Unhandled rejection: TypeError: payload.filterBy?.split is not a function
+    at ApiRouter.getLibraryItems (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:586:49)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9) 
+promise: Promise {
+  <rejected> TypeError: payload.filterBy?.split is not a function
+      at ApiRouter.getLibraryItems (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:586:49)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9)
+}
+=== restart after lib_items_filter_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:51.547] INFO: === Starting Server ===
+[2026-10-10 15:40:51.548] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:51.548] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:51.548] INFO: [Server] Platform: linux
+[2026-10-10 15:40:51.548] INFO: [Server] Arch: x64
+[2026-10-10 15:40:51.550] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:51.550] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:51.561] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:51.564] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:51.616] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:51.629] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:51.657] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:51.657] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:51.658] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:51.662] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:51.662] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:51.663] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:51.667] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:51.668] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:51.671] INFO: Listening on port :3343
+[2026-10-10 15:40:51.673] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:51.674] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:52.319] INFO: Received ping
+[2026-10-10 15:40:52.514] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.getLibraryItems (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:568:14)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.getLibraryItems (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:568:14)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9)
+}
+=== restart after lib_items_include_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:53.776] INFO: === Starting Server ===
+[2026-10-10 15:40:53.777] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:53.777] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:53.777] INFO: [Server] Platform: linux
+[2026-10-10 15:40:53.777] INFO: [Server] Arch: x64
+[2026-10-10 15:40:53.778] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:53.779] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:53.789] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:53.792] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:53.832] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:53.844] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:53.854] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:53.854] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:53.854] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:53.857] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:53.857] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:53.858] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:53.862] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:53.863] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:53.866] INFO: Listening on port :3343
+[2026-10-10 15:40:53.868] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:53.869] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:54.568] INFO: Received ping
+[2026-10-10 15:40:54.778] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.getAllSeriesForLibrary (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:696:14)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.getAllSeriesForLibrary (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:696:14)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9)
+}
+=== restart after lib_series_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:56.050] INFO: === Starting Server ===
+[2026-10-10 15:40:56.051] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:56.051] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:56.052] INFO: [Server] Platform: linux
+[2026-10-10 15:40:56.052] INFO: [Server] Arch: x64
+[2026-10-10 15:40:56.053] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:56.054] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:56.064] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:56.067] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:56.132] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:56.152] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:56.225] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:56.225] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:56.226] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:56.233] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:56.233] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:56.233] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:56.238] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:56.239] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:56.242] INFO: Listening on port :3343
+[2026-10-10 15:40:56.245] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:56.246] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:56.839] INFO: Received ping
+[2026-10-10 15:40:56.967] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.getSeriesForLibrary (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:728:14)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.getSeriesForLibrary (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:728:14)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9)
+}
+=== restart after lib_series_one_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:40:58.236] INFO: === Starting Server ===
+[2026-10-10 15:40:58.236] INFO: [Server] Init v2.37.0
+[2026-10-10 15:40:58.236] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:40:58.236] INFO: [Server] Platform: linux
+[2026-10-10 15:40:58.236] INFO: [Server] Arch: x64
+[2026-10-10 15:40:58.239] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:40:58.239] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:40:58.250] INFO: [Database] Db connection was successful
+[2026-10-10 15:40:58.253] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:40:58.295] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:40:58.307] INFO: [Database] running ANALYZE
+[2026-10-10 15:40:58.317] INFO: [Database] ANALYZE completed
+[2026-10-10 15:40:58.317] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:40:58.318] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:40:58.320] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:40:58.320] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:40:58.321] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:40:58.325] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:40:58.326] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:40:58.330] INFO: Listening on port :3343
+[2026-10-10 15:40:58.332] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:40:58.332] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:40:59.019] INFO: Received ping
+[2026-10-10 15:40:59.142] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.getCollectionsForLibrary (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:759:14)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.getCollectionsForLibrary (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:759:14)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9)
+}
+=== restart after lib_coll_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:41:00.433] INFO: === Starting Server ===
+[2026-10-10 15:41:00.434] INFO: [Server] Init v2.37.0
+[2026-10-10 15:41:00.434] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:41:00.434] INFO: [Server] Platform: linux
+[2026-10-10 15:41:00.435] INFO: [Server] Arch: x64
+[2026-10-10 15:41:00.437] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:41:00.437] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:41:00.448] INFO: [Database] Db connection was successful
+[2026-10-10 15:41:00.450] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:41:00.518] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:41:00.542] INFO: [Database] running ANALYZE
+[2026-10-10 15:41:00.552] INFO: [Database] ANALYZE completed
+[2026-10-10 15:41:00.552] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:41:00.553] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:41:00.561] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:41:00.561] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:41:00.564] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:41:00.569] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:41:00.569] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:41:00.574] INFO: Listening on port :3343
+[2026-10-10 15:41:00.578] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:41:00.581] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:41:01.210] INFO: Received ping
+[2026-10-10 15:41:01.517] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.getUserPersonalizedShelves (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:825:14)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.getUserPersonalizedShelves (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:825:14)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryController.js:1368:9)
+}
+=== restart after lib_pers_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:41:02.776] INFO: === Starting Server ===
+[2026-10-10 15:41:02.777] INFO: [Server] Init v2.37.0
+[2026-10-10 15:41:02.777] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:41:02.777] INFO: [Server] Platform: linux
+[2026-10-10 15:41:02.777] INFO: [Server] Arch: x64
+[2026-10-10 15:41:02.779] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:41:02.779] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:41:02.788] INFO: [Database] Db connection was successful
+[2026-10-10 15:41:02.791] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:41:02.831] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:41:02.843] INFO: [Database] running ANALYZE
+[2026-10-10 15:41:02.871] INFO: [Database] ANALYZE completed
+[2026-10-10 15:41:02.871] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:41:02.872] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:41:02.876] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:41:02.876] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:41:02.878] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:41:02.882] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:41:02.882] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:41:02.886] INFO: Listening on port :3343
+[2026-10-10 15:41:02.888] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:41:02.888] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:41:03.571] INFO: Received ping
+[2026-10-10 15:41:04.692] INFO: [LibraryController] User "root" requested download for items "630f71e5-1bc8-4384-b636-ed82ab07e74a,11ea40df-50ed-4e87-8bf3-22138c967593"
+[2026-10-10 15:41:04.706] INFO: 1668 total bytes
+[2026-10-10 15:41:04.706] INFO: [LibraryController] Downloaded 2 items "LibraryItems-1791600064692.zip"
+[2026-10-10 15:41:04.787] INFO: [Scanner] matchLibraryItems: Starting library match scan 4107d209-eb2b-47ad-811e-ce02dab0a47c for Books
+[2026-10-10 15:41:04.973] FATAL: [Server] Unhandled rejection: TypeError: (req.query.include || "").split is not a function
+    at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryItemController.js:66:59)
+    at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+    at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryItemController.js:1108:9) 
+promise: Promise {
+  <rejected> TypeError: (req.query.include || "").split is not a function
+      at ApiRouter.findOne (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryItemController.js:66:59)
+      at Layer.handle [as handle_request] (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/layer.js:95:5)
+      at next (/home/danny/Code/compx574/audiobookshelf/node_modules/express/lib/router/route.js:144:13)
+      at ApiRouter.middleware (/tmp/abs-base-b11c/dist-server/server/controllers/LibraryItemController.js:1108:9)
+}
+=== restart after li_find_exp_twice ===
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-q/qwork-oQtG/config, METADATA_PATH=/tmp/abs-q/qwork-oQtG/metadata, PORT=3343, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 15:41:06.242] INFO: === Starting Server ===
+[2026-10-10 15:41:06.242] INFO: [Server] Init v2.37.0
+[2026-10-10 15:41:06.243] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 15:41:06.243] INFO: [Server] Platform: linux
+[2026-10-10 15:41:06.243] INFO: [Server] Arch: x64
+[2026-10-10 15:41:06.245] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 15:41:06.246] INFO: [Database] Initializing db at "/tmp/abs-q/qwork-oQtG/config/absdatabase.sqlite"
+[2026-10-10 15:41:06.256] INFO: [Database] Db connection was successful
+[2026-10-10 15:41:06.259] INFO: [MigrationManager] Database is already up to date.
+[2026-10-10 15:41:06.306] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 15:41:06.322] INFO: [Database] running ANALYZE
+[2026-10-10 15:41:06.351] INFO: [Database] ANALYZE completed
+[2026-10-10 15:41:06.351] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 15:41:06.352] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 15:41:06.357] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 15:41:06.358] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 15:41:06.359] INFO: [ShareManager] Loaded permanent media item share "8b2a23de-6368-4a35-9ff2-9becb6365804"
+[2026-10-10 15:41:06.363] INFO: [Watcher] Initializing watcher for "Books".
+[2026-10-10 15:41:06.364] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:41:06.368] INFO: Listening on port :3343
+[2026-10-10 15:41:06.372] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:41:06.372] INFO: [Watcher] "Books" Ready
+[2026-10-10 15:41:07.029] INFO: Received ping
+[2026-10-10 15:41:07.546] ERROR: [LibraryItemController] getMetadataObject: Invalid library item "JSON Title"
+[2026-10-10 15:41:07.956] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-oQtG/metadata/items/3f07eefa-eb07-4c1b-bc0e-681f10477c4f"
+[2026-10-10 15:41:08.008] INFO: [LibraryItemController] (Soft) deleting Library Item "Audio Book" with id "fa089202-013c-43db-a754-f2d7480bf580"
+[2026-10-10 15:41:08.012] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-oQtG/metadata/items/fa089202-013c-43db-a754-f2d7480bf580"
+[2026-10-10 15:41:08.124] INFO: [LibraryController] No metadata.abs files found to remove
+[2026-10-10 15:41:08.165] INFO: [LibraryController] Found 1 metadata.json files to remove
+[2026-10-10 15:41:08.261] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-oQtG/metadata/items/11ea40df-50ed-4e87-8bf3-22138c967593"
+[2026-10-10 15:41:08.269] INFO: [LibraryItemController] Deleting library item from file system at "/tmp/abs-q/qwork-oQtG/lib/books/Author One/Book Two"
+[2026-10-10 15:41:08.284] INFO: [ApiRouter] Removed author "NFO Author" with no books
+[2026-10-10 15:41:08.386] INFO: [Watcher] Initializing watcher for "Extra".
+[2026-10-10 15:41:08.387] INFO: [Watcher] "Extra" Ready
+[2026-10-10 15:41:08.562] ERROR: [LibraryController] Invalid library not found in reorder nope
+[2026-10-10 15:41:08.654] ERROR: [LibraryController] Invalid request. Setting "coverAspectRatio" must be of type number
+[2026-10-10 15:41:08.980] WARN: [libraryFilters] Failed to decode filter value "%%": URI malformed
+[2026-10-10 15:41:09.023] WARN: [libraryFilters] Failed to decode filter value "%%": URI malformed
+[2026-10-10 15:41:09.112] WARN: [LibraryController] No library items have issues
+[2026-10-10 15:41:09.157] INFO: [LibraryController] Removed folder "/tmp/abs-q/qwork-oQtG/lib/podcasts" from library "Pods" with 2 library items
+[2026-10-10 15:41:09.157] INFO: [LibraryController] Removing library item "d897f049-7a74-4c89-b5d8-88c56ca6f865" from folder "/tmp/abs-q/qwork-oQtG/lib/podcasts"
+[2026-10-10 15:41:09.160] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-oQtG/metadata/items/d897f049-7a74-4c89-b5d8-88c56ca6f865"
+[2026-10-10 15:41:09.168] INFO: [LibraryController] Removing library item "794b0bdb-8db8-4dee-b8f6-331161ebc6b6" from folder "/tmp/abs-q/qwork-oQtG/lib/podcasts"
+[2026-10-10 15:41:09.177] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-oQtG/metadata/items/794b0bdb-8db8-4dee-b8f6-331161ebc6b6"
+[2026-10-10 15:41:09.194] INFO: [Watcher] Re-Initializing watcher for "Pods".
+[2026-10-10 15:41:09.194] INFO: [Watcher] Initializing watcher for "Pods".
+[2026-10-10 15:41:09.194] INFO: [Watcher] "Pods" Ready
+[2026-10-10 15:41:09.289] INFO: [LibraryController] Created folder "/tmp/abs-q/qwork-oQtG/lib/books2" for library "Books2"
+[2026-10-10 15:41:09.292] INFO: [LibraryController] Removed folder "/tmp/abs-q/qwork-oQtG/lib/books" from library "Books2" with 4 library items
+[2026-10-10 15:41:09.292] INFO: [LibraryController] Removing library item "bf9e5aa7-426d-430e-9049-75c0cf782cd9" from folder "/tmp/abs-q/qwork-oQtG/lib/books"
+[2026-10-10 15:41:09.299] INFO: [ApiRouter] Removed 1 media progress entries for library item "bf9e5aa7-426d-430e-9049-75c0cf782cd9"
+[2026-10-10 15:41:09.303] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-oQtG/metadata/items/bf9e5aa7-426d-430e-9049-75c0cf782cd9"
+[2026-10-10 15:41:09.311] INFO: [LibraryController] Removing library item "809f8a83-2146-4d96-a1ff-25a06aa3904f" from folder "/tmp/abs-q/qwork-oQtG/lib/books"
+[2026-10-10 15:41:09.321] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-oQtG/metadata/items/809f8a83-2146-4d96-a1ff-25a06aa3904f"
+[2026-10-10 15:41:09.328] INFO: [LibraryController] Removing library item "eff36001-bc1c-490a-a16c-89d46f3cce6b" from folder "/tmp/abs-q/qwork-oQtG/lib/books"
+[2026-10-10 15:41:09.337] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-oQtG/metadata/items/eff36001-bc1c-490a-a16c-89d46f3cce6b"
+[2026-10-10 15:41:09.343] INFO: [LibraryController] Removing library item "630f71e5-1bc8-4384-b636-ed82ab07e74a" from folder "/tmp/abs-q/qwork-oQtG/lib/books"
+[2026-10-10 15:41:09.353] INFO: [ApiRouter] Removed 1 media progress entries for library item "630f71e5-1bc8-4384-b636-ed82ab07e74a"
+[2026-10-10 15:41:09.355] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-q/qwork-oQtG/metadata/items/630f71e5-1bc8-4384-b636-ed82ab07e74a"
+[2026-10-10 15:41:09.367] INFO: [ApiRouter] Removed author "Tag Author" with no books
+[2026-10-10 15:41:09.367] INFO: [ApiRouter] Removed author "Author Six" with no books
+[2026-10-10 15:41:09.367] INFO: [ApiRouter] Removed author "JSON Author" with no books
+[2026-10-10 15:41:09.374] INFO: [ApiRouter] Series "JSON Series" is now empty. Removing series
+[2026-10-10 15:41:09.390] INFO: [Watcher] Re-Initializing watcher for "Books2".
+[2026-10-10 15:41:09.390] INFO: [Watcher] Initializing watcher for "Books2".
+[2026-10-10 15:41:09.391] INFO: [Watcher] "Books2" Ready
+[2026-10-10 15:41:09.481] INFO: [Watcher] Removed watcher for "Pods"
+[2026-10-10 15:41:09.483] INFO: [LibraryController] Removing 0 library items in library "Pods"
+[2026-10-10 15:41:09.483] INFO: [LibraryController] Updated 0 playback sessions to remove library id

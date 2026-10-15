@@ -1,0 +1,267 @@
+# Batch 11d, commit 1: server/utils
+@ server/utils/queries/libraryItemsBookFilters.ts
+R 104 // cast(d): permissions is the User JSON column, typed UserPermissions since batch 3a; the cast only adds null (the ?. reads below allow it)
+R 296 // cast(d): value is string | null | undefined (the decoded filter value); includes() is false for null or undefined
+R 298 // cast(d): value is one of the strings of the list checked just above
+R 304 // cast(d): value is string | null | undefined (the decoded filter value); includes() is false for null or undefined
+R 306 // cast(d): value is one of the strings of the list checked just above
+R 317 // cast(d): value may be null or undefined; parseInt of it is NaN, as in the JS
+R 319 // cast(d): value may be null or undefined; parseInt of it is NaN, as in the JS
+R 409 // cast(b): Sequelize types findAll rows without their includes; the books (with their book_series row and libraryItem) are included above
+R 451 // cast(d): offset is number | null | undefined; a null or undefined offset is passed through to findAll, as in the JS
+R 457 // cast(d): Map.get is typed as possibly undefined; the count for this key is set just above when missing
+R 462 // cast(d): offset is number | null | undefined; a null or undefined offset is passed through to findAll, as in the JS
+R 496 // cast(d): with a plain null initialiser TypeScript narrows bookAttributes to null, so the later assignment and null check would not type check
+R 625 // cast(d): sortBy is string | null (no sort); includes() is false for null
+R 631 // cast(d): the only caller without a user (getLibraryItemsForSeries) passes sortBy null, so a progress sort always has a user
+R 717 // cast(b): Sequelize types findAll rows without their includes; the rows are books with the includes above
+R 719 // cast(b): libraryItem is a required include of the query above; the Book model declares it optional
+R 736 // cast(b): series is included through bookSeries in the query above; the BookSeries model declares it optional
+R 821 // cast(d): extraData is the User JSON column, already typed UserExtraData | null with this key; the cast changes no type
+R 888 // cast(b): Sequelize types findAndCountAll rows without their includes; bookSeries (with book, libraryItem, authors and progress) is included above
+R 906 // cast(b): libraryItem is included with the book in the query above; the Book model declares it optional
+R 971 // cast(b): Sequelize types findAll rows without their includes; bookSeries is included above
+R 1087 // cast(d): filter(Boolean) removes the ids that were not found, but TypeScript keeps undefined in the element type; the books have the includes above
+R 1092 // cast(b): libraryItem is a required include of the query above; the Book model declares it optional
+R 1099 // cast(b): series is included through bookSeries in the query above; the BookSeries model declares it optional
+R 1164 // cast(b): libraryItem is a required include of the query above; the Book model declares it optional
+R 1244 // cast(b): Sequelize types findAll rows without their includes; libraryItem, bookSeries and bookAuthors are included above
+R 1246 // cast(b): libraryItem is a required include of the query above; the Book model declares it optional
+R 1250 // cast(b): bookSeries is a separate include of the query above, so it is always an array; the model declares it optional
+R 1252 // cast(b): series is included through bookSeries in the query above; the BookSeries model declares it optional
+R 1260 // cast(b): bookAuthors is a separate include of the query above, so it is always an array; the model declares it optional
+R 1284 // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numBooks)
+R 1302 // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numBooks)
+R 1320 // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numBooks)
+R 1358 // cast(b): Sequelize types findAll rows without their includes; bookSeries (with book and libraryItem) is included above
+R 1361 // cast(b): libraryItem is included with the book in the query above; the Book model declares it optional
+R 1364 // cast(d): media is the book set on the line above; the cast only names it BookExpanded (authors and series are set here)
+R 1366 // cast(d): media is the book set two lines above; the cast only names it BookExpanded (authors and series are set here)
+R 1402 // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numBooks)
+R 1421 // cast(b): query() types the rows as unknown[]; the row has the selected sums and the count
+R 1447 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@ server/utils/queries/libraryItemsPodcastFilters.ts
+R 51 // cast(d): permissions is the User JSON column, typed UserPermissions since batch 3a; the cast only adds null (the ?. reads below allow it)
+R 113 // cast(b): sequelize accepts an order item with only a literal; its types require a direction
+R 150 // cast(d): Map.get is typed as possibly undefined; the count for this key is set just above when missing
+R 230 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+R 233 // cast(d): typed with an optional libraryItem so it can be deleted below (same object)
+R 243 // cast(d): mediaProgresses is already typed as set (NonAttribute<MediaProgress[]>); the cast changes no type
+R 348 // cast(b): Sequelize types findAll rows without their includes; the podcast and its libraryItem are included above
+R 351 // cast(d): typed with an optional libraryItem so it can be deleted below (same object)
+I 378 // cast(b): distinct is not a findAll option (sequelize ignores it, see below); FindOptions rejects it
+R 416 // cast(d): libraryItem is included above; typed as optional so it can be deleted below (findAll already types the rows as Podcast)
+R 418 // cast(b): libraryItem is included in the query above; the cast types it as set
+I 429 // cast(b): distinct is not a findAll option (sequelize ignores it, see below); FindOptions rejects it
+R 454 // cast(b): Sequelize types findAll rows without their includes; the podcast and its libraryItem are included above
+R 479 // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numItems)
+R 497 // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numItems)
+R 557 // cast(b): Sequelize types findAll rows without their includes; the podcast and its libraryItem are included above
+R 586 // cast(b): query() types the rows as unknown[]; the row has the selected sum
+R 588 // cast(b): query() types the rows as unknown[]; the row has the selected sums and the count
+R 609 // cast(b): query() types the rows as unknown[]; the rows have the selected columns (value, numItems)
+R 635 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@ server/utils/queries/libraryFilters.ts
+R 22 // cast(a): the vendored fast-sort has untyped parameters (see SortInstance)
+R 77 // cast(d): catch variable is unknown; decodeURIComponent throws a URIError
+R 150 // cast(d): size is typed number since batch 3a (sqlite returns the BIGINT as a number), so the cast changes no type
+R 169 // cast(d): size is typed number since batch 3a (sqlite returns the BIGINT as a number), so the cast changes no type
+R 279 // cast(d): permissions is the User JSON column, typed UserPermissions since batch 3a; the cast only adds null (the ?. reads below allow it)
+R 321 // cast(b): Sequelize types findAll rows without their includes; bookSeries (with book and libraryItem) and feeds are included above
+R 397 // cast(b): Sequelize types findAll rows without their includes; books are included above
+R 502 // cast(b): count options; this cast is not needed (the options are valid CountOptions), kept as before
+I 518 // cast(b): limit is not a count option, which sequelize ignores and CountOptions rejects
+R 561 // cast(d): findAll is bound (or wrapped by profile) above, which loses its generic row type; the rows are Podcast models
+I 605 // cast(b): limit is not a count option, which sequelize ignores and CountOptions rejects
+I 625 // cast(b): limit is not a count option, which sequelize ignores and CountOptions rejects
+I 636 // cast(b): limit is not a count option, which sequelize ignores and CountOptions rejects
+R 673 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+R 687 // cast(d): publishedYear is a string; isNaN, the comparisons and the division coerce it to a number
+R 713 // cast(d): same object as data; its sets are replaced by sorted arrays below, which is the LibraryFilterData shape
+@ server/utils/queries/seriesFilters.ts
+R 32 // cast(d): catch variable is unknown; decodeURIComponent throws a URIError
+R 79 // cast(d): filterGroup is string | null; includes() is false for null
+R 118 // cast(d): permissions is the User JSON column, typed UserPermissions since batch 3a; the cast only adds null (the ?. reads below allow it)
+R 204 // cast(b): Sequelize types findAll rows without their includes; bookSeries (with book and libraryItem) and feeds are included above
+R 226 // cast(b): libraryItem is included with the book in the query above; the Book model declares it optional
+R 229 // cast(d): the book is the media of its library item; the cast drops the libraryItem the BookExpandedWithLibraryItem row type adds
+@ server/utils/queries/adminStats.ts
+R 71 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+R 110 // cast(d): mediaMetadata is the PlaybackSession JSON column, typed PlaybackMediaMetadata | null since batch 3a; the cast changes no type
+R 165 // cast(b): query() types the rows as unknown[]; the first row has the selected sums and the count (undefined when there is no row)
+R 190 // cast(b): query() types the rows as unknown[]; the rows have the selected columns (mediaType, totalSize, numItems)
+R 218 // cast(b): query() types the rows as unknown[]; the first row has the selected sum (undefined when there is no row)
+@ server/utils/queries/authorFilters.ts
+R 43 // cast(b): Sequelize types findAll rows without their includes; author is included above
+@ server/utils/queries/libraryItemFilters.ts
+R 52 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+R 74 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+R 113 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+R 135 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+R 175 // cast(b): Sequelize types findAll rows without their includes; libraryItem is included above
+@ server/utils/queries/userStats.ts
+R 37 // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+R 46 // cast(b): Sequelize types findAll rows without their includes; the book (mediaItem) is included above
+R 67 // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+R 76 // cast(b): Sequelize types findAll rows without their includes; the book (mediaItem) is included above
+R 142 // cast(d): mediaMetadata is the PlaybackSession JSON column, typed PlaybackMediaMetadata | null since batch 3a; the cast changes no type
+@ server/utils/libraryHelpers.ts
+R 12 // cast(a): the vendored fast-sort has untyped parameters (see SortInstance)
+R 104 // cast(d): toOldJSONMinified of a book library item; SeriesBookJson adds the sequence fields set below
+R 108 // cast(d): find is typed as possibly undefined; the items are the books of filterSeries (see handleCollapseSubseries), so the series is found
+R 207 // cast(b): Sequelize types the include as Book[]; the series is loaded with its books, each with its library item, authors and series
+R 213 // cast(b): libraryItem is included in the query above; typed optional so it can be deleted below
+R 237 // cast(d): find is typed as possibly undefined; the items are the books of this series, so the series is found
+R 278 // cast(d) (2): this is the else branch of !payload.sortBy, so sortBy is set (narrowing does not reach the callback); each step of the path is an object or undefined
+R 288 // cast(d): page is optional; an undefined page gives NaN, as in the JS
+R 295 // cast(d): find is typed as possibly undefined; the items are the books of this series, so the series is found
+R 297 // cast(d): toOldJSONMinified of a book library item; CollapsedItemJson adds the series and collapsedSeries set below
+R 319 // cast(d): the sequences are filtered by filterSeriesSequence above, so each is a set string
+R 325 // cast(d): lastRange.isNumber is checked in the same condition, and a range with isNumber has a number end
+@ server/utils/migrations/dbMigration.ts
+R 620 // cast(d): migrateBook starts with book null and always sets it before it returns
+R 628 // cast(d): migratePodcast starts with podcast null and always sets it before it returns
+R 648 // cast(d): mediaType of the old library JSON may be missing; includes() is false for undefined
+R 909 // cast(d): getDeviceInfoString returns null only for a missing deviceInfo, which is checked just above
+R 973 // cast(d): episodeId is optional in the old session; a missing one reads the key "undefined" (undefined || null), as in the JS
+R 1267 // cast(d): assumed: the old libraries db files hold old library objects (loadOldData parses the JSON without checking it)
+R 1280 // cast(d): assumed: the old settings db files hold old settings objects (loadOldData parses the JSON without checking it)
+R 1291 // cast(d): assumed: the old authors db files hold old author objects (loadOldData parses the JSON without checking it)
+R 1302 // cast(d): assumed: the old series db files hold old series objects (loadOldData parses the JSON without checking it)
+R 1325 // cast(d): assumed: the old library items db files hold old library item objects (loadOldData parses the JSON without checking it)
+R 1343 // cast(d): assumed: the old users db files hold old user objects (loadOldData parses the JSON without checking it)
+R 1356 // cast(d): assumed: the old sessions db files hold old session objects (loadOldData parses the JSON without checking it)
+R 1376 // cast(d): assumed: the old collections db files hold old collection objects (loadOldData parses the JSON without checking it)
+R 1389 // cast(d): assumed: the old playlists db files hold old playlist objects (loadOldData parses the JSON without checking it)
+R 1402 // cast(d): assumed: the old feeds db files hold old feed objects (loadOldData parses the JSON without checking it)
+R 1509 // cast(d): assumed: the old library items db files hold old library item objects (loadOldData parses the JSON without checking it)
+R 1529 // cast(d): media is Book | Podcast; Book has no podcastEpisodes, so for a book the read is undefined, as in the JS
+R 1573 // cast(d): assumed: the old libraries db files hold old library objects (loadOldData parses the JSON without checking it)
+R 1585 // cast(b): getAllWithFolders includes the folders; the Library model declares libraryFolders optional
+R 1590 // cast(d): extraData is the Library JSON column (LibraryExtraData | null); the cast lets it take the oldLibraryId key set below
+R 1597 // cast(c): the Library model has no oldLibraryId; read as in the JS (see NOTE above)
+R 1635 // cast(d): permissions is the User JSON column; the cast types the ids as possibly undefined, which they become when mapped below
+R 1641 // cast(d) (2): permissions is set when librariesAccessible has items (it came from permissions); its ids are strings before the mapping
+R 1654 // cast(d): extraData is the User JSON column; the cast types the ids as possibly null, which they become when mapped below
+R 1659 // cast(d) (2): userExtraData is set when the list has items (it came from extraData); its ids are strings before the mapping
+@ server/utils/migrations/oldDbFiles.ts
+R 13 // cast(a): the vendored archiver function is inferred as a non-callable class (see ArchiverFactory)
+@ server/utils/areEquivalent.ts
+R 22 // cast(d): value1 is unknown; isNaN coerces its argument, so any value is accepted at runtime
+R 24 // cast(d): value2 is unknown; isNaN coerces its argument, so any value is accepted at runtime
+R 53 // cast(d) (2): type1 === 'number' and the types match, so both are numbers
+R 62 // cast(d) (2): type1 === 'function' and the types match, so both are functions
+R 67 // cast(d): type1 is widened to string so the already handled 'function' check stays as it was (TypeScript has narrowed 'function' out)
+R 98 // cast(d): only non-null objects remain (null was handled by the falsy checks above)
+R 100 // cast(d): same type as value1 (checked above), so also a non-null object
+@ server/utils/podcastUtils.ts
+R 17 // cast(a): fuse.js is required as a module object; see FuseConstructor
+R 148 // cast(a): xml2js output is untyped; it puts child elements in arrays
+R 156 // cast(a): xml2js output is untyped; it puts child elements in arrays
+R 172 // cast(a): xml2js output is untyped; objects in it are elements
+R 183 // cast(c): read as the object the code expects (see NOTE above)
+R 240 // cast(d): split always returns at least one element, so pop is not undefined
+R 243 // cast(d) (2): reads `_` of an element value; strings and null read undefined, as in the JS
+R 255 // cast(a): xml2js output is untyped; url was checked above, so these are the enclosure attributes
+R 259 // cast(c): the enclosure attributes may lack url (see NOTE above); cast(d): the check above found an audio media:content, so this find finds one too
+R 293 // cast(a): xml2js output is untyped; a non-string value is an element (or null when missing)
+R 305 // cast(a): xml2js output is untyped; a non-string value is an element (or null when missing)
+R 318 // cast(d): split always returns at least one element, so pop is not undefined
+R 334 // cast(d): psc:chapter was checked above (the RssItem type already says XmlElement[], the cast changes no type)
+R 340 // cast(d): start was checked above (the cast to XmlAttributes changes no type)
+R 348 // cast(d) (2): title was checked above to be a string (the cast to XmlAttributes changes no type)
+R 357 // cast(d): the some() check above found no null chapter
+R 361 // cast(d): durationSeconds was checked in the if condition above (it is not null here)
+R 378 // cast(d): isNaN coerces the date to its timestamp, as in the JS
+@ server/utils/scandir.ts
+R 83 // cast(d): i < numparts, so dirparts is not empty and shift returns a string
+R 91 // cast(c): groups for directories are arrays; a root file group is a string (see NOTE above)
+R 115 // cast(d): i < numparts, so dirparts is not empty and shift returns a string
+R 122 // cast(c): groups for directories are arrays; a root file group is a string (see NOTE above)
+R 151 // cast(d): split always returns at least one element, so pop is not undefined
+R 183 // cast(d) (2): the pattern has the named groups title and narrators, so groups is set when it matches
+R 210 // cast(d): parts are only set to undefined right before the loop breaks, so this part is a string
+R 212 // cast(d): the pattern has named groups, so groups is set when it matches (undefined only without a match)
+R 216 // cast(d): the sequence group always takes part in the match (it may match the empty string)
+R 218 // cast(d): isNaN coerces the string, as in the JS
+@ server/utils/ffmpegHelpers.ts
+R 161 // cast(d) (5): setData sets url before the download is queued (the url! reads of this axios call)
+R 179 // cast(d): catch variable is unknown; axios rejects with an Error
+R 200 // cast(d): episodes are only downloaded for podcast library items (PodcastManager queues downloads of podcasts)
+R 233 // cast(d): the year is a number: its length is undefined so the check is false, as in the JS
+@ server/utils/fileUtils.ts
+R 185 // cast(a): the vendored recursive-readdir-async list() resolves to the items, or to an { error, path } object when the dir cannot be read
+R 203 // cast(d): relPathToReplace is set above (it is already typed string, the cast changes no type)
+R 237 // cast(d): relPathToReplace is set above (it is already typed string, the cast changes no type)
+R 239 // cast(d): relPathToReplace is set above (it is already typed string, the cast changes no type)
+R 291 // cast(d): axios types a header as string | string[] | number...; content-type is a single header string
+R 296 // cast(d): axios types a header as possibly undefined; content-length is a single header string (parseInt(undefined) is NaN)
+R 402 // cast(d): an unknown key reads undefined and returns null below
+@ server/utils/parsers/parseComicMetadata.ts
+R 46 // cast(d): filePaths is undefined when getFilePaths fails; sort then throws and the catch below returns null, as in the JS
+@ server/utils/parsers/parseEpubMetadata.ts
+R 109 // cast(a): xml2js output is untyped; the package document is the OPF package json parseOpfMetadataJson reads
+@ server/utils/parsers/parseFullName.ts
+R 37 // cast(c): fixCase is never a string; widened so the comparison compiles (see NOTE above)
+R 64 // cast(d): Object.keys returns string[]; these are the keys of a ParsedName with 'error' filtered out
+R 114 // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+R 211 // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+R 254 // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+R 285 // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+R 351 // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+R 359 // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+R 370 // cast(d): partToReturn is 'all' or one of the ParsedName keys after the validation above
+@ server/utils/parsers/parseOpfMetadata.ts
+R 49 // cast(a): xml2js output is untyped; it puts child elements in arrays
+R 80 // cast(d): false entries read undefined properties here and are filtered out, as in the JS
+R 86 // cast(a): xml2js output is untyped; it puts child elements in arrays
+R 118 // cast(d): isNaN coerces the string, as in the JS
+R 133 // cast(a): xml2js output is untyped; it puts child elements in arrays, identifiers with a scheme attribute are elements
+R 142 // cast(d): i['$'] was checked above (the cast changes no type)
+R 174 // cast(a): xml2js output is untyped; it puts child elements in arrays
+R 205 // cast(d): find() above only matches metas with $ set
+R 220 // cast(d): a null tag string throws here and is caught below, as in the JS
+R 229 // cast(a): xml2js output is untyped; it puts child elements in arrays
+R 250 // cast(a): xml2js output is untyped; this is the <metadata> element of the OPF package
+R 258 // cast(a): xml2js output is untyped; before it is replaced below, meta holds the raw <meta> elements
+@ server/utils/parsers/parseOverdriveMediaMarkers.ts
+R 102 // cast(a): xml2js output is untyped; its values are arrays (never null)
+R 107 // cast(d): every value was converted to a string above; Name and Time come from the MediaMarker XML
+R 155 // cast(d): split always returns at least one element, so pop is not undefined
+R 159 // cast(d): timeParts.length was checked above, so pop is not undefined
+R 164 // cast(d): timeParts.length was checked above, so pop is not undefined
+@ server/utils/parsers/parseUserAgent.ts
+R 28 // cast(d) (2): for...in only yields keys of deviceInfo
+@ server/utils/comicBookExtractors.ts
+R 101 // cast(d): tmpDir is set in open() before files are extracted
+R 113 // cast(d): tmpDir is set in open() before files are extracted
+R 167 // cast(a): Archive.open resolves to the opened archive, its JSDoc return type is wrong; cast(c): a null buffer is passed through as before (see NOTE above)
+@ server/utils/generators/abmetadataGenerator.ts
+R 107 // cast(d): validated.title is a validated string value or null (the cast changes no type)
+@ server/utils/generators/opmlGenerator.ts
+R 22 // cast(c): Podcast has no itunesPageUrl property; widened so the existing (always undefined) read compiles (see NOTE above)
+@ server/utils/index.ts
+R 54 // cast(d): num is unknown; isNaN coerces its argument, so any value is accepted at runtime
+R 73 // cast(d): assumed: the parsed XML has the shape the caller names in T (xml2js output is not checked)
+R 152 // cast(d): val is an object here and key comes from for...in over it
+R 160 // cast(d): val is unknown; isNaN coerces its argument, so any value is accepted at runtime
+@ server/utils/prober.ts
+R 7 // cast(d): isNaN coerces its argument; ffprobe reports most numbers as strings
+R 75 // cast(a): the vendored module is an IIFE, so its inferred type does not describe the output (see Ffprobe)
+R 152 // cast(d): find returns undefined when no tag matches; the undefined key reads undefined, as in the JS
+R 224 // cast(d): time_base was checked in the same expression (the cast changes no type)
+R 342 // cast(d) (2): the bit rates may be null; null compares as 0, as in the JS
+@ server/utils/profiler.ts
+R 23 // cast(d): values is added on the next line
+R 28 // cast(d): Map.get is typed as possibly undefined; the histogram is set above when missing
+R 33 // cast(d): with isFindQuery (the default) the first argument of the profiled findAll or count is its options object
+@ server/utils/rateLimiterFactory.ts
+R 35 // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+R 37 // cast(d): the variable is set, the check above passed
+R 45 // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+R 47 // cast(d): the variable is set, the check above passed
+R 66 // cast(d): assumed: express sets req.ip from the socket for every request (its type allows undefined)
+@ server/utils/stringifySequelizeQuery.ts
+R 9 // cast(d): indexing by a symbol own property of the object (Object.getOwnPropertySymbols)
+@ server/utils/zipHelpers.ts
+R 7 // cast(a): the vendored archiver function is inferred as a non-callable class (see ArchiverFactory)

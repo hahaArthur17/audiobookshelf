@@ -1,0 +1,22 @@
+== git
+7f280c67 phase3 batch 1 fixes
+e99cf142 phase3 batch 1: server/utils
+9c4185a0 phase3: extra rules
+== fix commit stat
+ MIGRATION.md                                   |  9 +++++++++
+ server/utils/comicBookExtractors.ts            | 10 +++++-----
+ server/utils/generators/abmetadataGenerator.ts |  4 ++--
+ server/utils/index.ts                          |  6 +++---
+ server/utils/longTimeout.ts                    |  4 ++--
+ server/utils/rateLimiterFactory.ts             |  2 +-
+ 6 files changed, 22 insertions(+), 13 deletions(-)
+== files outside server/utils changed by the fix
+MIGRATION.md
+== tsconfig vs 9c4185a0
+unchanged
+2026-10-03T20:56:08+13:00 label=batch1-fixed head=7f280c67 ts=64 js=125 err=0 tests= 356 passing (1s) 
+== bare field lines left in compiled utils (expect none)
+== series check in compiled abmetadataGenerator
+77:        if (validated.series?.length) {
+84:            else if (Array.isArray(abmetadataData.chapters)) {
+135:        if (!Array.isArray(value)) {

@@ -1,0 +1,29 @@
+Done. All three finders are now TypeScript, and every acceptance criterion passes.
+
+Results
+1. npm run build:server reports 0 error TS.
+2. npm test shows 356 passing, 0 failing, the same as before the change.
+3. No test files were touched. The only changes are renaming the three files with git mv (.js → .ts) and editing them; nothing is committed yet.
+4. Runtime behaviour is unchanged. I diffed the compiled JS against the original files. Apart from formatting, the only differences are:
+   - Field declarations, which still produce the same object properties.
+   - isNaN(x) became isNaN(Number(x)), which gives the same result because isNaN converts to a number anyway.
+   - true - false became Number(true) - Number(false).
+   - The authorDistance check gained an extra condition, !== undefined. It can't change the outcome, because undefined > n is already false.
+   - "use strict", which the build already adds to every existing JS file.
+
+   Imports use import X = require() and the files end with export = new …(), so existing require() callers and the tests' bookFinder.constructor.TitleCandidates and sinon stubs work as before.
+5. No any. I added named types instead: BookSearchResult, ScoredOpenLibraryBookResult, ProviderErrorResponse, BookSearchOptions, PodcastSearchOptions, SaveAuthorImageResult, and AuthorASINLookup (the subset of Audnexus the author-candidate code uses, which also fits the test stub). The providers' JSDoc says they return a plain Object, so I cast their results to these types where the finders receive them.
+
+Bugs found but not fixed (as you asked)
+- BookFinder.findCovers sends options in the wrong slot. It calls this.search(null, provider, title, author, options), so options lands in the isbn parameter. The fuzzy-search settings are never used, and for a custom-* provider the options object is sent to the custom provider as isbn (it becomes "[object Object]"). I kept the call and marked it with a comment and a cast.
+- The "already tried" check in search never matches res lowercased fuzzy candidates against theoriginal-case title/author, so the first query can be re-run and use up one of the fuzzy-search attempts.
+- Null checks come too late:
+  - In getAudibleResults and getAudiobookCoversResults, the verbose log reads .length before the null fallback (only matters if verbose is on).
+  - findByISBN reads book.errorCode without checking for null first.                                                                 - PodcastFinder.search reads results.length withouers does check.
+- Dead null check in getAudibleResults. if (!books) return [] can never trigger, because Audible.search never returns null. When the API response has no products, it throws on null.fi
+- null counts as a valid setting. In findAuthorByName and the search options, isNaN(null) is false, so passing null gives a distance or limit of 0 instead of the default.
+- Wrong return type in a comment: the JSDoc for save {path, error}, but it actually returns either {path} or {error}.
+
+Worth knowing
+- Compiler crash: while BookFinder was still half-converted, tsc 5.x crashed with "Debug Failure. False expression" instead of listing the type errors. Once the errors were fixed it builds normally. If you see that crash again in later conversions, it is most likely type errors that the compiler fails to print.
+- ESLint: I didn't run it, since it wasn't in the acceptance criteria and its config may not cover .ts files.

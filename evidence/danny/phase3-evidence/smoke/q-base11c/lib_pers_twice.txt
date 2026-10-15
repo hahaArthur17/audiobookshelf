@@ -1,0 +1,521 @@
+STATUS 000
+LOCATION 
+[
+ {
+  "entities": [
+   {
+    "addedAt": "MASK",
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "folderId": "MASK",
+    "id": "MASK",
+    "ino": "MASK",
+    "isFile": false,
+    "isInvalid": false,
+    "isMissing": false,
+    "libraryId": "MASK",
+    "media": {
+     "coverPath": null,
+     "duration": 4.127346,
+     "id": "MASK",
+     "metadata": {
+      "abridged": false,
+      "asin": null,
+      "authorName": "Tag Author",
+      "authorNameLF": "Author, Tag",
+      "description": "Tagged description",
+      "explicit": false,
+      "genres": [
+       "Thriller"
+      ],
+      "isbn": null,
+      "language": null,
+      "narratorName": "Tag Narrator",
+      "publishedDate": null,
+      "publishedYear": "2010",
+      "publisher": "Tag Pub",
+      "seriesName": "",
+      "subtitle": null,
+      "title": "Tagged Book Album",
+      "titleIgnorePrefix": "Tagged Book Album"
+     },
+     "numAudioFiles": 2,
+     "numChapters": 2,
+     "numTracks": 2,
+     "size": 17281,
+     "tags": []
+    },
+    "mediaType": "book",
+    "mtimeMs": "MASK",
+    "numFiles": 2,
+    "oldLibraryItemId": null,
+    "path": "ROOT/lib/books/Tag Author/Tagged Book",
+    "relPath": "Tag Author/Tagged Book",
+    "size": 17281,
+    "updatedAt": "MASK"
+   }
+  ],
+  "id": "MASK",
+  "label": "Continue Listening",
+  "labelStringKey": "LabelContinueListening",
+  "total": 2,
+  "type": "book"
+ },
+ {
+  "entities": [
+   {
+    "addedAt": "MASK",
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "folderId": "MASK",
+    "id": "MASK",
+    "ino": "MASK",
+    "isFile": false,
+    "isInvalid": false,
+    "isMissing": false,
+    "libraryId": "MASK",
+    "media": {
+     "coverPath": null,
+     "duration": 0,
+     "ebookFormat": "pdf",
+     "id": "MASK",
+     "metadata": {
+      "abridged": false,
+      "asin": null,
+      "authorName": "OPF Author",
+      "authorNameLF": "Author, OPF",
+      "description": "OPF description",
+      "explicit": false,
+      "genres": [
+       "Fantasy"
+      ],
+      "isbn": "9781234567897",
+      "language": "en",
+      "narratorName": "Reader One",
+      "publishedDate": null,
+      "publishedYear": "2001",
+      "publisher": "OPF Publisher",
+      "seriesName": "OPF Series #2",
+      "subtitle": null,
+      "title": "OPF Title",
+      "titleIgnorePrefix": "OPF Title"
+     },
+     "numAudioFiles": 0,
+     "numChapters": 0,
+     "numTracks": 0,
+     "size": 8,
+     "tags": []
+    },
+    "mediaType": "book",
+    "mtimeMs": "MASK",
+    "numFiles": 4,
+    "oldLibraryItemId": null,
+    "path": "ROOT/lib/books/Author One/Book One",
+    "relPath": "Author One/Book One",
+    "size": 737,
+    "updatedAt": "MASK"
+   }
+  ],
+  "id": "MASK",
+  "label": "Continue Reading",
+  "labelStringKey": "LabelContinueReading",
+  "total": 2,
+  "type": "book"
+ },
+ {
+  "entities": [
+   {
+    "addedAt": "MASK",
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "folderId": "MASK",
+    "id": "MASK",
+    "ino": "MASK",
+    "isFile": false,
+    "isInvalid": false,
+    "isMissing": false,
+    "libraryId": "MASK",
+    "media": {
+     "coverPath": null,
+     "duration": 0,
+     "ebookFormat": "pdf",
+     "id": "MASK",
+     "metadata": {
+      "abridged": false,
+      "asin": null,
+      "authorName": "OPF Author",
+      "authorNameLF": "Author, OPF",
+      "description": "OPF description",
+      "explicit": false,
+      "genres": [
+       "Fantasy"
+      ],
+      "isbn": "9781234567897",
+      "language": "en",
+      "narratorName": "Reader One",
+      "publishedDate": null,
+      "publishedYear": "2001",
+      "publisher": "OPF Publisher",
+      "seriesName": "OPF Series #2",
+      "subtitle": null,
+      "title": "OPF Title",
+      "titleIgnorePrefix": "OPF Title"
+     },
+     "numAudioFiles": 0,
+     "numChapters": 0,
+     "numTracks": 0,
+     "size": 8,
+     "tags": []
+    },
+    "mediaType": "book",
+    "mtimeMs": "MASK",
+    "numFiles": 4,
+    "oldLibraryItemId": null,
+    "path": "ROOT/lib/books/Author One/Book One",
+    "relPath": "Author One/Book One",
+    "size": 737,
+    "updatedAt": "MASK"
+   },
+   {
+    "addedAt": "MASK",
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "folderId": "MASK",
+    "id": "MASK",
+    "ino": "MASK",
+    "isFile": false,
+    "isInvalid": false,
+    "isMissing": false,
+    "libraryId": "MASK",
+    "media": {
+     "coverPath": null,
+     "duration": 0,
+     "ebookFormat": "pdf",
+     "id": "MASK",
+     "metadata": {
+      "abridged": false,
+      "asin": null,
+      "authorName": "JSON Author",
+      "authorNameLF": "Author, JSON",
+      "description": "JSON description",
+      "explicit": false,
+      "genres": [
+       "Science Fiction"
+      ],
+      "isbn": null,
+      "language": "English",
+      "narratorName": "JSON Narrator",
+      "publishedDate": null,
+      "publishedYear": "1998",
+      "publisher": "JSON Publisher",
+      "seriesName": "JSON Series #1",
+      "subtitle": null,
+      "title": "JSON Title",
+      "titleIgnorePrefix": "JSON Title"
+     },
+     "numAudioFiles": 0,
+     "numChapters": 0,
+     "numTracks": 0,
+     "size": 10,
+     "tags": [
+      "tag one"
+     ]
+    },
+    "mediaType": "book",
+    "mtimeMs": "MASK",
+    "numFiles": 2,
+    "oldLibraryItemId": null,
+    "path": "ROOT/lib/books/Author One/Book Three",
+    "relPath": "Author One/Book Three",
+    "size": 288,
+    "updatedAt": "MASK"
+   }
+  ],
+  "id": "MASK",
+  "label": "Recently Added",
+  "labelStringKey": "LabelRecentlyAdded",
+  "total": 7,
+  "type": "book"
+ },
+ {
+  "entities": [
+   {
+    "addedAt": "MASK",
+    "books": [
+     {
+      "addedAt": "MASK",
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "folderId": "MASK",
+      "id": "MASK",
+      "ino": "MASK",
+      "isFile": false,
+      "isInvalid": false,
+      "isMissing": false,
+      "libraryId": "MASK",
+      "media": {
+       "coverPath": null,
+       "duration": 0,
+       "ebookFormat": "pdf",
+       "id": "MASK",
+       "metadata": {
+        "abridged": false,
+        "asin": null,
+        "authorName": "",
+        "authorNameLF": "",
+        "description": "OPF description",
+        "explicit": false,
+        "genres": [
+         "Fantasy"
+        ],
+        "isbn": "9781234567897",
+        "language": "en",
+        "narratorName": "Reader One",
+        "publishedDate": null,
+        "publishedYear": "2001",
+        "publisher": "OPF Publisher",
+        "seriesName": "",
+        "subtitle": null,
+        "title": "OPF Title",
+        "titleIgnorePrefix": "OPF Title"
+       },
+       "numAudioFiles": 0,
+       "numChapters": 0,
+       "numTracks": 0,
+       "size": 8,
+       "tags": []
+      },
+      "mediaType": "book",
+      "mtimeMs": "MASK",
+      "numFiles": 4,
+      "oldLibraryItemId": null,
+      "path": "ROOT/lib/books/Author One/Book One",
+      "relPath": "Author One/Book One",
+      "size": 737,
+      "updatedAt": "MASK"
+     }
+    ],
+    "description": null,
+    "id": "MASK",
+    "libraryId": "MASK",
+    "name": "OPF Series",
+    "nameIgnorePrefix": "OPF Series",
+    "updatedAt": "MASK"
+   },
+   {
+    "addedAt": "MASK",
+    "books": [
+     {
+      "addedAt": "MASK",
+      "birthtimeMs": "MASK",
+      "ctimeMs": "MASK",
+      "folderId": "MASK",
+      "id": "MASK",
+      "ino": "MASK",
+      "isFile": false,
+      "isInvalid": false,
+      "isMissing": false,
+      "libraryId": "MASK",
+      "media": {
+       "coverPath": null,
+       "duration": 0,
+       "ebookFormat": "pdf",
+       "id": "MASK",
+       "metadata": {
+        "abridged": false,
+        "asin": null,
+        "authorName": "",
+        "authorNameLF": "",
+        "description": "JSON description",
+        "explicit": false,
+        "genres": [
+         "Science Fiction"
+        ],
+        "isbn": null,
+        "language": "English",
+        "narratorName": "JSON Narrator",
+        "publishedDate": null,
+        "publishedYear": "1998",
+        "publisher": "JSON Publisher",
+        "seriesName": "",
+        "subtitle": null,
+        "title": "JSON Title",
+        "titleIgnorePrefix": "JSON Title"
+       },
+       "numAudioFiles": 0,
+       "numChapters": 0,
+       "numTracks": 0,
+       "size": 10,
+       "tags": [
+        "tag one"
+       ]
+      },
+      "mediaType": "book",
+      "mtimeMs": "MASK",
+      "numFiles": 2,
+      "oldLibraryItemId": null,
+      "path": "ROOT/lib/books/Author One/Book Three",
+      "relPath": "Author One/Book Three",
+      "size": 288,
+      "updatedAt": "MASK"
+     }
+    ],
+    "description": null,
+    "id": "MASK",
+    "libraryId": "MASK",
+    "name": "JSON Series",
+    "nameIgnorePrefix": "JSON Series",
+    "updatedAt": "MASK"
+   }
+  ],
+  "id": "MASK",
+  "label": "Recent Series",
+  "labelStringKey": "LabelRecentSeries",
+  "total": 2,
+  "type": "series"
+ },
+ {
+  "entities": [
+   {
+    "addedAt": "MASK",
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "folderId": "MASK",
+    "id": "MASK",
+    "ino": "MASK",
+    "isFile": false,
+    "isInvalid": false,
+    "isMissing": false,
+    "libraryId": "MASK",
+    "media": {
+     "coverPath": null,
+     "duration": 0,
+     "ebookFormat": "pdf",
+     "id": "MASK",
+     "metadata": {
+      "abridged": false,
+      "asin": null,
+      "authorName": "JSON Author",
+      "authorNameLF": "Author, JSON",
+      "description": "JSON description",
+      "explicit": false,
+      "genres": [
+       "Science Fiction"
+      ],
+      "isbn": null,
+      "language": "English",
+      "narratorName": "JSON Narrator",
+      "publishedDate": null,
+      "publishedYear": "1998",
+      "publisher": "JSON Publisher",
+      "seriesName": "JSON Series #1",
+      "subtitle": null,
+      "title": "JSON Title",
+      "titleIgnorePrefix": "JSON Title"
+     },
+     "numAudioFiles": 0,
+     "numChapters": 0,
+     "numTracks": 0,
+     "size": 10,
+     "tags": [
+      "tag one"
+     ]
+    },
+    "mediaType": "book",
+    "mtimeMs": "MASK",
+    "numFiles": 2,
+    "oldLibraryItemId": null,
+    "path": "ROOT/lib/books/Author One/Book Three",
+    "relPath": "Author One/Book Three",
+    "size": 288,
+    "updatedAt": "MASK"
+   },
+   {
+    "addedAt": "MASK",
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "folderId": "MASK",
+    "id": "MASK",
+    "ino": "MASK",
+    "isFile": false,
+    "isInvalid": false,
+    "isMissing": false,
+    "libraryId": "MASK",
+    "media": {
+     "coverPath": null,
+     "duration": 2,
+     "id": "MASK",
+     "metadata": {
+      "abridged": false,
+      "asin": null,
+      "authorName": "Author Two",
+      "authorNameLF": "Two, Author",
+      "description": null,
+      "explicit": false,
+      "genres": [],
+      "isbn": null,
+      "language": null,
+      "narratorName": "",
+      "publishedDate": null,
+      "publishedYear": null,
+      "publisher": null,
+      "seriesName": "",
+      "subtitle": null,
+      "title": "Audio Book",
+      "titleIgnorePrefix": "Audio Book"
+     },
+     "numAudioFiles": 2,
+     "numChapters": 2,
+     "numTracks": 2,
+     "size": 32088,
+     "tags": []
+    },
+    "mediaType": "book",
+    "mtimeMs": "MASK",
+    "numFiles": 2,
+    "oldLibraryItemId": null,
+    "path": "ROOT/lib/books/Author Two/Audio Book",
+    "relPath": "Author Two/Audio Book",
+    "size": 32088,
+    "updatedAt": "MASK"
+   }
+  ],
+  "id": "MASK",
+  "label": "Discover",
+  "labelStringKey": "LabelDiscover",
+  "total": 6,
+  "type": "book"
+ },
+ {
+  "entities": [
+   {
+    "addedAt": "MASK",
+    "asin": null,
+    "description": null,
+    "id": "MASK",
+    "imagePath": null,
+    "libraryId": "MASK",
+    "name": "OPF Author",
+    "numBooks": 1,
+    "updatedAt": "MASK"
+   },
+   {
+    "addedAt": "MASK",
+    "asin": null,
+    "description": null,
+    "id": "MASK",
+    "imagePath": null,
+    "libraryId": "MASK",
+    "name": "JSON Author",
+    "numBooks": 1,
+    "updatedAt": "MASK"
+   }
+  ],
+  "id": "MASK",
+  "label": "Newest Authors",
+  "labelStringKey": "LabelNewestAuthors",
+  "total": 6,
+  "type": "authors"
+ }
+]
+SERVER EXITED (code 1)

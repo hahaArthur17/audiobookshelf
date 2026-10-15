@@ -1,0 +1,155 @@
+# --- batch 12: every route of LibraryItemController ---
+# findOne
+f_plain GET /api/items/{BI_AUDIO}
+f_exp GET /api/items/{BI_AUDIO}?expanded=1
+f_exp_twice GET /api/items/{BI_AUDIO}?expanded=1&expanded=1
+f_exp_arr GET /api/items/{BI_AUDIO}?expanded[]=1
+f_exp_obj GET /api/items/{BI_AUDIO}?expanded[a]=1
+f_exp_str GET /api/items/{BI_AUDIO}?expanded=1.0
+f_exp_nan GET /api/items/{BI_AUDIO}?expanded=abc
+f_inc GET /api/items/{BI_AUDIO}?expanded=1&include=progress,rssfeed,share,downloads
+f_inc_noexp GET /api/items/{BI_AUDIO}?include=progress
+f_pod_ep GET /api/items/{PI}?expanded=1&include=progress&episode={EP}
+f_pod_dl GET /api/items/{PI}?expanded=1&include=downloads,rssfeed
+f_bad GET /api/items/nope
+f_inc_twice GET /api/items/{BI_AUDIO}?expanded=1&include=progress&include=share
+f_pod_ep_twice GET /api/items/{PI}?expanded=1&include=progress&episode={EP}&episode={EP}
+# getCover (no cover)
+c_none GET /api/items/{BI_AUDIO}/cover
+c_w GET /api/items/{BI_AUDIO}/cover?width=100
+c_raw GET /api/items/{BI_AUDIO}/cover?raw=1
+c_ts GET /api/items/{BI_AUDIO}/cover?ts=1
+# getCover (Book Three has cover.jpg)
+c3_none GET /api/items/{BI_JSON}/cover
+c3_w GET /api/items/{BI_JSON}/cover?width=100
+c3_h GET /api/items/{BI_JSON}/cover?height=50
+c3_wh_fmt GET /api/items/{BI_JSON}/cover?width=20&height=30&format=jpeg
+c3_fmt_webp GET /api/items/{BI_JSON}/cover?format=webp
+c3_raw GET /api/items/{BI_JSON}/cover?raw=1
+c3_raw_twice GET /api/items/{BI_JSON}/cover?raw=1&raw=1
+c3_ts GET /api/items/{BI_JSON}/cover?ts=1
+c3_ts_twice GET /api/items/{BI_JSON}/cover?ts=1&ts=2
+c3_nan GET /api/items/{BI_JSON}/cover?width=abc&height=abc
+c3_neg GET /api/items/{BI_JSON}/cover?width=-5&height=0
+c3_big GET /api/items/{BI_JSON}/cover?width=99999
+c3_w_twice GET /api/items/{BI_JSON}/cover?width=10&width=20
+c3_h_twice GET /api/items/{BI_JSON}/cover?height=10&height=20
+c3_fmt_twice GET /api/items/{BI_JSON}/cover?format=jpeg&format=webp
+c_bad GET /api/items/nope/cover
+# play
+play_book POST /api/items/{BI_AUDIO}/play {"deviceInfo":{"clientName":"qrun","deviceId":"qrun-dev"},"mediaPlayer":"html5","forceDirectPlay":true}
+play_pdf POST /api/items/{BI_OPF}/play {"deviceInfo":{"clientName":"qrun","deviceId":"qrun-dev"}}
+play_ep POST /api/items/{PI}/play/{EP} {"deviceInfo":{"clientName":"qrun","deviceId":"qrun-dev"},"mediaPlayer":"html5","forceDirectPlay":true}
+play_ep_bad POST /api/items/{PI}/play/nope {"deviceInfo":{"clientName":"qrun","deviceId":"qrun-dev"}}
+play_ep_book POST /api/items/{BI_AUDIO}/play/{EP} {"deviceInfo":{"clientName":"qrun","deviceId":"qrun-dev"}}
+# metadata object, ffprobe
+meta_audio GET /api/items/{BI_AUDIO}/metadata-object
+meta_pdf GET /api/items/{BI_OPF}/metadata-object
+meta_pod GET /api/items/{PI}/metadata-object
+ffprobe GET /api/items/{BI_AUDIO}/ffprobe/{INO_A1}
+ffprobe_bad GET /api/items/{BI_AUDIO}/ffprobe/nope
+# library files
+file_get GET /api/items/{BI_OPF}/file/{PDF_INO}
+file_get_mp3 GET /api/items/{BI_AUDIO}/file/{INO_A1}
+file_get_bad GET /api/items/{BI_OPF}/file/nope
+file_dl GET /api/items/{BI_OPF}/file/{PDF_INO}/download
+file_dl_mp3 GET /api/items/{BI_AUDIO}/file/{INO_A2}/download
+# ebook
+eb_primary GET /api/items/{BI_OPF}/ebook
+eb_fileid GET /api/items/{EB_ITEM}/ebook/{EB_INO}
+eb_notebook GET /api/items/{BI_OPF}/ebook/{OPF_INO}
+eb_pod GET /api/items/{PI}/ebook
+eb_audio GET /api/items/{BI_AUDIO}/ebook
+ebs_pod PATCH /api/items/{PI}/ebook/{EP_INO}/status
+ebs_notebook PATCH /api/items/{BI_OPF}/ebook/{OPF_INO}/status
+ebs_to_supp PATCH /api/items/{BI_OPF}/ebook/{PDF_INO}/status
+ebs_after1 GET /api/items/{BI_OPF}?expanded=1
+eb_primary_after GET /api/items/{BI_OPF}/ebook
+ebs_to_primary PATCH /api/items/{BI_OPF}/ebook/{PDF_INO}/status
+ebs_after2 GET /api/items/{BI_OPF}?expanded=1
+ebs_epub_primary PATCH /api/items/{EB_ITEM}/ebook/{EB_INO}/status
+ebs_after3 GET /api/items/{EB_ITEM}?expanded=1
+# download
+dl_file_item GET /api/items/{BI_LOOSE}/download
+dl_dir GET /api/items/{BI_OPF}/download
+# tracks
+tr_pod PATCH /api/items/{PI}/tracks {"orderedFileData":[{"ino":"{EP_INO}"}]}
+tr_empty PATCH /api/items/{BI_AUDIO}/tracks {"orderedFileData":[]}
+tr_none PATCH /api/items/{BI_AUDIO}/tracks {}
+tr_bad PATCH /api/items/{BI_AUDIO}/tracks {"orderedFileData":[{"ino":"nope"}]}
+tr_ok PATCH /api/items/{BI_AUDIO}/tracks {"orderedFileData":[{"ino":"{INO_A2}"},{"ino":"{INO_A1}","exclude":true}]}
+tr_ok2 PATCH /api/items/{BI_AUDIO}/tracks {"orderedFileData":[{"ino":"{INO_A1}"},{"ino":"{INO_A2}"}]}
+# chapters
+ch_pdf POST /api/items/{BI_OPF}/chapters {"chapters":[]}
+ch_bad POST /api/items/{BI_AUDIO}/chapters {"chapters":[{"title":"x"}]}
+ch_none POST /api/items/{BI_AUDIO}/chapters {}
+ch_new POST /api/items/{BI_AUDIO}/chapters {"chapters":[{"title":"A","start":0,"end":2},{"title":"B","start":2,"end":4}]}
+ch_same POST /api/items/{BI_AUDIO}/chapters {"chapters":[{"title":"A","start":0,"end":2},{"title":"B","start":2,"end":4}]}
+ch_change POST /api/items/{BI_AUDIO}/chapters {"chapters":[{"title":"A2","start":0,"end":2},{"title":"B","start":2,"end":4}]}
+ch_after GET /api/items/{BI_AUDIO}?expanded=1
+# cover routes
+cov_up_none POST /api/items/{BI_AUDIO}/cover {}
+cov_up_url POST /api/items/{BI_AUDIO}/cover {"url":"http://127.0.0.1:9/c.jpg"}
+cov_up_file FORM /api/items/{BI_AUDIO}/cover
+cov_up_after GET /api/items/{BI_AUDIO}?expanded=1
+cov_up_after_img GET /api/items/{BI_AUDIO}/cover?raw=1
+cov_up_pod FORM /api/items/{PI}/cover
+cov_upd_none PATCH /api/items/{BI_JSON}/cover {}
+cov_upd_bad PATCH /api/items/{BI_JSON}/cover {"cover":"/nope.jpg"}
+cov_upd_same PATCH /api/items/{BI_JSON}/cover {"cover":"{WORK}/lib/books/Author One/Book Three/cover.jpg"}
+cov_rm DELETE /api/items/{BI_JSON}/cover
+cov_rm_after GET /api/items/{BI_JSON}?expanded=1
+cov_rm_again DELETE /api/items/{BI_JSON}/cover
+cov_upd_back PATCH /api/items/{BI_JSON}/cover {"cover":"{WORK}/lib/books/Author One/Book Three/cover.jpg"}
+cov_upd_after GET /api/items/{BI_JSON}?expanded=1
+cov_rm_pod DELETE /api/items/{PI}/cover
+cov_rm_pod_after GET /api/items/{PI}?expanded=1
+# media update
+m_book PATCH /api/items/{BI_JSON}/media {"metadata":{"title":"New Title","series":[{"name":"New Series","sequence":"3"}],"authors":[{"name":"New Author"},{"name":" "},{"name":5}]}}
+m_book_after GET /api/items/{BI_JSON}?expanded=1
+m_book_noop PATCH /api/items/{BI_JSON}/media {"metadata":{"title":"New Title"}}
+m_book_rm PATCH /api/items/{BI_JSON}/media {"metadata":{"series":[],"authors":[{"name":"Other Author"}]}}
+m_book_rm_after GET /api/items/{BI_JSON}?expanded=1
+m_pod PATCH /api/items/{PI}/media {"autoDownloadEpisodes":true,"autoDownloadSchedule":"0 * * * *"}
+m_pod_bad PATCH /api/items/{PI}/media {"autoDownloadSchedule":"bad cron"}
+m_pod_sched PATCH /api/items/{PI}/media {"autoDownloadSchedule":"5 * * * *"}
+m_pod_same PATCH /api/items/{PI}/media {"autoDownloadEpisodes":true}
+m_pod_after GET /api/items/{PI}?expanded=1
+m_url PATCH /api/items/{BI_AUDIO}/media {"url":"http://127.0.0.1:9/c.jpg"}
+# batch routes
+bu_bad POST /api/items/batch/update {}
+bu_dup POST /api/items/batch/update [{"id":"{BI_JSON}"},{"id":"{BI_JSON}"}]
+bu_missing POST /api/items/batch/update [{"id":"nope","mediaPayload":{}}]
+bu_ok POST /api/items/batch/update [{"id":"{BI_JSON}","mediaPayload":{"metadata":{"publisher":"P3","series":[{"name":"S2","sequence":"1"}],"authors":[{"name":"A2"}]}}},{"id":"{PI}","mediaPayload":{"autoDownloadSchedule":"bad"}},{"id":"{PI2}","mediaPayload":{"metadata":{"author":"H2"}}}]
+bu_after GET /api/items/{BI_JSON}?expanded=1
+bu_after_pod GET /api/items/{PI2}?expanded=1
+bg_ok POST /api/items/batch/get {"libraryItemIds":["{BI_JSON}","{PI}"]}
+bg_empty POST /api/items/batch/get {}
+bg_bad POST /api/items/batch/get {"libraryItemIds":["nope"]}
+bscan_none POST /api/items/batch/scan {}
+bscan POST /api/items/batch/scan {"libraryItemIds":["{BI_AUDIO}","{BI_LOOSE}"]}
+bqm_none POST /api/items/batch/quickmatch {}
+scan POST /api/items/{BI_AUDIO}/scan
+scan_file POST /api/items/{BI_LOOSE}/scan
+# library file delete
+fdel_bad DELETE /api/items/{PI}/file/nope
+fdel_opf DELETE /api/items/{BI_OPF}/file/{OPF_INO}
+fdel_pdf DELETE /api/items/{BI_OPF}/file/{PDF_INO}
+fdel_after GET /api/items/{BI_OPF}?expanded=1
+fdel_mp3 DELETE /api/items/{EB_ITEM}/file/{EB_MP3_INO}
+fdel_mp3_after GET /api/items/{EB_ITEM}?expanded=1
+fdel_ep DELETE /api/items/{PI}/file/{EP_INO}
+fdel_ep_after GET /api/items/{PI}?expanded=1
+# delete
+del_bad DELETE /api/items/nope
+del_hard_twice DELETE /api/items/{BI_WAV}?hard=1&hard=1
+del_hard DELETE /api/items/{BI_LOOSE}?hard=1
+del_hard_check GET /api/items/{BI_LOOSE}
+del_pod DELETE /api/items/{PI2}
+del_book0 DELETE /api/items/{EB_ITEM}?hard=0
+bdel_none POST /api/items/batch/delete {}
+bdel_missing POST /api/items/batch/delete {"libraryItemIds":["nope"]}
+bdel_nan POST /api/items/batch/delete?hard=abc {"libraryItemIds":["{BI_AUDIO}"]}
+bdel_hard POST /api/items/batch/delete?hard=1 {"libraryItemIds":["{BI_JSON}","{PI}"]}
+lib_after GET /api/libraries/{BL}/items
+lib_after_pod GET /api/libraries/{PL}/items

@@ -1,0 +1,19 @@
+STATUS 200
+LOCATION 
+{
+ "addedAt": "MASK",
+ "description": null,
+ "id": "MASK",
+ "libraryId": "MASK",
+ "name": "JSON Series",
+ "nameIgnorePrefix": "JSON Series",
+ "progress": {
+  "isFinished": false,
+  "libraryItemIds": [
+   "UUID"
+  ],
+  "libraryItemIdsFinished": []
+ },
+ "rssFeed": null,
+ "updatedAt": "MASK"
+}

@@ -1,0 +1,24 @@
+Batch 8 (server/migrations): independent verification, 2026-10-10
+Baseline: 90330ca2 (batch 7). Commit checked: dd0b7b2f (batch 8).
+
+Measured (commands run by the user, outputs in this folder):
+- git status clean; protected files (tsconfig, eslint config, tests) unchanged.
+- 15 migrations converted (v2.15.0 to v2.35.0), none skipped, plus server/migrations/types.d.ts. Outside server/migrations only MIGRATION.md changed. 9 .js files remain in the repo (index.js, Auth, Database, Logger, Server, SocketAuthority, Watcher, LibraryController, LibraryItemController).
+- tsc: 0 errors. npm test: 356 passing. dist-server has the 15 migration .js files and no emitted file for types.d.ts.
+- Casts by my script: 32 plain "as", 1 "as unknown as" (v2.17.3, PragmaForeignKeyRow[]), 1 non-null "!" (v2.17.4, serverSettings). Per file counts agree with the Log.
+- Tag comments: b 27, d 3, a/c/e 0. The 3 d comments are the catch variables (v2.17.7, v2.19.1, v2.20.0), one comment above a line with 2 casts, so 27 + 6 = 33 tagged casts = 32 + 1. Largest target types: { name: string }[] 6, typeof Sequelize & typeof SequelizeDataTypes 6, Error 6; no kind over 10.
+- 13 casts share one cause: the Sequelize types do not declare QueryTypes and DataTypes on the class (the casts read `Sequelize as typeof Sequelize & { DataTypes: ... }`). Candidate for the batch 11 helper. The cause is confirmed by the agent's own check of sequelize.js; my grep of node_modules/sequelize/types found no such declaration, which is consistent but indirect.
+- types.d.ts is a declaration file on purpose: MigrationManager copies every .js file of dist-server/server/migrations to the config folder and rejects names without a version, so an emitted file for the types would break startup.
+- types.d.ts resolves: a deliberate call to a nonexistent method in a migration gave TS2339 on both Logger and QueryInterface (12-dts-negative-test.txt). The normal build skips .d.ts files (skipLibCheck); 8-dts-check.txt shows a run with 2 errors in total and 0 in server/migrations (the file holds only the counts, not the command; presumably a run without skipLibCheck).
+- Compiled JS vs the pre-batch build: every migration differs (comments from the removed JSDoc typedefs, double quotes, aliases, parentheses, added tag comments). No logic change found in the filtered diff. In v2.17.3 the compiled file is 25 lines shorter before the rollback code (hunks of 8, 12 and 6 lines removed and 1 added), which explains the changed stack line numbers below.
+- Smoke tests (empty config, then a library with sample files): only the known tie order of authorsWithCount differs, as in batch 7.
+- Real migration run (migrun.sh, mig-base8.txt and mig-converted8.txt, diff in 13-mig-diff.txt): database version set to 2.14.0, server restarted. Both builds apply all 15 migrations in the same order with the same log lines, end at version and maxVersion 2.37.0, have the same 15 .js names in SequelizeMeta and 15 files in config/migrations, and /status returns 200. The diff shows only durationSeconds, path masking in stack lines, stack line numbers in v2.17.3 (211:9 and 30:13 versus 186:9 and 22:13) and the random backup table suffix (13 versus 58). v2.17.3 logs the same caught SQLite error (trigger update_library_items_title: no such table) in both builds and rolls that step back; the database was already at the latest schema, so this is existing behaviour.
+
+Whole server after the batch (from the agent's Log, not independently counted): 683 "as", 160 "as unknown as", 209 "!".
+
+Found while typing (read in the code): v2.17.0 down has no tableExists('mediaItemShares') check, so a downgrade of a database without that table throws (NOTE in the file, entry in Bugs). Not fixed, per the rules.
+Agent self-report: during the session it passed /dev/null to a test script that deletes its target folder; rm failed because it was not root. The batch 9 prompt now forbids deleting with unchecked paths.
+
+Limits: the migration run started from a latest-schema database, so most migrations took their "already exists" branches, and only the up direction was run; down is covered only by the unit tests. Casts are erased in the compiled JS, so identical JS does not prove the cast counts.
+
+Usage (Claude Code /usage): before: session 4%, week 41%; after: cost $5.06, API 12m 18s, wall 2h 20m (includes idle), session 17%, week 43%. The weekly percentage includes other use.

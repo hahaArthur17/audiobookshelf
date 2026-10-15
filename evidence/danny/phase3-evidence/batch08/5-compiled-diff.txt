@@ -1,0 +1,15 @@
+Files /tmp/out-base-b8/server/migrations/v2.15.0-series-column-unique.js and /tmp/out-new-b8/server/migrations/v2.15.0-series-column-unique.js differ
+Files /tmp/out-base-b8/server/migrations/v2.15.1-reindex-nocase.js and /tmp/out-new-b8/server/migrations/v2.15.1-reindex-nocase.js differ
+Files /tmp/out-base-b8/server/migrations/v2.15.2-index-creation.js and /tmp/out-new-b8/server/migrations/v2.15.2-index-creation.js differ
+Files /tmp/out-base-b8/server/migrations/v2.17.0-uuid-replacement.js and /tmp/out-new-b8/server/migrations/v2.17.0-uuid-replacement.js differ
+Files /tmp/out-base-b8/server/migrations/v2.17.3-fk-constraints.js and /tmp/out-new-b8/server/migrations/v2.17.3-fk-constraints.js differ
+Files /tmp/out-base-b8/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.js and /tmp/out-new-b8/server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.js differ
+Files /tmp/out-base-b8/server/migrations/v2.17.5-remove-host-from-feed-urls.js and /tmp/out-new-b8/server/migrations/v2.17.5-remove-host-from-feed-urls.js differ
+Files /tmp/out-base-b8/server/migrations/v2.17.6-share-add-isdownloadable.js and /tmp/out-new-b8/server/migrations/v2.17.6-share-add-isdownloadable.js differ
+Files /tmp/out-base-b8/server/migrations/v2.17.7-add-indices.js and /tmp/out-new-b8/server/migrations/v2.17.7-add-indices.js differ
+Files /tmp/out-base-b8/server/migrations/v2.19.1-copy-title-to-library-items.js and /tmp/out-new-b8/server/migrations/v2.19.1-copy-title-to-library-items.js differ
+Files /tmp/out-base-b8/server/migrations/v2.19.4-improve-podcast-queries.js and /tmp/out-new-b8/server/migrations/v2.19.4-improve-podcast-queries.js differ
+Files /tmp/out-base-b8/server/migrations/v2.20.0-improve-author-sort-queries.js and /tmp/out-new-b8/server/migrations/v2.20.0-improve-author-sort-queries.js differ
+Files /tmp/out-base-b8/server/migrations/v2.26.0-create-auth-tables.js and /tmp/out-new-b8/server/migrations/v2.26.0-create-auth-tables.js differ
+Files /tmp/out-base-b8/server/migrations/v2.33.0-add-discover-query-indexes.js and /tmp/out-new-b8/server/migrations/v2.33.0-add-discover-query-indexes.js differ
+Files /tmp/out-base-b8/server/migrations/v2.35.0-add-last-refresh-token.js and /tmp/out-new-b8/server/migrations/v2.35.0-add-last-refresh-token.js differ

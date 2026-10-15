@@ -1,0 +1,17 @@
+STATUS 200
+LOCATION 
+{
+ "directories": [
+  {
+   "dirname": "books",
+   "level": 1,
+   "path": "ROOT/lib/books"
+  },
+  {
+   "dirname": "podcasts",
+   "level": 1,
+   "path": "ROOT/lib/podcasts"
+  }
+ ],
+ "posix": true
+}

@@ -1,0 +1,44 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/1bc9c272-5921-4d52-a006-f05fe1948dff/scratchpad/b12/empty-5C3m/config, METADATA_PATH=/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/1bc9c272-5921-4d52-a006-f05fe1948dff/scratchpad/b12/empty-5C3m/metadata, PORT=13477, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 18:34:31.294] INFO: === Starting Server ===
+[2026-10-10 18:34:31.295] INFO: [Server] Init v2.37.0
+[2026-10-10 18:34:31.295] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 18:34:31.295] INFO: [Server] Platform: linux
+[2026-10-10 18:34:31.295] INFO: [Server] Arch: x64
+[2026-10-10 18:34:31.296] INFO: [BinaryManager] Skipping check for binaries
+[2026-10-10 18:34:31.296] INFO: [Database] absdatabase.sqlite not found at /tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/1bc9c272-5921-4d52-a006-f05fe1948dff/scratchpad/b12/empty-5C3m/config/absdatabase.sqlite
+[2026-10-10 18:34:31.296] INFO: [Database] Initializing db at "/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/1bc9c272-5921-4d52-a006-f05fe1948dff/scratchpad/b12/empty-5C3m/config/absdatabase.sqlite"
+[2026-10-10 18:34:31.308] INFO: [Database] Db connection was successful
+[2026-10-10 18:34:31.337] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 18:34:31.633] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 18:34:31.633] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 18:34:31.637] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 18:34:31.641] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 18:34:31.646] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 18:34:31.651] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 18:34:31.656] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 18:34:31.660] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 18:34:31.678] INFO: [Database] running ANALYZE
+[2026-10-10 18:34:31.682] INFO: [Database] ANALYZE completed
+[2026-10-10 18:34:31.682] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 18:34:31.683] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 18:34:31.688] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 18:34:31.690] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 18:34:31.690] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 18:34:31.697] INFO: Listening on port :13477
+[2026-10-10 18:34:32.067] INFO: Received ping
+[2026-10-10 18:34:32.081] INFO: [Server] Initializing new server
+[2026-10-10 18:34:32.136] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 18:34:32.181] ERROR: [LocalAuth] Failed login attempt for username "root" from ip ::1 (Invalid password)
+[2026-10-10 18:34:32.182] INFO: SIGINT (Ctrl+C) received. Shutting down...
+[2026-10-10 18:34:32.182] INFO: === Stopping Server ===
+[2026-10-10 18:34:32.182] INFO: [Server] Watcher Closed
+[2026-10-10 18:34:32.182] INFO: [SocketAuthority] closing...
+[2026-10-10 18:34:32.182] INFO: [SocketAuthority] Closing Socket.IO server: /socket.io
+[2026-10-10 18:34:32.182] INFO: [SocketAuthority] Closing Socket.IO server: /audiobookshelf/socket.io
+[2026-10-10 18:34:32.183] INFO: [SocketAuthority] Socket.IO server closed: /socket.io
+[2026-10-10 18:34:32.183] INFO: [SocketAuthority] Socket.IO server closed: /audiobookshelf/socket.io
+[2026-10-10 18:34:32.183] INFO: [SocketAuthority] closed
+[2026-10-10 18:34:32.183] INFO: [Server] Closing HTTP Server
+[2026-10-10 18:34:32.183] INFO: [Server] HTTP Server Closed
+[2026-10-10 18:34:32.183] INFO: Server stopped. Exiting.

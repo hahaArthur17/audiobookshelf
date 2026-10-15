@@ -1,0 +1,18 @@
+STATUS 200
+LOCATION 
+{
+ "podcasts": [
+  {
+   "itunesId": null,
+   "libraryId": "MASK",
+   "libraryItemId": "MASK",
+   "title": "Other Show"
+  },
+  {
+   "itunesId": null,
+   "libraryId": "MASK",
+   "libraryItemId": "MASK",
+   "title": "My Show"
+  }
+ ]
+}

@@ -1,0 +1,5 @@
+status1 {"app":"audiobookshelf","serverVersion":"2.37.0","isInit":false,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""},"ConfigPath":"/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/1bc9c272-5921-4d52-a006-f05fe1948dff/scratchpad/b12/empty-5C3m/config","MetadataPath":"/tmp/claude-1000/-home-danny-Code-compx574-audiobookshelf/1bc9c272-5921-4d52-a006-f05fe1948dff/scratchpad/b12/empty-5C3m/metadata"}
+init 200
+status2 {"app":"audiobookshelf","serverVersion":"2.37.0","isInit":true,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""}}
+login HTTP200 user=root token True debian
+wrong 401

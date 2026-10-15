@@ -1,0 +1,596 @@
+files=194 as=649 unknown_as=122 nonnull=281 total=1052
+strict tags: {"d":271,"none":581,"b":106,"a":15,"c":28,"nonnull":51}
+  a by kind: {"unk":9,"as":6}
+  b by kind: {"unk":41,"as":65}
+  c by kind: {"as":24,"unk":4}
+  d by kind: {"as":228,"unk":21,"nn":22}
+  e by kind: {}
+  nonnull by kind: {"nn":51}
+  none by kind: {"nn":208,"as":326,"unk":47}
+strict assumed: 0
+strict untagged: 581 (count missing: 25)
+loose tags (as and as unknown as only, as in 11b/11c): {"d":265,"b":91,"a":15,"c":28,"none":372}
+loose tags (all three kinds): {"d":317,"none":599,"b":92,"a":16,"c":28}
+
+untagged (strict):
+server/Auth.ts:166 nn TokenManager.TokenSecret!
+server/Auth.ts:335 nn req.user!
+server/Auth.ts:338 nn req.user!
+server/Auth.ts:393 nn refreshResponse.user!
+server/Auth.ts:415 nn authorizationUrlResponse.authorizationUrl!
+server/Auth.ts:506 nn req.user!
+server/Auth.ts:508 nn req.user!
+server/Database.ts:187 nn this.dbPath!
+server/Database.ts:252 nn [count missing] this.dbPath!
+server/Logger.ts:46 nn Error().stack!
+server/Server.ts:238 nn Logger.logManager!
+server/Server.ts:346 nn this.auth.tokenManager.TokenSecret!
+server/Server.ts:617 nn this.server!
+server/SocketAuthority.ts:50 nn client.user!
+server/SocketAuthority.ts:52 nn client.user!
+server/SocketAuthority.ts:55 nn client.user!
+server/SocketAuthority.ts:57 nn client.user!
+server/SocketAuthority.ts:57 nn this.Server!
+server/SocketAuthority.ts:79 nn this.clients[socketId].user!
+server/SocketAuthority.ts:142 nn this.clients[socketId].user!
+server/SocketAuthority.ts:183 nn Server.server!
+server/SocketAuthority.ts:193 nn Server.server!
+server/SocketAuthority.ts:250 nn this.Server!
+server/SocketAuthority.ts:377 nn this.Server!
+server/SocketAuthority.ts:397 nn this.Server!
+server/Watcher.ts:81 nn library.libraryFolders!
+server/Watcher.ts:120 nn library.libraryFolders!
+server/Watcher.ts:168 nn library.libraryFolders!
+server/Watcher.ts:368 nn this.pendingTask!
+server/Watcher.ts:370 nn this.pendingTask!
+server/auth/LocalAuthStrategy.ts:140 as bcrypt.compare(password, user.pash) as Promise<boolean>
+server/auth/OidcAuthStrategy.ts:76 as new OpenIDClient.Strategy( { client: this.getClient(), params: { redirect_uri: `${global.ServerSettings.authOpenIDSubfolderForRedirectURLs}/auth/openid/callback
+server/auth/OidcAuthStrategy.ts:103 as { issuer: global.ServerSettings.authOpenIDIssuerURL, authorization_endpoint: global.ServerSettings.authOpenIDAuthorizationURL, token_endpoint: global.ServerSett
+server/auth/OidcAuthStrategy.ts:113 as { client_id: global.ServerSettings.authOpenIDClientID, client_secret: global.ServerSettings.authOpenIDClientSecret, id_token_signed_response_alg: global.ServerS
+server/auth/OidcAuthStrategy.ts:211 as error as Error
+server/auth/OidcAuthStrategy.ts:211 as error as Error
+server/auth/OidcAuthStrategy.ts:251 as userinfo[groupClaimName] as string[]
+server/auth/OidcAuthStrategy.ts:407 unk req.session as unknown as Record<string, object | undefined>
+server/auth/OidcAuthStrategy.ts:434 as error as Error
+server/auth/OidcAuthStrategy.ts:438 as error as Error
+server/auth/OidcAuthStrategy.ts:453 as client.issuer as OpenIDClient.Issuer<OpenIDClient.BaseClient> & OpenIDClient.IssuerMetadata
+server/auth/OidcAuthStrategy.ts:475 as postLogoutRedirectUri as string | undefined
+server/auth/OidcAuthStrategy.ts:507 as configUrl as URL
+server/auth/OidcAuthStrategy.ts:543 nn this.openIdAuthSession.get(requiredString(state))!
+server/auth/OidcAuthStrategy.ts:558 as error as Error
+server/auth/TokenManager.ts:44 as process.env.REFRESH_TOKEN_EXPIRY as string
+server/auth/TokenManager.ts:45 as process.env.ACCESS_TOKEN_EXPIRY as string
+server/auth/TokenManager.ts:46 as process.env.REFRESH_TOKEN_GRACE_PERIOD as string
+server/auth/TokenManager.ts:48 as process.env.REFRESH_TOKEN_EXPIRY as string
+server/auth/TokenManager.ts:51 as process.env.ACCESS_TOKEN_EXPIRY as string
+server/auth/TokenManager.ts:54 as process.env.REFRESH_TOKEN_GRACE_PERIOD as string
+server/auth/TokenManager.ts:76 as require('crypto') as typeof import('crypto')
+server/auth/TokenManager.ts:268 as (await Database.sessionModel.findOne({ where: { id: session.id } })) as SessionRow
+server/auth/TokenManager.ts:301 as jwt_payload.keyId as string
+server/auth/TokenManager.ts:342 as jwt_payload.userId as string
+server/auth/TokenManager.ts:384 as (await Database.sessionModel.findOne({ where: { [Op.or]: [{ refreshToken: refreshToken }, { lastRefreshToken: refreshToken }] } })) as SessionRow | null
+server/auth/TokenManager.ts:451 as error as Error
+server/auth/TokenManager.ts:462 as cleanupError as Error
+server/auth/TokenManager.ts:468 as error as Error
+server/auth/TokenManager.ts:470 as error as Error
+server/auth/TokenManager.ts:476 as error as Error
+server/auth/TokenManager.ts:496 as req.user as User
+server/auth/TokenManager.ts:500 as (await Database.sessionModel.findOne({ where: { userId: user.id, [Op.or]: [{ refreshToken: currentRefreshToken }, { lastRefreshToken: currentRefreshToken }] } }
+server/auth/TokenManager.ts:570 as error as Error
+server/controllers/LibraryController.ts:245 nn folder.path!
+server/controllers/LibraryController.ts:734 nn [count missing] payload.filterBy!
+server/controllers/LibraryController.ts:1470 nn p.libraryItem!
+server/controllers/MiscController.ts:755 nn Logger.logManager!
+server/controllers/SearchController.ts:104 as error as Error
+server/controllers/SearchController.ts:129 as error as Error
+server/controllers/SearchController.ts:150 as error as Error
+server/controllers/SearchController.ts:169 as error as Error
+server/controllers/SearchController.ts:194 as error as Error
+server/controllers/SearchController.ts:212 as Database.customMetadataProviderModel as CustomMetadataProviderLister
+server/controllers/SessionController.ts:202 nn req.playbackSession.id!
+server/finders/AuthorFinder.ts:42 as global as ServerGlobals
+server/finders/BookFinder.ts:87 as book as ScoredOpenLibraryResult
+server/finders/BookFinder.ts:133 nn b.authorDistance!
+server/finders/BookFinder.ts:173 as books as BookSearchResult[]
+server/finders/BookFinder.ts:198 nn provider.split('.').pop()!
+server/finders/BookFinder.ts:609 unk options as unknown as string
+server/managers/ApiCacheManager.ts:114 nn req.user!
+server/managers/ApiCacheManager.ts:137 nn res.originalSend!
+server/managers/AudioMetadataManager.ts:286 nn this.tasksQueued.shift()!
+server/managers/BackupManager.ts:130 nn this.scheduleTask!
+server/managers/BackupManager.ts:130 nn this.scheduleTask!
+server/managers/BackupManager.ts:202 nn backup.fullPath!
+server/managers/BackupManager.ts:333 nn data!
+server/managers/BackupManager.ts:346 nn backup.fullPath!
+server/managers/BackupManager.ts:356 nn zip!
+server/managers/BackupManager.ts:401 nn newBackup.fullPath!
+server/managers/BackupManager.ts:414 nn a.createdAt!
+server/managers/BackupManager.ts:414 nn b.createdAt!
+server/managers/BackupManager.ts:417 nn this.backups.shift()!
+server/managers/BackupManager.ts:432 nn backup.fullPath!
+server/managers/BackupManager.ts:446 nn [count missing] Database.dbPath!
+server/managers/BackupManager.ts:472 nn backup.fullPath!
+server/managers/CacheManager.ts:73 nn this.CoverCachePath!
+server/managers/CacheManager.ts:151 nn this.CachePath!
+server/managers/CacheManager.ts:153 nn this.CachePath!
+server/managers/CacheManager.ts:163 nn this.ItemCachePath!
+server/managers/CacheManager.ts:165 nn this.ItemCachePath!
+server/managers/CacheManager.ts:183 nn this.ImageCachePath!
+server/managers/CoverManager.ts:261 nn audioFileWithCover.metadata.path!
+server/managers/CronManager.ts:89 nn _library.settings.autoScanCronExpression!
+server/managers/CronManager.ts:148 nn podcast.autoDownloadSchedule!
+server/managers/CronManager.ts:149 nn podcast.autoDownloadSchedule!
+server/managers/CronManager.ts:150 nn podcast.autoDownloadSchedule!
+server/managers/CronManager.ts:155 nn podcast.autoDownloadSchedule!
+server/managers/CronManager.ts:155 nn podcast.libraryItem!
+server/managers/LogManager.ts:82 nn this.currentDailyLog!
+server/managers/MigrationManager.ts:136 nn this.serverVersion!
+server/managers/MigrationManager.ts:136 nn this.databaseVersion!
+server/managers/MigrationManager.ts:144 nn this.umzug!
+server/managers/MigrationManager.ts:146 nn this.umzug!
+server/managers/MigrationManager.ts:166 nn this.umzug!
+server/managers/MigrationManager.ts:198 nn this.migrationsDir!
+server/managers/MigrationManager.ts:204 nn this.migrationsDir!
+server/managers/MigrationManager.ts:252 nn versionA!
+server/managers/MigrationManager.ts:252 nn versionB!
+server/managers/MigrationManager.ts:332 nn this.migrationsDir!
+server/managers/MigrationManager.ts:348 nn this.extractVersionFromTag(migration.name)!
+server/managers/MigrationManager.ts:351 nn this.databaseVersion!
+server/managers/MigrationManager.ts:351 nn this.serverVersion!
+server/managers/MigrationManager.ts:354 nn this.databaseVersion!
+server/managers/MigrationManager.ts:354 nn this.serverVersion!
+server/managers/NotificationManager.ts:197 nn this.notificationQueue.shift()!
+server/managers/PlaybackSessionManager.ts:313 nn userProgressForItem!
+server/managers/PlaybackSessionManager.ts:316 nn userProgressForItem!
+server/managers/PlaybackSessionManager.ts:375 as [count missing] episodeId as string | null
+server/managers/PlaybackSessionManager.ts:400 nn session.libraryItemId!
+server/managers/PlaybackSessionManager.ts:507 nn session.updatedAt!
+server/managers/PlaybackSessionManager.ts:510 nn session.updatedAt!
+server/managers/PodcastManager.ts:191 nn this.downloadQueue.shift()!
+server/managers/PodcastManager.ts:203 as [count missing] this.currentDownload!.targetRelPath as string
+server/managers/PodcastManager.ts:203 nn [count missing] this.currentDownload!
+server/managers/PodcastManager.ts:211 nn [count missing] this.currentDownload!
+server/managers/PodcastManager.ts:213 nn this.currentDownload!
+server/managers/PodcastManager.ts:218 nn [count missing] this.currentDownload!
+server/managers/PodcastManager.ts:233 nn this.currentDownload!
+server/managers/PodcastManager.ts:269 nn this.currentDownload!
+server/managers/PodcastManager.ts:311 nn libraryFile.metadata.path!
+server/managers/ShareManager.ts:158 nn session.updatedAt!
+server/managers/ShareManager.ts:161 nn session.updatedAt!
+server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.ts:77 nn serverSettings!
+server/migrations/v2.17.7-add-indices.ts:55 as [count missing] error as Error
+server/migrations/v2.19.1-copy-title-to-library-items.ts:83 as [count missing] error as Error
+server/migrations/v2.20.0-improve-author-sort-queries.ts:240 as [count missing] error as Error
+server/models/ApiKey.ts:258 as [count missing] options as InstanceUpdateOptions<ApiKeyAttributes>
+server/models/Author.ts:86 nn author!
+server/models/Author.ts:87 nn author!
+server/models/Feed.ts:138 as [count missing] media as Book
+server/models/Feed.ts:461 nn itemExpanded!
+server/models/Feed.ts:464 nn itemExpanded!
+server/models/Feed.ts:474 nn collectionExpanded!
+server/models/Feed.ts:483 nn seriesExpanded!
+server/models/Feed.ts:501 nn [count missing] feedEpisodeCreateFuncEntity!
+server/models/FeedEpisode.ts:78 unk [count missing] new Date(a.pubDate) as unknown as number
+server/models/FeedEpisode.ts:81 unk [count missing] new Date(b.pubDate) as unknown as number
+server/models/FeedEpisode.ts:201 nn earliestLibraryItemCreatedAt!
+server/models/Podcast.ts:391 nn episode.publishedAt!
+server/models/User.ts:997 as [count missing] options as InstanceUpdateOptions<UserAttributes>
+server/objects/Backup.ts:6 unk dateAndTime as unknown as DateAndTime
+server/objects/Backup.ts:55 unk this.key as unknown as number
+server/objects/DailyLog.ts:8 unk dateAndTime as unknown as DateAndTime
+server/objects/DeviceInfo.ts:79 unk this as unknown as Record<string, unknown>
+server/objects/DeviceInfo.ts:80 as deviceInfo as Record<string, unknown>
+server/objects/DeviceInfo.ts:107 as obj as Record<string, string | null | undefined>
+server/objects/DeviceInfo.ts:177 unk this as unknown as Record<string, unknown>
+server/objects/DeviceInfo.ts:178 as deviceInfoJson as Record<string, unknown>
+server/objects/DeviceInfo.ts:179 as existingDeviceInfoJson as Record<string, unknown>
+server/objects/Notification.ts:139 unk this as unknown as Record<string, unknown>
+server/objects/Notification.ts:172 as data[match[1]] as string
+server/objects/PlaybackSession.ts:10 unk dateAndTime as unknown as DateAndTime
+server/objects/PlaybackSession.ts:240 as (session.updatedAt || session.startedAt) as number | null
+server/objects/PlaybackSession.ts:297 as episodeId as string
+server/objects/PlaybackSession.ts:319 as timeListened as number
+server/objects/PlaybackSession.ts:328 as this.timeListening as number
+server/objects/PlaybackSession.ts:328 as timeListened as string
+server/objects/PodcastEpisodeDownload.ts:41 unk null as unknown as LibraryItem
+server/objects/PodcastEpisodeDownload.ts:101 as this.targetFilename as string
+server/objects/PodcastEpisodeDownload.ts:112 nn this.rssPodcastEpisode!
+server/objects/Stream.ts:76 as this.libraryItem.media as Podcast
+server/objects/Stream.ts:86 as this.episodeId as string
+server/objects/Stream.ts:133 as this.tracksAudioFileType as string
+server/objects/Stream.ts:250 as this.loop as NodeJS.Timeout
+server/objects/Stream.ts:300 as this.tracksMimeType as string
+server/objects/Stream.ts:300 as this.tracksCodec as string
+server/objects/Stream.ts:308 as this.tracksCodec as string
+server/objects/Stream.ts:353 as this.loop as NodeJS.Timeout
+server/objects/Stream.ts:382 as this.loop as NodeJS.Timeout
+server/objects/Stream.ts:389 as this.loop as NodeJS.Timeout
+server/objects/Stream.ts:412 as this.loop as NodeJS.Timeout
+server/objects/files/AudioFile.ts:73 unk null as unknown as FileMetadata
+server/objects/files/AudioFile.ts:167 as AudioMimeType as Record<string, string | undefined>
+server/objects/files/AudioFile.ts:199 as probeData.audioMetaTags as AudioMetaTags
+server/objects/files/AudioFile.ts:243 unk this as unknown as Record<string, unknown>
+server/objects/files/AudioFile.ts:244 as newjson as Record<string, unknown>
+server/objects/files/LibraryFile.ts:41 unk null as unknown as FileMetadata
+server/objects/files/LibraryFile.ts:61 as { ino: this.ino, metadata: this.metadata.toJSON(), isSupplementary: this.isSupplementary, addedAt: this.addedAt, updatedAt: this.updatedAt, fileType: this.fileT
+server/objects/files/LibraryFile.ts:98 as (await getFileTimestampsWithIno(path)) as Exclude<Awaited<ReturnType<typeof getFileTimestampsWithIno>>, false>
+server/objects/metadata/AudioMetaTags.ts:136 unk this as unknown as Record<string, string | null>
+server/objects/metadata/AudioMetaTags.ts:322 unk this as unknown as Record<string, string | null>
+server/objects/metadata/AudioMetaTags.ts:340 unk audioFileMetadata as unknown as Record<string, string | null>
+server/objects/metadata/AudioMetaTags.ts:341 unk this as unknown as Record<string, string | null>
+server/objects/metadata/FileMetadata.ts:26 as metadata as FileMetadataJSON
+server/objects/metadata/FileMetadata.ts:46 as { filename: this.filename, ext: this.ext, path: this.path, relPath: this.relPath, size: this.size, mtimeMs: this.mtimeMs, ctimeMs: this.ctimeMs, birthtimeMs: th
+server/objects/metadata/FileMetadata.ts:73 unk this as unknown as Record<string, unknown>
+server/objects/metadata/FileMetadata.ts:74 as payload as Record<string, unknown>
+server/objects/metadata/FileMetadata.ts:87 unk this as unknown as Record<string, unknown>
+server/objects/metadata/FileMetadata.ts:88 as payload as Record<string, unknown>
+server/objects/settings/EmailSettings.ts:118 as payload.ereaderDevices .map((device) => { if (!device.name || !device.email) { Logger.error(`[EmailSettings] Update ereader device is invalid`, device) return n
+server/objects/settings/EmailSettings.ts:142 unk this as unknown as Record<string, unknown>
+server/objects/settings/EmailSettings.ts:143 as json as Record<string, unknown>
+server/objects/settings/ServerSettings.ts:184 as settings.tokenSecret as string | null
+server/objects/settings/ServerSettings.ts:188 as settings.scannerParseSubtitle as boolean
+server/objects/settings/ServerSettings.ts:197 as settings.rateLimitLoginRequests as number
+server/objects/settings/ServerSettings.ts:199 as settings.rateLimitLoginWindow as number
+server/objects/settings/ServerSettings.ts:272 as settings.bookshelfView as number
+server/objects/settings/ServerSettings.ts:438 unk this as unknown as Record<string, unknown>
+server/providers/Audible.ts:236 nn items!
+server/providers/Audnexus.ts:141 as null as (AuthorASINObj & { levenshteinDistance: number }) | null
+server/providers/Audnexus.ts:188 as error as RequestError
+server/providers/CustomProviderAdapter.ts:73 as Database.customMetadataProviderModel as CustomMetadataProviderFinder
+server/providers/CustomProviderAdapter.ts:186 as key as keyof CustomProviderBookResult
+server/providers/CustomProviderAdapter.ts:187 as key as keyof CustomProviderBookResult
+server/providers/FantLab.ts:216 nn bookEditions.list.pop()!
+server/providers/GoogleBooks.ts:68 nn Object.keys(imageLinks).pop()!
+server/providers/iTunes.ts:137 as this.search({ term, entity: 'audiobook', media: 'audiobook' }, timeout) as Promise<iTunesSearchResultItem[]>
+server/providers/iTunes.ts:165 as this.search({ term, entity: 'podcast', media: 'podcast', ...options }, timeout) as Promise<iTunesSearchResultItem[]>
+server/routers/ApiRouter.ts:44 unk dateAndTime as unknown as DateAndTime
+server/routers/ApiRouter.ts:125 unk express() as unknown as ApiRouterApp
+server/routers/ApiRouter.ts:487 unk { where: [ { id: seriesIds }, sequelize.where(sequelize.literal('(SELECT count(*) FROM bookSeries bs WHERE bs.seriesId = series.id)'), 0) ], attributes: ['id', 
+server/routers/ApiRouter.ts:530 as error as Error
+server/routers/ApiRouter.ts:547 unk { where: [ { id: authorIds, asin: { [sequelize.Op.or]: [null, ''] }, description: { [sequelize.Op.or]: [null, ''] }, imagePath: { [sequelize.Op.or]: [null, ''] 
+server/routers/ApiRouter.ts:591 as error as Error
+server/routers/ApiRouter.ts:599 as b.updatedAt as number
+server/routers/ApiRouter.ts:599 as a.updatedAt as number
+server/routers/ApiRouter.ts:606 as b.updatedAt as number
+server/routers/ApiRouter.ts:606 as a.updatedAt as number
+server/routers/ApiRouter.ts:622 unk listeningSessions as unknown as ListeningStatsSession[]
+server/scanner/AbsMetadataFileScanner.ts:31 nn metadataLibraryFile.metadata.path!
+server/scanner/AbsMetadataFileScanner.ts:69 nn metadataLibraryFile.metadata.path!
+server/scanner/AudioFileScanner.ts:154 nn a[discKey!]!
+server/scanner/AudioFileScanner.ts:154 nn discKey!
+server/scanner/AudioFileScanner.ts:154 nn b[discKey!]!
+server/scanner/AudioFileScanner.ts:154 nn discKey!
+server/scanner/AudioFileScanner.ts:155 nn a[trackKey!]!
+server/scanner/AudioFileScanner.ts:155 nn trackKey!
+server/scanner/AudioFileScanner.ts:155 nn b[trackKey!]!
+server/scanner/AudioFileScanner.ts:155 nn trackKey!
+server/scanner/AudioFileScanner.ts:161 nn a[trackKey!]!
+server/scanner/AudioFileScanner.ts:161 nn trackKey!
+server/scanner/AudioFileScanner.ts:161 nn b[trackKey!]!
+server/scanner/AudioFileScanner.ts:161 nn trackKey!
+server/scanner/AudioFileScanner.ts:221 nn [count missing] libraryFile.metadata.path!
+server/scanner/AudioFileScanner.ts:235 nn probeData.audioMetaTags!
+server/scanner/AudioFileScanner.ts:236 nn probeData.audioMetaTags!
+server/scanner/AudioFileScanner.ts:611 nn [count missing] file.metaTags!
+server/scanner/BookScanner.ts:214 nn iFile.metadata.path!
+server/scanner/BookScanner.ts:228 nn media.ebookFile!
+server/scanner/BookScanner.ts:232 nn [count missing] ebookFile.metadata!
+server/scanner/BookScanner.ts:233 nn ebookFile.metadata!
+server/scanner/BookScanner.ts:245 nn lf.metadata.ext!
+server/scanner/BookScanner.ts:378 nn bookMetadata.coverPath!
+server/scanner/BookScanner.ts:383 nn bookMetadata.coverPath!
+server/scanner/BookScanner.ts:500 nn lf.metadata.ext!
+server/scanner/BookScanner.ts:593 nn libraryFile.metadata.ext!
+server/scanner/BookScanner.ts:646 nn libraryItem.book!
+server/scanner/BookScanner.ts:647 nn libraryItem.book!
+server/scanner/BookScanner.ts:653 nn libraryItem.book!
+server/scanner/BookScanner.ts:654 nn libraryItem.book!
+server/scanner/BookScanner.ts:663 nn libraryItem.book!
+server/scanner/BookScanner.ts:664 nn libraryItem.book!
+server/scanner/BookScanner.ts:665 nn libraryItem.book!
+server/scanner/BookScanner.ts:666 nn libraryItem.book!
+server/scanner/BookScanner.ts:667 nn libraryItem.book!
+server/scanner/BookScanner.ts:669 nn libraryItem.book!
+server/scanner/BookScanner.ts:714 nn libraryItemData.mediaMetadata.title!
+server/scanner/BookScanner.ts:750 nn iFile.metadata.path!
+server/scanner/BookScanner.ts:794 nn this.libraryItemData.mediaMetadata.title!
+server/scanner/BookScanner.ts:801 nn ebookMetdataObject.tags!
+server/scanner/BookScanner.ts:802 nn ebookMetdataObject.tags!
+server/scanner/BookScanner.ts:806 nn ebookMetdataObject.genres!
+server/scanner/BookScanner.ts:807 nn ebookMetdataObject.genres!
+server/scanner/BookScanner.ts:844 nn this.libraryItemData.descTxtLibraryFile.metadata.path!
+server/scanner/BookScanner.ts:851 nn this.libraryItemData.readerTxtLibraryFile.metadata.path!
+server/scanner/LibraryItemScanData.ts:204 nn lf.metadata.ext!
+server/scanner/LibraryItemScanData.ts:210 nn lf.metadata.ext!
+server/scanner/LibraryItemScanData.ts:328 nn scannedLibraryFile.ino!
+server/scanner/LibraryItemScanner.ts:78 nn library.libraryFolders!
+server/scanner/LibraryScan.ts:65 nn this.library!
+server/scanner/LibraryScan.ts:68 nn this.library!
+server/scanner/LibraryScan.ts:71 nn this.library!
+server/scanner/LibraryScan.ts:74 nn this.library!
+server/scanner/LibraryScan.ts:86 nn this.elapsed!
+server/scanner/LibraryScan.ts:98 nn this.elapsed!
+server/scanner/LibraryScan.ts:116 nn this.library!
+server/scanner/LibraryScan.ts:137 nn this.startedAt!
+server/scanner/LibraryScanner.ts:70 nn library.libraryFolders!
+server/scanner/LibraryScanner.ts:120 nn task.data!
+server/scanner/LibraryScanner.ts:136 nn task.data!
+server/scanner/LibraryScanner.ts:164 nn libraryScan.libraryFolders!
+server/scanner/LibraryScanner.ts:165 nn libraryScan.libraryFolders!
+server/scanner/LibraryScanner.ts:166 nn libraryScan.library!
+server/scanner/LibraryScanner.ts:219 nn libraryScan.library!
+server/scanner/LibraryScanner.ts:279 nn libraryScan.library!
+server/scanner/LibraryScanner.ts:425 nn library.libraryFolders!
+server/scanner/LibraryScanner.ts:467 nn pendingTask.data!
+server/scanner/LibraryScanner.ts:470 nn pendingTask.startedAt!
+server/scanner/LibraryScanner.ts:480 nn this.pendingFileUpdatesToScan.shift()!
+server/scanner/MediaProbeData.ts:69 as [count missing] probeData[key] as ConstructorParameters<typeof AudioMetaTags>[0]
+server/scanner/NfoFileScanner.ts:19 nn nfoLibraryFileObj.metadata.path!
+server/scanner/NfoFileScanner.ts:26 nn nfoMetadata.tags!
+server/scanner/NfoFileScanner.ts:27 nn nfoMetadata.tags!
+server/scanner/NfoFileScanner.ts:32 nn nfoMetadata.genres!
+server/scanner/NfoFileScanner.ts:33 nn nfoMetadata.genres!
+server/scanner/OpfFileScanner.ts:19 nn opfLibraryFileObj.metadata.path!
+server/scanner/PodcastScanner.ts:201 nn iFile.metadata.path!
+server/scanner/PodcastScanner.ts:315 nn iFile.metadata.path!
+server/scanner/PodcastScanner.ts:360 nn libraryItem.podcast!
+server/scanner/PodcastScanner.ts:361 nn libraryItem.podcast!
+server/scanner/PodcastScanner.ts:387 nn libraryItemData.mediaMetadata.title!
+server/scanner/ScanLogger.ts:66 nn this.startedAt!
+server/scanner/Scanner.ts:93 nn coverResult.cover!
+server/scanner/Scanner.ts:110 nn results!
+server/scanner/Scanner.ts:116 nn results!
+server/scanner/Scanner.ts:126 nn coverResult.cover!
+server/scanner/Scanner.ts:395 nn libraryItem.media.feedURL!
+server/scanner/Scanner.ts:404 nn episode.title!
+server/scanner/Scanner.ts:552 nn task.data!
+server/utils/areEquivalent.ts:23 as value1 as number
+server/utils/areEquivalent.ts:25 as value2 as number
+server/utils/areEquivalent.ts:54 as value1 as number
+server/utils/areEquivalent.ts:54 as value2 as number
+server/utils/areEquivalent.ts:63 as value1 as Function
+server/utils/areEquivalent.ts:63 as value2 as Function
+server/utils/areEquivalent.ts:69 as type1 as string
+server/utils/areEquivalent.ts:99 as value1 as Record<string, unknown>
+server/utils/areEquivalent.ts:101 as value2 as Record<string, unknown>
+server/utils/comicBookExtractors.ts:102 as this.tmpDir as string
+server/utils/comicBookExtractors.ts:114 as this.tmpDir as string
+server/utils/comicBookExtractors.ts:168 unk (await Archive.open(buffer as Buffer)) as unknown as LibArchive
+server/utils/comicBookExtractors.ts:168 as buffer as Buffer
+server/utils/ffmpegHelpers.ts:171 nn [count missing] podcastEpisodeDownload.url!
+server/utils/ffmpegHelpers.ts:171 nn [count missing] podcastEpisodeDownload.url!
+server/utils/ffmpegHelpers.ts:172 nn [count missing] podcastEpisodeDownload.url!
+server/utils/ffmpegHelpers.ts:172 nn [count missing] podcastEpisodeDownload.url!
+server/utils/ffmpegHelpers.ts:180 as error as Error
+server/utils/ffmpegHelpers.ts:201 as podcastEpisodeDownload.libraryItem.media as import('../models/Podcast')
+server/utils/ffmpegHelpers.ts:234 as tagValue as string
+server/utils/fileUtils.ts:186 as (await rra.list(path, options)) as RraListItem[] & { error?: unknown }
+server/utils/fileUtils.ts:204 as relPathToReplace as string
+server/utils/fileUtils.ts:238 as relPathToReplace as string
+server/utils/fileUtils.ts:240 as relPathToReplace as string
+server/utils/fileUtils.ts:292 as response.headers?.['content-type'] as string | undefined
+server/utils/fileUtils.ts:297 as response.headers['content-length'] as string
+server/utils/fileUtils.ts:403 as extname.slice(1).toUpperCase() as keyof typeof AudioMimeType
+server/utils/generators/abmetadataGenerator.ts:108 as validated.title as string | null | undefined
+server/utils/generators/opmlGenerator.ts:23 as podcast as Podcast & { itunesPageUrl?: string }
+server/utils/index.ts:55 as num as number
+server/utils/index.ts:74 as results as T
+server/utils/index.ts:153 as val as Record<string, unknown>
+server/utils/index.ts:161 as val as number
+server/utils/libraryHelpers.ts:13 as createNewSortInstance({ comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare }) as SortInstance
+server/utils/libraryHelpers.ts:105 as libraryItem.toOldJSONMinified() as SeriesBookJson
+server/utils/libraryHelpers.ts:109 as libraryItem.media.series.find((se) => se.id === filterSeries) as SeriesExpanded
+server/utils/libraryHelpers.ts:208 as seriesWithBooks.books as (BookMediaExpanded & { libraryItem?: BookLibraryItem })[]
+server/utils/libraryHelpers.ts:214 as book.libraryItem as BookLibraryItem
+server/utils/libraryHelpers.ts:238 as li.media.series.find((se) => se.id === seriesId) as SeriesExpanded
+server/utils/libraryHelpers.ts:279 as payload.sortBy as string
+server/utils/libraryHelpers.ts:279 as a as Record<string, unknown> | undefined
+server/utils/libraryHelpers.ts:289 as payload.page as number
+server/utils/libraryHelpers.ts:296 as li.media.series.find((se) => se.id === seriesId) as SeriesExpanded
+server/utils/libraryHelpers.ts:298 as li.toOldJSONMinified() as CollapsedItemJson
+server/utils/libraryHelpers.ts:320 as sequence as string
+server/utils/libraryHelpers.ts:326 as lastRange.end as number
+server/utils/migrations/dbMigration.ts:621 as bookRecords.book as NewRecord
+server/utils/migrations/dbMigration.ts:629 as podcastRecords.podcast as NewRecord
+server/utils/migrations/dbMigration.ts:649 as oldLibrary.mediaType as string
+server/utils/migrations/dbMigration.ts:910 as getDeviceInfoString(oldDeviceInfo, userId) as string
+server/utils/migrations/dbMigration.ts:974 as oldSession.episodeId as string
+server/utils/migrations/dbMigration.ts:1268 as await oldDbFiles.loadOldData('libraries') as OldLibrary[]
+server/utils/migrations/dbMigration.ts:1281 as await oldDbFiles.loadOldData('settings') as OldSetting[]
+server/utils/migrations/dbMigration.ts:1292 as await oldDbFiles.loadOldData('authors') as OldAuthor[]
+server/utils/migrations/dbMigration.ts:1303 as await oldDbFiles.loadOldData('series') as OldSeries[]
+server/utils/migrations/dbMigration.ts:1326 as await oldDbFiles.loadOldData('libraryItems') as OldLibraryItem[]
+server/utils/migrations/dbMigration.ts:1344 as await oldDbFiles.loadOldData('users') as OldUser[]
+server/utils/migrations/dbMigration.ts:1357 as await oldDbFiles.loadOldData('sessions') as OldSession[]
+server/utils/migrations/dbMigration.ts:1377 as await oldDbFiles.loadOldData('collections') as OldCollection[]
+server/utils/migrations/dbMigration.ts:1390 as await oldDbFiles.loadOldData('playlists') as OldPlaylist[]
+server/utils/migrations/dbMigration.ts:1403 as await oldDbFiles.loadOldData('feeds') as OldFeed[]
+server/utils/migrations/dbMigration.ts:1510 as (await oldDbFiles.loadOldData('libraryItems')) as OldLibraryItem[]
+server/utils/migrations/dbMigration.ts:1530 as libraryItem.media as { podcastEpisodes?: { id: string; audioFile?: { ino?: string } }[] }
+server/utils/migrations/dbMigration.ts:1574 as (await oldDbFiles.loadOldData('libraries')) as OldLibrary[]
+server/utils/migrations/dbMigration.ts:1586 as library.libraryFolders as { path: string }[]
+server/utils/migrations/dbMigration.ts:1591 as (library.extraData || {}) as Record<string, unknown>
+server/utils/migrations/dbMigration.ts:1598 unk library as unknown as { oldLibraryId: string }
+server/utils/migrations/dbMigration.ts:1636 as user.permissions as { librariesAccessible?: (string | undefined)[] } | null
+server/utils/migrations/dbMigration.ts:1642 as permissions as { librariesAccessible?: (string | undefined)[] }
+server/utils/migrations/dbMigration.ts:1642 as librariesAccessible as string[]
+server/utils/migrations/dbMigration.ts:1655 as user.extraData as { seriesHideFromContinueListening?: (string | null)[] } | null
+server/utils/migrations/dbMigration.ts:1660 as userExtraData as { seriesHideFromContinueListening?: (string | null)[] }
+server/utils/migrations/dbMigration.ts:1660 as seriesHideFromContinueListening as string[]
+server/utils/migrations/oldDbFiles.ts:14 unk archiverLib as unknown as ArchiverFactory
+server/utils/parsers/parseComicMetadata.ts:47 as filePaths as string[]
+server/utils/parsers/parseEpubMetadata.ts:110 as structuredClone(packageJson) as Parameters<typeof parseOpfMetadata.parseOpfMetadataJson>[0]
+server/utils/parsers/parseFullName.ts:38 as fixCase as unknown
+server/utils/parsers/parseFullName.ts:65 as Object.keys(parsedName) .filter(function (v) { return v !== 'error'; }) as Exclude<keyof ParsedName, 'error'>[]
+server/utils/parsers/parseFullName.ts:115 as partToReturn as keyof ParsedName
+server/utils/parsers/parseFullName.ts:212 as partToReturn as keyof ParsedName
+server/utils/parsers/parseFullName.ts:255 as partToReturn as keyof ParsedName
+server/utils/parsers/parseFullName.ts:286 as partToReturn as keyof ParsedName
+server/utils/parsers/parseFullName.ts:352 as partToReturn as keyof ParsedName
+server/utils/parsers/parseFullName.ts:360 as partToReturn as keyof ParsedName
+server/utils/parsers/parseFullName.ts:371 as partToReturn as keyof ParsedName
+server/utils/parsers/parseOpfMetadata.ts:50 as metadata['dc:creator'] as (string | XmlElement)[] | undefined
+server/utils/parsers/parseOpfMetadata.ts:81 as creators as MetadataCreatorObject[]
+server/utils/parsers/parseOpfMetadata.ts:87 as metadata[tag] as (string | XmlElement)[] | undefined
+server/utils/parsers/parseOpfMetadata.ts:119 unk dateSplit[0] as unknown as number
+server/utils/parsers/parseOpfMetadata.ts:134 as metadata['dc:identifier'] as XmlElement[] | undefined
+server/utils/parsers/parseOpfMetadata.ts:143 as i['$'] as Record<string, string>
+server/utils/parsers/parseOpfMetadata.ts:175 as metadata['dc:subject'] as unknown[] | undefined
+server/utils/parsers/parseOpfMetadata.ts:206 as seriesIndexMeta.$ as Record<string, string>
+server/utils/parsers/parseOpfMetadata.ts:221 as fetchTagString(metadata.meta, 'calibre:user_metadata:#narrators') as string
+server/utils/parsers/parseOpfMetadata.ts:230 as metadata['dc:tag'] as unknown[] | undefined
+server/utils/parsers/parseOpfMetadata.ts:251 as (prefix ? json[packageKey][`${prefix}:metadata`] || json[packageKey].metadata : json[packageKey].metadata) as OpfMetadata | OpfMetadata[] | undefined
+server/utils/parsers/parseOpfMetadata.ts:259 unk (prefix ? metadata[`${prefix}:meta`] || metadata.meta : metadata.meta) as unknown as XmlElement[] | undefined
+server/utils/parsers/parseOverdriveMediaMarkers.ts:103 as item[key] as unknown[]
+server/utils/parsers/parseOverdriveMediaMarkers.ts:108 as arrayOfObjects as OverdriveMediaMarker[]
+server/utils/parsers/parseOverdriveMediaMarkers.ts:156 as timeParts.pop() as string
+server/utils/parsers/parseOverdriveMediaMarkers.ts:160 as timeParts.pop() as string
+server/utils/parsers/parseOverdriveMediaMarkers.ts:165 as timeParts.pop() as string
+server/utils/parsers/parseUserAgent.ts:29 as key as keyof DeviceInfo
+server/utils/parsers/parseUserAgent.ts:29 as key as keyof DeviceInfo
+server/utils/podcastUtils.ts:18 unk FuseLib as unknown as FuseConstructor
+server/utils/podcastUtils.ts:149 as json[key] as unknown[] | undefined
+server/utils/podcastUtils.ts:157 as json[Object.keys(json)[0]] as unknown[] | undefined
+server/utils/podcastUtils.ts:173 as item as XmlElement
+server/utils/podcastUtils.ts:184 as channel.image as { url?: string[] } | undefined
+server/utils/podcastUtils.ts:241 as key.split(':').pop() as string
+server/utils/podcastUtils.ts:244 as value as XmlElement | null
+server/utils/podcastUtils.ts:244 as value as XmlElement
+server/utils/podcastUtils.ts:256 as item.enclosure[0]['$'] as RssPodcastEnclosure
+server/utils/podcastUtils.ts:260 as (item['media:content'].find((c) => (c['$']?.type ?? '').startsWith('audio')) as XmlElement)['$'] as RssPodcastEnclosure
+server/utils/podcastUtils.ts:260 as item['media:content'].find((c) => (c['$']?.type ?? '').startsWith('audio')) as XmlElement
+server/utils/podcastUtils.ts:294 as extractFirstArrayItem(item, 'pubDate') as string | XmlElement | null
+server/utils/podcastUtils.ts:306 as extractFirstArrayItem(item, 'guid') as string | XmlElement | null
+server/utils/podcastUtils.ts:319 as key.split(':').pop() as string
+server/utils/podcastUtils.ts:335 as item['psc:chapters'][0]['psc:chapter'] as XmlElement[]
+server/utils/podcastUtils.ts:341 as chapter['$'] as XmlAttributes
+server/utils/podcastUtils.ts:349 as (chapter['$'] as XmlAttributes).title as string
+server/utils/podcastUtils.ts:349 as chapter['$'] as XmlAttributes
+server/utils/podcastUtils.ts:358 as cleanedChapters as { id: number; title: string; start: number }[]
+server/utils/podcastUtils.ts:362 as episode.durationSeconds as number
+server/utils/podcastUtils.ts:379 unk pubJsDate as unknown as number
+server/utils/prober.ts:8 as globalThis.isNaN as (value: unknown) => boolean
+server/utils/prober.ts:76 unk nodeFfprobe as unknown as Ffprobe
+server/utils/prober.ts:153 as tagKey as string
+server/utils/prober.ts:225 as chap.time_base as string
+server/utils/prober.ts:343 as cleanedData.audio_stream.bit_rate as number
+server/utils/prober.ts:343 as videoBitrate as number
+server/utils/profiler.ts:24 as histogram as ProfilerHistogram
+server/utils/profiler.ts:29 as histograms.get(funcName) as ProfilerHistogram
+server/utils/profiler.ts:34 as args[0] as ProfiledFindOptions
+server/utils/queries/adminStats.ts:72 unk books as unknown as BookWithLibraryItem[]
+server/utils/queries/adminStats.ts:111 as ls.mediaMetadata as PlaybackMediaMetadata | null
+server/utils/queries/adminStats.ts:166 as totalStatResultsRow[0] as { totalSize: number | null; totalDuration: number | null; totalItems: number } | undefined
+server/utils/queries/adminStats.ts:191 as mediaTypeStatsRows as { mediaType: string; totalSize: number | null; numItems: number }[]
+server/utils/queries/adminStats.ts:219 as numBookAudioFilesRow[0] as { numAudioFiles: number | null } | undefined
+server/utils/queries/authorFilters.ts:44 as authors as (BookAuthor & { author: Author })[]
+server/utils/queries/libraryFilters.ts:23 as createNewSortInstance({ comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare }) as SortInstance
+server/utils/queries/libraryFilters.ts:78 as error as Error
+server/utils/queries/libraryFilters.ts:151 unk li.size as unknown as number
+server/utils/queries/libraryFilters.ts:170 unk li.size as unknown as number
+server/utils/queries/libraryFilters.ts:280 as user.permissions as UserPermissions | null
+server/utils/queries/libraryFilters.ts:322 as series as SeriesWithBooks[]
+server/utils/queries/libraryFilters.ts:398 as authors as (Author & { books: Book[] })[]
+server/utils/queries/libraryFilters.ts:503 as { include: { model: Database.libraryItemModel, attributes: [], where: { libraryId: libraryId } } } as CountOptions
+server/utils/queries/libraryFilters.ts:518 as { include: { model: Database.libraryItemModel, attributes: [], where: { libraryId: libraryId, updatedAt: { [Sequelize.Op.gt]: new Date(lastLoadedAt) } } }, wher
+server/utils/queries/libraryFilters.ts:562 as podcasts as import('../../models/Podcast')[]
+server/utils/queries/libraryFilters.ts:605 as { include: { model: Database.libraryItemModel, attributes: [], where: { libraryId: libraryId, updatedAt: { [Sequelize.Op.gt]: new Date(lastLoadedAt) } } }, wher
+server/utils/queries/libraryFilters.ts:625 as { where: { libraryId: libraryId, updatedAt: { [Sequelize.Op.gt]: new Date(lastLoadedAt) } }, limit: 1 // limit is not a count option (sequelize ignores it); kep
+server/utils/queries/libraryFilters.ts:636 as { where: { libraryId: libraryId, updatedAt: { [Sequelize.Op.gt]: new Date(lastLoadedAt) } }, limit: 1 // limit is not a count option (sequelize ignores it); kep
+server/utils/queries/libraryFilters.ts:674 as books as (Book & { libraryItem: LibraryItem })[]
+server/utils/queries/libraryFilters.ts:688 unk book.publishedYear as unknown as number
+server/utils/queries/libraryFilters.ts:714 unk data as unknown as LibraryFilterData
+server/utils/queries/libraryItemFilters.ts:53 as booksWithTag as MediaWithLibraryItem[]
+server/utils/queries/libraryItemFilters.ts:75 as podcastsWithTag as MediaWithLibraryItem[]
+server/utils/queries/libraryItemFilters.ts:114 as booksWithGenre as MediaWithLibraryItem[]
+server/utils/queries/libraryItemFilters.ts:136 as podcastsWithGenre as MediaWithLibraryItem[]
+server/utils/queries/libraryItemFilters.ts:176 as booksWithGenre as MediaWithLibraryItem[]
+server/utils/queries/libraryItemsBookFilters.ts:105 as user.permissions as UserPermissions | null
+server/utils/queries/libraryItemsBookFilters.ts:297 as value as string
+server/utils/queries/libraryItemsBookFilters.ts:299 as value as string
+server/utils/queries/libraryItemsBookFilters.ts:305 as value as string
+server/utils/queries/libraryItemsBookFilters.ts:307 as value as string
+server/utils/queries/libraryItemsBookFilters.ts:318 as value as string
+server/utils/queries/libraryItemsBookFilters.ts:320 as value as string
+server/utils/queries/libraryItemsBookFilters.ts:410 as allSeriesRows as CollapseSeriesRow[]
+server/utils/queries/libraryItemsBookFilters.ts:452 as offset as number
+server/utils/queries/libraryItemsBookFilters.ts:458 as countCache.get(countCacheKey) as number
+server/utils/queries/libraryItemsBookFilters.ts:463 as offset as number
+server/utils/queries/libraryItemsBookFilters.ts:497 as null as { include: [ReturnType<typeof Sequelize.literal>, string][] } | null
+server/utils/queries/libraryItemsBookFilters.ts:626 as sortBy as string
+server/utils/queries/libraryItemsBookFilters.ts:632 as user as User
+server/utils/queries/libraryItemsBookFilters.ts:718 as books as BookRow[]
+server/utils/queries/libraryItemsBookFilters.ts:720 as bookExpanded.libraryItem as FilteredLibraryItem
+server/utils/queries/libraryItemsBookFilters.ts:737 as bs.series as SeriesRow
+server/utils/queries/libraryItemsBookFilters.ts:822 as user.extraData as { seriesHideFromContinueListening?: string[] } | null
+server/utils/queries/libraryItemsBookFilters.ts:889 as series as SeriesWithBookSeries[]
+server/utils/queries/libraryItemsBookFilters.ts:907 as s.bookSeries[bookIndex].book.libraryItem as FilteredLibraryItem
+server/utils/queries/libraryItemsBookFilters.ts:972 as seriesNotStarted as SeriesWithBookSeries[]
+server/utils/queries/libraryItemsBookFilters.ts:1088 as selectedIds.map((id) => booksById.get(id)).filter(Boolean) as BookRow[]
+server/utils/queries/libraryItemsBookFilters.ts:1093 as bookExpanded.libraryItem as FilteredLibraryItem
+server/utils/queries/libraryItemsBookFilters.ts:1100 as bs.series as SeriesRow
+server/utils/queries/libraryItemsBookFilters.ts:1165 as book.libraryItem as FilteredLibraryItem
+server/utils/queries/libraryItemsBookFilters.ts:1245 as books as BookRow[]
+server/utils/queries/libraryItemsBookFilters.ts:1247 as book.libraryItem as FilteredLibraryItem
+server/utils/queries/libraryItemsBookFilters.ts:1251 as book.bookSeries as BookSeriesRow[]
+server/utils/queries/libraryItemsBookFilters.ts:1253 as bs.series as SeriesRow
+server/utils/queries/libraryItemsBookFilters.ts:1261 as book.bookAuthors as BookAuthorRow[]
+server/utils/queries/libraryItemsBookFilters.ts:1285 as narratorResultRows as ValueCountRow[]
+server/utils/queries/libraryItemsBookFilters.ts:1303 as tagResultRows as ValueCountRow[]
+server/utils/queries/libraryItemsBookFilters.ts:1321 as genreResultRows as ValueCountRow[]
+server/utils/queries/libraryItemsBookFilters.ts:1359 as allSeries as SeriesWithBookSeries[]
+server/utils/queries/libraryItemsBookFilters.ts:1362 as bs.book.libraryItem as FilteredLibraryItem
+server/utils/queries/libraryItemsBookFilters.ts:1365 as libraryItem.media as BookExpanded
+server/utils/queries/libraryItemsBookFilters.ts:1367 as libraryItem.media as BookExpanded
+server/utils/queries/libraryItemsBookFilters.ts:1403 as genreResultRows as ValueCountRow[]
+server/utils/queries/libraryItemsBookFilters.ts:1422 as statResultRows as { totalSize: number | null; totalDuration: number | null; numAudioFiles: number | null; totalItems: number }[]
+server/utils/queries/libraryItemsBookFilters.ts:1448 as books as (Book & { libraryItem: LibraryItem })[]
+server/utils/queries/libraryItemsPodcastFilters.ts:52 as user.permissions as UserPermissions | null
+server/utils/queries/libraryItemsPodcastFilters.ts:114 unk [[Sequelize.literal(`\`podcast\`.\`author\` COLLATE NOCASE ${nullDir}`)]] as unknown as Order
+server/utils/queries/libraryItemsPodcastFilters.ts:151 as countCache.get(countCacheKey) as number
+server/utils/queries/libraryItemsPodcastFilters.ts:231 as podcasts as PodcastWithLibraryItem[]
+server/utils/queries/libraryItemsPodcastFilters.ts:234 as podcastExpanded as Podcast & { libraryItem?: FilteredLibraryItem }
+server/utils/queries/libraryItemsPodcastFilters.ts:244 as user.mediaProgresses as NonNullable<User['mediaProgresses']>
+server/utils/queries/libraryItemsPodcastFilters.ts:349 as podcastEpisodes as EpisodeWithPodcast[]
+server/utils/queries/libraryItemsPodcastFilters.ts:352 as ep.podcast as Podcast & { libraryItem?: FilteredLibraryItem }
+server/utils/queries/libraryItemsPodcastFilters.ts:378 as { where: [ { [Sequelize.Op.or]: [ Sequelize.literal(matchTitle), Sequelize.literal(matchAuthor), { itunesId: { [Sequelize.Op.substring]: query } }, { itunesArti
+server/utils/queries/libraryItemsPodcastFilters.ts:417 as podcasts as (Podcast & { libraryItem?: FilteredLibraryItem })[]
+server/utils/queries/libraryItemsPodcastFilters.ts:419 as podcast.libraryItem as FilteredLibraryItem
+server/utils/queries/libraryItemsPodcastFilters.ts:429 as { where: [ Sequelize.literal(textSearchQuery.matchExpression('podcastEpisode.title')), { '$podcast.libraryItem.libraryId$': library.id } ], replacements: userPe
+server/utils/queries/libraryItemsPodcastFilters.ts:455 as podcastEpisodes as EpisodeWithPodcast[]
+server/utils/queries/libraryItemsPodcastFilters.ts:480 as tagResultRows as ValueCountRow[]
+server/utils/queries/libraryItemsPodcastFilters.ts:498 as genreResultRows as ValueCountRow[]
+server/utils/queries/libraryItemsPodcastFilters.ts:558 as episodes as EpisodeWithPodcast[]
+server/utils/queries/libraryItemsPodcastFilters.ts:587 as sizeResultRows as { totalSize: number | null }[]
+server/utils/queries/libraryItemsPodcastFilters.ts:589 as statResultRows as { totalDuration: number | null; numAudioFiles: number; totalItems: number }[]
+server/utils/queries/libraryItemsPodcastFilters.ts:610 as genreResultRows as ValueCountRow[]
+server/utils/queries/libraryItemsPodcastFilters.ts:636 as podcasts as PodcastWithLibraryItem[]
+server/utils/queries/seriesFilters.ts:33 as error as Error
+server/utils/queries/seriesFilters.ts:80 as filterGroup as string
+server/utils/queries/seriesFilters.ts:119 as user.permissions as UserPermissions | null
+server/utils/queries/seriesFilters.ts:205 as series as SeriesWithBooks[]
+server/utils/queries/seriesFilters.ts:227 as bs.book.libraryItem as FilteredLibraryItem
+server/utils/queries/seriesFilters.ts:230 unk bs.book as unknown as FilteredLibraryItem['media']
+server/utils/queries/userStats.ts:38 unk { model: Database.libraryItemModel, attributes: ['id', 'mediaId', 'mediaType'] } as unknown as Includeable[]
+server/utils/queries/userStats.ts:47 as sessions as (PlaybackSession & { mediaItem?: IncludedBook | null })[]
+server/utils/queries/userStats.ts:68 unk { model: Database.libraryItemModel, attributes: ['id', 'mediaId', 'mediaType'] } as unknown as Includeable[]
+server/utils/queries/userStats.ts:77 as progresses as (MediaProgress & { mediaItem: IncludedBook })[]
+server/utils/queries/userStats.ts:143 as ls.mediaMetadata as PlaybackMediaMetadata | null
+server/utils/rateLimiterFactory.ts:36 as process.env.RATE_LIMIT_AUTH_WINDOW as string
+server/utils/rateLimiterFactory.ts:38 as process.env.RATE_LIMIT_AUTH_WINDOW as string
+server/utils/rateLimiterFactory.ts:46 as process.env.RATE_LIMIT_AUTH_MAX as string
+server/utils/rateLimiterFactory.ts:48 as process.env.RATE_LIMIT_AUTH_MAX as string
+server/utils/rateLimiterFactory.ts:67 as (requestIp.getClientIp(req) || req.ip) as string
+server/utils/scandir.ts:84 as dirparts.shift() as string
+server/utils/scandir.ts:92 as libraryItemGroup[_path] as string[]
+server/utils/scandir.ts:116 as dirparts.shift() as string
+server/utils/scandir.ts:123 as libraryItemGroup[_path] as string[]
+server/utils/scandir.ts:152 as splitDir.pop() as string
+server/utils/scandir.ts:184 nn match.groups!
+server/utils/scandir.ts:184 nn match.groups!
+server/utils/scandir.ts:211 as parts[i] as string
+server/utils/scandir.ts:213 as match?.groups as Record<string, string | undefined> | undefined
+server/utils/scandir.ts:217 as groups.sequence as string
+server/utils/scandir.ts:219 unk sequenceMatch as unknown as number
+server/utils/stringifySequelizeQuery.ts:10 as value as Record<symbol, unknown>
+server/utils/zipHelpers.ts:8 unk archiverLib as unknown as ArchiverFactory

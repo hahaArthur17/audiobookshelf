@@ -1,0 +1,682 @@
+diff --git a/server/auth/OidcAuthStrategy.ts b/server/auth/OidcAuthStrategy.ts
+index 6f031871..b63d955b 100644
+--- a/server/auth/OidcAuthStrategy.ts
++++ b/server/auth/OidcAuthStrategy.ts
+@@ -164,8 +164,7 @@ class OidcAuthStrategy {
+    */
+   async verifyCallback(tokenset: OpenIDClient.TokenSet, userinfo: OidcUserinfo, done: PassportDone) {
+     let isNewUser = false
+-    // Starts as null; typed as the user so the reads below type check (see the NOTE below)
+-    let user = null as unknown as OidcUser
++    let user: OidcUser | null = null
+     try {
+       Logger.debug(`[OidcAuth] openid callback userinfo=`, JSON.stringify(userinfo, null, 2))
+ 
+@@ -177,8 +176,8 @@ class OidcAuthStrategy {
+         throw new Error(`Group claim ${Database.serverSettings.authOpenIDGroupClaim} not found or empty in userinfo`)
+       }
+ 
+-      // The { error } result is checked right below
+-      user = (await Database.userModel.findUserFromOpenIdUserInfo(userinfo)) as OidcUser
++      // cast(d): the { error } result is checked right below (OidcUser has an optional error); null when no user matched
++      user = (await Database.userModel.findUserFromOpenIdUserInfo(userinfo)) as OidcUser | null
+ 
+       if (user?.error) {
+         throw new Error('Invalid userinfo or already linked')
+@@ -196,16 +195,18 @@ class OidcAuthStrategy {
+         }
+       }
+ 
++      // cast(d): user is null here when no user was found and auto-register is off (see the NOTE below); same object as user
++      const activeUser = user!
+       // NOTE: when no user was found and auto-register is off, user is null and this read throws a TypeError, so the 'User not active or not found' error is never thrown for that case (the login still fails)
+-      if (!user.isActive) {
++      if (!activeUser.isActive) {
+         throw new Error('User not active or not found')
+       }
+ 
+-      await this.setUserGroup(user, userinfo)
+-      await this.updateUserPermissions(user, userinfo)
++      await this.setUserGroup(activeUser, userinfo)
++      await this.updateUserPermissions(activeUser, userinfo)
+ 
+       // We also have to save the id_token for later (used for logout) because we cannot set cookies here
+-      user.openid_id_token = tokenset.id_token
++      activeUser.openid_id_token = tokenset.id_token
+ 
+       return done(null, user)
+     } catch (error) {
+diff --git a/server/managers/PodcastManager.ts b/server/managers/PodcastManager.ts
+index 5fb269b0..53ebfd1d 100644
+--- a/server/managers/PodcastManager.ts
++++ b/server/managers/PodcastManager.ts
+@@ -148,7 +148,8 @@ class PodcastManager {
+     if (!success && !ffmpegDownloadResponse?.isRequestError) {
+       Logger.info(`[PodcastManager] Retrying episode download without tagging`)
+       // Download episode only
+-      success = await downloadFile(this.currentDownload.url, this.currentDownload.targetPath)
++      // cast(d): setData sets url before the download is queued
++      success = await downloadFile(this.currentDownload.url!, this.currentDownload.targetPath)
+         .then(() => true)
+         .catch((error) => {
+           Logger.error(`[PodcastManager] Podcast Episode download failed`, error)
+@@ -213,7 +214,8 @@ class PodcastManager {
+       return false
+     }
+ 
+-    const podcastEpisode = await Database.podcastEpisodeModel.createFromRssPodcastEpisode(this.currentDownload!.rssPodcastEpisode, libraryItem.media.id, audioFile)
++    // cast(d): setData sets rssPodcastEpisode before the download is queued
++    const podcastEpisode = await Database.podcastEpisodeModel.createFromRssPodcastEpisode(this.currentDownload!.rssPodcastEpisode!, libraryItem.media.id, audioFile)
+ 
+     libraryItem.libraryFiles.push(libraryFile.toJSON())
+     // Re-calculating library item size because this wasnt being updated properly for podcasts in v2.20.0 and below
+diff --git a/server/models/LibraryItem.ts b/server/models/LibraryItem.ts
+index e588170f..946e812c 100644
+--- a/server/models/LibraryItem.ts
++++ b/server/models/LibraryItem.ts
+@@ -9,7 +9,6 @@ import LibraryFile = require('../objects/files/LibraryFile')
+ // Required at load as in the JS (only their types are used here)
+ import './Book'
+ import './Podcast'
+-import type { FsExtra } from '../utils/types'
+ import type Author = require('./Author')
+ import type Book = require('./Book')
+ import type Feed = require('./Feed')
+@@ -19,8 +18,7 @@ import type User = require('./User')
+ import type { AudioFileObject, AudioTrack, LibraryFileObject, LibraryItemExtraData, ModelsSequelize } from './types'
+ import type * as ModelTypes from './types'
+ const { DataTypes, Model } = Sequelize
+-// cast(a): the vendored fs-extra builds its fs API at runtime, so its inferred type lacks most fs methods
+-const fsExtra = fsExtraModule as unknown as FsExtra
++const fsExtra = fsExtraModule
+ const { filePathToPOSIX, getFileTimestampsWithIno } = fileUtils
+ 
+ /**
+@@ -603,8 +601,8 @@ class LibraryItem extends Model<InferAttributes<LibraryItem>, LibraryItemCreatio
+    * Get book library items for author, optional use user permissions
+    */
+   static async getForAuthor(author: Author, user: User | null = null) {
+-    // cast(d): libraryFilters types limit and offset as numbers; undefined (no limit, no offset) is passed on to the query, as in the JS
+-    const { libraryItems } = await libraryFilters.getLibraryItemsForAuthor(author, user, undefined as unknown as number, undefined as unknown as number)
++    // undefined (no limit, no offset) is passed on to the query, as in the JS
++    const { libraryItems } = await libraryFilters.getLibraryItemsForAuthor(author, user, undefined, undefined)
+     return libraryItems
+   }
+ 
+diff --git a/server/objects/DailyLog.ts b/server/objects/DailyLog.ts
+index 60abaef2..4bfc61ce 100644
+--- a/server/objects/DailyLog.ts
++++ b/server/objects/DailyLog.ts
+@@ -3,11 +3,10 @@ import dateAndTime = require('../libs/dateAndTime')
+ import fsExtra = require('../libs/fsExtra')
+ import fileUtils = require('../utils/fileUtils')
+ import Logger = require('../Logger')
+-import type { FsExtra } from '../utils/types'
+ import type { DateAndTime } from './types'
+-// Typed views of the untyped vendored date-and-time and fs-extra
++// Typed view of the untyped vendored date-and-time
+ const date = dateAndTime as unknown as DateAndTime
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
+ 
+ type LogObject = import('../managers/LogManager').LogObject
+ 
+diff --git a/server/objects/PodcastEpisodeDownload.ts b/server/objects/PodcastEpisodeDownload.ts
+index 4e6109b0..577f2083 100644
+--- a/server/objects/PodcastEpisodeDownload.ts
++++ b/server/objects/PodcastEpisodeDownload.ts
+@@ -13,9 +13,9 @@ type RssPodcastEpisode = NonNullable<ReturnType<typeof import('../utils/podcastU
+ 
+ class PodcastEpisodeDownload {
+   declare id: string | null
+-  declare rssPodcastEpisode: RssPodcastEpisode
++  declare rssPodcastEpisode: RssPodcastEpisode | null
+ 
+-  declare url: string
++  declare url: string | null
+   declare libraryItem: LibraryItem
+   declare libraryId: string | null
+ 
+@@ -34,11 +34,9 @@ class PodcastEpisodeDownload {
+ 
+   constructor() {
+     this.id = null
+-    // Typed RssPodcastEpisode (as the JSDoc did); setData sets it before use
+-    this.rssPodcastEpisode = null as unknown as RssPodcastEpisode
++    this.rssPodcastEpisode = null
+ 
+-    // Typed string; setData sets it before use
+-    this.url = null as unknown as string
++    this.url = null
+     // Typed LibraryItem (as the JSDoc did); setData sets it before use
+     this.libraryItem = null as unknown as LibraryItem
+     this.libraryId = null
+@@ -80,7 +78,8 @@ class PodcastEpisodeDownload {
+   }
+ 
+   get urlFileExtension() {
+-    const cleanUrl = this.url.split('?')[0] // Remove query string
++    // cast(d): setData sets url before the getters are used
++    const cleanUrl = this.url!.split('?')[0] // Remove query string
+     return Path.extname(cleanUrl).substring(1).toLowerCase()
+   }
+   get fileExtension() {
+@@ -89,11 +88,13 @@ class PodcastEpisodeDownload {
+     return 'mp3'
+   }
+   get enclosureType() {
+-    const enclosureType = this.rssPodcastEpisode.enclosure.type
++    // cast(d): setData sets rssPodcastEpisode before the getters are used
++    const enclosureType = this.rssPodcastEpisode!.enclosure.type
+     return typeof enclosureType === 'string' ? enclosureType : null
+   }
+   get episodeTitle() {
+-    return this.rssPodcastEpisode.title
++    // cast(d): setData sets rssPodcastEpisode before the getters are used
++    return this.rssPodcastEpisode!.title
+   }
+   get targetPath() {
+     // setData sets targetFilename to a string before the getters are used
+@@ -106,8 +107,9 @@ class PodcastEpisodeDownload {
+     return this.libraryItem?.id || null
+   }
+   get pubYear() {
+-    if (!this.rssPodcastEpisode.publishedAt) return null
+-    return new Date(this.rssPodcastEpisode.publishedAt).getFullYear()
++    // cast(d): setData sets rssPodcastEpisode before the getters are used (2)
++    if (!this.rssPodcastEpisode!.publishedAt) return null
++    return new Date(this.rssPodcastEpisode!.publishedAt).getFullYear()
+   }
+ 
+   /**
+@@ -124,7 +126,8 @@ class PodcastEpisodeDownload {
+    */
+   setAppendRandomId(appendRandomId: boolean) {
+     this.appendRandomId = appendRandomId
+-    this.targetFilename = this.getSanitizedFilename(this.rssPodcastEpisode.title || '')
++    // cast(d): only called on a queued download, after setData set rssPodcastEpisode
++    this.targetFilename = this.getSanitizedFilename(this.rssPodcastEpisode!.title || '')
+   }
+ 
+   /**
+diff --git a/server/objects/Stream.ts b/server/objects/Stream.ts
+index 86c149c2..7a726c8c 100644
+--- a/server/objects/Stream.ts
++++ b/server/objects/Stream.ts
+@@ -14,9 +14,7 @@ import AudioTrack = require('./files/AudioTrack')
+ import type LibraryItem = require('../models/LibraryItem')
+ import type Podcast = require('../models/Podcast')
+ import type User = require('../models/User')
+-import type { FsExtra } from '../utils/types'
+-// Typed view of the untyped vendored fs-extra
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
+ const { secondsToTimestamp } = utils
+ const { writeConcatFile } = ffmpegHelpers
+ const { AudioMimeType } = constants
+diff --git a/server/objects/files/AudioFile.ts b/server/objects/files/AudioFile.ts
+index ba05bd06..ea6a6ef0 100644
+--- a/server/objects/files/AudioFile.ts
++++ b/server/objects/files/AudioFile.ts
+@@ -60,7 +60,7 @@ class AudioFile {
+   declare embeddedCoverArt: string | null
+ 
+   // Tags scraped from the audio file
+-  declare metaTags: AudioMetaTags
++  declare metaTags: AudioMetaTags | null
+ 
+   declare manuallyVerified: boolean
+   declare exclude: boolean
+@@ -91,8 +91,7 @@ class AudioFile {
+     this.embeddedCoverArt = null
+ 
+     // Tags scraped from the audio file
+-    // Typed AudioMetaTags (as the JSDoc did); construct or setDataFromProbe sets it before use
+-    this.metaTags = null as unknown as AudioMetaTags
++    this.metaTags = null
+ 
+     this.manuallyVerified = false
+     this.exclude = false
+@@ -250,7 +249,8 @@ class AudioFile {
+         }
+       } else if (key === 'metaTags') {
+         if (!this.metaTags || !this.metaTags.isEqual(scannedAudioFile.metaTags)) {
+-          this.metaTags = scannedAudioFile.metaTags.clone()
++          // cast(d): a scanned audio file has meta tags (setDataFromProbe sets them)
++          this.metaTags = scannedAudioFile.metaTags!.clone()
+           hasUpdated = true
+         }
+       } else if (key === 'chapters') {
+diff --git a/server/objects/files/EBookFile.ts b/server/objects/files/EBookFile.ts
+index 5e263e5c..32fc7541 100644
+--- a/server/objects/files/EBookFile.ts
++++ b/server/objects/files/EBookFile.ts
+@@ -15,15 +15,14 @@ interface EBookFileData {
+ 
+ class EBookFile {
+   declare ino: string | null
+-  declare metadata: FileMetadata
++  declare metadata: FileMetadata | null
+   declare ebookFormat: string | null
+   declare addedAt: number | null
+   declare updatedAt: number | null
+ 
+   constructor(file?: EBookFileData | null) {
+     this.ino = null
+-    // Typed FileMetadata; construct or setData sets it before use
+-    this.metadata = null as unknown as FileMetadata
++    this.metadata = null
+     this.ebookFormat = null
+     this.addedAt = null
+     this.updatedAt = null
+@@ -44,7 +43,8 @@ class EBookFile {
+   toJSON() {
+     return {
+       ino: this.ino,
+-      metadata: this.metadata.toJSON(),
++      // cast(d): toJSON is only called on files that construct or setData filled in
++      metadata: this.metadata!.toJSON(),
+       ebookFormat: this.ebookFormat,
+       addedAt: this.addedAt,
+       updatedAt: this.updatedAt
+@@ -66,7 +66,8 @@ class EBookFile {
+   updateFromLibraryFile(libraryFile: LibraryFile) {
+     var hasUpdated = false
+ 
+-    if (this.metadata.update(libraryFile.metadata)) {
++    // cast(d): for an ebook file that construct or setData filled in (nothing calls this method at the moment)
++    if (this.metadata!.update(libraryFile.metadata)) {
+       hasUpdated = true
+     }
+ 
+diff --git a/server/routers/ApiRouter.ts b/server/routers/ApiRouter.ts
+index 533a2d3f..86df20f1 100644
+--- a/server/routers/ApiRouter.ts
++++ b/server/routers/ApiRouter.ts
+@@ -39,9 +39,8 @@ import ApiKeyController = require('../controllers/ApiKeyController')
+ import type { FindOptions } from 'sequelize'
+ import type Server = require('../Server')
+ import type { DateAndTime } from '../objects/types'
+-import type { FsExtra } from '../utils/types'
+-// Typed views of the untyped vendored fs-extra and date-and-time
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
++// Typed view of the untyped vendored date-and-time
+ const date = dateAndTime as unknown as DateAndTime
+ 
+ type OldPlaybackSession = import('../objects/PlaybackSession')
+diff --git a/server/routers/HlsRouter.ts b/server/routers/HlsRouter.ts
+index e7a61592..a555e5ad 100644
+--- a/server/routers/HlsRouter.ts
++++ b/server/routers/HlsRouter.ts
+@@ -7,9 +7,7 @@ import SocketAuthority = require('../SocketAuthority')
+ import fsExtra = require('../libs/fsExtra')
+ import type Auth = require('../Auth')
+ import type PlaybackSessionManager = require('../managers/PlaybackSessionManager')
+-import type { FsExtra } from '../utils/types'
+-// Typed view of the untyped vendored fs-extra
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
+ 
+ 
+ class HlsRouter {
+diff --git a/server/scanner/AudioFileScanner.ts b/server/scanner/AudioFileScanner.ts
+index 34634217..cb00f3dc 100644
+--- a/server/scanner/AudioFileScanner.ts
++++ b/server/scanner/AudioFileScanner.ts
+@@ -325,7 +325,8 @@ class AudioFileScanner {
+     ]
+ 
+     const firstScannedFile = audioFiles[0]
+-    const audioFileMetaTags = firstScannedFile.metaTags
++    // cast(d): scanned and stored audio files have meta tags (construct and setDataFromProbe set them)
++    const audioFileMetaTags = firstScannedFile.metaTags!
+     MetadataMapArray.forEach((mapping) => {
+       let value = audioFileMetaTags[mapping.tag]
+       let isAltTag = false
+@@ -408,7 +409,8 @@ class AudioFileScanner {
+    * Set podcast metadata from first audio file
+    */
+   setPodcastMetadataFromAudioMetaTags(audioFile: ScannedOrStoredAudioFile, podcastMetadata: PodcastMetadataObject, libraryScan: LibraryScan | ScanLogger) {
+-    const audioFileMetaTags = audioFile.metaTags
++    // cast(d): scanned and stored audio files have meta tags (construct and setDataFromProbe set them)
++    const audioFileMetaTags = audioFile.metaTags!
+ 
+     const MetadataMapArray: MetaTagMapping[] = [
+       {
+@@ -500,7 +502,8 @@ class AudioFileScanner {
+       }
+     ]
+ 
+-    const audioFileMetaTags = podcastEpisode.audioFile.metaTags
++    // cast(d): scanned and stored audio files have meta tags (construct and setDataFromProbe set them)
++    const audioFileMetaTags = podcastEpisode.audioFile.metaTags!
+     MetadataMapArray.forEach((mapping) => {
+       let value = audioFileMetaTags[mapping.tag]
+       let tagToUse = mapping.tag
+@@ -608,8 +611,8 @@ class AudioFileScanner {
+         if (file.duration) {
+           let title = file.metadata.filename ? Path.basename(file.metadata.filename, Path.extname(file.metadata.filename)) : `Chapter ${currChapterId}`
+           if (useMetaTagAsTitle) {
+-            // Every file has a title tag when useMetaTagAsTitle is true
+-            title = file.metaTags.tagTitle!
++            // cast(d): every file has meta tags with a title tag when useMetaTagAsTitle is true
++            title = file.metaTags!.tagTitle!
+           }
+ 
+           chapters.push({
+diff --git a/server/scanner/BookScanner.ts b/server/scanner/BookScanner.ts
+index ae86d33a..99a6f686 100644
+--- a/server/scanner/BookScanner.ts
++++ b/server/scanner/BookScanner.ts
+@@ -226,9 +226,9 @@ class BookScanner {
+       let ebookMatch = libraryItemData.ebookLibraryFilesModified.find((eFile) => eFile.old.metadata.path === media.ebookFile!.metadata.path)
+       if (ebookMatch) {
+         const ebookFile = new EBookFile(ebookMatch.new)
+-        // The library file JSON has an extension
+-        ebookFile.ebookFormat = ebookFile.metadata.ext!.slice(1).toLowerCase()
+-        libraryScan.addLog(LogLevel.DEBUG, `Updating book ebook file "${media.ebookFile.metadata.path}" => "${ebookFile.metadata.path}" for book "${media.title}"`)
++        // cast(d): the constructor sets metadata from the library file JSON, which has an extension (2 reads)
++        ebookFile.ebookFormat = ebookFile.metadata!.ext!.slice(1).toLowerCase()
++        libraryScan.addLog(LogLevel.DEBUG, `Updating book ebook file "${media.ebookFile.metadata.path}" => "${ebookFile.metadata!.path}" for book "${media.title}"`)
+         // cast(d): the stored ebook file JSON (EBookFile toJSON; ebookFormat was set just above)
+         media.ebookFile = ebookFile.toJSON() as EBookFileObject
+         media.changed('ebookFile', true)
+diff --git a/server/scanner/PodcastScanner.ts b/server/scanner/PodcastScanner.ts
+index 6ee4ff24..ee7e1ffd 100644
+--- a/server/scanner/PodcastScanner.ts
++++ b/server/scanner/PodcastScanner.ts
+@@ -139,7 +139,8 @@ class PodcastScanner {
+         newAudioFile.index = 1
+ 
+         const newEpisode = {
+-          title: newAudioFile.metaTags.tagTitle || newAudioFile.metadata.filenameNoExt,
++          // cast(d): a scanned audio file has meta tags (setDataFromProbe sets them)
++          title: newAudioFile.metaTags!.tagTitle || newAudioFile.metadata.filenameNoExt,
+           subtitle: null,
+           season: null,
+           episode: null,
+@@ -285,7 +286,8 @@ class PodcastScanner {
+       audioFile.index = 1
+ 
+       const newEpisode: NewPodcastEpisode = {
+-        title: audioFile.metaTags.tagTitle || audioFile.metadata.filenameNoExt,
++        // cast(d): a scanned audio file has meta tags (setDataFromProbe sets them)
++        title: audioFile.metaTags!.tagTitle || audioFile.metadata.filenameNoExt,
+         subtitle: null,
+         season: null,
+         episode: null,
+diff --git a/server/utils/comicBookExtractors.ts b/server/utils/comicBookExtractors.ts
+index 0f08186a..a9bdfd55 100644
+--- a/server/utils/comicBookExtractors.ts
++++ b/server/utils/comicBookExtractors.ts
+@@ -7,12 +7,10 @@ import StreamZip = require('../libs/nodeStreamZip')
+ import Archive = require('../libs/libarchive/archive')
+ import fileUtils = require('./fileUtils')
+ import archiverUtils = require('../libs/archiver/archiverUtils')
+-import type { FsExtra } from './types'
+ const { isWritable } = fileUtils
+ const { sanitizePath } = archiverUtils
+ 
+-// The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
+ 
+ /**
+  * Sanitize a path from an archive
+diff --git a/server/utils/ffmpegHelpers.ts b/server/utils/ffmpegHelpers.ts
+index 5b42244b..864a9546 100644
+--- a/server/utils/ffmpegHelpers.ts
++++ b/server/utils/ffmpegHelpers.ts
+@@ -7,11 +7,9 @@ import Path = require('path')
+ import Logger = require('../Logger')
+ import fileUtils = require('./fileUtils')
+ import PodcastEpisodeDownload = require('../objects/PodcastEpisodeDownload')
+-import type { FsExtra } from './types'
+ const { filePathToPOSIX, copyToExisting } = fileUtils
+ 
+-// The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
+ 
+ /**
+  * Audio track fields used (see models/Book AudioFileObject)
+@@ -160,8 +158,9 @@ const downloadPodcastEpisode = (podcastEpisodeDownload: PodcastEpisodeDownload):
+ 
+     for (const userAgent of userAgents) {
+       try {
++        // cast(d): setData sets url before the download is queued (5 reads below)
+         response = await axios({
+-          url: podcastEpisodeDownload.url,
++          url: podcastEpisodeDownload.url!,
+           method: 'GET',
+           responseType: 'stream',
+           headers: {
+@@ -169,8 +168,8 @@ const downloadPodcastEpisode = (podcastEpisodeDownload: PodcastEpisodeDownload):
+             'User-Agent': userAgent
+           },
+           timeout: global.PodcastDownloadTimeout,
+-          httpAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : ssrfFilter(podcastEpisodeDownload.url),
+-          httpsAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : ssrfFilter(podcastEpisodeDownload.url)
++          httpAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url!) ? null : ssrfFilter(podcastEpisodeDownload.url!),
++          httpsAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url!) ? null : ssrfFilter(podcastEpisodeDownload.url!)
+         })
+ 
+         Logger.debug(`[ffmpegHelpers] Successfully connected with User-Agent: ${userAgent}`)
+@@ -200,7 +199,8 @@ const downloadPodcastEpisode = (podcastEpisodeDownload: PodcastEpisodeDownload):
+ 
+     // Episodes are only downloaded for podcast library items
+     const podcast = podcastEpisodeDownload.libraryItem.media as import('../models/Podcast')
+-    const podcastEpisode = podcastEpisodeDownload.rssPodcastEpisode
++    // cast(d): setData sets rssPodcastEpisode before the download is queued
++    const podcastEpisode = podcastEpisodeDownload.rssPodcastEpisode!
+     const finalSizeInBytes = Number(podcastEpisode.enclosure?.length || 0)
+ 
+     const taggings: Record<string, string | number | null | undefined> = {
+diff --git a/server/utils/fileUtils.ts b/server/utils/fileUtils.ts
+index b7788c19..e9235d9b 100644
+--- a/server/utils/fileUtils.ts
++++ b/server/utils/fileUtils.ts
+@@ -6,12 +6,11 @@ import fsExtra = require('../libs/fsExtra')
+ import rra = require('../libs/recursiveReaddirAsync')
+ import Logger = require('../Logger')
+ import constants = require('./constants')
+-import type { FilePathItem, FsExtra } from './types'
++import type { FilePathItem } from './types'
+ const exec = childProcess.exec
+ const { AudioMimeType } = constants
+ 
+-// The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
+ 
+ /**
+  * Item returned by recursiveReaddirAsync list() with the options used in recurseFiles
+diff --git a/server/utils/generators/hlsPlaylistGenerator.ts b/server/utils/generators/hlsPlaylistGenerator.ts
+index a90a42a7..c98e3682 100644
+--- a/server/utils/generators/hlsPlaylistGenerator.ts
++++ b/server/utils/generators/hlsPlaylistGenerator.ts
+@@ -1,8 +1,6 @@
+ import fsExtra = require('../../libs/fsExtra')
+-import type { FsExtra } from '../types'
+ 
+-// The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
+ 
+ function getPlaylistStr(segmentName: string, duration: number, segmentLength: number, hlsSegmentType: string): string {
+   var ext = hlsSegmentType === 'fmp4' ? 'm4s' : 'ts'
+diff --git a/server/utils/migrations/absMetadataMigration.ts b/server/utils/migrations/absMetadataMigration.ts
+index b44e76fd..f70857ea 100644
+--- a/server/utils/migrations/absMetadataMigration.ts
++++ b/server/utils/migrations/absMetadataMigration.ts
+@@ -5,10 +5,8 @@ import fileUtils = require('../fileUtils')
+ import LibraryFile = require('../../objects/files/LibraryFile')
+ import LibraryItem = require('../../models/LibraryItem')
+ import type DatabaseModule = require('../../Database')
+-import type { FsExtra } from '../types'
+ 
+-// The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+-const fsExtra = fsExtraModule as unknown as FsExtra
++const fsExtra = fsExtraModule
+ 
+ /**
+  * @returns false if failed, null if the metadata file already exists
+diff --git a/server/utils/migrations/dbMigration.ts b/server/utils/migrations/dbMigration.ts
+index e45a2b18..ecd86e8b 100644
+--- a/server/utils/migrations/dbMigration.ts
++++ b/server/utils/migrations/dbMigration.ts
+@@ -6,14 +6,12 @@ import fsExtra = require('../../libs/fsExtra')
+ import oldDbFiles = require('./oldDbFiles')
+ import parseNameString = require('../parsers/parseNameString')
+ import type { CreationAttributes, Model, ModelStatic, QueryInterface } from 'sequelize'
+-import type { FsExtra } from '../types'
+ import type DatabaseModule = require('../../Database')
+ import type { ModelRegistry } from '../../models/types'
+ const { DataTypes } = sequelize
+ const uuidv4 = uuid.v4
+ 
+-// The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
+ 
+ /*
+  * Old (pre 2.3.0) JSON db entities, only the fields used.
+diff --git a/server/utils/migrations/oldDbFiles.ts b/server/utils/migrations/oldDbFiles.ts
+index 35094913..fc1343e4 100644
+--- a/server/utils/migrations/oldDbFiles.ts
++++ b/server/utils/migrations/oldDbFiles.ts
+@@ -5,12 +5,11 @@ import Logger = require('../../Logger')
+ import fsExtra = require('../../libs/fsExtra')
+ import archiverLib = require('../../libs/archiver')
+ import StreamZip = require('../../libs/nodeStreamZip')
+-import type { ArchiverFactory, FsExtra } from '../types'
++import type { ArchiverFactory } from '../types'
+ const { once } = events
+ const { createInterface } = readline
+ 
+-// The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+-const fs = fsExtra as unknown as FsExtra
++const fs = fsExtra
+ // The vendored archiver function is inferred as a non-callable class
+ const archiver = archiverLib as unknown as ArchiverFactory
+ 
+diff --git a/server/utils/queries/adminStats.ts b/server/utils/queries/adminStats.ts
+index d162c6a9..70210824 100644
+--- a/server/utils/queries/adminStats.ts
++++ b/server/utils/queries/adminStats.ts
+@@ -4,12 +4,11 @@ import PlaybackSession = require('../../models/PlaybackSession')
+ import fsExtraModule = require('../../libs/fsExtra')
+ import Book = require('../../models/Book')
+ import LibraryItem = require('../../models/LibraryItem')
+-import type { FsExtra, PlaybackMediaMetadata } from '../types'
++import type { PlaybackMediaMetadata } from '../types'
+ 
+ // Same module object (kept as an alias so the compiled module is unchanged)
+ const Database = DatabaseModule
+-// The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+-const fsExtra = fsExtraModule as unknown as FsExtra
++const fsExtra = fsExtraModule
+ 
+ /**
+  * Book with its libraryItem. size is a BIGINT column that sqlite returns as a number (the model JSDoc says BigInt)
+diff --git a/server/utils/queries/libraryFilters.ts b/server/utils/queries/libraryFilters.ts
+index 3122238d..0a690765 100644
+--- a/server/utils/queries/libraryFilters.ts
++++ b/server/utils/queries/libraryFilters.ts
+@@ -445,7 +445,7 @@ export = {
+   /**
+    * Get library items for an author, optional use user permissions
+    */
+-  async getLibraryItemsForAuthor(author: Author, user: User | null | undefined, limit: number, offset: number) {
++  async getLibraryItemsForAuthor(author: Author, user: User | null | undefined, limit?: number, offset?: number) {
+     const { libraryItems, count } = await libraryItemsBookFilters.getFilteredLibraryItems(author.libraryId, user, 'authors', author.id, 'addedAt', true, false, [], limit, offset)
+     return {
+       count,
+diff --git a/server/utils/queries/libraryItemsBookFilters.ts b/server/utils/queries/libraryItemsBookFilters.ts
+index 5af8c239..65cafb4a 100644
+--- a/server/utils/queries/libraryItemsBookFilters.ts
++++ b/server/utils/queries/libraryItemsBookFilters.ts
+@@ -436,7 +436,7 @@ export = {
+     countCache.clear()
+   },
+ 
+-  async findAndCountAll(findOptions: RuntimeFindOptions, limit: number | null, offset: number | null, useCountCache: boolean): Promise<{ rows: Book[]; count: number }> {
++  async findAndCountAll(findOptions: RuntimeFindOptions, limit: number | null | undefined, offset: number | null | undefined, useCountCache: boolean): Promise<{ rows: Book[]; count: number }> {
+     const model = Database.bookModel
+     if (useCountCache) {
+       const countCacheKey = stringifySequelizeQuery(findOptions)
+@@ -448,7 +448,7 @@ export = {
+       }
+ 
+       findOptions.limit = limit || null
+-      // A null offset is passed through, as in the JS
++      // A null or undefined offset is passed through, as in the JS
+       findOptions.offset = offset as number
+ 
+       // cast(b): RuntimeFindOptions relaxes options to the shapes Sequelize accepts at runtime; its FindOptions type is stricter
+@@ -459,7 +459,7 @@ export = {
+     }
+ 
+     findOptions.limit = limit || null
+-    // A null offset is passed through, as in the JS
++    // A null or undefined offset is passed through, as in the JS
+     findOptions.offset = offset as number
+ 
+     // cast(b): RuntimeFindOptions relaxes options to the shapes Sequelize accepts at runtime; its FindOptions type is stricter
+@@ -479,8 +479,8 @@ export = {
+     sortDesc: boolean | null,
+     collapseseries: boolean,
+     include: string[],
+-    limit: number | null,
+-    offset: number | null,
++    limit: number | null | undefined,
++    offset: number | null | undefined,
+     isHomePage = false
+   ): Promise<{ libraryItems: FilteredLibraryItem[]; count: number }> {
+     // TODO: Handle collapse sub-series
+diff --git a/server/utils/queries/types.ts b/server/utils/queries/types.ts
+index f7ad0fc9..e8d6e07b 100644
+--- a/server/utils/queries/types.ts
++++ b/server/utils/queries/types.ts
+@@ -5,6 +5,7 @@ import type { FindAttributeOptions, FindOptions, Includeable, IncludeOptions, Or
+ import type Sequelize = require('sequelize')
+ import type LibraryItem = require('../../models/LibraryItem')
+ import type Feed = require('../../models/Feed')
++import type MediaItemShare = require('../../models/MediaItemShare')
+ 
+ /**
+  * Named replacements for the raw SQL literals in a query
+@@ -45,7 +46,12 @@ export type FilteredLibraryItem = LibraryItem & {
+   rssFeed?: Feed
+   numEpisodesIncomplete?: number
+   recentEpisode?: unknown
+-  [key: string]: unknown
++  /** Series shown on the book cover (filter by series, and the series of a continue series item) */
++  series?: { id: string; name: string; sequence: string | null }
++  /** Details of the collapsed series the book stands for (collapseseries) */
++  collapsedSeries?: { id: string; name: string; nameIgnorePrefix: string; sequence: string | null; numBooks: number; libraryItemIds: string[] }
++  /** Open share of the media item (ShareManager.findByMediaItemId) */
++  mediaItemShare?: MediaItemShare.MediaItemShareForClient | null
+ }
+ 
+ /**
+diff --git a/server/utils/queries/userStats.ts b/server/utils/queries/userStats.ts
+index a4cf51c6..9f004a50 100644
+--- a/server/utils/queries/userStats.ts
++++ b/server/utils/queries/userStats.ts
+@@ -6,12 +6,11 @@ import fsExtraModule = require('../../libs/fsExtra')
+ import Book = require('../../models/Book')
+ import LibraryItem = require('../../models/LibraryItem')
+ import type { Includeable } from 'sequelize'
+-import type { FsExtra, PlaybackMediaMetadata } from '../types'
++import type { PlaybackMediaMetadata } from '../types'
+ 
+ // Same module object (kept as an alias so the compiled module is unchanged)
+ const Database = DatabaseModule
+-// The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+-const fsExtra = fsExtraModule as unknown as FsExtra
++const fsExtra = fsExtraModule
+ 
+ /**
+  * Book loaded through the session/progress include, with its libraryItem

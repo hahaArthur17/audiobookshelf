@@ -1,0 +1,92 @@
+server/controllers/ApiKeyController.ts:98:      } as CreationAttributes<ApiKey>
+server/controllers/ApiKeyController.ts:99:    )) as ApiKeyWithUser
+server/controllers/ApiKeyController.ts:123:    })) as ApiKeyWithUser | null
+server/controllers/AuthorController.ts:39:}) as SortInstance
+server/controllers/AuthorController.ts:49:    const include = ((req.query.include as string | undefined) || '').split(',')
+server/controllers/AuthorController.ts:56:      const libraryItems = (await Database.libraryItemModel.getForAuthor(req.author, req.user)) as LibraryItem.BookLibraryItem[]
+server/controllers/AuthorController.ts:143:      const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id)) as LibraryItem.BookLibraryItem[]
+server/controllers/AuthorController.ts:155:        } as Author)
+server/controllers/AuthorController.ts:208:        const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id)) as LibraryItem.BookLibraryItem[]
+server/controllers/AuthorController.ts:255:    const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id)) as LibraryItem.BookLibraryItem[]
+server/controllers/AuthorController.ts:417:      format: (format as string | undefined) || (reqSupportsWebp(req) ? 'webp' : 'jpeg'),
+server/controllers/AuthorController.ts:419:      height: clampPositiveInt(height ? parseInt(height as string) : null, 4096),
+server/controllers/AuthorController.ts:421:      width: clampPositiveInt(width ? parseInt(width as string) : null, 4096)
+server/controllers/CollectionController.ts:80:    const transaction = await (Database as InitializedDatabase).sequelize.transaction()
+server/controllers/CollectionController.ts:138:    const includeEntities = ((req.query.include as string | undefined) || '').split(',')
+server/controllers/CollectionController.ts:185:      } satisfies RuntimeFindOptions as unknown as FindOptions)) as (CollectionBook & { book: Book.BookExpandedWithLibraryItem })[]
+server/controllers/EmailController.ts:100:    const ebookFile = (libraryItem.media as Book).ebookFile
+server/controllers/FileSystemController.ts:22:    const relpath = req.query.path as string | undefined
+server/controllers/MeController.ts:433:    const limit = !isNaN(req.query.limit as unknown as number) ? Number(req.query.limit) || 25 : 25
+server/controllers/MeController.ts:440:    const libraryItems = await Database.libraryItemModel.findAllExpandedWhere({ id: libraryItemsIds as string[] })
+server/controllers/MeController.ts:450:          const episode = (libraryItem.media as Podcast).podcastEpisodes.find((ep) => ep.id === oldMediaProgress.episodeId)
+server/controllers/MiscController.ts:84:    const cleanedOutputDirectoryParts = outputDirectoryParts.filter(Boolean).map((part) => sanitizeFilename(part) as string)
+server/controllers/MiscController.ts:98:      const path = Path.join(outputDirectory, sanitizeFilename(file.name) as string)
+server/controllers/MiscController.ts:120:    const includeArray = ((req.query.include as string | undefined) || '').split(',')
+server/controllers/MiscController.ts:217:      await Database.bookModel.bulkCreate(bulkUpdateBooks as CreationAttributes<Book>[], {
+server/controllers/MiscController.ts:240:      await Database.podcastModel.bulkCreate(bulkUpdatePodcasts as CreationAttributes<Podcast>[], {
+server/controllers/MiscController.ts:265:      await Database.seriesModel.bulkCreate(bulkUpdateSeries as CreationAttributes<Series>[], {
+server/controllers/MiscController.ts:362:        await (libraryItem.media as Model).update({
+server/controllers/MiscController.ts:403:      await (libraryItem.media as Model).update({
+server/controllers/MiscController.ts:493:        await (libraryItem.media as Model).update({
+server/controllers/MiscController.ts:534:      await (libraryItem.media as Model).update({
+server/controllers/MiscController.ts:643:        let updatedAuthMethods = (settingsUpdate[key] as string[] | undefined)?.filter?.((authMeth) => Database.serverSettings.supportedAuthMethods.includes(authMeth))
+server/controllers/MiscController.ts:688:        if (key === 'authLoginCustomMessage' && updatedValue) updatedValue = sanitize(updatedValue as string) || null
+server/controllers/MiscController.ts:695:          ;(Database.serverSettings as unknown as Record<string, unknown>)[key] = updatedValue
+server/controllers/PlaylistController.ts:101:    const transaction = await (Database as InitializedDatabase).sequelize.transaction()
+server/controllers/PlaylistController.ts:153:    const playlistsForUser = await (Database.playlistModel.getOldPlaylistsForUserAndLibrary as (userId: string, libraryId?: string) => ReturnType<typeof Database.playlistModel.getOldPlaylistsForUserAndLibrary>)(req.user.id)
+server/controllers/PlaylistController.ts:204:      const changed = req.playlist.changed() as string[]
+server/controllers/PlaylistController.ts:304:    if (itemToAdd.episodeId && !(libraryItem.media as Podcast).podcastEpisodes.some((pe) => pe.id === itemToAdd.episodeId)) {
+server/controllers/PlaylistController.ts:328:      const episode = (libraryItem.media as Podcast).podcastEpisodes.find((ep) => ep.id === itemToAdd.episodeId)!
+server/controllers/PlaylistController.ts:360:      playlistMediaItem = req.playlist.playlistMediaItems.find((pmi) => (pmi.mediaItem as Book).libraryItem?.id === req.params.libraryItemId)
+server/controllers/PlaylistController.ts:439:          const episode = (libraryItem.media as Podcast).podcastEpisodes.find((ep) => ep.id === item.episodeId)!
+server/controllers/PlaylistController.ts:485:        playlistMediaItem = req.playlist.playlistMediaItems.find((pmi) => (pmi.mediaItem as Book).libraryItem?.id === item.libraryItemId)
+server/controllers/PlaylistController.ts:538:    const transaction = await (Database as InitializedDatabase).sequelize.transaction()
+server/controllers/PlaylistController.ts:552:      for (const [index, libraryItem] of (collectionExpanded.books as ReturnType<LibraryItem['toOldJSONExpanded']>[]).entries()) {
+server/controllers/PodcastController.ts:119:    const libraryItemFolderStats = (await getFileTimestampsWithIno(podcastPath)) as Exclude<Awaited<ReturnType<typeof getFileTimestampsWithIno>>, false>
+server/controllers/PodcastController.ts:126:    const transaction = await (Database as InitializedDatabase).sequelize.transaction()
+server/controllers/PodcastController.ts:153:      )) as LibraryItem.PodcastLibraryItem
+server/controllers/PodcastController.ts:163:    newLibraryItem.media = (await newLibraryItem.getMediaExpanded()) as Podcast
+server/controllers/PodcastController.ts:194:          newLibraryItem.libraryFiles.push(newLibraryFile as LibraryFileObject)
+server/controllers/PodcastController.ts:298:    const maxEpisodesToDownload = !isNaN(req.query.limit as unknown as number) ? Number(req.query.limit) : 3
+server/controllers/PodcastController.ts:364:    ;(this.podcastManager.downloadPodcastEpisodes as (libraryItem: LibraryItem.PodcastLibraryItem, episodesToDownload: RssPodcastEpisode[], isAutoDownload?: boolean) => Promise<void>)(req.libraryItem, episodes)
+server/controllers/PodcastController.ts:438:      episode.set(updatePayload as unknown as Partial<Attributes<PodcastEpisode>>)
+server/controllers/SearchController.ts:104:      Logger.error(`[SearchController] findBooks: ${(error as Error).message}`)
+server/controllers/SearchController.ts:129:      Logger.error(`[SearchController] findCovers: ${(error as Error).message}`)
+server/controllers/SearchController.ts:150:      Logger.error(`[SearchController] findPodcasts: ${(error as Error).message}`)
+server/controllers/SearchController.ts:169:      Logger.error(`[SearchController] findAuthor: ${(error as Error).message}`)
+server/controllers/SearchController.ts:194:      Logger.error(`[SearchController] findChapters: ${(error as Error).message}`)
+server/controllers/SearchController.ts:212:    const customProviders = await (Database.customMetadataProviderModel as CustomMetadataProviderLister).findAll()
+server/controllers/SeriesController.ts:33:    const include = ((req.query.include as string | undefined) || '')
+server/controllers/SessionController.ts:49:    let userId: string | null | undefined = req.query.user as string | undefined
+server/controllers/SessionController.ts:57:    let orderKey = (req.query.sort as string | undefined) || 'updatedAt'
+server/controllers/SessionController.ts:99:    } satisfies RuntimeFindOptions as FindAndCountOptions)) as { rows: PlaybackSessionWithUser[]; count: number }
+server/controllers/SessionController.ts:170:    const sessionForClient = req.playbackSession.toJSONForClient(libraryItem as LibraryItem | undefined)
+server/controllers/SessionController.ts:261:    const audioTrackIndex = (toNumber as (val: unknown, fallback: number | null) => number | null)(req.params.index, null)
+server/controllers/ShareController.ts:46:    let startTime = req.query.t && !isNaN(req.query.t as unknown as number) ? Math.max(0, parseInt(req.query.t as string)) : 0
+server/controllers/ShareController.ts:93:      const publicTracks = (libraryItem.media as Book).includedAudioFiles.map((audioFile) => {
+server/controllers/ShareController.ts:119:      const deviceInfo = await this.playbackSessionManager.getDeviceInfo(req as RequestWithUser, clientDeviceInfo)
+server/controllers/ShareController.ts:123:      ;(newPlaybackSession.setData as (libraryItem: LibraryItem, userId: string | null, mediaPlayer: string, deviceInfo: DeviceInfo | null, startTime: number) => void)(libraryItem, null, 'web-share', deviceInfo, startTime)
+server/controllers/ShareController.ts:125:      newPlaybackSession.audioTracks = publicTracks as unknown as AudioTrack[]
+server/controllers/ShareController.ts:371:        } as CreationAttributes<MediaItemShare>
+server/controllers/ToolsController.ts:46:    this.abMergeManager.startAudiobookMerge(req.user.id, req.libraryItem as LibraryItem.BookLibraryItem, options)
+server/controllers/ToolsController.ts:84:    this.audioMetadataManager.updateMetadataForItem(req.user.id, req.libraryItem as LibraryItem.BookLibraryItem, options)
+server/controllers/ToolsController.ts:123:      libraryItems.push(libraryItem as LibraryItem.BookLibraryItem)
+server/controllers/UserController.ts:41:    const includes = ((req.query.include as string | undefined) || '').split(',').map((i) => i.trim())
+server/controllers/UserController.ts:50:        const userSessions = (await Database.getPlaybackSessions({ userId: user.id })) as OldPlaybackSession[]
+server/controllers/UserController.ts:93:    } satisfies RuntimeFindOptions as unknown as FindOptions)) as MediaProgressWithMediaItem[]
+server/controllers/UserController.ts:403:      } as unknown as { userId: string },
+server/controllers/UserController.ts:431:    ;(req.reqUser.extraData as { authOpenIDSub?: string | null }).authOpenIDSub = null
+server/routers/ApiRouter.ts:44:const fs = fsExtra as unknown as FsExtra
+server/routers/ApiRouter.ts:45:const date = dateAndTime as unknown as DateAndTime
+server/routers/ApiRouter.ts:50:const Database = DatabaseModule as InitializedDatabase
+server/routers/ApiRouter.ts:126:    this.router = express() as unknown as ApiRouterApp
+server/routers/ApiRouter.ts:181:    this.router.post('/items/:id/cover', LibraryItemController.middleware.bind(this), LibraryItemController.uploadCover.bind(this) as unknown as RouteHandler)
+server/routers/ApiRouter.ts:503:        } as unknown as FindOptions)
+server/routers/ApiRouter.ts:531:      Logger.error(`[ApiRouter] Error removing empty series: ${(error as Error).message}`)
+server/routers/ApiRouter.ts:568:        } as unknown as FindOptions)
+server/routers/ApiRouter.ts:592:      Logger.error(`[ApiRouter] Error removing authors: ${(error as Error).message}`)
+server/routers/ApiRouter.ts:598:    const userSessions = (await Database.getPlaybackSessions({ userId })) as OldPlaybackSession[]
+server/routers/ApiRouter.ts:600:    return userSessions.sort((a, b) => (b.updatedAt as number) - (a.updatedAt as number))
+server/routers/ApiRouter.ts:605:    const userSessions = (await Database.getPlaybackSessions({ userId, mediaItemId })) as OldPlaybackSession[]
+server/routers/ApiRouter.ts:607:    return userSessions.sort((a, b) => (b.updatedAt as number) - (a.updatedAt as number))
+server/routers/ApiRouter.ts:623:    const sessionsForStats = listeningSessions as unknown as ListeningStatsSession[]

@@ -1,0 +1,10 @@
+Batch 3b independent verification (advisor review, 2026-10-09)
+Measured by Danny: clean build 0 error TS, 356 passing, ts=116 js=76; package.json, tsconfig, eslint config and test/ unchanged; any 0; @ts directives 0; 16 files modified (+123, -157); NOTE lines added 0; smoke tests identical to the original (RESPONSES-IDENTICAL, API-IDENTICAL, empty library only).
+Workaround names (grep matches before to after): TypedDatabase 49 to 0, ApiDatabase 2 to 0, PatchModels 20 to 0, as unknown as LibraryItem['media'] 12 to 0, QueryFindOptions 31 to 31 (kept, listed under Known deviations). New workaround type InitializedDatabase (26 matches, 6 module-level casts), to be removed when Database.js is converted.
+Casts in server/ (grep count: "as X" matches minus "as unknown as"): 530 to 502; as unknown as 135 to 108. The agent reported 527 to 499 (same net change of -28).
+Compiled JS diff: 14 files differ. 5 differ in code only by require style (const DatabaseModule = require plus an alias became const Database = require; same object, same load order); 9 differ only in comments or added parentheses. The agent reported 5 files. No logic change found.
+The usage counter showed 0 lines added although git shows +123 and -157; the counter is not reliable for edits made by shell commands.
+Open points: QueryFindOptions kept (the main audit finding is still open; closed in batch 3c); all new casts tagged d, with no tag for "temporary until a JS file is converted"; one line with two undefined as unknown as number casts (LibraryItem.ts:604); 8 null as unknown as unchanged; Database.js (outside the batch) received comments only.
+Casts are erased in the compiled JS, so identical JS does not prove the cast counts.
+
+Usage (Claude Code /usage; 2-usage-before.txt, an earlier morning file 2-usage-before-OLD-morning-not-used.txt was not used): before: session 4%, week 15% (resets Oct 14); after: cost $3.11, API 7m 34s, wall 16m 23s (includes idle), session 12%, week 16%. The percentages include other use.

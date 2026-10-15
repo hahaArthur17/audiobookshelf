@@ -1,0 +1,24 @@
+Batch 10 (packaging and configuration): independent verification, 2026-10-10
+Baseline: 2069c8db (batch 9b). Commit checked: ac6f1d06 (batch 10, HEAD, branch danny/phase3).
+
+Measured (commands run by the user, outputs in this folder):
+- git status clean. Batch 10 changed 9 files besides MIGRATION.md: .github/workflows/codeql.yml, docker-build.yml and integration-test.yml, .vscode/tasks.json, Dockerfile, eslint.config.mjs, package.json, server/Server.ts and server/utils/types.ts. The change is 10 lines added and 10 removed outside MIGRATION.md.
+- No code logic changed. The workflow, tasks.json, Dockerfile, eslint and package.json edits replace index.js with index.ts in a path, a COPY line or a watch list. The edits in Server.ts and types.ts are comments only. tsconfig.server.json and test are unchanged.
+- tsc: 0 errors. npm test: 356 passing. eslint (npm run lint): no output, exit code 0. dist-server/index.js is emitted (3291 bytes).
+- Every remaining "index.js" in tracked files other than MIGRATION.md is the compiled dist-server/index.js (Dockerfile CMD, package.json main, start, start-dev, build-win, bin and pkg lists, the pkg command in integration-test.yml, build/linuxpackager), a vendored library file, an external URL, or the new comment in types.ts. No reference to a source index.js is left.
+- Tracked .js files left outside client, docs, build, test and server/libs: .devcontainer/dev.js (an example file), prod.js, server/controllers/LibraryController.js, server/controllers/LibraryItemController.js and tailwind.config.js (an empty file). The Log lists prod.js under Skipped as tracked and unused, and no longer says it is gitignored. This corrects the batch 9 difference.
+- Smoke test (smoke.sh run on the HEAD build, compared with the saved batch 9 smoke responses): the responses differ only in the config path, user id, token and timestamps. Because batch 10 changed no code, this shows no regression but is a weak test for this batch.
+- Docker (Docker was not installed on this machine and was installed for this check):
+  - docker build of the current Dockerfile finished with exit code 0. The log shows COPY index.ts in the compile-server stage (3/5) and the build-server stage (4/8), and "npm run build:server" (tsc) inside the compile stage with no "error TS" line.
+  - A container started from that image answered /status with 200 and isInit false. After /init (200) /status returned isInit true. /login returned 200, and a wrong password returned 401. The only ERROR line in the container log is that failed login. The container holds /app/dist-server/index.js (3291 bytes, the same size as the host build) and /app/index.ts, and runs node v24.21.0.
+  - Environment note: on this machine, containers on the default Docker bridge network cannot reach the internet (apk update failed with DNS errors, ping to 1.1.1.1 had 100% loss, and apk update worked with --network host). The cause was not determined. The build and the run used --network host. The Dockerfile was not changed for this, and it is not a project problem.
+
+Difference from the agent's Log: none found in this batch.
+
+Decisions to review (agent's, judged here):
+- prod.js stays .js, as in batch 9. Converting it would change the value of global.appRoot.
+- No TypeScript linter was added. eslint covers only .js files, so the .ts files are not linted. Report this as a known limitation.
+
+Not covered: the CI workflows (not run, they need GitHub), a multi-architecture build (amd64 and arm64 with buildx), the pkg packagers (build-win and build-linux), the dev script (nodemon --watch index.ts), and the compiled JS diff against batch 9 (not run, because the changes are configuration and comments).
+
+Usage (Claude Code /usage): before: session 69%, week 50% (resets Oct 14); after: cost $1.48, API 2m 48s, wall 5m 24s (includes idle), session 72%, week 51%. The weekly percentage includes other use.

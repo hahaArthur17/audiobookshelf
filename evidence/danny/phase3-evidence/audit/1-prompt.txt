@@ -1,0 +1,20 @@
+This is a read-only audit. Do NOT convert any file, do NOT edit, create or delete any file inside the repository, and do NOT run git add, git commit or npm install. Read MIGRATION.md only for context; ignore its conversion instructions.
+
+Goal: measure how good the TypeScript types are in the files converted so far, because a green build and passing tests do not show that the agent added useful types rather than shortcuts that silence the compiler.
+
+Scope: every .ts file under server/ (excluding server/libs and .d.ts files), split into three groups:
+- Group A (Phase 2): server/finders, server/providers, server/controllers/SearchController.ts
+- Group B (batch 1): server/utils
+- Group C (batches 2 and 4): server/objects, server/auth, server/routers
+
+Part 1, measured counts. For each group and in total, report the number of files, non-blank lines of code, and the count of each of these (also per 1,000 lines): type assertions with `as` (all), `as unknown as`, non-null assertions (`!` after an expression), `any` in code (including any[] and Record<string, any>), `unknown` annotations, index signatures such as `[key: string]: ...`, `declare` fields, @ts-ignore / @ts-nocheck / @ts-expect-error, eslint-disable comments, and `NOTE:` bug comments. Count only code, not comments or strings; if you use grep, say what false positives you removed. Also confirm from git that tsconfig.server.json, the eslint config and every file under test/ are unchanged since commit 7d10b8fc, and that "strict" is still true. Give the exact commands or scripts you used in an appendix so the numbers can be reproduced. Put any scripts in your scratch directory, not in the repo.
+
+Part 2, quality review. Read a sample of at least 20 files (include the 10 largest, plus files with the most casts) and judge, with file:line evidence:
+1. Are domain objects described by specific interfaces or classes, or by broad `unknown`, `object`, `Record<string, unknown>` or optional-everything types?
+2. For each `as unknown as` and each `as` that bypasses a real mismatch, classify the reason: (a) vendored or untyped library, (b) Sequelize or Express typing limitation, (c) a real type mismatch in the original JavaScript that the cast hides, (d) other.
+3. Fields typed as non-null but initialised with `null as unknown as T`, or typed as `T | null` where the JavaScript never used null.
+4. Types declared in a types.ts file that are mostly optional properties or index signatures.
+5. Any place where the compiler was made to pass by weakening a signature or widening a type (for example a parameter widened to unknown to avoid narrowing).
+Say clearly what is a measured count and what is your judgement.
+
+Output: write the report in Markdown to /home/danny/Code/compx574/a4-context/phase3-evidence/audit/4-type-audit.md with these sections: Summary (5 lines max), Table of counts, Cast reasons, Top 10 worst shortcuts (file:line and one-line explanation), What looks good, Suggested changes to the MIGRATION.md rules for the remaining batches (suggestions only, do not apply them), Appendix with commands. Use plain language, no em dashes. Then stop and tell me the three most important findings.

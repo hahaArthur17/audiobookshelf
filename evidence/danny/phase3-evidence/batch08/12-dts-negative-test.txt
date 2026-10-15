@@ -1,0 +1,3 @@
+server/migrations/v2.15.1-reindex-nocase.ts(10,10): error TS2339: Property 'nonexistentMethod' does not exist on type 'Logger'.
+server/migrations/v2.15.1-reindex-nocase.ts(11,18): error TS2339: Property 'nonexistentMethod' does not exist on type 'QueryInterface'.
+---sequelize types

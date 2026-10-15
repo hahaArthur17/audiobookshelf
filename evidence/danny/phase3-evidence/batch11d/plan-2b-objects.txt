@@ -1,0 +1,21 @@
+# Batch 11d, commit 2 (second pass, line numbers after plan-2): one comment per statement
+@ server/objects/DeviceInfo.ts
+R 78 // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+I 80 // cast(d): the stored data is read by key in the loop below (same object)
+R 176 // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+I 178 // cast(d): the new JSON is read by key in the loop below (same object)
+I 179 // cast(d): the existing JSON is read by key in the loop below (same object)
+@ server/objects/files/AudioFile.ts
+R 242 // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+I 244 // cast(d): the new JSON is read by key in the loop below (same object)
+@ server/objects/metadata/AudioMetaTags.ts
+R 339 // cast(d): the other meta tags object is read by key in the loop below (same object; the tag fields are string | null)
+I 341 // cast(d): this object is read by key in the loop below (same object; the tag fields are string | null)
+@ server/objects/metadata/FileMetadata.ts
+R 72 // cast(d): this object is read and written by key in the loop below (same object; the class has no index signature)
+I 74 // cast(d): the payload is read by key in the loop below (same object)
+R 86 // cast(d): this object is written by key in the loop below (same object; the class has no index signature)
+I 88 // cast(d): the payload is read by key in the loop below (same object)
+@ server/objects/settings/EmailSettings.ts
+R 141 // cast(d): this object is written by key in the loop below (same object; the class has no index signature)
+I 143 // cast(d): the JSON is read by key in the loop below (same object)

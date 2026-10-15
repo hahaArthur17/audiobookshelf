@@ -1,0 +1,109 @@
+# Batch 11d, commit 2: server/objects, server/routers, server/auth
+@ server/objects/Backup.ts
+R 5 // cast(a): typed view of the untyped vendored date-and-time (see DateAndTime)
+R 54 // cast(d): key is a string; the loose comparison with the number 1 coerces it, like the JS
+@ server/objects/DailyLog.ts
+R 7 // cast(a): typed view of the untyped vendored date-and-time (see DateAndTime)
+@ server/objects/DeviceInfo.ts
+R 78 // cast(d) (2): this object and the stored data are read and written by key in the loop below (same objects)
+R 106 // cast(d): the JSON object is read and its empty keys deleted by key in the loop below (same object)
+R 176 // cast(d) (3): this object and both JSON objects are read and written by key in the loop below (same objects)
+@ server/objects/Notification.ts
+R 138 // cast(d): this object is read and written by key in the loop below (same object)
+R 171 // cast(d): event data values are not all strings; replace coerces the replacement to a string, like the JS
+@ server/objects/PlaybackSession.ts
+R 9 // cast(a): typed view of the untyped vendored date-and-time (see DateAndTime)
+R 239 // cast(d): updatedAt and startedAt of the stored session may be undefined; copied as given, like the JS
+R 296 // cast(d): a book ignores the id; for a podcast a null id finds no episode, so getChapters logs it and returns [], as in the JS
+R 318 // cast(d): timeListened is number | string; isNaN coerces its argument
+R 327 // cast(d) (2): timeListening is null before the first update (null + n is n); parseFloat coerces numbers to strings
+@ server/objects/PodcastEpisodeDownload.ts
+R 40 // cast(d): typed LibraryItem (as the JSDoc did); setData sets it before use (left from batch 11a, see Skipped files)
+R 100 // cast(d): setData sets targetFilename to a string before the getters are used
+R 110 // cast(d): setData sets rssPodcastEpisode before the getters are used
+I 112 // cast(d): setData sets rssPodcastEpisode before the getters are used
+@ server/objects/Stream.ts
+R 75 // cast(d): isPodcast is checked just above (a getter does not narrow media), so media is a Podcast
+R 85 // cast(d): getTrackList only reads the episode id for podcasts (null for books)
+R 132 // cast(d): tracksAudioFileType may be null; includes(null) is false
+I 250 // cast(d): loop is null before the first transcode; clearInterval ignores null, but its type does not accept it
+R 299 // cast(d) (2): the mime type and codec may be null; includes(null) is false
+R 307 // cast(d): tracksCodec may be null; includes(null) is false
+I 353 // cast(d): loop may be null; clearInterval ignores null, but its type does not accept it
+I 382 // cast(d): loop may be null; clearInterval ignores null, but its type does not accept it
+I 389 // cast(d): loop is null when no transcode ran; clearInterval ignores null, but its type does not accept it
+I 412 // cast(d): loop may be null; clearInterval ignores null, but its type does not accept it
+@ server/objects/files/AudioFile.ts
+R 72 // cast(d): typed FileMetadata (as the JSDoc did); construct or setDataFromProbe sets it before use (left from batch 11a, see Skipped files)
+R 166 // cast(d): the mime type map is indexed by any format string; unknown formats read undefined, like the JS
+R 198 // cast(d): probe data from prober.probe always has audioMetaTags (MediaProbeData.setData sets it)
+R 242 // cast(d) (2): this object and the new JSON are read and written by key in the loop below (same objects)
+@ server/objects/files/LibraryFile.ts
+R 40 // cast(d): typed FileMetadata; construct or setDataFromPath sets it before use (left from batch 11a, see Skipped files)
+R 60 // cast(d): typed as set: toJSON is only called on files that construct or setDataFromPath filled in (isSupplementary may still be null)
+I 98 // cast(c): typed without false; when stat fails it is false and the reads below are undefined, as in the JS (see NOTE above)
+@ server/objects/metadata/AudioMetaTags.ts
+R 135 // cast(d): this object is read by key in the loop below (same object; the tag fields are string | null)
+R 321 // cast(d): this object is read and written by key in the loop below (same object; the tag fields are string | null)
+R 339 // cast(d) (2): both objects are read by key in the loop below (same objects; the tag fields are string | null)
+@ server/objects/metadata/FileMetadata.ts
+R 25 // cast(d): the stored JSON may lack fields; missing fields are copied as undefined, like the JS
+R 45 // cast(d): typed as set: toJSON is only called on metadata that construct or setData filled in
+R 72 // cast(d) (2): this object and the payload are read and written by key in the loop below (same objects)
+R 86 // cast(d) (2): this object and the payload are read and written by key in the loop below (same objects)
+@ server/objects/settings/EmailSettings.ts
+R 117 // cast(d): filter removes the null (invalid) devices, but TypeScript keeps null in the element type
+R 141 // cast(d) (2): this object and the JSON are read and written by key in the loop below (same objects)
+@ server/objects/settings/ServerSettings.ts
+R 183 // cast(d): tokenSecret of the stored settings may be undefined; copied as given, like the JS
+R 187 // cast(d): scannerParseSubtitle of the stored settings may be undefined; copied as given, like the JS
+R 196 // cast(d): isNaN coerces its argument (undefined is NaN)
+R 198 // cast(d): isNaN coerces its argument (undefined is NaN)
+R 271 // cast(d): bookshelfView of the stored settings may be undefined; copied as given, like the JS
+R 437 // cast(d): this object is read and written by key in the loop below (same object)
+@ server/routers/ApiRouter.ts
+R 43 // cast(a): typed view of the untyped vendored date-and-time (see DateAndTime)
+R 124 // cast(b): same app; typed so the routes accept the controller handlers, which express's RequestHandler rejects (see ApiRouterApp)
+R 501 // cast(b): Sequelize accepts an array of where conditions at runtime; its types do not
+R 529 // cast(d): catch variable is unknown; the queries throw Error objects
+R 566 // cast(b): Sequelize accepts an array of where conditions at runtime; its types do not
+R 590 // cast(d): catch variable is unknown; the queries throw Error objects
+R 598 // cast(d) (2): sessions loaded from the database always have updatedAt (Sequelize timestamps)
+R 605 // cast(d) (2): sessions loaded from the database always have updatedAt (Sequelize timestamps)
+R 621 // cast(d): same array; typed as the stats read the sessions (see ListeningStatsSession)
+@ server/auth/LocalAuthStrategy.ts
+R 139 // cast(a): the vendored bcryptjs is typed with both overloads; without a callback compare returns a promise
+@ server/auth/OidcAuthStrategy.ts
+R 75 // cast(d): typed with the internal fields of the openid-client strategy read in getAuthorizationUrl (see OidcStrategy)
+R 102 // cast(d): the settings are string | null; they were checked valid above, and a null logout URL is passed through, like the JS
+R 112 // cast(d): the settings are string | null; they were checked valid above
+R 210 // cast(d) (2): catch variable is unknown; errors thrown above are Error objects
+R 250 // cast(d): assumed: the provider sends the group claim as a list of group names (only its presence is checked above)
+R 406 // cast(b): express-session types the session without the strategy's key; it is indexed by that key here
+R 433 // cast(d): catch variable is unknown; errors thrown above are Error objects
+R 437 // cast(d): catch variable is unknown; errors thrown above are Error objects
+R 452 // cast(d): openid-client types issuer without its metadata fields, which it exposes directly (end_session_endpoint is a string or unset)
+R 474 // cast(d): postLogoutRedirectUri is string | null; undefined and null both leave the parameter out
+R 506 // cast(d): configUrl was set in the try block above, which returns otherwise (the cast changes no type)
+R 542 // cast(d): has(state) was checked above, so get returns the session
+R 557 // cast(d): catch variable is unknown; errors thrown above are Error objects
+@ server/auth/TokenManager.ts
+R 43 // cast(d): the variable may be unset; parseInt(undefined) is NaN, so the fallback is used, like the JS
+I 45 // cast(d): the variable may be unset; parseInt(undefined) is NaN, so the fallback is used, like the JS
+I 46 // cast(d): the variable may be unset; parseInt(undefined) is NaN, so the fallback is used, like the JS
+I 48 // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+I 51 // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+I 54 // cast(d): the variable may be unset; parseInt(undefined) is NaN, which fails the check
+R 75 // cast(d): require() is typed any; required here like the JS, typed as the node crypto module
+I 268 // cast(c): typed as found; when the row was deleted findOne returns null (see NOTE above)
+R 300 // cast(d): api tokens are signed with a keyId by ApiKey (passport-jwt verified the signature); keyId is optional in JwtPayload
+R 341 // cast(d): isBearerAccessTokenPayload checked that userId is set
+R 383 // cast(d): SessionRow names the refresh token columns; the Session model declares them since batch 3a, so the cast changes no type
+R 450 // cast(d): catch variable is unknown; jwt.verify and the queries throw Error objects
+R 461 // cast(d): catch variable is unknown; the query throws Error objects
+I 468 // cast(d): catch variable is unknown; jwt.verify and the queries throw Error objects
+R 469 // cast(d): catch variable is unknown (see above)
+R 475 // cast(d): catch variable is unknown (see above)
+R 495 // cast(d): the callers (MeController and UserController routes) run after the auth middleware, so req.user is set
+R 499 // cast(d): SessionRow names the refresh token columns; the Session model declares them since batch 3a, so the cast changes no type
+R 569 // cast(d): catch variable is unknown; the query throws Error objects

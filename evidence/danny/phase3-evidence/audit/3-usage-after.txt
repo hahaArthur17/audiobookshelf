@@ -1,0 +1,31 @@
+Session
+
+Total cost:            $2.74
+Total duration (API):  7m 6s
+Total duration (wall): 10h 26m 30s
+Total code changes:    296 lines added, 0 lines removed
+Usage by model:
+    claude-haiku-4-5:  922 input, 13 output, 0 cache read, 0 cache write ($0.0010)
+     claude-opus-5-5:  604 input, 40.7k output, 4.6m cache read, 125.3k cache write ($2.74)
+Prompt cache (main):   49 requests · 97% of input tokens from cache · no misses · cold — idle 10h 17m 7s, next turn re-caches ~147.2k tokens
+
+Current session
+█                                                  2% used
+Resets 2:50pm (Pacific/Auckland)
+
+Current week (all models)
+███▌                                               7% used
+Resets Oct 14, 2am (Pacific/Auckland)
+
+What's contributing to your limits usage?
+Approximate, based on local sessions on this machine — does not include other devices or claude.ai
+
+Last 24h · these are independent characteristics of your usage, not a breakdown
+
+Nothing over 10% in this period — try the other window.
+
+d to day · w to week
+
+Usage credits
+Usage credits are off · /usage-credits to turn them on
+NOTE: captured next morning, 2026-10-09 around 10:00 NZDT, after leaving the session idle overnight. Wall time and Current session % are not valid. Use cost and API duration.

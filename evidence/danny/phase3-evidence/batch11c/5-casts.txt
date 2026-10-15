@@ -1,0 +1,54 @@
+== base 81ad6a7f
+TOTAL files=192 as=646 unknown_as=120 nonnull=267
+TAGS {"d":261,"b":87,"a":15,"c":26,"none":377}
+TARGETS with count over 2: 86 string | 53 number | 46 Error | 27 Record<string, unknown> | 18 string[] | 17 FindOptions | 17 Book | 16 Podcast | 11 string | undefined | 8 DateAndTime | 8 Model | 8 CountOptions | 8 FilteredLibraryItem | 7 NodeJS.Timeout | 7 LibraryItem.PodcastLibraryItem | 7 keyof Pa
+UNTAGGED 377 server/auth/LocalAuthStrategy.ts:140 server/auth/OidcAuthStrategy.ts:79 server/auth/OidcAuthStrategy.ts:106 server/auth/OidcAuthStrategy.ts:116 server/auth/OidcAuthStrategy.ts:214 server/auth/OidcAuthStrategy.ts:214 server/auth/OidcAuthStrategy.ts:254 server/auth/OidcAuthStrategy.ts:308
+== new HEAD
+TOTAL files=194 as=649 unknown_as=122 nonnull=281
+TAGS {"d":265,"b":91,"a":15,"c":28,"none":372}
+TARGETS with count over 2: 86 string | 54 number | 46 Error | 27 Record<string, unknown> | 19 Book | 19 Podcast | 18 string[] | 17 FindOptions | 8 DateAndTime | 8 Model | 8 CountOptions | 8 FilteredLibraryItem | 7 NodeJS.Timeout | 7 LibraryItem.PodcastLibraryItem | 7 keyof ParsedName | 7 ValueCountR
+UNTAGGED 372 server/auth/LocalAuthStrategy.ts:140 server/auth/OidcAuthStrategy.ts:76 server/auth/OidcAuthStrategy.ts:103 server/auth/OidcAuthStrategy.ts:113 server/auth/OidcAuthStrategy.ts:211 server/auth/OidcAuthStrategy.ts:211 server/auth/OidcAuthStrategy.ts:251 server/auth/OidcAuthStrategy.ts:407
+== per-file differences (base then new)
+2c2
+< server/Auth.ts as=3 unknown_as=4 nonnull=7
+---
+> server/Auth.ts as=2 unknown_as=4 nonnull=7
+9c9
+< server/auth/OidcAuthStrategy.ts as=19 unknown_as=1 nonnull=2
+---
+> server/auth/OidcAuthStrategy.ts as=16 unknown_as=1 nonnull=2
+13c13
+< server/controllers/AuthorController.ts as=11 unknown_as=0 nonnull=5
+---
+> server/controllers/AuthorController.ts as=7 unknown_as=0 nonnull=5
+16c16
+< server/controllers/CollectionController.ts as=2 unknown_as=1 nonnull=3
+---
+> server/controllers/CollectionController.ts as=1 unknown_as=1 nonnull=3
+19,21c19,22
+< server/controllers/FileSystemController.ts as=1 unknown_as=0 nonnull=0
+< server/controllers/MeController.ts as=2 unknown_as=1 nonnull=1
+< server/controllers/MiscController.ts as=12 unknown_as=1 nonnull=2
+---
+> server/controllers/FileSystemController.ts as=0 unknown_as=0 nonnull=0
+> server/controllers/LibraryController.ts as=17 unknown_as=4 nonnull=14
+> server/controllers/MeController.ts as=2 unknown_as=0 nonnull=1
+> server/controllers/MiscController.ts as=11 unknown_as=1 nonnull=2
+24c25
+< server/controllers/PodcastController.ts as=6 unknown_as=2 nonnull=1
+---
+> server/controllers/PodcastController.ts as=6 unknown_as=1 nonnull=1
+27,29c28,30
+< server/controllers/SeriesController.ts as=1 unknown_as=0 nonnull=0
+< server/controllers/SessionController.ts as=6 unknown_as=0 nonnull=5
+< server/controllers/ShareController.ts as=5 unknown_as=2 nonnull=6
+---
+> server/controllers/SeriesController.ts as=0 unknown_as=0 nonnull=0
+> server/controllers/SessionController.ts as=4 unknown_as=0 nonnull=5
+> server/controllers/ShareController.ts as=4 unknown_as=1 nonnull=6
+32c33
+< server/controllers/UserController.ts as=4 unknown_as=2 nonnull=4
+---
+> server/controllers/UserController.ts as=3 unknown_as=2 nonnull=4
+186a188
+> server/utils/queryValue.ts as=2 unknown_as=1 nonnull=0

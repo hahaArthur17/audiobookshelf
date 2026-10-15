@@ -1,0 +1,87 @@
+== base ac6f1d06
+TOTAL files=191 as=729 unknown_as=172 nonnull=241
+TAGS {"d":358,"b":104,"a":16,"c":26,"none":397}
+TARGETS with count over 2: 96 Record<string, unknown> | 88 string | 55 number | 46 Error | 20 string[] | 17 FindOptions | 17 Book | 16 Podcast | 14 FsExtra | 11 string | undefined | 8 typeof Sequelize & typeof SequelizeDataTypes | 8 DateAndTime | 8 Model | 8 CountOptions | 8 FilteredLibraryItem | 7 
+UNTAGGED 397 server/auth/LocalAuthStrategy.ts:140 server/auth/OidcAuthStrategy.ts:79 server/auth/OidcAuthStrategy.ts:106 server/auth/OidcAuthStrategy.ts:116 server/auth/OidcAuthStrategy.ts:168 server/auth/OidcAuthStrategy.ts:181 server/auth/OidcAuthStrategy.ts:213 server/auth/OidcAuthStrategy.ts:213
+== new 18b19b45
+TOTAL files=191 as=729 unknown_as=151 nonnull=267
+TAGS {"d":358,"b":104,"a":15,"c":26,"none":377}
+TARGETS with count over 2: 96 Record<string, unknown> | 87 string | 53 number | 46 Error | 20 string[] | 17 FindOptions | 17 Book | 16 Podcast | 11 string | undefined | 8 typeof Sequelize & typeof SequelizeDataTypes | 8 DateAndTime | 8 Model | 8 CountOptions | 8 FilteredLibraryItem | 7 NodeJS.Timeou
+UNTAGGED 377 server/auth/LocalAuthStrategy.ts:140 server/auth/OidcAuthStrategy.ts:79 server/auth/OidcAuthStrategy.ts:106 server/auth/OidcAuthStrategy.ts:116 server/auth/OidcAuthStrategy.ts:214 server/auth/OidcAuthStrategy.ts:214 server/auth/OidcAuthStrategy.ts:254 server/auth/OidcAuthStrategy.ts:308
+== per-file differences (base then new)
+9c9
+< server/auth/OidcAuthStrategy.ts as=19 unknown_as=2 nonnull=1
+---
+> server/auth/OidcAuthStrategy.ts as=19 unknown_as=1 nonnull=2
+51c51
+< server/managers/PodcastManager.ts as=10 unknown_as=0 nonnull=9
+---
+> server/managers/PodcastManager.ts as=10 unknown_as=0 nonnull=11
+84c84
+< server/models/LibraryItem.ts as=18 unknown_as=4 nonnull=0
+---
+> server/models/LibraryItem.ts as=18 unknown_as=1 nonnull=0
+98c98
+< server/objects/DailyLog.ts as=0 unknown_as=2 nonnull=0
+---
+> server/objects/DailyLog.ts as=0 unknown_as=1 nonnull=0
+102,103c102,103
+< server/objects/PodcastEpisodeDownload.ts as=1 unknown_as=3 nonnull=0
+< server/objects/Stream.ts as=11 unknown_as=1 nonnull=0
+---
+> server/objects/PodcastEpisodeDownload.ts as=1 unknown_as=1 nonnull=6
+> server/objects/Stream.ts as=11 unknown_as=0 nonnull=0
+106c106
+< server/objects/files/AudioFile.ts as=3 unknown_as=3 nonnull=0
+---
+> server/objects/files/AudioFile.ts as=3 unknown_as=2 nonnull=1
+108c108
+< server/objects/files/EBookFile.ts as=0 unknown_as=1 nonnull=0
+---
+> server/objects/files/EBookFile.ts as=0 unknown_as=0 nonnull=2
+126,127c126,127
+< server/routers/ApiRouter.ts as=8 unknown_as=7 nonnull=0
+< server/routers/HlsRouter.ts as=0 unknown_as=1 nonnull=0
+---
+> server/routers/ApiRouter.ts as=8 unknown_as=6 nonnull=0
+> server/routers/HlsRouter.ts as=0 unknown_as=0 nonnull=0
+130,131c130,131
+< server/scanner/AudioFileScanner.ts as=13 unknown_as=6 nonnull=16
+< server/scanner/BookScanner.ts as=26 unknown_as=7 nonnull=27
+---
+> server/scanner/AudioFileScanner.ts as=13 unknown_as=6 nonnull=20
+> server/scanner/BookScanner.ts as=26 unknown_as=7 nonnull=29
+139c139
+< server/scanner/PodcastScanner.ts as=14 unknown_as=6 nonnull=5
+---
+> server/scanner/PodcastScanner.ts as=14 unknown_as=6 nonnull=7
+144c144
+< server/utils/comicBookExtractors.ts as=3 unknown_as=2 nonnull=0
+---
+> server/utils/comicBookExtractors.ts as=3 unknown_as=1 nonnull=0
+146,147c146,147
+< server/utils/ffmpegHelpers.ts as=3 unknown_as=1 nonnull=0
+< server/utils/fileUtils.ts as=7 unknown_as=1 nonnull=0
+---
+> server/utils/ffmpegHelpers.ts as=3 unknown_as=0 nonnull=6
+> server/utils/fileUtils.ts as=7 unknown_as=0 nonnull=0
+149c149
+< server/utils/generators/hlsPlaylistGenerator.ts as=0 unknown_as=1 nonnull=0
+---
+> server/utils/generators/hlsPlaylistGenerator.ts as=0 unknown_as=0 nonnull=0
+157,159c157,159
+< server/utils/migrations/absMetadataMigration.ts as=0 unknown_as=1 nonnull=0
+< server/utils/migrations/dbMigration.ts as=28 unknown_as=9 nonnull=0
+< server/utils/migrations/oldDbFiles.ts as=0 unknown_as=2 nonnull=0
+---
+> server/utils/migrations/absMetadataMigration.ts as=0 unknown_as=0 nonnull=0
+> server/utils/migrations/dbMigration.ts as=28 unknown_as=8 nonnull=0
+> server/utils/migrations/oldDbFiles.ts as=0 unknown_as=1 nonnull=0
+177c177
+< server/utils/queries/adminStats.ts as=4 unknown_as=2 nonnull=0
+---
+> server/utils/queries/adminStats.ts as=4 unknown_as=1 nonnull=0
+185c185
+< server/utils/queries/userStats.ts as=3 unknown_as=3 nonnull=0
+---
+> server/utils/queries/userStats.ts as=3 unknown_as=2 nonnull=0

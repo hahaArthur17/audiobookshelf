@@ -1,0 +1,112 @@
+STATUS 200
+LOCATION 
+{
+ "directories": [
+  {
+   "dirname": "bin.usr-is-merged",
+   "level": 0,
+   "path": "/bin.usr-is-merged"
+  },
+  {
+   "dirname": "boot",
+   "level": 0,
+   "path": "/boot"
+  },
+  {
+   "dirname": "cdrom",
+   "level": 0,
+   "path": "/cdrom"
+  },
+  {
+   "dirname": "dev",
+   "level": 0,
+   "path": "/dev"
+  },
+  {
+   "dirname": "etc",
+   "level": 0,
+   "path": "/etc"
+  },
+  {
+   "dirname": "home",
+   "level": 0,
+   "path": "/home"
+  },
+  {
+   "dirname": "lib.usr-is-merged",
+   "level": 0,
+   "path": "/lib.usr-is-merged"
+  },
+  {
+   "dirname": "lost+found",
+   "level": 0,
+   "path": "/lost+found"
+  },
+  {
+   "dirname": "media",
+   "level": 0,
+   "path": "/media"
+  },
+  {
+   "dirname": "mnt",
+   "level": 0,
+   "path": "/mnt"
+  },
+  {
+   "dirname": "opt",
+   "level": 0,
+   "path": "/opt"
+  },
+  {
+   "dirname": "proc",
+   "level": 0,
+   "path": "/proc"
+  },
+  {
+   "dirname": "root",
+   "level": 0,
+   "path": "/root"
+  },
+  {
+   "dirname": "run",
+   "level": 0,
+   "path": "/run"
+  },
+  {
+   "dirname": "sbin.usr-is-merged",
+   "level": 0,
+   "path": "/sbin.usr-is-merged"
+  },
+  {
+   "dirname": "snap",
+   "level": 0,
+   "path": "/snap"
+  },
+  {
+   "dirname": "srv",
+   "level": 0,
+   "path": "/srv"
+  },
+  {
+   "dirname": "sys",
+   "level": 0,
+   "path": "/sys"
+  },
+  {
+   "dirname": "tmp",
+   "level": 0,
+   "path": "/tmp"
+  },
+  {
+   "dirname": "usr",
+   "level": 0,
+   "path": "/usr"
+  },
+  {
+   "dirname": "var",
+   "level": 0,
+   "path": "/var"
+  }
+ ],
+ "posix": true
+}

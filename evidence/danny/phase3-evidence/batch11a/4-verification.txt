@@ -1,0 +1,57 @@
+== branch and log
+danny/phase3
+18b19b45 phase3 batch 11a: honest null types, FilteredLibraryItem, FsExtra casts
+ac6f1d06 phase3 batch 10: packaging
+2069c8db phase3 batch 9b: remove InitializedDatabase
+== status
+== protected files changed since ac6f1d06 (expect none)
+== files changed
+ MIGRATION.md                                    | 47 ++++++++++++++++++++-----
+ server/auth/OidcAuthStrategy.ts                 | 17 ++++-----
+ server/managers/PodcastManager.ts               |  6 ++--
+ server/models/LibraryItem.ts                    |  8 ++---
+ server/objects/DailyLog.ts                      |  5 ++-
+ server/objects/PodcastEpisodeDownload.ts        | 27 +++++++-------
+ server/objects/Stream.ts                        |  4 +--
+ server/objects/files/AudioFile.ts               |  8 ++---
+ server/objects/files/EBookFile.ts               | 11 +++---
+ server/routers/ApiRouter.ts                     |  5 ++-
+ server/routers/HlsRouter.ts                     |  4 +--
+ server/scanner/AudioFileScanner.ts              | 13 ++++---
+ server/scanner/BookScanner.ts                   |  6 ++--
+ server/scanner/PodcastScanner.ts                |  6 ++--
+ server/utils/comicBookExtractors.ts             |  4 +--
+ server/utils/ffmpegHelpers.ts                   | 14 ++++----
+ server/utils/fileUtils.ts                       |  5 ++-
+ server/utils/generators/hlsPlaylistGenerator.ts |  4 +--
+ server/utils/migrations/absMetadataMigration.ts |  4 +--
+ server/utils/migrations/dbMigration.ts          |  4 +--
+ server/utils/migrations/oldDbFiles.ts           |  5 ++-
+ server/utils/queries/adminStats.ts              |  5 ++-
+ server/utils/queries/libraryFilters.ts          |  2 +-
+ server/utils/queries/libraryItemsBookFilters.ts | 10 +++---
+ server/utils/queries/types.ts                   |  8 ++++-
+ server/utils/queries/userStats.ts               |  5 ++-
+ 26 files changed, 133 insertions(+), 104 deletions(-)
+== build
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+== tsc error count
+0
+== test
+    ✔ should stringify a sequelize query containing an op
+    ✔ should stringify a sequelize query containing a literal
+    ✔ should stringify a sequelize query containing a class
+    ✔ should ignore non-class functions
+
+
+  356 passing (1s)
+
+== lint
+lint exit: 0
+== remaining null, undefined and FsExtra casts
+server/objects/files/AudioFile.ts:73:    this.metadata = null as unknown as FileMetadata
+server/objects/files/LibraryFile.ts:41:    this.metadata = null as unknown as FileMetadata
+server/objects/PodcastEpisodeDownload.ts:41:    this.libraryItem = null as unknown as LibraryItem

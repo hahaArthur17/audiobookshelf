@@ -1,0 +1,108 @@
+server/Auth.ts:165
+  - // TokenSecret is set by initTokenSecret (Server.init) before passport is initialized
+  + // cast(d): TokenSecret is set by initTokenSecret (Server.init) before passport is initialized
+server/Auth.ts:334
+  - // req.user is set by passport.authenticate before this runs (see above)
+  + // cast(d): req.user is set by passport.authenticate before this runs (see above)
+server/Auth.ts:337
+  - // req.user is set by passport.authenticate (see above)
+  + // cast(d): req.user is set by passport.authenticate (see above)
+server/Auth.ts:392
+  - // handleRefreshToken returns the user when there is no error
+  + // cast(d): handleRefreshToken returns the user when there is no error (checked above)
+server/Auth.ts:414
+  - // the url is set when there is no error
+  + // cast(d): the url is set when there is no error (checked above)
+server/Auth.ts:505
+  - // req.user is set by isAuthenticated (the middleware before this handler)
+  + // cast(d): req.user is set by isAuthenticated (the middleware before this handler)
+server/Auth.ts:507
+  - // req.user is set by isAuthenticated (see above)
+  + // cast(d): req.user is set by isAuthenticated (see above)
+server/Database.ts:186
+  - // dbPath is set by init before it calls this
+  + // cast(d): dbPath is set by init before it calls this
+server/Database.ts:251
+  - // dbPath is set by init before it calls this
+  + // cast(d): dbPath is set by init before it calls this
+server/Logger.ts:45
+  - // Error() always has a stack in V8
+  + // cast(d): Error() always has a stack in V8
+server/Server.ts:237
+  - // logManager is set in the constructor
+  + // cast(d): logManager is set in the constructor
+server/Server.ts:345
+  - // set by initTokenSecret in init (before start creates the app)
+  + // cast(d): set by initTokenSecret in init (before start creates the app)
+server/Server.ts:616
+  - // stop runs after start, which creates the server
+  + // cast(d): stop runs after start, which creates the server
+server/SocketAuthority.ts:49
+  - // filtered on user above
+  + // cast(d): the clients are filtered on user above
+server/SocketAuthority.ts:51
+  - // filtered on user above
+  + // cast(d): the clients are filtered on user above
+server/SocketAuthority.ts:54
+  - // filtered on user above
+  + // cast(d): the clients are filtered on user above
+server/SocketAuthority.ts:56
+  - // filtered on user above; Server is set by initialize before any socket connects
+  + // cast(d) (2): filtered on user above; Server is set by initialize before any socket connects
+server/SocketAuthority.ts:78
+  - // checked just above
+  + // cast(d): user is checked just above
+server/SocketAuthority.ts:141
+  - // checked just above
+  + // cast(d): user is checked just above (the filter runs inside that if)
+server/SocketAuthority.ts:182
+  - // server is created in Server.start before it calls initialize
+  + // cast(d): the server is created in Server.start before it calls initialize
+server/SocketAuthority.ts:192
+  - // server is created in Server.start before it calls initialize
+  + // cast(d): the server is created in Server.start before it calls initialize
+server/SocketAuthority.ts:249
+  - // Server is set by initialize before any socket connects
+  + // cast(d): Server is set by initialize before any socket connects
+server/SocketAuthority.ts:376
+  - // Server is set by initialize before any socket connects
+  + // cast(d): Server is set by initialize before any socket connects
+server/SocketAuthority.ts:396
+  - // Server is set by initialize before any socket connects
+  + // cast(d): Server is set by initialize before any socket connects
+server/Watcher.ts:80
+  - // the callers pass libraries loaded with their folders (getAllWithFolders, the library controller)
+  + // cast(b): the callers pass libraries loaded with their folders (getAllWithFolders, the library controller); the association is optional in the model
+server/Watcher.ts:119
+  - // loaded with the library (see above)
+  + // cast(b): loaded with the library (see above); the association is optional in the model
+server/Watcher.ts:167
+  - // the library controller passes the library loaded with its folders
+  + // cast(b): the library controller passes the library loaded with its folders; the association is optional in the model
+server/Watcher.ts:367
+  - // pendingTask is set by addFileUpdate before it starts this timeout
+  + // cast(d): pendingTask is set by addFileUpdate before it starts this timeout
+server/Watcher.ts:369
+  - // as above
+  + // cast(d): pendingTask is set by addFileUpdate (as above)
+server/controllers/LibraryController.ts:733
+  - // cast(d): decode returns null for an invalid id; findByPk(null) in handleCollapseSubseries then finds no series, as in the JS
+  + // cast(d) (2): filterByGroup is only set when filterBy is; decode returns null for an invalid id, and findByPk(null) in handleCollapseSubseries then finds no series, as in the JS
+server/controllers/MiscController.ts:754
+  - // logManager is set in the Server constructor, before any route is served
+  + // cast(d): logManager is set in the Server constructor, before any route is served
+server/controllers/SessionController.ts:201
+  - // the session was loaded from the db by the middleware, so it has an id
+  + // cast(d): the session was loaded from the db by the middleware, so it has an id
+server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.ts:76
+  - // set by the try block (the catch rethrows)
+  + // cast(d): set by the try block (the catch rethrows)
+server/migrations/v2.17.7-add-indices.ts:54
+  - // cast(d): catch variable is unknown
+  + // cast(d) (2): catch variable is unknown
+server/migrations/v2.19.1-copy-title-to-library-items.ts:82
+  - // cast(d): catch variable is unknown
+  + // cast(d) (2): catch variable is unknown
+server/migrations/v2.20.0-improve-author-sort-queries.ts:239
+  - // cast(d): catch variable is unknown
+  + // cast(d) (2): catch variable is unknown

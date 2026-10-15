@@ -1,0 +1,168 @@
+server/managers/BackupManager.ts:129
+  - // Set: the branch above handles a missing task
+  + // cast(d) (2): set: the branch above handles a missing task
+server/managers/BackupManager.ts:201
+  - // Set from the constructor data
+  + // cast(d): fullPath is set from the constructor data (the backup was loaded from its file)
+server/managers/BackupManager.ts:332
+  - // Set in the try block (it continues on failure)
+  + // cast(d): set in the try block (the catch continues the loop on failure)
+server/managers/BackupManager.ts:345
+  - // Set from the constructor data
+  + // cast(d): fullPath is set from the constructor data (the backup was loaded from its file)
+server/managers/BackupManager.ts:355
+  - // Set in the try block (it continues on failure)
+  + // cast(d): set in the try block (the catch continues the loop on failure)
+server/managers/BackupManager.ts:400
+  - // Set by setData
+  + // cast(d): fullPath is set by setData
+server/managers/BackupManager.ts:413
+  - // Loaded and new backups have createdAt
+  + // cast(d) (2): loaded and new backups have createdAt
+server/managers/BackupManager.ts:416
+  - // There are more backups than backupsToKeep
+  + // cast(d): there are more backups than backupsToKeep (the loop condition), so shift returns one
+server/managers/BackupManager.ts:431
+  - // Loaded and new backups have a fullPath
+  + // cast(d): loaded and new backups have a fullPath
+server/managers/BackupManager.ts:444
+  - // dbPath is set by Database.init
+  + // cast(a): the sqlite3 types do not include the backup API (https://github.com/TryGhost/node-sqlite3/pull/1116)
+server/managers/BackupManager.ts:445
+  - // cast(a): the sqlite3 types do not include the backup API (https://github.com/TryGhost/node-sqlite3/pull/1116)
+  + // cast(d): dbPath is set by Database.init, which runs before backups are made
+server/managers/BackupManager.ts:471
+  - // Set by setData
+  + // cast(d): fullPath is set by setData
+server/managers/MigrationManager.ts:135
+  - // Both are set by init (checked above)
+  + // cast(d) (2): both are set by init (checked above)
+server/managers/MigrationManager.ts:143
+  - // Set by initUmzug
+  + // cast(d): set by initUmzug, which runs before
+server/managers/MigrationManager.ts:145
+  - // Set by initUmzug
+  + // cast(d): set by initUmzug, which runs before
+server/managers/MigrationManager.ts:165
+  - // Set by initUmzug
+  + // cast(d): set by initUmzug, which runs before
+server/managers/MigrationManager.ts:197
+  - // migrationsDir is set by init
+  + // cast(d): migrationsDir is set by init
+server/managers/MigrationManager.ts:203
+  - // migrationsDir is set by init
+  + // cast(d): migrationsDir is set by init
+server/managers/MigrationManager.ts:251
+  - // Migration names were validated above (each has a version)
+  + // cast(d) (2): migration names were validated above (each has a version)
+server/managers/MigrationManager.ts:331
+  - // migrationsDir is set by init
+  + // cast(d): migrationsDir is set by init
+server/managers/MigrationManager.ts:347
+  - // initUmzug validated that every migration name has a version
+  + // cast(d): initUmzug validated that every migration name has a version
+server/managers/PodcastManager.ts:190
+  - // The queue is not empty (checked above)
+  + // cast(d): the queue is not empty (checked above)
+server/managers/PodcastManager.ts:202
+  - // cast(d): setData sets targetFilename to a string before the download starts
+  + // cast(d) (3): currentDownload is set by startPodcastEpisodeDownload, the only caller, until this returns; setData sets targetFilename to a string before the download starts
+server/managers/PodcastManager.ts:210
+  - // cast(d): the library item of a podcast episode download is a podcast
+  + // cast(d) (2): the library item of a podcast episode download is a podcast; currentDownload is set (see the comment at the start of this method)
+server/managers/PodcastManager.ts:217
+  - // cast(d): setData sets rssPodcastEpisode before the download is queued
+  + // cast(d) (2): currentDownload is set (see above); setData sets rssPodcastEpisode before the download is queued
+server/managers/PodcastManager.ts:310
+  - // setDataFromPath (called before this) sets the path
+  + // cast(d): setDataFromPath (called before this) sets the path
+server/managers/ApiCacheManager.ts:113
+  - // The cached routes are behind the auth middleware, which sets req.user
+  + // cast(d): the cached routes are behind the auth middleware, which sets req.user
+server/managers/ApiCacheManager.ts:136
+  - // Set just above, before send is replaced
+  + // cast(d): set just above, before send is replaced
+server/managers/AudioMetadataManager.ts:285
+  - // The queue is not empty (checked above)
+  + // cast(d): the queue is not empty (checked above)
+server/managers/CacheManager.ts:72
+  - // Set by ensureCachePaths at startup
+  + // cast(d): set by ensureCachePaths at startup
+server/managers/CacheManager.ts:150
+  - // Set by ensureCachePaths at startup
+  + // cast(d): set by ensureCachePaths at startup
+server/managers/CacheManager.ts:152
+  - // Set by ensureCachePaths at startup
+  + // cast(d): set by ensureCachePaths at startup
+server/managers/CacheManager.ts:162
+  - // Set by ensureCachePaths at startup
+  + // cast(d): set by ensureCachePaths at startup
+server/managers/CacheManager.ts:164
+  - // Set by ensureCachePaths at startup
+  + // cast(d): set by ensureCachePaths at startup
+server/managers/CacheManager.ts:182
+  - // Set by ensureCachePaths at startup
+  + // cast(d): set by ensureCachePaths at startup
+server/managers/CoverManager.ts:260
+  - // Scanned and stored audio files have a path
+  + // cast(d): scanned and stored audio files have a path
+server/managers/CronManager.ts:88
+  - // Only called when the library has a cron expression
+  + // cast(d): only called when the library has a cron expression
+server/managers/CronManager.ts:147
+  - // The query only returns podcasts with a schedule (autoDownloadSchedule not null)
+  + // cast(d): the query only returns podcasts with a schedule (autoDownloadSchedule not null)
+server/managers/CronManager.ts:154
+  - // libraryItem is included above
+  + // cast(d): the query only returns podcasts with a schedule; cast(b): libraryItem is included above, the association is optional in the model
+server/managers/LogManager.ts:81
+  - // Set just above
+  + // cast(d): set just above
+server/managers/NotificationManager.ts:196
+  - // The queue is not empty (checked above)
+  + // cast(d): the queue is not empty (checked above)
+server/managers/PlaybackSessionManager.ts:311
+  - // progressSynced is only true when the media progress was set
+  + // cast(d) (2): progressSynced is only true when the media progress was set
+server/managers/PlaybackSessionManager.ts:373
+  - // setData sets the session id
+  + // cast(d): setData sets the session id
+server/managers/PlaybackSessionManager.ts:399
+  - // Open sessions have a library item id (setData)
+  + // cast(d): open sessions have a library item id (setData)
+server/managers/PlaybackSessionManager.ts:506
+  - // Open sessions are created with setData (startSession), which sets updatedAt
+  + // cast(d): open sessions are created with setData (startSession), which sets updatedAt
+server/managers/PlaybackSessionManager.ts:509
+  - // Set by setData (see above)
+  + // cast(d): set by setData (see above)
+server/managers/ShareManager.ts:157
+  - // Open share sessions are created with setData, which sets updatedAt
+  + // cast(d): open share sessions are created with setData, which sets updatedAt
+server/managers/ShareManager.ts:160
+  - // Set by setData (see above)
+  + // cast(d): set by setData (see above)
+server/models/ApiKey.ts:257
+  - // cast(b): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+  + // cast(b) (2): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+server/models/User.ts:996
+  - // cast(b): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+  + // cast(b) (2): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+server/models/Feed.ts:137
+  - // cast(d): media is a Podcast when mediaType is "podcast" and a Book otherwise
+  + // cast(d) (2): media is a Podcast when mediaType is "podcast" and a Book otherwise
+server/models/Feed.ts:500
+  - // The entity is only null in the library item case noted above, which has already thrown
+  + // cast(d): the entity is only null in the library item case noted above, which has already thrown
+server/models/FeedEpisode.ts:77
+  - // cast(d): subtracting Dates subtracts their timestamps, as in the JS
+  + // cast(d) (2): subtracting Dates subtracts their timestamps, as in the JS
+server/models/FeedEpisode.ts:80
+  - // cast(d): subtracting Dates subtracts their timestamps, as in the JS
+  + // cast(d) (2): subtracting Dates subtracts their timestamps, as in the JS
+server/models/FeedEpisode.ts:200
+  - // earliestLibraryItemCreatedAt is set: this loop only runs when books is not empty
+  + // cast(d): earliestLibraryItemCreatedAt is set: this loop only runs when books is not empty
+server/models/Podcast.ts:390
+  - // publishedAt is set (the comparison above is false for null)
+  + // cast(d): publishedAt is set (the comparison above is false for null)

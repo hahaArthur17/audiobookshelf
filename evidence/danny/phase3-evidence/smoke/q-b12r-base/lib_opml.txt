@@ -1,0 +1,11 @@
+STATUS 200
+LOCATION 
+TEXT <?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>Audiobookshelf Podcast Subscriptions</title>
+    </head>
+    <body>
+        <outline type="rss" text="My Show" title="My Show" xmlUrl="http://127.0.0.1:9/feed.xml"/>
+    </body>
+</opml>

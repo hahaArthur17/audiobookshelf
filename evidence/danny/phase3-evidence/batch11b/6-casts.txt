@@ -1,0 +1,72 @@
+== base 18b19b45
+TOTAL files=191 as=729 unknown_as=151 nonnull=267
+TAGS {"d":358,"b":104,"a":15,"c":26,"none":377}
+TARGETS with count over 2: 96 Record<string, unknown> | 87 string | 53 number | 46 Error | 20 string[] | 17 FindOptions | 17 Book | 16 Podcast | 11 string | undefined | 8 typeof Sequelize & typeof SequelizeDataTypes | 8 DateAndTime | 8 Model | 8 CountOptions | 8 FilteredLibraryItem | 7 NodeJS.Timeou
+UNTAGGED 377 server/auth/LocalAuthStrategy.ts:140 server/auth/OidcAuthStrategy.ts:79 server/auth/OidcAuthStrategy.ts:106 server/auth/OidcAuthStrategy.ts:116 server/auth/OidcAuthStrategy.ts:214 server/auth/OidcAuthStrategy.ts:214 server/auth/OidcAuthStrategy.ts:254 server/auth/OidcAuthStrategy.ts:308
+== new HEAD
+TOTAL files=192 as=646 unknown_as=120 nonnull=267
+TAGS {"d":261,"b":87,"a":15,"c":26,"none":377}
+TARGETS with count over 2: 86 string | 53 number | 46 Error | 27 Record<string, unknown> | 18 string[] | 17 FindOptions | 17 Book | 16 Podcast | 11 string | undefined | 8 DateAndTime | 8 Model | 8 CountOptions | 8 FilteredLibraryItem | 7 NodeJS.Timeout | 7 LibraryItem.PodcastLibraryItem | 7 keyof Pa
+UNTAGGED 377 server/auth/LocalAuthStrategy.ts:140 server/auth/OidcAuthStrategy.ts:79 server/auth/OidcAuthStrategy.ts:106 server/auth/OidcAuthStrategy.ts:116 server/auth/OidcAuthStrategy.ts:214 server/auth/OidcAuthStrategy.ts:214 server/auth/OidcAuthStrategy.ts:254 server/auth/OidcAuthStrategy.ts:308
+== per-file differences (base then new)
+3c3
+< server/Database.ts as=42 unknown_as=1 nonnull=2
+---
+> server/Database.ts as=14 unknown_as=1 nonnull=2
+48c48
+< server/managers/MigrationManager.ts as=5 unknown_as=1 nonnull=15
+---
+> server/managers/MigrationManager.ts as=4 unknown_as=1 nonnull=15
+56c56
+< server/migrations/v2.15.0-series-column-unique.ts as=5 unknown_as=0 nonnull=0
+---
+> server/migrations/v2.15.0-series-column-unique.ts as=4 unknown_as=0 nonnull=0
+60c60
+< server/migrations/v2.17.3-fk-constraints.ts as=2 unknown_as=1 nonnull=0
+---
+> server/migrations/v2.17.3-fk-constraints.ts as=1 unknown_as=1 nonnull=0
+63c63
+< server/migrations/v2.17.6-share-add-isdownloadable.ts as=1 unknown_as=0 nonnull=0
+---
+> server/migrations/v2.17.6-share-add-isdownloadable.ts as=0 unknown_as=0 nonnull=0
+65,68c65,68
+< server/migrations/v2.19.1-copy-title-to-library-items.ts as=5 unknown_as=0 nonnull=0
+< server/migrations/v2.19.4-improve-podcast-queries.ts as=2 unknown_as=0 nonnull=0
+< server/migrations/v2.20.0-improve-author-sort-queries.ts as=5 unknown_as=0 nonnull=0
+< server/migrations/v2.26.0-create-auth-tables.ts as=2 unknown_as=0 nonnull=0
+---
+> server/migrations/v2.19.1-copy-title-to-library-items.ts as=3 unknown_as=0 nonnull=0
+> server/migrations/v2.19.4-improve-podcast-queries.ts as=0 unknown_as=0 nonnull=0
+> server/migrations/v2.20.0-improve-author-sort-queries.ts as=3 unknown_as=0 nonnull=0
+> server/migrations/v2.26.0-create-auth-tables.ts as=0 unknown_as=0 nonnull=0
+70c70
+< server/migrations/v2.35.0-add-last-refresh-token.ts as=2 unknown_as=0 nonnull=0
+---
+> server/migrations/v2.35.0-add-last-refresh-token.ts as=0 unknown_as=0 nonnull=0
+129,132c129,132
+< server/scanner/AbsMetadataFileScanner.ts as=2 unknown_as=0 nonnull=2
+< server/scanner/AudioFileScanner.ts as=13 unknown_as=6 nonnull=20
+< server/scanner/BookScanner.ts as=26 unknown_as=7 nonnull=29
+< server/scanner/LibraryItemScanData.ts as=5 unknown_as=16 nonnull=3
+---
+> server/scanner/AbsMetadataFileScanner.ts as=0 unknown_as=0 nonnull=2
+> server/scanner/AudioFileScanner.ts as=10 unknown_as=2 nonnull=20
+> server/scanner/BookScanner.ts as=17 unknown_as=4 nonnull=29
+> server/scanner/LibraryItemScanData.ts as=4 unknown_as=0 nonnull=3
+135c135
+< server/scanner/LibraryScanner.ts as=7 unknown_as=1 nonnull=12
+---
+> server/scanner/LibraryScanner.ts as=4 unknown_as=1 nonnull=12
+137,139c137,139
+< server/scanner/NfoFileScanner.ts as=3 unknown_as=0 nonnull=5
+< server/scanner/OpfFileScanner.ts as=3 unknown_as=0 nonnull=1
+< server/scanner/PodcastScanner.ts as=14 unknown_as=6 nonnull=7
+---
+> server/scanner/NfoFileScanner.ts as=0 unknown_as=0 nonnull=5
+> server/scanner/OpfFileScanner.ts as=0 unknown_as=0 nonnull=1
+> server/scanner/PodcastScanner.ts as=8 unknown_as=3 nonnull=7
+141c141,142
+< server/scanner/Scanner.ts as=36 unknown_as=7 nonnull=7
+---
+> server/scanner/Scanner.ts as=23 unknown_as=2 nonnull=7
+> server/scanner/dynamicKey.ts as=2 unknown_as=0 nonnull=0

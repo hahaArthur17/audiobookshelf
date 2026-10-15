@@ -1,0 +1,68 @@
+== branch and log
+danny/phase3
+81ad6a7f phase3 batch 11b-3: scanner dynamic keys
+f5a43f82 phase3 batch 11b-2: lazy models in Database
+4fc58fd8 phase3 batch 11b-1: Sequelize class statics
+18b19b45 phase3 batch 11a: honest null types, FilteredLibraryItem, FsExtra casts
+ac6f1d06 phase3 batch 10: packaging
+2069c8db phase3 batch 9b: remove InitializedDatabase
+== status
+== protected files changed since 18b19b45 (expect none)
+== files changed
+ MIGRATION.md                                       | 64 ++++++++++++++++--
+ server/Database.ts                                 | 77 ++++++++++++----------
+ server/managers/MigrationManager.ts                |  3 +-
+ server/migrations/v2.15.0-series-column-unique.ts  |  4 +-
+ server/migrations/v2.17.3-fk-constraints.ts        |  5 +-
+ .../migrations/v2.17.6-share-add-isdownloadable.ts |  4 +-
+ .../v2.19.1-copy-title-to-library-items.ts         |  7 +-
+ .../migrations/v2.19.4-improve-podcast-queries.ts  |  7 +-
+ .../v2.20.0-improve-author-sort-queries.ts         |  8 +--
+ server/migrations/v2.26.0-create-auth-tables.ts    |  7 +-
+ .../migrations/v2.35.0-add-last-refresh-token.ts   |  7 +-
+ server/scanner/AbsMetadataFileScanner.ts           |  8 +--
+ server/scanner/AudioFileScanner.ts                 | 24 +++----
+ server/scanner/BookScanner.ts                      | 22 +++----
+ server/scanner/LibraryItemScanData.ts              | 31 ++++-----
+ server/scanner/LibraryScanner.ts                   | 21 ++++--
+ server/scanner/NfoFileScanner.ts                   |  8 +--
+ server/scanner/OpfFileScanner.ts                   |  8 +--
+ server/scanner/PodcastScanner.ts                   | 16 ++---
+ server/scanner/Scanner.ts                          | 47 ++++++-------
+ server/scanner/dynamicKey.ts                       | 23 +++++++
+ server/utils/sequelizeStatics.d.ts                 | 59 +++++++++++++++++
+ server/utils/types.ts                              |  1 +
+ 23 files changed, 287 insertions(+), 174 deletions(-)
+== build
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+== tsc error count
+0
+== test
+    ✔ should stringify a sequelize query containing an op
+    ✔ should stringify a sequelize query containing a literal
+    ✔ should stringify a sequelize query containing a class
+    ✔ should ignore non-class functions
+
+
+  356 passing (2s)
+
+== lint
+lint exit: 0
+== remaining as Record<string, unknown> in server/scanner
+server/scanner/MediaProbeData.ts:34:  constructor(probeData?: Record<string, unknown> | null) {
+server/scanner/MediaProbeData.ts:65:  construct(probeData: Record<string, unknown>) {
+server/scanner/MediaProbeData.ts:69:        (this as unknown as Record<string, unknown>)[key] = new AudioMetaTags(probeData[key] as ConstructorParameters<typeof AudioMetaTags>[0])
+server/scanner/MediaProbeData.ts:71:      } else if ((this as unknown as Record<string, unknown>)[key] !== undefined) {
+server/scanner/MediaProbeData.ts:73:        (this as unknown as Record<string, unknown>)[key] = probeData[key]
+server/scanner/Scanner.ts:67:    let updatePayload: Record<string, unknown> = {}
+server/scanner/Scanner.ts:177:  quickMatchPodcastBuildUpdatePayload(libraryItem: LibraryItem.PodcastLibraryItem, matchData: iTunes.iTunesPodcastSearchResult, options: QuickMatchOptions): Record<string, unknown> {
+server/scanner/Scanner.ts:178:    const updatePayload: Record<string, unknown> = {}
+server/scanner/Scanner.ts:220:  async quickMatchBookBuildUpdatePayload(apiRouterCtx: ApiRouter, libraryItem: LibraryItem.BookLibraryItem, matchData: BookMatchData, options: QuickMatchOptions): Promise<{ updatePayload: Record<string, unknown>; hasSeriesUpdates: boolean; hasAuthorUpdates: boolean }> {
+server/scanner/Scanner.ts:223:    const updatePayload: Record<string, unknown> = {}
+server/scanner/Scanner.ts:434:    const updatePayload: Record<string, unknown> = {}
+server/scanner/dynamicKey.ts:11:  return (obj as Record<string, unknown>)[key]
+server/scanner/dynamicKey.ts:19:  const values = obj as Record<string, unknown>
+== remaining require() casts in Database

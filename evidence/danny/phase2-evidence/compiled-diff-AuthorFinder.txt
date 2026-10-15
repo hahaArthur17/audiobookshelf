@@ -1,0 +1,50 @@
+--- /tmp/abs-base2/dist-server/server/finders/AuthorFinder.js	2026-10-03 16:15:06.743768710 +1300
++++ dist-server/server/finders/AuthorFinder.js	2026-10-03 15:34:12.776658466 +1300
+@@ -1,10 +1,12 @@
+ "use strict";
+-const fs = require('../libs/fsExtra');
+-const Logger = require('../Logger');
+-const Path = require('path');
+-const Audnexus = require('../providers/Audnexus');
+-const { downloadImageFile } = require('../utils/fileUtils');
++const fs = require("../libs/fsExtra");
++const Logger = require("../Logger");
++const Path = require("path");
++const Audnexus = require("../providers/Audnexus");
++const fileUtils = require("../utils/fileUtils");
++const { downloadImageFile } = fileUtils;
+ class AuthorFinder {
++    audnexus;
+     constructor() {
+         this.audnexus = new Audnexus();
+     }
+@@ -13,17 +15,10 @@
+             return null;
+         return this.audnexus.findAuthorByASIN(asin, region);
+     }
+-    /**
+-     *
+-     * @param {string} name
+-     * @param {string} region
+-     * @param {Object} [options={}]
+-     * @returns {Promise<import('../providers/Audnexus').AuthorSearchObj>}
+-     */
+     async findAuthorByName(name, region, options = {}) {
+         if (!name)
+             return null;
+-        const maxLevenshtein = !isNaN(options.maxLevenshtein) ? Number(options.maxLevenshtein) : 3;
++        const maxLevenshtein = !isNaN(Number(options.maxLevenshtein)) ? Number(options.maxLevenshtein) : 3;
+         const author = await this.audnexus.findAuthorByName(name, region, maxLevenshtein);
+         if (!author?.name) {
+             return null;
+@@ -32,10 +27,6 @@
+     }
+     /**
+      * Download author image from url and save in authors folder
+-     *
+-     * @param {string} authorId
+-     * @param {string} url
+-     * @returns {Promise<{path:string, error:string}>}
+      */
+     async saveAuthorImage(authorId, url) {
+         const authorDir = Path.join(global.MetadataPath, 'authors');

@@ -1,0 +1,12 @@
+STATUS 200
+LOCATION 
+{
+ "addedAt": "MASK",
+ "asin": null,
+ "description": null,
+ "id": "MASK",
+ "imagePath": null,
+ "libraryId": "MASK",
+ "name": "Author Six",
+ "updatedAt": "MASK"
+}

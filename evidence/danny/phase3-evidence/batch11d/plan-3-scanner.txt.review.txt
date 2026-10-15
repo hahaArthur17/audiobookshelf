@@ -1,0 +1,165 @@
+server/scanner/BookScanner.ts:213
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/BookScanner.ts:227
+  - // ebookFile was checked above
+  + // cast(d): media.ebookFile was checked in the if condition above (narrowing does not reach the callback)
+server/scanner/BookScanner.ts:231
+  - // cast(d): the constructor sets metadata from the library file JSON, which has an extension (2 reads)
+  + // cast(d) (2): the constructor sets metadata from the library file JSON, which has an extension
+server/scanner/BookScanner.ts:244
+  - // Scanned library files have an extension (set by setDataFromPath)
+  + // cast(d): scanned library files have an extension (set by setDataFromPath)
+server/scanner/BookScanner.ts:377
+  - // Not undefined (skipped above); only set to an image file path
+  + // cast(d): not undefined (undefined keys are skipped above); only set to an image file path
+server/scanner/BookScanner.ts:382
+  - // Not undefined (skipped above); only set to an image file path
+  + // cast(d): not undefined (undefined keys are skipped above); only set to an image file path
+server/scanner/BookScanner.ts:499
+  - // Scanned library files have an extension (set by setDataFromPath)
+  + // cast(d): scanned library files have an extension (set by setDataFromPath)
+server/scanner/BookScanner.ts:592
+  - // Scanned library files have an extension (set by setDataFromPath)
+  + // cast(d): scanned library files have an extension (set by setDataFromPath)
+server/scanner/BookScanner.ts:645
+  - // The book (with its join rows) is created with the library item (included above)
+  + // cast(b): the book (with its join rows) is created with the library item (included above); the association is optional in the model
+server/scanner/BookScanner.ts:713
+  - // The folder or file name gives the title
+  + // cast(d): the folder or file name gives the title (LibraryItemScanData types it optional)
+server/scanner/BookScanner.ts:749
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/BookScanner.ts:793
+  - // The folder or file name gives the title
+  + // cast(d): the folder or file name gives the title (LibraryItemScanData types it optional)
+server/scanner/BookScanner.ts:800
+  - // The key is in the ebook metadata
+  + // cast(d): the key is in the ebook metadata (for...in over it)
+server/scanner/BookScanner.ts:805
+  - // The key is in the ebook metadata
+  + // cast(d): the key is in the ebook metadata (for...in over it)
+server/scanner/BookScanner.ts:843
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/BookScanner.ts:850
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/AudioFileScanner.ts:153
+  - // The disc and track keys were set above
+  + // cast(d) (4): the disc and track keys were set above (TypeScript already narrows them); a null number sorts as 0 in the subtraction, as in the JS
+server/scanner/AudioFileScanner.ts:160
+  - // The track key was set above; a file without a track number (null) sorts as 0
+  + // cast(d) (4): the track key was set above (TypeScript already narrows it); a file without a track number (null) sorts as 0, as in the JS
+server/scanner/AudioFileScanner.ts:220
+  - // setDataFromPath sets the path of scanned files
+  + // cast(d): setDataFromPath sets the path of scanned files
+server/scanner/AudioFileScanner.ts:234
+  - // setData sets the audio meta tags of probe data
+  + // cast(d): setData sets the audio meta tags of probe data
+server/scanner/AudioFileScanner.ts:610
+  - // cast(d): every file has meta tags with a title tag when useMetaTagAsTitle is true
+  + // cast(d) (2): every file has meta tags with a title tag when useMetaTagAsTitle is true
+server/scanner/LibraryScan.ts:85
+  - // Set by setComplete, which runs before the results are read
+  + // cast(d): set by setComplete, which runs before the results are read
+server/scanner/LibraryScan.ts:97
+  - // Set by setComplete, which runs before the results are read
+  + // cast(d): set by setComplete, which runs before the results are read
+server/scanner/LibraryScan.ts:136
+  - // startedAt is set by setData
+  + // cast(d): startedAt is set by setData, which runs before setComplete
+server/scanner/LibraryScanner.ts:69
+  - // Libraries are loaded with their folders for scans
+  + // cast(b): both callers load the library with its folders (findByIdWithFolders in CronManager and the LibraryController middleware); the association is optional in the model
+server/scanner/LibraryScanner.ts:119
+  - // Set by createAndAddTask
+  + // cast(d): set by createAndAddTask (with the scan data)
+server/scanner/LibraryScanner.ts:135
+  - // Set by createAndAddTask
+  + // cast(d): set by createAndAddTask (with the scan data)
+server/scanner/LibraryScanner.ts:163
+  - // The library of the scan is loaded with its folders (setData sets the library)
+  + // cast(b): setData sets the library of the scan, which is loaded with its folders; the association is optional in the model
+server/scanner/LibraryScanner.ts:218
+  - // setData sets the library of the scan
+  + // cast(d): setData sets the library of the scan
+server/scanner/LibraryScanner.ts:278
+  - // setData sets the library of the scan
+  + // cast(d): setData sets the library of the scan
+server/scanner/LibraryScanner.ts:424
+  - // The library folder is included above
+  + // cast(b): the library folder is included in the query above; the association is optional in the model
+server/scanner/LibraryScanner.ts:466
+  - // The watcher's pending task is created with data and a start time (setData)
+  + // cast(d) (2): the watcher's pending task is created with data and a start time (setData)
+server/scanner/LibraryScanner.ts:479
+  - // The queue is not empty (checked above)
+  + // cast(d): the queue is not empty (checked above)
+server/scanner/AbsMetadataFileScanner.ts:30
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/AbsMetadataFileScanner.ts:68
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/LibraryItemScanData.ts:203
+  - // Scanned library files have an extension (set by setDataFromPath)
+  + // cast(d): scanned library files have an extension (set by setDataFromPath)
+server/scanner/LibraryItemScanData.ts:209
+  - // Scanned library files have an extension (set by setDataFromPath)
+  + // cast(d): scanned library files have an extension (set by setDataFromPath)
+server/scanner/LibraryItemScanData.ts:327
+  - // setDataFromPath sets the ino of scanned files
+  + // cast(d): setDataFromPath sets the ino of scanned files
+server/scanner/LibraryItemScanner.ts:77
+  - // The library folder is included above
+  + // cast(b): the library folder is included in the query above; the association is optional in the model
+server/scanner/MediaProbeData.ts:68
+  - // cast(d): this object indexed by the keys of the stored probe data; the stored audio meta tags are AudioMetaTags toJSON
+  + // cast(d) (2): this object indexed by the keys of the stored probe data; the stored audio meta tags are AudioMetaTags toJSON
+server/scanner/NfoFileScanner.ts:18
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/NfoFileScanner.ts:25
+  - // The key is in the parsed metadata
+  + // cast(d): the key is in the parsed metadata (for...in over it)
+server/scanner/NfoFileScanner.ts:31
+  - // The key is in the parsed metadata
+  + // cast(d): the key is in the parsed metadata (for...in over it)
+server/scanner/OpfFileScanner.ts:18
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/PodcastScanner.ts:200
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/PodcastScanner.ts:314
+  - // Scanned library files have a path (set by setDataFromPath)
+  + // cast(d): scanned library files have a path (set by setDataFromPath)
+server/scanner/PodcastScanner.ts:359
+  - // The podcast is created with the library item (included above)
+  + // cast(b): the podcast is created with the library item (included above); the association is optional in the model
+server/scanner/PodcastScanner.ts:386
+  - // The folder or file name gives the title
+  + // cast(d): the folder or file name gives the title (LibraryItemScanData types it optional)
+server/scanner/ScanLogger.ts:65
+  - // startedAt is set by setData
+  + // cast(d): startedAt is set by setData, which runs before setComplete
+server/scanner/Scanner.ts:92
+  - // The error was checked just above, so the cover path is set
+  + // cast(d): the error was checked just above, so the cover path is set
+server/scanner/Scanner.ts:115
+  - // See NOTE above
+  + // cast(c): see NOTE above (results may be null)
+server/scanner/Scanner.ts:125
+  - // The error was checked just above, so the cover path is set
+  + // cast(d): the error was checked just above, so the cover path is set
+server/scanner/Scanner.ts:394
+  - // Only called for podcasts with a feed url
+  + // cast(c): quickMatchLibraryItem checks feedURL before it calls this; the route passes a podcast without one (see NOTE above)
+server/scanner/Scanner.ts:403
+  - // Episodes without an enclosure url were scanned from audio files, which give them a title (the title tag or the file name)
+  + // cast(d): episodes without an enclosure url were scanned from audio files, which give them a title (the title tag or the file name)
+server/scanner/Scanner.ts:551
+  - // Set by createAndAddTask
+  + // cast(d): set by createAndAddTask (with the scan data)

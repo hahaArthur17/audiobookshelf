@@ -1,0 +1,43 @@
+STATUS 200
+LOCATION 
+{
+ "createdAt": "MASK",
+ "displayOrder": "3",
+ "folders": [
+  {
+   "addedAt": "MASK",
+   "fullPath": "ROOT/lib/books",
+   "id": "MASK",
+   "libraryId": "MASK"
+  }
+ ],
+ "icon": "database",
+ "id": "MASK",
+ "lastScan": "MASK",
+ "lastScanVersion": "MASK",
+ "lastUpdate": "MASK",
+ "mediaType": "book",
+ "name": "Books2",
+ "provider": "google",
+ "settings": {
+  "audiobooksOnly": false,
+  "autoScanCronExpression": null,
+  "coverAspectRatio": 1,
+  "disableWatcher": false,
+  "epubsAllowScriptedContent": false,
+  "hideSingleBookSeries": true,
+  "markAsFinishedPercentComplete": null,
+  "markAsFinishedTimeRemaining": 5,
+  "metadataPrecedence": [
+   "folderStructure",
+   "audioMetatags",
+   "nfoFile",
+   "txtFiles",
+   "opfFile",
+   "absMetadata"
+  ],
+  "onlyShowLaterBooksInContinueSeries": true,
+  "skipMatchingMediaWithAsin": false,
+  "skipMatchingMediaWithIsbn": false
+ }
+}

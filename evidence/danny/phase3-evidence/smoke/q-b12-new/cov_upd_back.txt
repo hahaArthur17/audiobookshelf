@@ -1,0 +1,6 @@
+STATUS 200
+LOCATION 
+{
+ "cover": "ROOT/metadata/items/UUID/cover.jpg",
+ "success": true
+}

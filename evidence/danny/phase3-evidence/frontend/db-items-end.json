@@ -1,0 +1,50 @@
+[
+ {
+  "lib": "My Books",
+  "mediaType": "book",
+  "relPath": "Author One/Book One",
+  "isMissing": 0
+ },
+ {
+  "lib": "My Books",
+  "mediaType": "book",
+  "relPath": "Author One/Book Three",
+  "isMissing": 0
+ },
+ {
+  "lib": "My Books",
+  "mediaType": "book",
+  "relPath": "Combo Author/Combo Book",
+  "isMissing": 0
+ },
+ {
+  "lib": "My Books",
+  "mediaType": "book",
+  "relPath": "Ebook Author/EPUB Book",
+  "isMissing": 0
+ },
+ {
+  "lib": "My Books",
+  "mediaType": "book",
+  "relPath": "Ebook Author/PDF Book",
+  "isMissing": 0
+ },
+ {
+  "lib": "My Books",
+  "mediaType": "book",
+  "relPath": "Loose Book.pdf",
+  "isMissing": 0
+ },
+ {
+  "lib": "My Books",
+  "mediaType": "book",
+  "relPath": "Real Author/Real Book",
+  "isMissing": 0
+ },
+ {
+  "lib": "My Books",
+  "mediaType": "book",
+  "relPath": "Tag Author/Tagged Book",
+  "isMissing": 0
+ }
+]

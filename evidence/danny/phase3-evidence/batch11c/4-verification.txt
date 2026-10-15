@@ -1,0 +1,70 @@
+== branch and log
+danny/phase3
+78b3c0b1 phase3 batch 11c-3: LibraryController to TypeScript
+cf79d521 phase3 batch 11c-2: OidcQuery
+ca74c5a5 phase3 batch 11c-1: typed query values
+81ad6a7f phase3 batch 11b-3: scanner dynamic keys
+f5a43f82 phase3 batch 11b-2: lazy models in Database
+4fc58fd8 phase3 batch 11b-1: Sequelize class statics
+== status
+== protected files changed since 81ad6a7f (expect none)
+== files changed
+ MIGRATION.md                                       | 107 +++-
+ server/Auth.ts                                     |   5 +-
+ server/auth/OidcAuthStrategy.ts                    |  36 +-
+ server/controllers/AuthorController.ts             |  15 +-
+ server/controllers/CollectionController.ts         |   7 +-
+ server/controllers/FileSystemController.ts         |   6 +-
+ .../{LibraryController.js => LibraryController.ts} | 550 ++++++++++++---------
+ server/controllers/MeController.ts                 |   5 +-
+ server/controllers/MiscController.ts               |   6 +-
+ server/controllers/PodcastController.ts            |   5 +-
+ server/controllers/SeriesController.ts             |   7 +-
+ server/controllers/SessionController.ts            |   8 +-
+ server/controllers/ShareController.ts              |   6 +-
+ server/controllers/UserController.ts               |   6 +-
+ server/models/Library.ts                           |   3 +-
+ server/utils/queries/seriesFilters.ts              |   2 +-
+ server/utils/queryValue.ts                         |  39 ++
+ 17 files changed, 504 insertions(+), 309 deletions(-)
+== LibraryController files
+docs/controllers/LibraryController.yaml
+server/controllers/LibraryController.ts
+test/server/controllers/LibraryController.test.js
+== references to LibraryController outside server/ and MIGRATION.md
+docs/root.yaml:33:    $ref: './controllers/LibraryController.yaml#/paths/~1api~1libraries'
+docs/root.yaml:35:    $ref: './controllers/LibraryController.yaml#/paths/~1api~1libraries~1{id}'
+docs/root.yaml:37:    $ref: './controllers/LibraryController.yaml#/paths/~1api~1libraries~1{id}~1authors'
+docs/root.yaml:39:    $ref: './controllers/LibraryController.yaml#/paths/~1api~1libraries~1{id}~1items'
+docs/root.yaml:41:    $ref: './controllers/LibraryController.yaml#/paths/~1api~1libraries~1{id}~1issues'
+docs/root.yaml:43:    $ref: './controllers/LibraryController.yaml#/paths/~1api~1libraries~1{id}~1series'
+docs/root.yaml:45:    $ref: './controllers/LibraryController.yaml#/paths/~1api~1libraries~1{id}~1series~1{seriesId}'
+test/server/controllers/LibraryController.test.js:6:const LibraryController = require('../../../server/controllers/LibraryController')
+test/server/controllers/LibraryController.test.js:10:describe('LibraryController.downloadMultiple', () => {
+test/server/controllers/LibraryController.test.js:140:    await LibraryController.downloadMultiple(req, res)
+test/server/controllers/LibraryController.test.js:150:    await LibraryController.downloadMultiple(req, res)
+test/server/controllers/LibraryController.test.js:160:    await LibraryController.downloadMultiple(req, res)
+test/server/controllers/LibraryController.test.js:170:    await LibraryController.downloadMultiple(req, res)
+== remaining query value casts
+server/auth/OidcAuthStrategy.ts:552:      // cast(d): query value; code is not checked (requiredString does not fit), and encodeURIComponent stringifies undefined or an array, like the JS
+server/utils/queryValue.ts:17:  // cast(d): query value; the caller uses it as a string or undefined (an array or object is returned as is)
+server/utils/queryValue.ts:26:  // cast(d): query value; the caller has checked it is set and uses it as a string (an array or object is returned as is)
+server/utils/queryValue.ts:35:  // cast(d): query value; isNaN is typed to take a number, but it converts its argument itself, so the raw value is returned as is
+== build
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+== tsc error count
+0
+== test
+    ✔ should stringify a sequelize query containing an op
+    ✔ should stringify a sequelize query containing a literal
+    ✔ should stringify a sequelize query containing a class
+    ✔ should ignore non-class functions
+
+
+  356 passing (1s)
+
+== lint
+lint exit: 0

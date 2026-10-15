@@ -1,0 +1,35 @@
+ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "WORK/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+WARN: Removed 1 sessions that were 3 seconds or less
+WARN: [AuthorController] Author "Author Six" has invalid imagePath: null
+ERROR: [podcastUtils] getPodcastFeed Error Error: Call to 127.0.0.1 is blocked.
+ERROR: [PodcastManager] checkPodcastForNewEpisodes invalid feed payload for My Show (ID: 794b0bdb-8db8-4dee-b8f6-331161ebc6b6) null
+ERROR: [podcastUtils] getPodcastFeed Error Error: Call to 127.0.0.1 is blocked.
+ERROR: [PodcastManager] checkPodcastForNewEpisodes invalid feed payload for My Show (ID: 794b0bdb-8db8-4dee-b8f6-331161ebc6b6) null
+ERROR: [podcastUtils] getPodcastFeed Error Error: Call to 127.0.0.1 is blocked.
+ERROR: [PodcastManager] checkPodcastForNewEpisodes invalid feed payload for My Show (ID: 794b0bdb-8db8-4dee-b8f6-331161ebc6b6) null
+ERROR: [podcastUtils] getPodcastFeed Error Error: Call to 127.0.0.1 is blocked.
+ERROR: [PodcastManager] checkPodcastForNewEpisodes invalid feed payload for My Show (ID: 794b0bdb-8db8-4dee-b8f6-331161ebc6b6) null
+WARN: [SessionController] Invalid "user" query string "notauuid"
+WARN: [SessionController] Invalid "user" query string "41d6ad72-add6-481c-887d-ba6ce769b656,41d6ad72-add6-481c-887d-ba6ce769b656"
+WARN: [SessionController] Invalid "sort" query string "bogus" (Must be one of "displayTitle|duration|playMethod|startTime|currentTime|timeListening|updatedAt|createdAt")
+WARN: [SessionController] Invalid "sort" query string "duration,updatedAt" (Must be one of "displayTitle|duration|playMethod|startTime|currentTime|timeListening|updatedAt|createdAt")
+WARN: [OidcAuth] Rejected callback URL to different origin: http://localhost/login (expected http://localhost:3343)
+WARN: [Auth] Rejected invalid callback URL: http://localhost/login
+WARN: [OidcAuth] Rejected callback URL to different origin: http://evil.example/login (expected http://localhost:3343)
+WARN: [Auth] Rejected invalid callback URL: http://evil.example/login
+ERROR: [OidcAuth] Invalid callback URL format: http://localhost/a,http://localhost/b TypeError: callbackUrl.startsWith is not a function
+WARN: [Auth] Rejected invalid callback URL: http://localhost/a,http://localhost/b
+ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+ERROR: [OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch
+ERROR: [OidcAuth] Invalid callback URL format: /audiobookshelf/login,/audiobookshelf/x TypeError: callbackUrl.startsWith is not a function
+WARN: [Auth] Rejected invalid callback URL: /audiobookshelf/login,/audiobookshelf/x
+ERROR: [LibraryItemController] getMetadataObject: Invalid library item "JSON Title"
+ERROR: [LibraryController] Invalid library not found in reorder nope
+ERROR: [LibraryController] Invalid request. Setting "coverAspectRatio" must be of type number
+WARN: [libraryFilters] Failed to decode filter value "%%": URI malformed
+WARN: [libraryFilters] Failed to decode filter value "%%": URI malformed
+WARN: [LibraryController] No library items have issues

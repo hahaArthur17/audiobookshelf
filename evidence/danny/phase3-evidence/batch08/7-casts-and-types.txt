@@ -1,0 +1,68 @@
+server/migrations/types.d.ts plain=0 unknown_as=0 nonnull=0
+server/migrations/v2.15.0-series-column-unique.ts plain=5 unknown_as=0 nonnull=0
+  21: dist=1: const seriesIndexes = (await queryInterface.showIndex('Series')) as { name: string }[]
+  43: dist=6: `)) as [{ name: string; libraryId: string }[], unknown]
+  73: dist=NONE: )) as [{ bookId: string }[], unknown]
+  99: dist=NONE: )) as [{ id: string }[], unknown]
+  136: dist=1: type: (queryInterface.sequelize as Sequelize & { QueryTypes: typeof QueryTypes }).QueryTypes.SELECT
+server/migrations/v2.15.1-reindex-nocase.ts plain=0 unknown_as=0 nonnull=0
+server/migrations/v2.15.2-index-creation.ts plain=3 unknown_as=0 nonnull=0
+  16: dist=1: const bookAuthorsIndexes = (await queryInterface.showIndex('bookAuthors')) as { name: string }[]
+  28: dist=1: const bookSeriesIndexes = (await queryInterface.showIndex('bookSeries')) as { name: string }[]
+  44: dist=1: const podcastEpisodesIndexes = (await queryInterface.showIndex('podcastEpisodes')) as { name: string }[]
+server/migrations/v2.17.0-uuid-replacement.ts plain=0 unknown_as=0 nonnull=0
+server/migrations/v2.17.3-fk-constraints.ts plain=2 unknown_as=1 nonnull=0
+  162: dist=1: const foreignKeys = (await execQuery(`PRAGMA foreign_key_list(${quotedTableName});`)) as unknown as PragmaFore
+  231: dist=1: const attributes = (queryInterface.queryGenerator as { attributesToSQL(attributes: Record<string, ColumnDescri
+  252: dist=1: type: (queryInterface.sequelize.Sequelize as typeof Sequelize & { QueryTypes: typeof QueryTypes }).QueryTypes.
+server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.ts plain=1 unknown_as=0 nonnull=1
+  70: dist=1: serverSettings = JSON.parse((result[0][0] as { value: string }).value)
+  77: dist=1: return serverSettings!
+server/migrations/v2.17.5-remove-host-from-feed-urls.ts plain=0 unknown_as=0 nonnull=0
+server/migrations/v2.17.6-share-add-isdownloadable.ts plain=1 unknown_as=0 nonnull=0
+  23: dist=1: type: (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataTypes }).Data
+server/migrations/v2.17.7-add-indices.ts plain=2 unknown_as=0 nonnull=0
+  55: dist=1: if ((error as Error).name === 'SequelizeDatabaseError' && (error as Error).message.includes('already exists'))
+server/migrations/v2.19.1-copy-title-to-library-items.ts plain=5 unknown_as=0 nonnull=0
+  28: dist=1: await addColumn(queryInterface, logger, 'libraryItems', 'title', { type: (queryInterface.sequelize.Sequelize a
+  34: dist=1: await addColumn(queryInterface, logger, 'libraryItems', 'titleIgnorePrefix', { type: (queryInterface.sequelize
+  82: dist=1: await queryInterface.addIndex(tableName, columns as string[])
+  86: dist=1: if ((error as Error).name === 'SequelizeDatabaseError' && (error as Error).message.includes('already exists'))
+server/migrations/v2.19.4-improve-podcast-queries.ts plain=2 unknown_as=0 nonnull=0
+  26: dist=1: await addColumn(queryInterface, logger, 'podcasts', 'numEpisodes', { type: (queryInterface.sequelize.Sequelize
+  33: dist=1: await addColumn(queryInterface, logger, 'mediaProgresses', 'podcastId', { type: (queryInterface.sequelize.Sequ
+server/migrations/v2.20.0-improve-author-sort-queries.ts plain=5 unknown_as=0 nonnull=0
+  18: dist=1: { name: 'authorNamesFirstLast', source: `${authors}.name`, spec: { type: (Sequelize as typeof Sequelize & type
+  20: dist=1: { name: 'authorNamesLastFirst', source: `${authors}.lastFirst`, spec: { type: (Sequelize as typeof Sequelize &
+  238: dist=1: await this.queryInterface.addIndex(tableName, columns as string[])
+  242: dist=1: if ((error as Error).name === 'SequelizeDatabaseError' && (error as Error).message.includes('already exists'))
+server/migrations/v2.26.0-create-auth-tables.ts plain=2 unknown_as=0 nonnull=0
+  25: dist=1: const DataTypes = (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataT
+  72: dist=1: const DataTypes = (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataT
+server/migrations/v2.33.0-add-discover-query-indexes.ts plain=2 unknown_as=0 nonnull=0
+  52: dist=1: const existing = (await queryInterface.showIndex(index.table)) as { name: string }[]
+  68: dist=1: const existing = (await queryInterface.showIndex(index.table)) as { name: string }[]
+server/migrations/v2.35.0-add-last-refresh-token.ts plain=2 unknown_as=0 nonnull=0
+  24: dist=1: type: (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataTypes }).Data
+  35: dist=1: type: (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataTypes }).Data
+TOTAL plain=32 unknown_as=1 nonnull=1
+== types.d.ts ==
+// Declaration file (emits no JavaScript): MigrationManager copies every .js file in the compiled migrations
+// directory to the config directory and rejects a file whose name has no version, so a types.ts here would break startup.
+import type { QueryInterface } from 'sequelize'
+import Logger = require('../Logger')
+
+/**
+ * The context MigrationManager passes to every migration (`context` of the umzug options)
+ */
+export interface MigrationContext {
+  /** a Sequelize QueryInterface object */
+  queryInterface: QueryInterface
+  /** a Logger object */
+  logger: typeof Logger
+}
+
+export interface MigrationOptions {
+  /** an object containing the migration context */
+  context: MigrationContext
+}

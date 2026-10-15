@@ -1,0 +1,21 @@
+diff -ruw /tmp/out-base-b11a/server/auth/OidcAuthStrategy.js /tmp/out-new-b11a/server/auth/OidcAuthStrategy.js
+--- /tmp/out-base-b11a/server/auth/OidcAuthStrategy.js	2026-10-10 13:29:20.921344746 +1300
++++ /tmp/out-new-b11a/server/auth/OidcAuthStrategy.js	2026-10-10 13:29:22.105822138 +1300
+@@ -97,12 +97,13 @@
+                     Logger.warn(`[User] openid: User not found and auto-register is disabled`);
+                 }
+             }
+-            if (!user.isActive) {
++            const activeUser = user;
++            if (!activeUser.isActive) {
+                 throw new Error('User not active or not found');
+             }
+-            await this.setUserGroup(user, userinfo);
+-            await this.updateUserPermissions(user, userinfo);
+-            user.openid_id_token = tokenset.id_token;
++            await this.setUserGroup(activeUser, userinfo);
++            await this.updateUserPermissions(activeUser, userinfo);
++            activeUser.openid_id_token = tokenset.id_token;
+             return done(null, user);
+         }
+         catch (error) {

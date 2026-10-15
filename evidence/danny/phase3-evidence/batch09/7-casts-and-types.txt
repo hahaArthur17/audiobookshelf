@@ -1,0 +1,45 @@
+== the 7 files at batch 9 (3b5baef7)
+index.ts as=1 unknown_as=0 nonnull=0
+server/Auth.ts as=3 unknown_as=4 nonnull=7
+server/Database.ts as=45 unknown_as=1 nonnull=41
+server/Logger.ts as=0 unknown_as=1 nonnull=1
+server/Server.ts as=8 unknown_as=3 nonnull=4
+server/SocketAuthority.ts as=3 unknown_as=3 nonnull=12
+server/Watcher.ts as=2 unknown_as=0 nonnull=5
+TOTAL files=7 as=62 unknown_as=12 nonnull=70
+TAGS {"d":46,"b":20,"a":5,"c":3}
+TARGETS with count over 2: 7 string | 3 [{ count: number }[], unknown]
+UNTAGGED 0 
+
+== outside files at batch 8 (dd0b7b2f)
+server/controllers/MiscController.ts as=12 unknown_as=1 nonnull=1
+server/controllers/SessionController.ts as=6 unknown_as=0 nonnull=4
+server/models/Setting.ts as=0 unknown_as=0 nonnull=0
+server/objects/settings/ServerSettings.ts as=5 unknown_as=1 nonnull=0
+server/utils/types.ts as=0 unknown_as=0 nonnull=0
+TOTAL files=5 as=23 unknown_as=2 nonnull=5
+TAGS {"d":13,"b":6,"none":6}
+TARGETS with count over 2: 4 Model | 3 string | 3 string | undefined | 3 number
+UNTAGGED 6 server/objects/settings/ServerSettings.ts:184 server/objects/settings/ServerSettings.ts:188 server/objects/settings/ServerSettings.ts:197 server/objects/settings/ServerSettings.ts:199 server/objects/settings/ServerSettings.ts:272 server/objects/settings/ServerSettings.ts:438
+
+== outside files at batch 9 (3b5baef7)
+server/controllers/MiscController.ts as=12 unknown_as=1 nonnull=2
+server/controllers/SessionController.ts as=6 unknown_as=0 nonnull=5
+server/models/Setting.ts as=0 unknown_as=0 nonnull=0
+server/objects/settings/ServerSettings.ts as=6 unknown_as=1 nonnull=0
+server/utils/types.ts as=0 unknown_as=0 nonnull=0
+TOTAL files=5 as=24 unknown_as=2 nonnull=7
+TAGS {"d":14,"b":6,"none":6}
+TARGETS with count over 2: 4 Model | 4 number | 3 string | 3 string | undefined
+UNTAGGED 6 server/objects/settings/ServerSettings.ts:184 server/objects/settings/ServerSettings.ts:188 server/objects/settings/ServerSettings.ts:197 server/objects/settings/ServerSettings.ts:199 server/objects/settings/ServerSettings.ts:272 server/objects/settings/ServerSettings.ts:438
+
+== whole server at dd0b7b2f, 3b5baef7, HEAD
+/tmp/abs-base-b9
+TOTAL files=184 as=683 unknown_as=160 nonnull=209
+TAGS {"none":395,"d":322,"c":23,"a":11,"e":8,"b":84}
+/tmp/abs-mid-b9
+TOTAL files=191 as=746 unknown_as=172 nonnull=281
+TAGS {"d":369,"b":104,"a":16,"c":26,"none":395,"e":8}
+/home/danny/Code/compx574/audiobookshelf
+TOTAL files=191 as=729 unknown_as=172 nonnull=241
+TAGS {"d":358,"b":104,"a":16,"c":26,"none":397}

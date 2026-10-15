@@ -1,0 +1,129 @@
+STATUS 200
+LOCATION 
+{
+ "libraryItem": {
+  "addedAt": "MASK",
+  "birthtimeMs": "MASK",
+  "ctimeMs": "MASK",
+  "folderId": "MASK",
+  "id": "MASK",
+  "ino": "MASK",
+  "isFile": false,
+  "isInvalid": false,
+  "isMissing": false,
+  "lastScan": "MASK",
+  "libraryFiles": [
+   {
+    "addedAt": "MASK",
+    "fileType": "audio",
+    "ino": "MASK",
+    "isSupplementary": null,
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".mp3",
+     "filename": "untagged.mp3",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/podcasts/Other Show/untagged.mp3",
+     "relPath": "untagged.mp3",
+     "size": 4511
+    },
+    "updatedAt": "MASK"
+   }
+  ],
+  "libraryId": "MASK",
+  "media": {
+   "autoDownloadEpisodes": false,
+   "autoDownloadSchedule": "0 * * * *",
+   "coverPath": null,
+   "episodes": [
+    {
+     "addedAt": "MASK",
+     "audioFile": {
+      "addedAt": "MASK",
+      "bitRate": 32000,
+      "channelLayout": "mono",
+      "channels": 1,
+      "chapters": [],
+      "codec": "mp3",
+      "discNumFromFilename": null,
+      "discNumFromMeta": null,
+      "duration": 1.07102,
+      "embeddedCoverArt": null,
+      "error": null,
+      "exclude": false,
+      "format": "MP2/3 (MPEG audio layer 2/3)",
+      "index": 1,
+      "ino": "MASK",
+      "language": null,
+      "manuallyVerified": false,
+      "metaTags": {
+       "tagEncoder": "Lavf60.16.100"
+      },
+      "metadata": {
+       "birthtimeMs": "MASK",
+       "ctimeMs": "MASK",
+       "ext": ".mp3",
+       "filename": "untagged.mp3",
+       "mtimeMs": "MASK",
+       "path": "ROOT/lib/podcasts/Other Show/untagged.mp3",
+       "relPath": "untagged.mp3",
+       "size": 4511
+      },
+      "mimeType": "audio/mpeg",
+      "timeBase": "1/14112000",
+      "trackNumFromFilename": null,
+      "trackNumFromMeta": null,
+      "updatedAt": "MASK"
+     },
+     "chapters": [],
+     "description": null,
+     "enclosure": null,
+     "episode": null,
+     "episodeType": null,
+     "guid": null,
+     "id": "MASK",
+     "index": null,
+     "libraryItemId": "MASK",
+     "oldEpisodeId": null,
+     "podcastId": "MASK",
+     "pubDate": null,
+     "publishedAt": null,
+     "season": null,
+     "subtitle": null,
+     "title": "untagged",
+     "updatedAt": "MASK"
+    }
+   ],
+   "id": "MASK",
+   "lastEpisodeCheck": null,
+   "libraryItemId": "MASK",
+   "maxEpisodesToKeep": 0,
+   "maxNewEpisodesToDownload": 3,
+   "metadata": {
+    "author": "New Host",
+    "description": null,
+    "explicit": false,
+    "feedUrl": null,
+    "genres": [],
+    "imageUrl": null,
+    "itunesArtistId": null,
+    "itunesId": null,
+    "itunesPageUrl": null,
+    "language": null,
+    "releaseDate": null,
+    "title": "Other Show",
+    "type": "episodic"
+   },
+   "tags": []
+  },
+  "mediaType": "podcast",
+  "mtimeMs": "MASK",
+  "oldLibraryItemId": null,
+  "path": "ROOT/lib/podcasts/Other Show",
+  "relPath": "Other Show",
+  "scanVersion": "2.37.0",
+  "updatedAt": "MASK"
+ },
+ "updated": true
+}

@@ -1,0 +1,38 @@
+On branch danny/phase2
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	renamed:    server/controllers/SearchController.js -> server/controllers/SearchController.ts
+	renamed:    server/finders/AuthorFinder.js -> server/finders/AuthorFinder.ts
+	renamed:    server/finders/BookFinder.js -> server/finders/BookFinder.ts
+	renamed:    server/finders/PodcastFinder.js -> server/finders/PodcastFinder.ts
+	renamed:    server/providers/Audible.js -> server/providers/Audible.ts
+	renamed:    server/providers/AudiobookCovers.js -> server/providers/AudiobookCovers.ts
+	renamed:    server/providers/Audnexus.js -> server/providers/Audnexus.ts
+	renamed:    server/providers/CustomProviderAdapter.js -> server/providers/CustomProviderAdapter.ts
+	renamed:    server/providers/FantLab.js -> server/providers/FantLab.ts
+	renamed:    server/providers/GoogleBooks.js -> server/providers/GoogleBooks.ts
+	renamed:    server/providers/MusicBrainz.js -> server/providers/MusicBrainz.ts
+	renamed:    server/providers/OpenLibrary.js -> server/providers/OpenLibrary.ts
+	renamed:    server/providers/iTunes.js -> server/providers/iTunes.ts
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   server/controllers/SearchController.ts
+	modified:   server/finders/AuthorFinder.ts
+	modified:   server/finders/BookFinder.ts
+	modified:   server/finders/PodcastFinder.ts
+	modified:   server/providers/Audible.ts
+	modified:   server/providers/AudiobookCovers.ts
+	modified:   server/providers/Audnexus.ts
+	modified:   server/providers/CustomProviderAdapter.ts
+	modified:   server/providers/FantLab.ts
+	modified:   server/providers/GoogleBooks.ts
+	modified:   server/providers/MusicBrainz.ts
+	modified:   server/providers/OpenLibrary.ts
+	modified:   server/providers/iTunes.ts
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	server/providers/types.ts
+

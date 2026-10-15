@@ -1,0 +1,121 @@
+STATUS 000
+LOCATION 
+{
+ "filterdata": {
+  "authorCount": 6,
+  "authors": [
+   {
+    "id": "MASK",
+    "name": "Author Six"
+   },
+   {
+    "id": "MASK",
+    "name": "Author Two"
+   },
+   {
+    "id": "MASK",
+    "name": "JSON Author"
+   },
+   {
+    "id": "MASK",
+    "name": "NFO Author"
+   },
+   {
+    "id": "MASK",
+    "name": "OPF Author"
+   },
+   {
+    "id": "MASK",
+    "name": "Tag Author"
+   }
+  ],
+  "bookCount": 7,
+  "genres": [
+   "Fantasy",
+   "Mystery",
+   "Science Fiction",
+   "Thriller"
+  ],
+  "languages": [
+   "en",
+   "English"
+  ],
+  "loadedAt": "MASK",
+  "narrators": [
+   "JSON Narrator",
+   "NFO Narrator",
+   "Reader One",
+   "Tag Narrator"
+  ],
+  "numIssues": 0,
+  "podcastCount": 0,
+  "publishedDecades": [
+   "1990",
+   "2000",
+   "2010"
+  ],
+  "publishers": [
+   "JSON Publisher",
+   "OPF Publisher",
+   "Tag Pub"
+  ],
+  "series": [
+   {
+    "id": "MASK",
+    "name": "JSON Series"
+   },
+   {
+    "id": "MASK",
+    "name": "OPF Series"
+   }
+  ],
+  "seriesCount": 2,
+  "tags": [
+   "tag one"
+  ]
+ },
+ "issues": 0,
+ "library": {
+  "createdAt": "MASK",
+  "displayOrder": 1,
+  "folders": [
+   {
+    "addedAt": "MASK",
+    "fullPath": "ROOT/lib/books",
+    "id": "MASK",
+    "libraryId": "MASK"
+   }
+  ],
+  "icon": "database",
+  "id": "MASK",
+  "lastScan": "MASK",
+  "lastScanVersion": "MASK",
+  "lastUpdate": "MASK",
+  "mediaType": "book",
+  "name": "Books",
+  "provider": "google",
+  "settings": {
+   "audiobooksOnly": false,
+   "autoScanCronExpression": null,
+   "coverAspectRatio": 1,
+   "disableWatcher": false,
+   "epubsAllowScriptedContent": false,
+   "hideSingleBookSeries": false,
+   "markAsFinishedPercentComplete": null,
+   "markAsFinishedTimeRemaining": 10,
+   "metadataPrecedence": [
+    "folderStructure",
+    "audioMetatags",
+    "nfoFile",
+    "txtFiles",
+    "opfFile",
+    "absMetadata"
+   ],
+   "onlyShowLaterBooksInContinueSeries": false,
+   "skipMatchingMediaWithAsin": false,
+   "skipMatchingMediaWithIsbn": false
+  }
+ },
+ "numUserPlaylists": 0
+}
+SERVER EXITED (code 1)

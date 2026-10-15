@@ -1,0 +1,46 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-smoke-g0pU/config, METADATA_PATH=/tmp/abs-smoke-g0pU/metadata, PORT=3333, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-09 10:25:14.369] INFO: === Starting Server ===
+[2026-10-09 10:25:14.369] INFO: [Server] Init v2.37.0
+[2026-10-09 10:25:14.369] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-09 10:25:14.369] INFO: [Server] Platform: linux
+[2026-10-09 10:25:14.369] INFO: [Server] Arch: x64
+[2026-10-09 10:25:14.371] INFO: [BinaryManager] ffmpeg not found or not a valid version
+[2026-10-09 10:25:14.372] INFO: [BinaryManager] ffprobe not found or not a valid version
+[2026-10-09 10:25:14.372] INFO: [BinaryManager] libnusqlite3 not found or not a valid version
+[2026-10-09 10:25:14.373] INFO: [BinaryManager] Installing binaries: ffmpeg, ffprobe, libnusqlite3
+[2026-10-09 10:25:20.093] INFO: [BinaryManager] Binaries installed to /home/danny/Code/compx574/audiobookshelf
+[2026-10-09 10:25:20.105] INFO: [BinaryManager] Found valid executable ffmpeg at /home/danny/Code/compx574/audiobookshelf/ffmpeg
+[2026-10-09 10:25:20.106] INFO: [BinaryManager] Updating process.env.FFMPEG_PATH
+[2026-10-09 10:25:20.112] INFO: [BinaryManager] Found valid executable ffprobe at /home/danny/Code/compx574/audiobookshelf/ffprobe
+[2026-10-09 10:25:20.112] INFO: [BinaryManager] Updating process.env.FFPROBE_PATH
+[2026-10-09 10:25:20.113] INFO: [BinaryManager] Found valid library libnusqlite3 at /home/danny/Code/compx574/audiobookshelf/libnusqlite3.so
+[2026-10-09 10:25:20.113] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-09 10:25:20.114] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-smoke-g0pU/config/absdatabase.sqlite
+[2026-10-09 10:25:20.114] INFO: [Database] Initializing db at "/tmp/abs-smoke-g0pU/config/absdatabase.sqlite"
+[2026-10-09 10:25:20.156] INFO: [Database] Loading extension /home/danny/Code/compx574/audiobookshelf/libnusqlite3.so
+[2026-10-09 10:25:20.156] INFO: [Database] Successfully loaded extension /home/danny/Code/compx574/audiobookshelf/libnusqlite3.so
+[2026-10-09 10:25:20.156] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-09 10:25:20.156] INFO: [Database] Db connection was successful
+[2026-10-09 10:25:20.178] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-09 10:25:20.548] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-09 10:25:20.549] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-09 10:25:20.554] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-09 10:25:20.558] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-09 10:25:20.563] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-09 10:25:20.567] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-09 10:25:20.572] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-09 10:25:20.577] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-09 10:25:20.597] INFO: [Database] running ANALYZE
+[2026-10-09 10:25:20.603] INFO: [Database] ANALYZE completed
+[2026-10-09 10:25:20.603] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-09 10:25:20.603] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-09 10:25:20.609] INFO: [LogManager] Init current daily log filename: 2026-10-09.txt
+[2026-10-09 10:25:20.611] INFO: [BackupManager] 0 Backups Found
+[2026-10-09 10:25:20.611] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-09 10:25:20.621] INFO: Listening on port :3333
+[2026-10-09 10:25:21.086] INFO: Received ping
+[2026-10-09 10:25:21.093] INFO: Received ping
+[2026-10-09 10:25:21.111] INFO: [Server] Initializing new server
+[2026-10-09 10:25:21.168] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-09 10:25:21.214] ERROR: [LocalAuth] Failed login attempt for username "root" from ip ::1 (Invalid password)

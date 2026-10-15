@@ -1,0 +1,577 @@
+diff -ruw /tmp/out-base-b11c/server/auth/OidcAuthStrategy.js /tmp/out-new-b11c/server/auth/OidcAuthStrategy.js
+--- /tmp/out-base-b11c/server/auth/OidcAuthStrategy.js	2026-10-10 15:38:15.969579902 +1300
++++ /tmp/out-new-b11c/server/auth/OidcAuthStrategy.js	2026-10-10 15:38:17.176526528 +1300
+@@ -8,7 +8,9 @@
+ const Database = require("../Database");
+ const Logger = require("../Logger");
+ const requestUtils = require("../utils/requestUtils");
++const queryValue = require("../utils/queryValue");
+ const { getRequestOrigin } = requestUtils;
++const { optionalString, requiredString } = queryValue;
+ class OidcAuthStrategy {
+     constructor() {
+         this.name = 'openid-client';
+@@ -178,8 +180,8 @@
+                 };
+             }
+             return {
+-                code_challenge: query.code_challenge,
+-                code_challenge_method: query.code_challenge_method || 'S256'
++                code_challenge: requiredString(query.code_challenge),
++                code_challenge_method: optionalString(query.code_challenge_method) || 'S256'
+             };
+         }
+         else {
+@@ -207,17 +209,17 @@
+                     error: 'Invalid response_type, only code supported'
+                 };
+             }
+-            const state = !isMobileFlow || !query.state ? OpenIDClient.generators.random() : query.state;
++            const state = !isMobileFlow || !query.state ? OpenIDClient.generators.random() : requiredString(query.state);
+             let redirectUri;
+             if (isMobileFlow) {
+-                if (!query.redirect_uri || !this.isValidRedirectUri(query.redirect_uri)) {
++                if (!query.redirect_uri || !this.isValidRedirectUri(requiredString(query.redirect_uri))) {
+                     Logger.debug(`[OidcAuth] Invalid redirect_uri=${query.redirect_uri}`);
+                     return {
+                         status: 400,
+                         error: 'Invalid redirect_uri'
+                     };
+                 }
+-                this.openIdAuthSession.set(state, { mobile_redirect_uri: query.redirect_uri });
++                this.openIdAuthSession.set(state, { mobile_redirect_uri: requiredString(query.redirect_uri) });
+                 redirectUri = new URL(`${global.ServerSettings.authOpenIDSubfolderForRedirectURLs}/auth/openid/mobile-redirect`, hostUrl).toString();
+             }
+             else {
+@@ -327,17 +329,17 @@
+     handleMobileRedirect(req, res) {
+         try {
+             const { state, code } = req.query;
+-            if (!state || !this.openIdAuthSession.has(state)) {
++            if (!state || !this.openIdAuthSession.has(requiredString(state))) {
+                 Logger.error('[OidcAuth] /auth/openid/mobile-redirect route: State parameter mismatch');
+                 return res.status(400).send('State parameter mismatch');
+             }
+-            let mobile_redirect_uri = this.openIdAuthSession.get(state).mobile_redirect_uri;
++            let mobile_redirect_uri = this.openIdAuthSession.get(requiredString(state)).mobile_redirect_uri;
+             if (!mobile_redirect_uri) {
+                 Logger.error('[OidcAuth] No redirect URI');
+                 return res.status(400).send('No redirect URI');
+             }
+-            this.openIdAuthSession.delete(state);
+-            const redirectUri = `${mobile_redirect_uri}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
++            this.openIdAuthSession.delete(requiredString(state));
++            const redirectUri = `${mobile_redirect_uri}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(requiredString(state))}`;
+             res.redirect(redirectUri);
+         }
+         catch (error) {
+diff -ruw /tmp/out-base-b11c/server/Auth.js /tmp/out-new-b11c/server/Auth.js
+--- /tmp/out-base-b11c/server/Auth.js	2026-10-10 15:38:16.012789235 +1300
++++ /tmp/out-new-b11c/server/Auth.js	2026-10-10 15:38:17.227515085 +1300
+@@ -8,9 +8,11 @@
+ const OidcAuthStrategy = require("./auth/OidcAuthStrategy");
+ const RateLimiterFactory = require("./utils/rateLimiterFactory");
+ const utils = require("./utils");
++const queryValue = require("./utils/queryValue");
+ const JwtStrategy = passportJwt.Strategy;
+ const ExtractJwt = passportJwt.ExtractJwt;
+ const { escapeRegExp } = utils;
++const { requiredString } = queryValue;
+ class Auth {
+     constructor() {
+         const escapedRouterBasePath = escapeRegExp(global.RouterBasePath);
+@@ -113,7 +115,7 @@
+                 res.status(400).send({ message: 'No callback parameter' });
+                 return { error: 'No callback parameter' };
+             }
+-            if (!this.oidcAuthStrategy.isValidWebCallbackUrl(callback, req)) {
++            if (!this.oidcAuthStrategy.isValidWebCallbackUrl(requiredString(callback), req)) {
+                 Logger.warn(`[Auth] Rejected invalid callback URL: ${callback}`);
+                 res.status(400).send({ message: 'Invalid callback URL - must be same-origin' });
+                 return { error: 'Invalid callback URL - must be same-origin' };
+diff -ruw /tmp/out-base-b11c/server/controllers/AuthorController.js /tmp/out-new-b11c/server/controllers/AuthorController.js
+--- /tmp/out-base-b11c/server/controllers/AuthorController.js	2026-10-10 15:38:15.745859825 +1300
++++ /tmp/out-new-b11c/server/controllers/AuthorController.js	2026-10-10 15:38:16.880593129 +1300
+@@ -9,15 +9,17 @@
+ const CoverManager = require("../managers/CoverManager");
+ const AuthorFinder = require("../finders/AuthorFinder");
+ const utils = require("../utils/index");
++const queryValue = require("../utils/queryValue");
+ const { createNewSortInstance } = fastSort;
+ const { reqSupportsWebp, isValidASIN, clampPositiveInt } = utils;
++const { optionalString, requiredString } = queryValue;
+ const naturalSort = createNewSortInstance({
+     comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+ });
+ class AuthorController {
+     constructor() { }
+     async findOne(req, res) {
+-        const include = (req.query.include || '').split(',');
++        const include = (optionalString(req.query.include) || '').split(',');
+         const authorJson = req.author.toOldJSON();
+         if (include.includes('items')) {
+             const libraryItems = (await Database.libraryItemModel.getForAuthor(req.author, req.user));
+@@ -281,9 +283,9 @@
+             return res.sendFile(author.imagePath);
+         }
+         const options = {
+-            format: format || (reqSupportsWebp(req) ? 'webp' : 'jpeg'),
+-            height: clampPositiveInt(height ? parseInt(height) : null, 4096),
+-            width: clampPositiveInt(width ? parseInt(width) : null, 4096)
++            format: optionalString(format) || (reqSupportsWebp(req) ? 'webp' : 'jpeg'),
++            height: clampPositiveInt(height ? parseInt(requiredString(height)) : null, 4096),
++            width: clampPositiveInt(width ? parseInt(requiredString(width)) : null, 4096)
+         };
+         return CacheManager.handleAuthorCache(res, authorId, options);
+     }
+diff -ruw /tmp/out-base-b11c/server/controllers/CollectionController.js /tmp/out-new-b11c/server/controllers/CollectionController.js
+--- /tmp/out-base-b11c/server/controllers/CollectionController.js	2026-10-10 15:38:15.728684066 +1300
++++ /tmp/out-new-b11c/server/controllers/CollectionController.js	2026-10-10 15:38:16.863526284 +1300
+@@ -5,6 +5,8 @@
+ const Database = require("../Database");
+ const htmlSanitizer = require("../utils/htmlSanitizer");
+ const RssFeedManager = require("../managers/RssFeedManager");
++const queryValue = require("../utils/queryValue");
++const { optionalString } = queryValue;
+ class CollectionController {
+     constructor() { }
+     async create(req, res) {
+@@ -72,7 +74,7 @@
+         });
+     }
+     async findOne(req, res) {
+-        const includeEntities = (req.query.include || '').split(',');
++        const includeEntities = (optionalString(req.query.include) || '').split(',');
+         const collectionExpanded = await req.collection.getOldJsonExpanded(req.user, includeEntities);
+         if (!collectionExpanded) {
+             return res.sendStatus(404);
+diff -ruw /tmp/out-base-b11c/server/controllers/FileSystemController.js /tmp/out-new-b11c/server/controllers/FileSystemController.js
+--- /tmp/out-base-b11c/server/controllers/FileSystemController.js	2026-10-10 15:38:15.738798627 +1300
++++ /tmp/out-new-b11c/server/controllers/FileSystemController.js	2026-10-10 15:38:16.873594710 +1300
+@@ -5,7 +5,9 @@
+ const utils = require("../utils/index");
+ const fileUtils = require("../utils/fileUtils");
+ const Database = require("../Database");
++const queryValue = require("../utils/queryValue");
+ const { toNumber } = utils;
++const { optionalString } = queryValue;
+ class FileSystemController {
+     constructor() { }
+     async getPaths(req, res) {
+@@ -13,7 +15,7 @@
+             Logger.error(`[FileSystemController] Non-admin user "${req.user.username}" attempting to get filesystem paths`);
+             return res.sendStatus(403);
+         }
+-        const relpath = req.query.path;
++        const relpath = optionalString(req.query.path);
+         const level = toNumber(req.query.level, 0);
+         if (relpath && (!Path.isAbsolute(relpath) || !(await fs.pathExists(relpath)))) {
+             Logger.error(`[FileSystemController] Invalid path in query string "${relpath}"`);
+diff -ruw /tmp/out-base-b11c/server/controllers/LibraryController.js /tmp/out-new-b11c/server/controllers/LibraryController.js
+--- /tmp/out-base-b11c/server/controllers/LibraryController.js	2026-10-10 15:38:15.733852690 +1300
++++ /tmp/out-new-b11c/server/controllers/LibraryController.js	2026-10-10 15:38:16.868746645 +1300
+@@ -1,28 +1,30 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Sequelize = require('sequelize');
+-const Path = require('path');
+-const fs = require('../libs/fsExtra');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const libraryHelpers = require('../utils/libraryHelpers');
+-const libraryItemsBookFilters = require('../utils/queries/libraryItemsBookFilters');
+-const libraryItemFilters = require('../utils/queries/libraryItemFilters');
+-const seriesFilters = require('../utils/queries/seriesFilters');
+-const fileUtils = require('../utils/fileUtils');
+-const { createNewSortInstance } = require('../libs/fastSort');
++const Sequelize = require("sequelize");
++const Path = require("path");
++const fs = require("../libs/fsExtra");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const libraryHelpers = require("../utils/libraryHelpers");
++const libraryItemsBookFilters = require("../utils/queries/libraryItemsBookFilters");
++const libraryItemFilters = require("../utils/queries/libraryItemFilters");
++const seriesFilters = require("../utils/queries/seriesFilters");
++const fileUtils = require("../utils/fileUtils");
++const fastSort = require("../libs/fastSort");
++const LibraryScanner = require("../scanner/LibraryScanner");
++const Scanner = require("../scanner/Scanner");
++const Database = require("../Database");
++const Watcher = require("../Watcher");
++const RssFeedManager = require("../managers/RssFeedManager");
++const libraryFilters = require("../utils/queries/libraryFilters");
++const libraryItemsPodcastFilters = require("../utils/queries/libraryItemsPodcastFilters");
++const authorFilters = require("../utils/queries/authorFilters");
++const zipHelpers = require("../utils/zipHelpers");
++const queryValue = require("../utils/queryValue");
++const { createNewSortInstance } = fastSort;
++const { optionalString, isNaNArgument } = queryValue;
+ const naturalSort = createNewSortInstance({
+     comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+ });
+-const LibraryScanner = require('../scanner/LibraryScanner');
+-const Scanner = require('../scanner/Scanner');
+-const Database = require('../Database');
+-const Watcher = require('../Watcher');
+-const RssFeedManager = require('../managers/RssFeedManager');
+-const libraryFilters = require('../utils/queries/libraryFilters');
+-const libraryItemsPodcastFilters = require('../utils/queries/libraryItemsPodcastFilters');
+-const authorFilters = require('../utils/queries/authorFilters');
+-const zipHelpers = require('../utils/zipHelpers');
+ class LibraryController {
+     constructor() { }
+     async create(req, res) {
+@@ -115,7 +117,7 @@
+                 return res.status(400).send(`Invalid request. Invalid folder directory "${folder.path}"`);
+             }
+         }
+-        let currentLargestDisplayOrder = await Database.libraryModel.getMaxDisplayOrder();
++        let currentLargestDisplayOrder = (await Database.libraryModel.getMaxDisplayOrder());
+         if (isNaN(currentLargestDisplayOrder))
+             currentLargestDisplayOrder = 0;
+         newLibraryPayload.displayOrder = currentLargestDisplayOrder + 1;
+@@ -143,10 +145,10 @@
+         if (librariesAccessible.length) {
+             libraries = libraries.filter((lib) => librariesAccessible.includes(lib.id));
+         }
+-        libraries = libraries.map((lib) => lib.toOldJSON());
+-        const includeArray = (req.query.include || '').split(',');
++        const librariesJson = libraries.map((lib) => lib.toOldJSON());
++        const includeArray = (optionalString(req.query.include) || '').split(',');
+         if (includeArray.includes('stats')) {
+-            for (const library of libraries) {
++            for (const library of librariesJson) {
+                 if (library.mediaType === 'book') {
+                     library.stats = await libraryItemsBookFilters.getBookLibraryStats(library.id);
+                 }
+@@ -156,11 +158,11 @@
+             }
+         }
+         res.json({
+-            libraries
++            libraries: librariesJson
+         });
+     }
+     async findOne(req, res) {
+-        const includeArray = (req.query.include || '').split(',');
++        const includeArray = (optionalString(req.query.include) || '').split(',');
+         if (includeArray.includes('filterdata')) {
+             const filterdata = await libraryFilters.getFilterData(req.library.mediaType, req.library.id);
+             return res.json({
+@@ -369,12 +371,13 @@
+                             mediaItemIds = libraryItem.media.podcastEpisodes.map((pe) => pe.id);
+                         }
+                         else {
++                            const book = libraryItem.media;
+                             mediaItemIds.push(libraryItem.mediaId);
+-                            if (libraryItem.media.bookAuthors.length) {
+-                                authorIds.push(...libraryItem.media.bookAuthors.map((ba) => ba.authorId));
++                            if (book.bookAuthors.length) {
++                                authorIds.push(...book.bookAuthors.map((ba) => ba.authorId));
+                             }
+-                            if (libraryItem.media.bookSeries.length) {
+-                                seriesIds.push(...libraryItem.media.bookSeries.map((bs) => bs.seriesId));
++                            if (book.bookSeries.length) {
++                                seriesIds.push(...book.bookSeries.map((bs) => bs.seriesId));
+                             }
+                         }
+                         Logger.info(`[LibraryController] Removing library item "${libraryItem.id}" from folder "${folder.path}"`);
+@@ -473,7 +476,7 @@
+         return res.json(libraryJson);
+     }
+     async getLibraryItems(req, res) {
+-        const include = (req.query.include || '')
++        const include = (optionalString(req.query.include) || '')
+             .split(',')
+             .map((v) => v.trim().toLowerCase())
+             .filter((v) => !!v);
+@@ -482,9 +485,9 @@
+             total: undefined,
+             limit: req.query.limit || 0,
+             page: req.query.page || 0,
+-            sortBy: req.query.sort,
++            sortBy: optionalString(req.query.sort),
+             sortDesc: req.query.desc === '1',
+-            filterBy: req.query.filter,
++            filterBy: optionalString(req.query.filter),
+             mediaType: req.library.mediaType,
+             minified: req.query.minified === '1',
+             collapseseries: req.query.collapseseries === '1',
+@@ -560,12 +563,13 @@
+                 mediaItemIds = libraryItem.media.podcastEpisodes.map((pe) => pe.id);
+             }
+             else {
++                const book = libraryItem.media;
+                 mediaItemIds.push(libraryItem.mediaId);
+-                if (libraryItem.media.bookAuthors.length) {
+-                    authorIds.push(...libraryItem.media.bookAuthors.map((ba) => ba.authorId));
++                if (book.bookAuthors.length) {
++                    authorIds.push(...book.bookAuthors.map((ba) => ba.authorId));
+                 }
+-                if (libraryItem.media.bookSeries.length) {
+-                    seriesIds.push(...libraryItem.media.bookSeries.map((bs) => bs.seriesId));
++                if (book.bookSeries.length) {
++                    seriesIds.push(...book.bookSeries.map((bs) => bs.seriesId));
+                 }
+             }
+             Logger.info(`[LibraryController] Removing library item "${libraryItem.id}" with issue`);
+@@ -583,7 +587,7 @@
+         res.sendStatus(200);
+     }
+     async getAllSeriesForLibrary(req, res) {
+-        const include = (req.query.include || '')
++        const include = (optionalString(req.query.include) || '')
+             .split(',')
+             .map((v) => v.trim().toLowerCase())
+             .filter((v) => !!v);
+@@ -592,9 +596,9 @@
+             total: 0,
+             limit: req.query.limit || 0,
+             page: req.query.page || 0,
+-            sortBy: req.query.sort,
++            sortBy: optionalString(req.query.sort),
+             sortDesc: req.query.desc === '1',
+-            filterBy: req.query.filter,
++            filterBy: optionalString(req.query.filter),
+             minified: req.query.minified === '1',
+             include: include.join(',')
+         };
+@@ -605,7 +609,7 @@
+         res.json(payload);
+     }
+     async getSeriesForLibrary(req, res) {
+-        const include = (req.query.include || '')
++        const include = (optionalString(req.query.include) || '')
+             .split(',')
+             .map((v) => v.trim().toLowerCase())
+             .filter((v) => !!v);
+@@ -629,7 +633,7 @@
+         res.json(seriesJson);
+     }
+     async getCollectionsForLibrary(req, res) {
+-        const include = (req.query.include || '')
++        const include = (optionalString(req.query.include) || '')
+             .split(',')
+             .map((v) => v.trim().toLowerCase())
+             .filter((v) => !!v);
+@@ -674,7 +678,7 @@
+     }
+     async getUserPersonalizedShelves(req, res) {
+         const limitPerShelf = req.query.limit || 10;
+-        const include = (req.query.include || '')
++        const include = (optionalString(req.query.include) || '')
+             .split(',')
+             .map((v) => v.trim().toLowerCase())
+             .filter((v) => !!v);
+@@ -885,12 +889,13 @@
+         const itemsUpdated = [];
+         const itemsWithNarrator = await libraryItemFilters.getAllLibraryItemsWithNarrators([narratorName], req.library.id);
+         for (const libraryItem of itemsWithNarrator) {
+-            libraryItem.media.narrators = libraryItem.media.narrators.filter((n) => n !== narratorName);
+-            if (!libraryItem.media.narrators.includes(updatedName)) {
+-                libraryItem.media.narrators.push(updatedName);
++            const book = libraryItem.media;
++            book.narrators = book.narrators.filter((n) => n !== narratorName);
++            if (!book.narrators.includes(updatedName)) {
++                book.narrators.push(updatedName);
+             }
+-            await libraryItem.media.update({
+-                narrators: libraryItem.media.narrators
++            await book.update({
++                narrators: book.narrators
+             });
+             itemsUpdated.push(libraryItem);
+         }
+@@ -911,9 +916,10 @@
+         const itemsUpdated = [];
+         const itemsWithNarrator = await libraryItemFilters.getAllLibraryItemsWithNarrators([narratorName], req.library.id);
+         for (const libraryItem of itemsWithNarrator) {
+-            libraryItem.media.narrators = libraryItem.media.narrators.filter((n) => n !== narratorName);
+-            await libraryItem.media.update({
+-                narrators: libraryItem.media.narrators
++            const book = libraryItem.media;
++            book.narrators = book.narrators.filter((n) => n !== narratorName);
++            await book.update({
++                narrators: book.narrators
+             });
+             itemsUpdated.push(libraryItem);
+         }
+@@ -1088,10 +1094,11 @@
+             return res.status(404).send('Library not found');
+         }
+         req.library = library;
++        const paginationQuery = req.query;
+         for (const queryKey of ['limit', 'page']) {
+             if (req.query[queryKey] !== undefined) {
+-                req.query[queryKey] = !isNaN(req.query[queryKey]) ? Number(req.query[queryKey]) : 0;
+-                if (!Number.isInteger(req.query[queryKey]) || req.query[queryKey] < 0) {
++                paginationQuery[queryKey] = !isNaN(isNaNArgument(req.query[queryKey])) ? Number(req.query[queryKey]) : 0;
++                if (!Number.isInteger(paginationQuery[queryKey]) || paginationQuery[queryKey] < 0) {
+                     return res.status(400).send(`Invalid request. ${queryKey} must be a positive integer`);
+                 }
+             }
+diff -ruw /tmp/out-base-b11c/server/controllers/MeController.js /tmp/out-new-b11c/server/controllers/MeController.js
+--- /tmp/out-base-b11c/server/controllers/MeController.js	2026-10-10 15:38:15.721855420 +1300
++++ /tmp/out-new-b11c/server/controllers/MeController.js	2026-10-10 15:38:16.856591737 +1300
+@@ -7,9 +7,11 @@
+ const utils = require("../utils/index");
+ const userStats = require("../utils/queries/userStats");
+ const parseUserAgent = require("../utils/parsers/parseUserAgent");
++const queryValue = require("../utils/queryValue");
+ const { Op } = sequelize;
+ const { sort } = fastSort;
+ const { toNumber, isNullOrNaN, isUUID } = utils;
++const { isNaNArgument } = queryValue;
+ class MeController {
+     constructor() { }
+     getCurrentUser(req, res) {
+@@ -286,7 +288,7 @@
+         res.sendStatus(200);
+     }
+     async getAllLibraryItemsInProgress(req, res) {
+-        const limit = !isNaN(req.query.limit) ? Number(req.query.limit) || 25 : 25;
++        const limit = !isNaN(isNaNArgument(req.query.limit)) ? Number(req.query.limit) || 25 : 25;
+         const mediaProgressesInProgress = req.user.mediaProgresses.filter((mp) => !mp.isFinished && (mp.currentTime > 0 || mp.ebookProgress > 0));
+         const libraryItemsIds = [...new Set(mediaProgressesInProgress.map((mp) => mp.extraData?.libraryItemId).filter((id) => id))];
+         const libraryItems = await Database.libraryItemModel.findAllExpandedWhere({ id: libraryItemsIds });
+diff -ruw /tmp/out-base-b11c/server/controllers/MiscController.js /tmp/out-new-b11c/server/controllers/MiscController.js
+--- /tmp/out-base-b11c/server/controllers/MiscController.js	2026-10-10 15:38:15.700860198 +1300
++++ /tmp/out-new-b11c/server/controllers/MiscController.js	2026-10-10 15:38:16.834603521 +1300
+@@ -14,9 +14,11 @@
+ const htmlSanitizer = require("../utils/htmlSanitizer");
+ const TaskManager = require("../managers/TaskManager");
+ const adminStats = require("../utils/queries/adminStats");
++const queryValue = require("../utils/queryValue");
+ const { isObject, getTitleIgnorePrefix } = utils;
+ const { sanitizeFilename } = fileUtils;
+ const { sanitize } = htmlSanitizer;
++const { optionalString } = queryValue;
+ class MiscController {
+     constructor() { }
+     async handleUpload(req, res) {
+@@ -77,7 +79,7 @@
+         res.sendStatus(200);
+     }
+     getTasks(req, res) {
+-        const includeArray = (req.query.include || '').split(',');
++        const includeArray = (optionalString(req.query.include) || '').split(',');
+         const data = {
+             tasks: TaskManager.tasks.map((t) => t.toJSON())
+         };
+diff -ruw /tmp/out-base-b11c/server/controllers/PodcastController.js /tmp/out-new-b11c/server/controllers/PodcastController.js
+--- /tmp/out-base-b11c/server/controllers/PodcastController.js	2026-10-10 15:38:15.735852235 +1300
++++ /tmp/out-new-b11c/server/controllers/PodcastController.js	2026-10-10 15:38:16.871789977 +1300
+@@ -11,9 +11,11 @@
+ const htmlSanitizer = require("../utils/htmlSanitizer");
+ const Scanner = require("../scanner/Scanner");
+ const CoverManager = require("../managers/CoverManager");
++const queryValue = require("../utils/queryValue");
+ const { getPodcastFeed, findMatchingEpisodes } = podcastUtils;
+ const { getFileTimestampsWithIno, filePathToPOSIX, isSameOrSubPath } = fileUtils;
+ const { validateUrl } = utils;
++const { isNaNArgument } = queryValue;
+ class PodcastController {
+     async create(req, res) {
+         if (!req.user.isAdminOrUp) {
+@@ -200,7 +202,7 @@
+             Logger.error(`[PodcastController] checkNewEpisodes no feed url for item ${req.libraryItem.id}`);
+             return res.status(400).send('Podcast has no rss feed url');
+         }
+-        const maxEpisodesToDownload = !isNaN(req.query.limit) ? Number(req.query.limit) : 3;
++        const maxEpisodesToDownload = !isNaN(isNaNArgument(req.query.limit)) ? Number(req.query.limit) : 3;
+         const newEpisodes = await this.podcastManager.checkAndDownloadNewEpisodes(req.libraryItem, maxEpisodesToDownload);
+         res.json({
+             episodes: newEpisodes || []
+diff -ruw /tmp/out-base-b11c/server/controllers/SeriesController.js /tmp/out-new-b11c/server/controllers/SeriesController.js
+--- /tmp/out-base-b11c/server/controllers/SeriesController.js	2026-10-10 15:38:15.717761080 +1300
++++ /tmp/out-new-b11c/server/controllers/SeriesController.js	2026-10-10 15:38:16.851599681 +1300
+@@ -4,10 +4,12 @@
+ const Database = require("../Database");
+ const RssFeedManager = require("../managers/RssFeedManager");
+ const libraryItemsBookFilters = require("../utils/queries/libraryItemsBookFilters");
++const queryValue = require("../utils/queryValue");
++const { optionalString } = queryValue;
+ class SeriesController {
+     constructor() { }
+     async findOne(req, res) {
+-        const include = (req.query.include || '')
++        const include = (optionalString(req.query.include) || '')
+             .split(',')
+             .map((v) => v.trim())
+             .filter((v) => !!v);
+diff -ruw /tmp/out-base-b11c/server/controllers/SessionController.js /tmp/out-new-b11c/server/controllers/SessionController.js
+--- /tmp/out-base-b11c/server/controllers/SessionController.js	2026-10-10 15:38:15.740851097 +1300
++++ /tmp/out-new-b11c/server/controllers/SessionController.js	2026-10-10 15:38:16.875594258 +1300
+@@ -6,9 +6,11 @@
+ const fileUtils = require("../utils/fileUtils");
+ const constants = require("../utils/constants");
+ const ShareManager = require("../managers/ShareManager");
++const queryValue = require("../utils/queryValue");
+ const { toNumber, isUUID } = utils;
+ const { getAudioMimeTypeFromExtname, encodeUriPath } = fileUtils;
+ const { PlayMethod } = constants;
++const { optionalString } = queryValue;
+ class SessionController {
+     constructor() { }
+     async getAllWithUserData(req, res) {
+@@ -16,13 +18,13 @@
+             Logger.error(`[SessionController] getAllWithUserData: Non-admin user "${req.user.username}" requested all session data`);
+             return res.sendStatus(404);
+         }
+-        let userId = req.query.user;
++        let userId = optionalString(req.query.user);
+         if (userId && !isUUID(userId)) {
+             Logger.warn(`[SessionController] Invalid "user" query string "${userId}"`);
+             userId = null;
+         }
+         const validSortOrders = ['displayTitle', 'duration', 'playMethod', 'startTime', 'currentTime', 'timeListening', 'updatedAt', 'createdAt'];
+-        let orderKey = req.query.sort || 'updatedAt';
++        let orderKey = optionalString(req.query.sort) || 'updatedAt';
+         if (!validSortOrders.includes(orderKey)) {
+             Logger.warn(`[SessionController] Invalid "sort" query string "${orderKey}" (Must be one of "${validSortOrders.join('|')}")`);
+             orderKey = 'updatedAt';
+diff -ruw /tmp/out-base-b11c/server/controllers/ShareController.js /tmp/out-new-b11c/server/controllers/ShareController.js
+--- /tmp/out-base-b11c/server/controllers/ShareController.js	2026-10-10 15:38:15.742850642 +1300
++++ /tmp/out-new-b11c/server/controllers/ShareController.js	2026-10-10 15:38:16.878658210 +1300
+@@ -9,14 +9,16 @@
+ const zipHelpers = require("../utils/zipHelpers");
+ const PlaybackSession = require("../objects/PlaybackSession");
+ const ShareManager = require("../managers/ShareManager");
++const queryValue = require("../utils/queryValue");
+ const { Op } = sequelize;
+ const { PlayMethod } = constants;
+ const { getAudioMimeTypeFromExtname, encodeUriPath } = fileUtils;
++const { requiredString, isNaNArgument } = queryValue;
+ class ShareController {
+     constructor() { }
+     async getMediaItemShareBySlug(req, res) {
+         const { slug } = req.params;
+-        let startTime = req.query.t && !isNaN(req.query.t) ? Math.max(0, parseInt(req.query.t)) : 0;
++        let startTime = req.query.t && !isNaN(isNaNArgument(req.query.t)) ? Math.max(0, parseInt(requiredString(req.query.t))) : 0;
+         const mediaItemShare = ShareManager.findBySlug(slug);
+         if (!mediaItemShare) {
+             Logger.warn(`[ShareController] Media item share not found with slug ${slug}`);
+diff -ruw /tmp/out-base-b11c/server/controllers/UserController.js /tmp/out-new-b11c/server/controllers/UserController.js
+--- /tmp/out-base-b11c/server/controllers/UserController.js	2026-10-10 15:38:15.694851145 +1300
++++ /tmp/out-new-b11c/server/controllers/UserController.js	2026-10-10 15:38:16.827605103 +1300
+@@ -4,15 +4,17 @@
+ const SocketAuthority = require("../SocketAuthority");
+ const Database = require("../Database");
+ const utils = require("../utils/index");
++const queryValue = require("../utils/queryValue");
+ const uuidv4 = uuid.v4;
+ const { toNumber } = utils;
++const { optionalString } = queryValue;
+ class UserController {
+     constructor() { }
+     async findAll(req, res) {
+         if (!req.user.isAdminOrUp)
+             return res.sendStatus(403);
+         const hideRootToken = !req.user.isRoot;
+-        const includes = (req.query.include || '').split(',').map((i) => i.trim());
++        const includes = (optionalString(req.query.include) || '').split(',').map((i) => i.trim());
+         const allUsers = await Database.userModel.findAll();
+         const users = allUsers.map((u) => u.toOldJSONForBrowser(hideRootToken, true));
+         if (includes.includes('latestSession')) {
+Only in /tmp/out-new-b11c/server/utils: queryValue.js

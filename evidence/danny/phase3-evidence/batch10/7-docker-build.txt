@@ -1,0 +1,676 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.21kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:24-alpine
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 198B done
+#3 DONE 0.0s
+
+#4 [compile-server 1/5] FROM docker.io/library/node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
+#4 resolve docker.io/library/node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 0.0s done
+#4 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 60.12kB 0.0s done
+#5 DONE 0.0s
+
+#6 [compile-server 2/5] WORKDIR /server
+#6 CACHED
+
+#7 [compile-server 3/5] COPY index.ts package* tsconfig.server.json /server
+#7 CACHED
+
+#8 [compile-server 4/5] COPY /server /server/server
+#8 CACHED
+
+#9 [build-client 2/5] WORKDIR /client
+#9 CACHED
+
+#10 [build-client 3/5] COPY /client /client
+#10 CACHED
+
+#11 [build-client 4/5] RUN npm ci && npm cache clean --force
+#11 2.214 npm warn deprecated urix@0.1.0: Please see https://github.com/lydell/urix#deprecated
+#11 2.415 npm warn deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
+#11 2.434 npm warn deprecated source-map-url@0.4.1: See https://github.com/lydell/source-map-url#deprecated
+#11 2.440 npm warn deprecated vue@2.7.16: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
+#11 2.490 npm warn deprecated source-map-resolve@0.5.3: See https://github.com/lydell/source-map-resolve#deprecated
+#11 2.563 npm warn deprecated resolve-url@0.2.1: https://github.com/lydell/resolve-url#deprecated
+#11 3.079 npm warn deprecated nuxt@2.18.1: Nuxt 2 has reached EOL and is no longer actively maintained. See https://nuxt.com/blog/nuxt2-eol for more details.
+#11 3.631 npm warn deprecated glob@8.1.0: Glob versions prior to v9 are no longer supported
+#11 3.754 npm warn deprecated figgy-pudding@3.5.2: This module is no longer supported.
+#11 4.242 npm warn deprecated consolidate@0.15.1: Please upgrade to consolidate v1.0.0+ as it has been modernized with several long-awaited fixes implemented. Maintenance is supported by Forward Email at https://forwardemail.net ; follow/watch https://github.com/ladjs/consolidate for updates and release changelog
+#11 ...
+
+#12 [stage-3 2/6] RUN apk add --no-cache --update   tzdata   ffmpeg   tini
+#12 0.620 (  1/107) Installing libSvtAv1Enc (4.1.0-r0)
+#12 0.718 (  2/107) Installing aom-libs (3.14.1-r0)
+#12 0.811 (  3/107) Installing libxau (1.0.12-r0)
+#12 0.818 (  4/107) Installing libmd (1.2.0-r0)
+#12 0.825 (  5/107) Installing libbsd (0.12.2-r0)
+#12 0.837 (  6/107) Installing libxdmcp (1.1.5-r1)
+#12 0.847 (  7/107) Installing libxcb (1.17.0-r2)
+#12 0.875 (  8/107) Installing libx11 (1.8.13-r0)
+#12 0.920 (  9/107) Installing hwdata-pci (0.408-r0)
+#12 0.945 ( 10/107) Installing libpciaccess (0.19-r0)
+#12 0.960 ( 11/107) Installing libdrm (2.4.134-r0)
+#12 0.989 ( 12/107) Installing libxext (1.3.7-r0)
+#12 1.013 ( 13/107) Installing libxfixes (6.0.2-r0)
+#12 1.029 ( 14/107) Installing libffi (3.5.2-r1)
+#12 1.042 ( 15/107) Installing wayland-libs-client (1.25.0-r0)
+#12 1.062 ( 16/107) Installing libva (2.23.0-r0)
+#12 1.084 ( 17/107) Installing libvdpau (1.5-r4)
+#12 1.104 ( 18/107) Installing libvpl (2.15.0-r1)
+#12 1.124 ( 19/107) Installing ffmpeg-libavutil (8.1.2-r0)
+#12 1.155 ( 20/107) Installing libdav1d (1.5.3-r0)
+#12 1.240 ( 21/107) Installing brotli-libs (1.2.0-r1)
+#12 1.279 ( 22/107) Installing libhwy (1.3.0-r0)
+#12 1.293 ( 23/107) Installing lcms2 (2.19-r0)
+#12 1.322 ( 24/107) Installing libjxl (0.11.2-r1)
+#12 1.428 ( 25/107) Installing lame-libs (3.100-r5)
+#12 1.462 ( 26/107) Installing opus (1.6.1-r0)
+#12 1.497 ( 27/107) Installing rav1e-libs (0.8.1-r0)
+#12 1.557 ( 28/107) Installing libgomp (15.2.0-r5)
+#12 1.576 ( 29/107) Installing soxr (0.1.3-r7)
+#12 1.588 ( 30/107) Installing ffmpeg-libswresample (8.1.2-r0)
+#12 1.602 ( 31/107) Installing libogg (1.3.6-r0)
+#12 1.612 ( 32/107) Installing libtheora (1.2.0-r1)
+#12 1.643 ( 33/107) Installing libvorbis (1.3.7-r2)
+#12 1.662 ( 34/107) Installing libvpx (1.15.2-r1)
+#12 1.716 ( 35/107) Installing libsharpyuv (1.6.0-r0)
+#12 1.728 ( 36/107) Installing libwebp (1.6.0-r0)
+#12 1.752 ( 37/107) Installing libwebpmux (1.6.0-r0)
+#12 1.782 ( 38/107) Installing x264-libs (0.164.3108-r1)
+#12 1.837 ( 39/107) Installing numactl (2.0.19-r0)
+#12 1.847 ( 40/107) Installing x265-libs (4.1-r0)
+#12 2.051 ( 41/107) Installing xvidcore (1.3.7-r2)
+#12 2.073 ( 42/107) Installing ffmpeg-libavcodec (8.1.2-r0)
+#12 2.526 ( 43/107) Installing alsa-lib (1.2.15.3-r0)
+#12 2.567 ( 44/107) Installing libexpat (2.8.5-r0)
+#12 2.585 ( 45/107) Installing libbz2 (1.0.8-r6)
+#12 2.599 ( 46/107) Installing libpng (1.6.59-r0)
+#12 2.613 ( 47/107) Installing freetype (2.14.3-r0)
+#12 2.640 ( 48/107) Installing fontconfig (2.17.1-r1)
+#12 2.668 ( 49/107) Installing fribidi (1.0.16-r3)
+#12 2.691 ( 50/107) Installing libintl (1.0-r0)
+#12 2.706 ( 51/107) Installing libeconf (0.8.3-r0)
+#12 2.727 ( 52/107) Installing libblkid (2.42.3-r1)
+#12 2.758 ( 53/107) Installing libmount (2.42.3-r1)
+#12 2.791 ( 54/107) Installing pcre2 (10.49-r0)
+#12 2.817 ( 55/107) Installing glib (2.88.1-r1)
+#12 2.927 ( 56/107) Installing graphite2 (1.3.14-r6)
+#12 2.942 ( 57/107) Installing harfbuzz (13.2.1-r0)
+#12 2.976 ( 58/107) Installing libunibreak (6.1-r0)
+#12 2.993 ( 59/107) Installing libass (0.17.4-r1)
+#12 3.013 ( 60/107) Installing libudfread (1.2.0-r1)
+#12 3.031 ( 61/107) Installing libbluray (1.4.0-r0)
+#12 3.049 ( 62/107) Installing libdvdcss (1.4.3-r0)
+#12 3.066 ( 63/107) Installing libdvdread (6.1.3-r2)
+#12 3.089 ( 64/107) Installing libdvdnav (6.1.1-r1)
+#12 3.102 ( 65/107) Installing mpg123-libs (1.33.5-r0)
+#12 3.132 ( 66/107) Installing libopenmpt (0.8.9-r0)
+#12 3.181 ( 67/107) Installing cjson (1.7.19-r1)
+#12 3.209 ( 68/107) Installing mbedtls3 (3.6.7-r0)
+#12 3.253 ( 69/107) Installing librist (0.2.15-r0)
+#12 3.296 ( 70/107) Installing libsrt (1.5.3-r1)
+#12 3.360 ( 71/107) Installing libssh (0.12.2-r0)
+#12 3.394 ( 72/107) Installing xz-libs (5.8.4-r0)
+#12 3.438 ( 73/107) Installing libxml2 (2.13.9-r2)
+#12 3.490 ( 74/107) Installing libsodium (1.0.22-r0)
+#12 3.520 ( 75/107) Installing libzmq (4.3.5-r2)
+#12 3.550 ( 76/107) Installing ffmpeg-libavformat (8.1.2-r0)
+#12 3.665 ( 77/107) Installing serd-libs (0.32.8-r0)
+#12 3.690 ( 78/107) Installing zix-libs (0.8.0-r0)
+#12 3.711 ( 79/107) Installing sord-libs (0.16.22-r0)
+#12 3.727 ( 80/107) Installing sratom (0.6.20-r0)
+#12 3.738 ( 81/107) Installing lilv-libs (0.24.26-r1)
+#12 3.751 ( 82/107) Installing libdovi (3.3.2-r0)
+#12 3.778 ( 83/107) Installing spirv-tools (1.4.341.0-r0)
+#12 3.881 ( 84/107) Installing glslang-libs (1.4.341.0-r0)
+#12 3.930 ( 85/107) Installing shaderc (2026.1-r0)
+#12 3.970 ( 86/107) Installing vulkan-loader (1.4.347-r0)
+#12 3.999 ( 87/107) Installing libplacebo (7.360.1-r0)
+#12 4.030 ( 88/107) Installing ffmpeg-libswscale (8.1.2-r0)
+#12 4.071 ( 89/107) Installing vidstab (1.1.1-r0)
+#12 4.089 ( 90/107) Installing zimg (3.0.6-r0)
+#12 4.118 ( 91/107) Installing ffmpeg-libavfilter (8.1.2-r0)
+#12 4.262 ( 92/107) Installing libasyncns (0.8-r5)
+#12 4.275 ( 93/107) Installing dbus-libs (1.16.2-r2)
+#12 4.293 ( 94/107) Installing libltdl (2.6.0-r1)
+#12 4.307 ( 95/107) Installing orc (0.4.41-r0)
+#12 4.331 ( 96/107) Installing libflac (1.4.3-r2)
+#12 4.354 ( 97/107) Installing libsndfile (1.2.2-r2)
+#12 4.372 ( 98/107) Installing speexdsp (1.2.1-r2)
+#12 4.387 ( 99/107) Installing tdb-libs (1.4.15-r1)
+#12 4.401 (100/107) Installing libpulse (17.0-r7)
+#12 4.436 (101/107) Installing libjpeg-turbo (3.1.3-r0)
+#12 4.454 (102/107) Installing json-c (0.18-r1)
+#12 4.468 (103/107) Installing v4l-utils-libs (1.32.0-r1)
+#12 4.492 (104/107) Installing ffmpeg-libavdevice (8.1.2-r0)
+#12 4.504 (105/107) Installing ffmpeg (8.1.2-r0)
+#12 4.527 (106/107) Installing tini (0.19.0-r3)
+#12 4.545 (107/107) Installing tzdata (2026e-r0)
+#12 4.625 Executing busybox-1.37.0-r31.trigger
+#12 4.628 Executing glib-2.88.1-r1.trigger
+#12 4.633 OK: 136.0 MiB in 125 packages
+#12 DONE 5.1s
+
+#13 [build-server 2/8] RUN apk add --no-cache --update   curl   make   python3   g++   unzip
+#13 0.643 ( 1/39) Installing brotli-libs (1.2.0-r1)
+#13 0.675 ( 2/39) Installing c-ares (1.34.8-r0)
+#13 0.691 ( 3/39) Installing libunistring (1.4.2-r0)
+#13 0.766 ( 4/39) Installing libidn2 (2.3.8-r0)
+#13 0.790 ( 5/39) Installing nghttp2-libs (1.70.0-r0)
+#13 0.810 ( 6/39) Installing libpsl (0.21.5-r3)
+#13 0.819 ( 7/39) Installing zstd-libs (1.5.7-r2)
+#13 0.839 ( 8/39) Installing libcurl (8.22.0-r0)
+#13 0.868 ( 9/39) Installing curl (8.22.0-r0)
+#13 0.884 (10/39) Installing libstdc++-dev (15.2.0-r5)
+#13 1.150 (11/39) Installing jansson (2.15.0-r0)
+#13 1.165 (12/39) Installing binutils (2.45.1-r1)
+#13 1.511 (13/39) Installing libgcc-static (15.2.0-r5)
+#13 1.666 (14/39) Installing libgomp (15.2.0-r5)
+#13 1.684 (15/39) Installing libatomic (15.2.0-r5)
+#13 1.703 (16/39) Installing gmp (6.3.0-r4)
+#13 1.726 (17/39) Installing isl26 (0.26-r2)
+#13 1.821 (18/39) Installing mpfr4 (4.2.2-r0)
+#13 1.853 (19/39) Installing mpc1 (1.3.1-r1)
+#13 1.883 (20/39) Installing gcc (15.2.0-r5)
+#13 ...
+
+#14 [stage-3 3/6] WORKDIR /app
+#14 DONE 0.0s
+
+#15 [compile-server 5/5] RUN npm ci --include=dev --ignore-scripts && npm run build:server
+#15 2.666 npm warn deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+#15 ...
+
+#11 [build-client 4/5] RUN npm ci && npm cache clean --force
+#11 5.442 npm warn deprecated @types/localforage@0.0.34: This is a stub types definition for localforage (https://github.com/localForage/localForage). localforage provides its own type definitions, so you don't need @types/localforage installed!
+#11 6.254 npm warn deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+#11 ...
+
+#13 [build-server 2/8] RUN apk add --no-cache --update   curl   make   python3   g++   unzip
+#13 5.976 (21/39) Installing musl-dev (1.2.6-r2)
+#13 6.137 (22/39) Installing g++ (15.2.0-r5)
+#13 6.833 (23/39) Installing make (4.4.1-r4)
+#13 6.847 (24/39) Installing libexpat (2.8.5-r0)
+#13 6.856 (25/39) Installing libbz2 (1.0.8-r6)
+#13 6.864 (26/39) Installing libffi (3.5.2-r1)
+#13 6.871 (27/39) Installing gdbm (1.26-r0)
+#13 6.879 (28/39) Installing xz-libs (5.8.4-r0)
+#13 6.895 (29/39) Installing mpdecimal (4.0.1-r0)
+#13 6.904 (30/39) Installing ncurses-terminfo-base (6.6_p20260516-r0)
+#13 6.915 (31/39) Installing libncursesw (6.6_p20260516-r0)
+#13 6.930 (32/39) Installing libpanelw (6.6_p20260516-r0)
+#13 6.936 (33/39) Installing readline (8.3.3-r1)
+#13 6.948 (34/39) Installing sqlite-libs (3.53.4-r0)
+#13 6.987 (35/39) Installing python3 (3.14.8-r0)
+#13 7.403 (36/39) Installing python3-pycache-pyc0 (3.14.8-r0)
+#13 7.670 (37/39) Installing pyc (3.14.8-r0)
+#13 7.670 (38/39) Installing python3-pyc (3.14.8-r0)
+#13 7.670 (39/39) Installing unzip (6.0-r16)
+#13 7.686 Executing busybox-1.37.0-r31.trigger
+#13 7.690 OK: 306.2 MiB in 57 packages
+#13 DONE 7.8s
+
+#16 [build-server 3/8] WORKDIR /server
+#16 DONE 0.1s
+
+#17 [build-server 4/8] COPY index.ts package* /server
+#17 DONE 0.1s
+
+#15 [compile-server 5/5] RUN npm ci --include=dev --ignore-scripts && npm run build:server
+#15 7.152 
+#15 7.152 added 596 packages, and audited 597 packages in 7s
+#15 7.152 
+#15 7.152 75 packages are looking for funding
+#15 7.152   run `npm fund` for details
+#15 7.183 
+#15 7.183 58 vulnerabilities (10 low, 11 moderate, 33 high, 4 critical)
+#15 7.183 
+#15 7.183 To address issues that do not require attention, run:
+#15 7.183   npm audit fix
+#15 7.183 
+#15 7.183 To address all issues (including breaking changes), run:
+#15 7.183   npm audit fix --force
+#15 7.183 
+#15 7.183 Run `npm audit` for details.
+#15 7.184 npm notice
+#15 7.184 npm notice New major version of npm available! 11.19.0 -> 12.2.0
+#15 7.184 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#15 7.184 npm notice To update run: npm install -g npm@12.2.0
+#15 7.184 npm notice
+#15 7.291 
+#15 7.291 > audiobookshelf@2.37.0 build:server
+#15 7.291 > tsc -p tsconfig.server.json
+#15 7.291 
+#15 ...
+
+#18 [build-server 5/8] COPY /server /server/server
+#18 DONE 0.1s
+
+#15 [compile-server 5/5] RUN npm ci --include=dev --ignore-scripts && npm run build:server
+#15 ...
+
+#11 [build-client 4/5] RUN npm ci && npm cache clean --force
+#11 8.475 npm warn deprecated @babel/plugin-proposal-private-methods@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-methods instead.
+#11 8.480 npm warn deprecated @babel/plugin-proposal-private-property-in-object@7.21.11: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-property-in-object instead.
+#11 8.496 npm warn deprecated @babel/plugin-proposal-optional-chaining@7.21.0: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-chaining instead.
+#11 8.509 npm warn deprecated @babel/plugin-proposal-nullish-coalescing-operator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-nullish-coalescing-operator instead.
+#11 8.665 npm warn deprecated @babel/plugin-proposal-class-properties@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
+#11 8.979 npm warn deprecated chokidar@2.1.8: Chokidar 2 does not receive security updates since 2019. Upgrade to chokidar 3 with 15x fewer dependencies
+#11 9.033 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 9.407 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 9.412 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 9.604 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 9.613 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 ...
+
+#15 [compile-server 5/5] RUN npm ci --include=dev --ignore-scripts && npm run build:server
+#15 DONE 13.1s
+
+#19 [build-server 6/8] COPY --from=compile-server /server/dist-server /server/dist-server
+#19 DONE 0.1s
+
+#20 [build-server 7/8] RUN case "linux/amd64" in   "linux/amd64")   curl -L -o /tmp/library.zip "https://github.com/mikiher/nunicode-sqlite/releases/download/v1.2/libnusqlite3-linux-musl-x64.zip" ;;   "linux/arm64")   curl -L -o /tmp/library.zip "https://github.com/mikiher/nunicode-sqlite/releases/download/v1.2/libnusqlite3-linux-musl-arm64.zip" ;;   *) echo "Unsupported platform: linux/amd64" && exit 1 ;;   esac &&   unzip /tmp/library.zip -d /usr/local/lib/nusqlite3 &&   rm /tmp/library.zip
+#20 0.235   % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+#20 0.235                                  Dload  Upload  Total   Spent   Left   Speed
+#20 0.235   0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0                              0
+#20 0.531   0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0                              0
+#20 0.939   0      0   0      0   0      0      0      0                              0100 151.4k 100 151.4k   0      0 123.7k      0   00:01   00:01              0100 151.4k 100 151.4k   0      0 123.7k      0   00:01   00:01              0100 151.4k 100 151.4k   0      0 123.7k      0   00:01   00:01              0
+#20 1.291 Archive:  /tmp/library.zip
+#20 1.291   inflating: /usr/local/lib/nusqlite3/libnusqlite3.so  
+#20 DONE 1.3s
+
+#21 [build-server 8/8] RUN npm ci --omit=dev
+#21 1.313 npm warn deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+#21 2.539 
+#21 2.539 added 273 packages, and audited 274 packages in 2s
+#21 2.539 
+#21 2.539 32 packages are looking for funding
+#21 2.539   run `npm fund` for details
+#21 2.559 
+#21 2.559 40 vulnerabilities (8 low, 6 moderate, 22 high, 4 critical)
+#21 2.559 
+#21 2.559 To address issues that do not require attention, run:
+#21 2.559   npm audit fix
+#21 2.559 
+#21 2.559 To address all issues (including breaking changes), run:
+#21 2.559   npm audit fix --force
+#21 2.559 
+#21 2.559 Run `npm audit` for details.
+#21 2.561 npm notice
+#21 2.561 npm notice New major version of npm available! 11.19.0 -> 12.2.0
+#21 2.561 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#21 2.561 npm notice To update run: npm install -g npm@12.2.0
+#21 2.561 npm notice
+#21 DONE 2.8s
+
+#11 [build-client 4/5] RUN npm ci && npm cache clean --force
+#11 25.10 
+#11 25.10 added 1540 packages, and audited 1541 packages in 25s
+#11 25.10 
+#11 25.10 249 packages are looking for funding
+#11 25.10   run `npm fund` for details
+#11 25.14 
+#11 25.14 105 vulnerabilities (12 low, 26 moderate, 59 high, 8 critical)
+#11 25.14 
+#11 25.14 To address issues that do not require attention, run:
+#11 25.14   npm audit fix
+#11 25.14 
+#11 25.14 To address all issues possible (including breaking changes), run:
+#11 25.14   npm audit fix --force
+#11 25.14 
+#11 25.14 Some issues need review, and may require choosing
+#11 25.14 a different dependency.
+#11 25.14 
+#11 25.14 Run `npm audit` for details.
+#11 25.14 npm warn install-scripts 5 packages have install scripts not yet covered by allowScripts:
+#11 25.14 npm warn install-scripts   @parcel/watcher@2.5.1 (install: node scripts/build-from-source.js)
+#11 25.14 npm warn install-scripts   core-js@3.38.1 (postinstall: node -e "try{require('./postinstall')}catch(e){}")
+#11 25.14 npm warn install-scripts   cypress@13.7.3 (postinstall: node index.js --exec install)
+#11 25.14 npm warn install-scripts   es5-ext@0.10.62 (postinstall:  node -e "try{require('./_postinstall')}catch(e){}" || exit 0)
+#11 25.14 npm warn install-scripts   nuxt@2.18.1 (postinstall: opencollective || exit 0)
+#11 25.14 npm warn install-scripts
+#11 25.14 npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+#11 25.14 npm notice
+#11 25.14 npm notice New major version of npm available! 11.19.0 -> 12.2.0
+#11 25.14 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#11 25.14 npm notice To update run: npm install -g npm@12.2.0
+#11 25.14 npm notice
+#11 25.24 npm warn using --force Recommended protections disabled.
+#11 DONE 25.9s
+
+#22 [build-client 5/5] RUN npm run generate
+#22 0.311 
+#22 0.311 > audiobookshelf-client@2.37.0 generate
+#22 0.311 > nuxt generate
+#22 0.311 
+#22 1.021 ℹ Production build
+#22 1.021 ℹ Bundling only for client side
+#22 1.021 ℹ Target: static
+#22 1.035 ℹ Using components loader to optimize imports
+#22 1.035 ℹ Discovered Components: node_modules/.cache/nuxt/components/readme.md
+#22 1.035 ✔ Builder initialized
+#22 1.060 ✔ Nuxt files generated
+#22 1.078 
+#22 1.078  WARN  Please use build.postcss in your nuxt.config.js instead of an external config file. Support for such files will be removed in Nuxt 3 as they remove all defaults set by Nuxt and can cause severe problems with features like alias resolving inside your CSS.
+#22 1.078 
+#22 1.177 [webpackbar] ℹ Compiling Client
+#22 36.09 [webpackbar] ✔ Client: Compiled successfully in 34.91s
+#22 36.10 
+#22 36.10 Hash: [1ma91dbe6533058a64c083[39m[22m
+#22 36.10 Version: webpack [1m4.47.0[39m[22m
+#22 36.10 Time: [1m34915[39m[22mms
+#22 36.10 Built at: 10/09/2026 [1m11:00:56 PM[39m[22m
+#22 36.10                                      [1mAsset[39m[22m       [1mSize[39m[22m                                                   [1mChunks[39m[22m  [1m[39m[22m                       [1m[39m[22m       [1mChunk Names[39m[22m
+#22 36.10             [1m[32m../server/client.manifest.json[39m[22m    151 KiB                                                         [1m[39m[22m  [1m[32m[emitted][39m[22m                     
+#22 36.10                                 [1m[32m03e296f.js[39m[22m   11.3 KiB                                                 [1m127, 126[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-collection-books-table
+#22 36.10                                 [1m[32m0475ff5.js[39m[22m   5.28 KiB                                                  [1m86, 125[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-chapters
+#22 36.10                                 [1m[32m0625674.js[39m[22m   17.7 KiB                                            [1m203, 135, 136[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/playlist/_id
+#22 36.10                                 [1m[32m07a0e76.js[39m[22m   1.43 KiB                                                       [1m62[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-settings-content
+#22 36.10                                 [1m[32m09003b9.js[39m[22m   7.48 KiB                                                      [1m120[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-year-in-review-server
+#22 36.10                                 [1m[32m093efe5.js[39m[22m   21.5 KiB                                             [1m173, 62, 149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/authentication
+#22 36.10                                 [1m[32m094d14c.js[39m[22m   7.05 KiB                                                 [1m129, 130[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-ebook-files-table
+#22 36.10                                 [1m[32m0b1e20a.js[39m[22m   6.36 KiB                                                       [1m32[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10             [1m[33m0b45c967e6c44cadc19e.worker.js[39m[22m    [1m[33m887 KiB[39m[22m                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  
+#22 36.10                                 [1m[32m0bf57a6.js[39m[22m   9.08 KiB                                                      [1m104[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-new-modal
+#22 36.10                                 [1m[32m0c0558a.js[39m[22m   12.2 KiB                                                       [1m30[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m0c090c9.js[39m[22m   37.3 KiB                                                   [1m2, 159[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-lazy-book-card
+#22 36.10                                 [1m[32m0d095fa.js[39m[22m   1.14 KiB                                                      [1m193[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/index
+#22 36.10                                 [1m[33m0daab17.js[39m[22m    [1m[33m253 KiB[39m[22m                                                       [1m58[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  commons/app
+#22 36.10                                 [1m[32m0e36157.js[39m[22m   3.04 KiB                                                      [1m151[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-abridged-indicator
+#22 36.10                                 [1m[32m110da4d.js[39m[22m   11.3 KiB                                                 [1m136, 135[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-playlist-items-table
+#22 36.10                                 [1m[32m1151a7d.js[39m[22m   68.5 KiB                                                       [1m48[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m1168b07.js[39m[22m   1.98 KiB                                                       [1m79[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-api-key-created-modal
+#22 36.10                                 [1m[32m1191e94.js[39m[22m    7.7 KiB                                                   [1m69, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-lazy-series-card
+#22 36.10                                 [1m[32m1362ff3.js[39m[22m   6.05 KiB                                                  [1m194, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/narrators
+#22 36.10                                 [1m[32m14d280e.js[39m[22m   5.89 KiB                                                   [1m76, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/controls-library-sort-select
+#22 36.10                                 [1m[32m150f677.js[39m[22m   9.04 KiB                                        [1m195, 60, 137, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/podcast/download-queue
+#22 36.10                                 [1m[32m162e834.js[39m[22m  658 bytes                                                      [1m190[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/index
+#22 36.10                                 [1m[32m17936e8.js[39m[22m   2.29 KiB                                                       [1m99[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-library-tools
+#22 36.10                                 [1m[32m18e38a2.js[39m[22m   7.03 KiB                                                      [1m135[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-playlist-item-table-row
+#22 36.10                                 [1m[32m191c3f4.js[39m[22m   98.4 KiB                                                       [1m16[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m1991f5d.js[39m[22m   10.7 KiB                                                  [1m163, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-series-input-widget
+#22 36.10                                 [1m[32m1a5c62c.js[39m[22m   69.7 KiB                                                        [1m5[39m[22m  [1m[32m[emitted] [immutable][39m[22m         vendors/components/modals-libraries-library-scanner-settings/components/tables-collection-books-tabl/902d0233
+#22 36.10                                 [1m[33m1ba3604.js[39m[22m    [1m[33m627 KiB[39m[22m                                                       [1m57[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  app
+#22 36.10                                 [1m[32m1d6f192.js[39m[22m   23.1 KiB                                        [1m92, 146, 152, 156[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-schedule
+#22 36.10                                 [1m[32m1e0efeb.js[39m[22m     71 KiB                                                       [1m43[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m1f040ef.js[39m[22m   7.71 KiB                                                 [1m141, 160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-users-table
+#22 36.10                                 [1m[32m21e6317.js[39m[22m   2.84 KiB                                                      [1m123[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-audio-tracks-table-row
+#22 36.10                                 [1m[32m22f6f8e.js[39m[22m  566 bytes                                                      [1m153[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-already-in-library-indicator
+#22 36.10                                 [1m[32m2408582.js[39m[22m   33.4 KiB                                    [1m205, 60, 66, 140, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/upload/index
+#22 36.10                                 [1m[32m2586220.js[39m[22m   13.9 KiB                                             [1m103, 60, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-episode-feed
+#22 36.10                                 [1m[32m26e55c0.js[39m[22m  898 bytes                                                       [1m27[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m2841673.js[39m[22m   25.7 KiB                                                        [1m3[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-vue-trix
+#22 36.10                                 [1m[32m2881cfa.js[39m[22m     20 KiB                                                       [1m59[39m[22m  [1m[32m[emitted] [immutable][39m[22m         commons/components/readers-mobi-reader
+#22 36.10                                 [1m[32m288897a.js[39m[22m   22.3 KiB                                              [1m9, 155, 158[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-book-shelf-categorized
+#22 36.10                                 [1m[32m28a6b6f.js[39m[22m   1.59 KiB                                                      [1m192[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/bookshelf/_id
+#22 36.10                                 [1m[32m2a35fe6.js[39m[22m   9.01 KiB                                                      [1m101[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-listening-session-modal
+#22 36.10                                 [1m[32m2a43f27.js[39m[22m  105 bytes                                                       [1m40[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[33m2c96a53.js[39m[22m    [1m[33m353 KiB[39m[22m                                                  [1m208, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  vendors/components/readers-epub-reader
+#22 36.10                                 [1m[32m2d62435.js[39m[22m   69.2 KiB                                                       [1m36[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m2e16212.js[39m[22m   2.12 KiB                                                      [1m155[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-cover-size-widget
+#22 36.10                                 [1m[32m301fbbd.js[39m[22m   29.1 KiB                                    [1m13, 60, 119, 120, 121[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-year-in-review-banner
+#22 36.10                                 [1m[32m327debc.js[39m[22m     11 KiB                                         [1m177, 62, 78, 128[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/item-metadata-utils/custom-metadata-providers
+#22 36.10                                 [1m[32m331981c.js[39m[22m   12.3 KiB                                         [1m184, 60, 62, 109[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/rss-feeds
+#22 36.10                                 [1m[32m336d656.js[39m[22m   61.4 KiB                                                       [1m55[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m33a4090.js[39m[22m   26.5 KiB                                             [1m176, 62, 111[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/index
+#22 36.10                                 [1m[32m34fb718.js[39m[22m   2.88 KiB                                                      [1m142[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-editable-text
+#22 36.10                                 [1m[32m35e498d.js[39m[22m   11.8 KiB                                         [1m66, 60, 140, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-item-upload-card
+#22 36.10                                 [1m[32m3a6e200.js[39m[22m     42 KiB                                       [1m169, 149, 154, 161[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/batch/index
+#22 36.10                                 [1m[32m3b05d66.js[39m[22m   1.91 KiB                                                       [1m70[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-narrator-card
+#22 36.10                                 [1m[32m3b8a4ed.js[39m[22m    223 KiB                                                        [1m4[39m[22m  [1m[32m[emitted] [immutable][39m[22m         vendors/components/modals-item-tabs-details/components/modals-item-tabs-match/components/modals-podc/60e85b4a
+#22 36.10                                 [1m[32m3ea8395.js[39m[22m      6 KiB                                                  [1m121, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-year-in-review-short
+#22 36.10                                 [1m[32m41937d0.js[39m[22m   6.65 KiB                                                      [1m116[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-daily-listening-chart
+#22 36.10                                 [1m[32m42604fd.js[39m[22m      3 KiB                                                      [1m198[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/search
+#22 36.10                                 [1m[32m4283f31.js[39m[22m     13 KiB                                                 [1m154, 149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-book-details-edit
+#22 36.10                                 [1m[32m42f2b0a.js[39m[22m   11.8 KiB                                              [1m84, 60, 146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-emails-e-reader-device-modal
+#22 36.10                                 [1m[32m42fd236.js[39m[22m   2.26 KiB                                                      [1m145[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-media-icon-picker
+#22 36.10                                 [1m[32m46fa208.js[39m[22m     81 KiB  [1m191, 60, 73, 81, 123, 125, 129, 130, 131, 132, 139, 151[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/item/_id/index
+#22 36.10                                 [1m[32m488d787.js[39m[22m   17.1 KiB                                                      [1m204[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/share/_slug
+#22 36.10                                 [1m[32m4a77485.js[39m[22m   4.88 KiB                                                      [1m180[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/item-metadata-utils/tags
+#22 36.10                                 [1m[32m4b6dc2a.js[39m[22m   10.8 KiB                                                      [1m113[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/readers-epub-reader
+#22 36.10                                 [1m[32m4ba3b4d.js[39m[22m   13.1 KiB                                         [1m90, 81, 131, 132[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-files
+#22 36.10                                 [1m[32m4c54e86.js[39m[22m  105 bytes                                                       [1m26[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m4e9dbec.js[39m[22m    139 KiB                                                       [1m50[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m4f3e78f.js[39m[22m   2.97 KiB                                                 [1m137, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-podcast-download-queue-table
+#22 36.10                                 [1m[32m51797a2.js[39m[22m   5.76 KiB                                                       [1m73[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/content-library-item-details
+#22 36.10                                 [1m[32m51b9e30.js[39m[22m   5.73 KiB                                                       [1m63[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-author-card
+#22 36.10                                 [1m[32m54c4d4b.js[39m[22m   3.68 KiB                                                       [1m74[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/controls-filter-select
+#22 36.10                                 [1m[32m5577b50.js[39m[22m   70.3 KiB                                                       [1m44[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m55c341b.js[39m[22m     25 KiB                                  [1m197, 104, 105, 143, 153[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/podcast/search
+#22 36.10                                 [1m[32m581b33a.js[39m[22m   21.6 KiB                                   [1m174, 62, 111, 124, 143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/backups
+#22 36.10                                 [1m[32m58689e3.js[39m[22m   9.15 KiB                                                      [1m161[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-podcast-details-edit
+#22 36.10                                 [1m[32m5b4d593.js[39m[22m     11 KiB                                        [1m189, 62, 141, 160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/users/index
+#22 36.10                                 [1m[32m5b7e41d.js[39m[22m   94.2 KiB                                                       [1m52[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m5b80732.js[39m[22m    3.5 KiB                                                       [1m78[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-add-custom-metadata-provider-modal
+#22 36.10                                 [1m[32m5bda457.js[39m[22m   17.1 KiB                                             [1m12, 146, 156[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-backup-schedule-modal
+#22 36.10                                 [1m[32m5bf7e5a.js[39m[22m   15.2 KiB                                                 [1m201, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/login
+#22 36.10                                 [1m[32m5c9d0d9.js[39m[22m   52.8 KiB                                            [1m165, 150, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/audiobook/_id/chapters
+#22 36.10                                 [1m[32m5cbf7dc.js[39m[22m   5.17 KiB                                                       [1m89[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-episodes
+#22 36.10                                 [1m[32m5deb6dd.js[39m[22m     69 KiB                                                       [1m20[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m5fc0507.js[39m[22m   5.13 KiB                                                      [1m210[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m623796a.js[39m[22m   71.4 KiB                                                       [1m24[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m630104d.js[39m[22m     38 KiB                                [1m14, 74, 77, 106, 138, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-podcast-lazy-episodes-table
+#22 36.10                                 [1m[32m6466bf6.js[39m[22m   4.66 KiB                                                      [1m146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-multi-select-dropdown
+#22 36.10                                 [1m[32m66cc0e1.js[39m[22m   5.74 KiB                                                   [1m85, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-emails-user-e-reader-device-modal
+#22 36.10                                 [1m[32m672fc69.js[39m[22m   1.24 KiB                                                       [1m35[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m687a3b1.js[39m[22m   5.02 KiB                                                      [1m206[39m[22m  [1m[32m[emitted] [immutable][39m[22m         runtime
+#22 36.10                                 [1m[32m6b23913.js[39m[22m   25.6 KiB                                                      [1m114[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/readers-mobi-reader
+#22 36.10                                 [1m[32m6b63384.js[39m[22m   10.1 KiB                                                 [1m138, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-podcast-lazy-episode-row
+#22 36.10                                 [1m[32m6d36ae7.js[39m[22m   9.48 KiB                                                  [1m83, 144[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-edit-series-input-inner-modal
+#22 36.10                                 [1m[32m6da22df.js[39m[22m   5.12 KiB                                                  [1m93, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-tools
+#22 36.10                                 [1m[32m6f9215a.js[39m[22m   12.1 KiB                                             [1m131, 81, 132[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-library-files-table
+#22 36.10                                 [1m[32m738729c.js[39m[22m   69.7 KiB                                                       [1m51[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m748f255.js[39m[22m   4.97 KiB                                                       [1m61[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-config-side-nav
+#22 36.10                                 [1m[32m75df525.js[39m[22m   5.37 KiB                                                      [1m144[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-input-dropdown
+#22 36.10                                 [1m[32m77275e2.js[39m[22m   19.7 KiB                                            [1m188, 101, 160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/users/_id/sessions
+#22 36.10                                 [1m[32m7847638.js[39m[22m   69.1 KiB                                                       [1m28[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m7976f63.js[39m[22m    7.6 KiB                                                 [1m107, 149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-tabs-episode-details
+#22 36.10                                 [1m[32m7a579c6.js[39m[22m   6.84 KiB                                                  [1m133, 82[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-library-item
+#22 36.10                                 [1m[32m7b01dae.js[39m[22m   5.65 KiB                                                       [1m97[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-library-scanner-settings
+#22 36.10                                 [1m[32m7fe0ed5.js[39m[22m   68.7 KiB                                                       [1m49[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m807a34d.js[39m[22m   16.5 KiB                                            [1m100, 146, 156[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-schedule-scan
+#22 36.10                                 [1m[32m81a8e49.js[39m[22m   26.2 KiB                                    [1m8, 60, 63, 65, 69, 70[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-book-shelf-row
+#22 36.10                                 [1m[32m844ab86.js[39m[22m   43.6 KiB                                                [1m1, 75, 77[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-book-shelf-toolbar/pages/library/_library/bookshelf/_id/pages/library/_library/index//996ae1f3
+#22 36.10                                 [1m[32m861efb0.js[39m[22m   72.2 KiB                                                       [1m22[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m870eeee.js[39m[22m   14.8 KiB                                                 [1m156, 146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-cron-expression-builder
+#22 36.10                                 [1m[32m876dbbb.js[39m[22m   16.2 KiB                                                      [1m112[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/readers-comic-reader
+#22 36.10                                 [1m[32m8b30430.js[39m[22m   6.42 KiB                                                      [1m102[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-notification-edit-modal
+#22 36.10                                 [1m[32m8b50a70.js[39m[22m   9.81 KiB                                                      [1m166[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/audiobook/_id/edit
+#22 36.10                                 [1m[32m8d82dec.js[39m[22m   7.68 KiB                                                       [1m96[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-lazy-folder-chooser
+#22 36.10                                 [1m[32m8d96ac7.js[39m[22m   19.4 KiB                                         [1m94, 96, 142, 145[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-edit-library
+#22 36.10                                 [1m[32m8f38ed6.js[39m[22m   1.88 KiB                                                       [1m72[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-podcast-feed-summary-card
+#22 36.10                                 [1m[32m9028881.js[39m[22m   14.1 KiB                                                        [1m6[39m[22m  [1m[32m[emitted] [immutable][39m[22m         commons/components/modals-item-tabs-cover/components/modals-upload-image-modal/components/readers-ep/3ee30da1
+#22 36.10                                 [1m[32m91b2b45.js[39m[22m   5.61 KiB                                                      [1m158[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-item-slider
+#22 36.10                                 [1m[32m92034f1.js[39m[22m   10.7 KiB                                            [1m124, 111, 143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-backups-table
+#22 36.10                                 [1m[32m9427ebd.js[39m[22m   97.9 KiB                                                       [1m46[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m9532793.js[39m[22m   84.6 KiB                                                       [1m15[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32m9548387.js[39m[22m   5.39 KiB                                                      [1m150[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-time-picker
+#22 36.10                                 [1m[32m95bf490.js[39m[22m   5.02 KiB                                                      [1m178[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/item-metadata-utils/genres
+#22 36.10                                 [1m[32m9604b5c.js[39m[22m   7.82 KiB                                                      [1m157[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-encoder-options-card
+#22 36.10                                 [1m[32m97ef74d.js[39m[22m   17.5 KiB                                              [1m87, 60, 143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-cover
+#22 36.10                                 [1m[32m9878294.js[39m[22m   3.08 KiB                                                      [1m159[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-more-menu
+#22 36.10                                 [1m[32m9c39e64.js[39m[22m   17.3 KiB                                     [1m172, 62, 79, 80, 122[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/api-keys/index
+#22 36.10                                 [1m[32m9d6c9ba.js[39m[22m   9.14 KiB                                                 [1m187, 160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/users/_id/index
+#22 36.10                                 [1m[32m9e94a2c.js[39m[22m   21.4 KiB                            [1m181, 60, 62, 82, 95, 133, 134[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/libraries
+#22 36.10                                   [1m[32mLICENSES[39m[22m   3.67 KiB                                                         [1m[39m[22m  [1m[32m[emitted][39m[22m                     
+#22 36.10                                 [1m[32ma0c12e9.js[39m[22m   4.03 KiB                                                      [1m105[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-opml-feeds-modal
+#22 36.10                                 [1m[32ma46155e.js[39m[22m    123 KiB                                                       [1m18[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32ma62a8a0.js[39m[22m   1.79 KiB                                                      [1m199[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/series/_id
+#22 36.10                                 [1m[32ma85b4a4.js[39m[22m   65.3 KiB                                                       [1m42[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32mabdab17.js[39m[22m  447 bytes                                                       [1m60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-book-shelf-toolbar
+#22 36.10                                 [1m[32mac07d3c.js[39m[22m    1.1 KiB                                                      [1m143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-file-input
+#22 36.10                                 [1m[32mae9ce14.js[39m[22m   3.46 KiB                                                      [1m128[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-custom-metadata-provider-table
+#22 36.10                                 [1m[32mb1566de.js[39m[22m   13.1 KiB                                             [1m196, 60, 162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/podcast/latest
+#22 36.10                                 [1m[32mb1e9823.js[39m[22m     33 KiB                                             [1m185, 62, 101[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/sessions
+#22 36.10                                 [1m[32mb204cbf.js[39m[22m   21.3 KiB                                               [1m0, 60, 163[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-multi-select
+#22 36.10                                 [1m[32mb7a859f.js[39m[22m   7.44 KiB                                                      [1m126[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-collection-book-table-row
+#22 36.10                                 [1m[32mb8052ba.js[39m[22m   37.8 KiB                                                       [1m39[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32mb81bf3d.js[39m[22m   3.66 KiB                                                      [1m109[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-rssfeed-view-feed-modal
+#22 36.10                                 [1m[32mba6d879.js[39m[22m   1.87 KiB                                                      [1m140[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-uploaded-files-table
+#22 36.10                                 [1m[32mbcf389f.js[39m[22m   98.2 KiB                                                       [1m17[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32mbf72d1b.js[39m[22m     19 KiB                                                       [1m23[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32mc09d159.js[39m[22m   25.8 KiB                                     [1m175, 60, 62, 84, 146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/email
+#22 36.10                                 [1m[32mc27e689.js[39m[22m   5.94 KiB                                                       [1m81[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-audio-file-data-modal
+#22 36.10                                 [1m[33mc3a74d8.js[39m[22m   [1m[33m1.32 MiB[39m[22m                                                      [1m207[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  vendors/app
+#22 36.10                                 [1m[32mc413324.js[39m[22m   3.08 KiB                                                  [1m179, 62[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/item-metadata-utils/index
+#22 36.10                                 [1m[32mc5eaf8c.js[39m[22m     29 KiB                                        [1m88, 149, 154, 161[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-details
+#22 36.10                                 [1m[32mc62cde0.js[39m[22m   10.5 KiB                                             [1m134, 82, 133[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-library-libraries-table
+#22 36.10                                 [1m[32mc69f75e.js[39m[22m   65.3 KiB                                                       [1m21[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32mca02cd4.js[39m[22m   1.68 KiB                                                      [1m111[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/prompt-dialog
+#22 36.10                                 [1m[32mcab3d33.js[39m[22m   9.33 KiB                                                       [1m98[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-library-settings
+#22 36.10                                 [1m[32mcacb05e.js[39m[22m   5.94 KiB                                                 [1m108, 152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-tabs-episode-match
+#22 36.10                                 [1m[32mcdf5bfc.js[39m[22m   8.37 KiB                                                  [1m171, 61[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config
+#22 36.10                                 [1m[32mce07feb.js[39m[22m   30.8 KiB                                                       [1m45[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32mce208fb.js[39m[22m   23.4 KiB                                                        [1m7[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-details/components/modals-item-tabs-match/components/widgets-book-detail/5a2d5026
+#22 36.10                                 [1m[32mce32a4d.js[39m[22m   1.81 KiB                                                       [1m82[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-dialog
+#22 36.10                                 [1m[32mce6867d.js[39m[22m   39.5 KiB                                                       [1m25[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32mcf8a97b.js[39m[22m   68.9 KiB                                                       [1m33[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32md04d50f.js[39m[22m   70.2 KiB                                                       [1m47[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32md1cfe15.js[39m[22m   19.1 KiB                                         [1m183, 62, 71, 102[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/notifications
+#22 36.10                                 [1m[32md1ed712.js[39m[22m   39.7 KiB                                              [1m91, 64, 149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-item-tabs-match
+#22 36.10                                 [1m[32md274fb2.js[39m[22m    5.1 KiB                                                       [1m71[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-notification-card
+#22 36.10                                 [1m[32md33ac97.js[39m[22m   3.55 KiB                                                      [1m130[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-ebook-files-table-row
+#22 36.10                                 [1m[32md38b862.js[39m[22m   61.2 KiB                                                       [1m31[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32md41bd13.js[39m[22m   79.6 KiB                                                       [1m37[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32md43f25a.js[39m[22m   38.6 KiB                                                       [1m56[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32md557b51.js[39m[22m     68 KiB                                                       [1m41[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32md59d95d.js[39m[22m   44.1 KiB                                                       [1m54[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32md5daaeb.js[39m[22m   3.87 KiB                                                      [1m125[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-chapters-table
+#22 36.10                                 [1m[32md6d9a98.js[39m[22m   22.5 KiB                                             [1m147, 60, 163[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-multi-select-query-input
+#22 36.10                                 [1m[32md70fa50.js[39m[22m   19.8 KiB                                            [1m170, 126, 127[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/collection/_id
+#22 36.10                                 [1m[33md7ad387.js[39m[22m    [1m[33m514 KiB[39m[22m                                                      [1m209[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  vendors/components/readers-pdf-reader
+#22 36.10                                 [1m[32md825379.js[39m[22m   19.7 KiB                                              [1m11, 60, 146[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-account-modal
+#22 36.10                                 [1m[32md8dd6c8.js[39m[22m  823 bytes                                                      [1m160[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-online-indicator
+#22 36.10                                 [1m[32md9e8de1.js[39m[22m   27.3 KiB                                            [1m167, 152, 157[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/audiobook/_id/manage
+#22 36.10                                 [1m[32mdb49335.js[39m[22m   20.7 KiB                                        [1m186, 62, 116, 117[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/stats
+#22 36.10                                 [1m[32mdbe0b4f.js[39m[22m   8.36 KiB                                                  [1m182, 62[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/config/log
+#22 36.10                                 [1m[32mdc15007.js[39m[22m   4.47 KiB                                                      [1m106[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-podcast-remove-episode
+#22 36.10                                 [1m[32mdefe9ba.js[39m[22m   3.46 KiB                                                      [1m118[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-preview-icons
+#22 36.10                                 [1m[32me1102a4.js[39m[22m   1.04 KiB                                                      [1m152[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-alert
+#22 36.10                                 [1m[32me14f122.js[39m[22m   2.82 KiB                                                       [1m77[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/controls-sort-select
+#22 36.10                                 [1m[32me1a3fc2.js[39m[22m  105 bytes                                                       [1m53[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32me32761b.js[39m[22m   12.9 KiB                                                       [1m75[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/controls-library-filter-select
+#22 36.10                                 [1m[32me4e750b.js[39m[22m  567 bytes                                                      [1m202[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/oops
+#22 36.10                                 [1m[32me649e6c.js[39m[22m   75.3 KiB                                                       [1m29[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32me6d7977.js[39m[22m   1.08 KiB                                                      [1m149[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-rich-text-editor
+#22 36.10                                 [1m[32me7bea9e.js[39m[22m   12.6 KiB                                             [1m139, 81, 123[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-tracks-table
+#22 36.10                                 [1m[32meab4845.js[39m[22m   2.48 KiB                                                      [1m132[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-library-files-table-row
+#22 36.10                                 [1m[32mec0e132.js[39m[22m   11.9 KiB                                                 [1m168, 158[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/author/_id
+#22 36.10                                 [1m[32mece1e86.js[39m[22m   5.06 KiB                                                      [1m122[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/tables-api-keys-table
+#22 36.10                                 [1m[32mecf7cec.js[39m[22m   72.9 KiB                                                       [1m38[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32medc29ae.js[39m[22m     21 KiB                                          [1m164, 60, 62, 85[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/account
+#22 36.10                                 [1m[32medd2a44.js[39m[22m   4.64 KiB                                                      [1m148[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/ui-query-input
+#22 36.10                                 [1m[32medf148a.js[39m[22m   4.16 KiB                                                       [1m67[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-lazy-collection-card
+#22 36.10                                 [1m[32mee65cf6.js[39m[22m  805 bytes                                                      [1m162[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/widgets-podcast-type-indicator
+#22 36.10                                 [1m[32mf00ccd9.js[39m[22m   11.1 KiB                                             [1m200, 60, 118[39m[22m  [1m[32m[emitted] [immutable][39m[22m         pages/library/_library/stats
+#22 36.10                                 [1m[32mf02e297.js[39m[22m      5 KiB                                                       [1m64[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-book-match-card
+#22 36.10                                 [1m[32mf0ed60d.js[39m[22m   8.52 KiB                                                  [1m119, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-year-in-review
+#22 36.10                                 [1m[32mf105e39.js[39m[22m   7.83 KiB                                                      [1m117[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/stats-heatmap
+#22 36.10                                 [1m[32mf56d39b.js[39m[22m   7.96 KiB                                                   [1m95, 60[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-libraries-edit-modal
+#22 36.10                                 [1m[32mf5c80cc.js[39m[22m   73.5 KiB                                                       [1m34[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32mf61cff4.js[39m[22m   4.67 KiB                                                 [1m110, 143[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-upload-image-modal
+#22 36.10                                 [1m[32mf8f70e0.js[39m[22m   2.72 KiB                                                       [1m65[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-group-card
+#22 36.10                                 [1m[32mfaf0424.js[39m[22m   55.2 KiB                              [1m10, 60, 63, 67, 68, 69, 155[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/app-lazy-bookshelf
+#22 36.10                                 [1m[32mfc3ccd1.js[39m[22m   6.74 KiB                                                      [1m115[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/readers-pdf-reader
+#22 36.10                                 [1m[32mfda9e7b.js[39m[22m   61.9 KiB                                                       [1m19[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                                 [1m[32mfeec3c5.js[39m[22m   6.16 KiB                                                       [1m80[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/modals-api-key-modal
+#22 36.10                                 [1m[32mffe01ee.js[39m[22m   3.82 KiB                                                       [1m68[39m[22m  [1m[32m[emitted] [immutable][39m[22m         components/cards-lazy-playlist-card
+#22 36.10 [1m[33mfonts/MaterialSymbolsRounded.dae4c83.woff2[39m[22m    [1m[33m417 KiB[39m[22m                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m  [1m[33m[big][39m[22m  
+#22 36.10      [1m[32mfonts/SourceSansPro-Light.e7208e0.ttf[39m[22m    241 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10    [1m[32mfonts/SourceSansPro-Regular.47dbe58.ttf[39m[22m    242 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10   [1m[32mfonts/SourceSansPro-SemiBold.c1b4f41.ttf[39m[22m    242 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10       [1m[32mfonts/UbuntuMono-Regular.c8ca9c5.ttf[39m[22m    185 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                 [1m[32mfonts/absicons.25aa078.ttf[39m[22m   5.22 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                [1m[32mfonts/absicons.b1a6dd1.woff[39m[22m    5.3 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                 [1m[32mfonts/absicons.d8367ca.eot[39m[22m   5.39 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                   [1m[32mimg/absicons.49dc9ff.svg[39m[22m   12.9 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10                       [1m[32mimg/icon.d3d4aef.svg[39m[22m    2.4 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10               [1m[32mimg/wood_default.6d366e7.jpg[39m[22m    114 KiB                                                         [1m[39m[22m  [1m[32m[emitted] [immutable][39m[22m         
+#22 36.10  + 1 hidden asset
+#22 36.10 Entrypoint [1mapp[39m[22m [1m[33m[big][39m[22m = [1m[32m687a3b1.js[39m[22m [1m[32m0daab17.js[39m[22m [1m[32mc3a74d8.js[39m[22m [1m[32m1ba3604.js[39m[22m
+#22 36.10 
+#22 36.10 [1m[33mWARNING in asset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
+#22 36.10 This can impact web performance.
+#22 36.10 Assets: 
+#22 36.10   0b45c967e6c44cadc19e.worker.js (887 KiB)
+#22 36.10   fonts/MaterialSymbolsRounded.dae4c83.woff2 (417 KiB)
+#22 36.10   1ba3604.js (627 KiB)
+#22 36.10   0daab17.js (253 KiB)
+#22 36.10   c3a74d8.js (1.32 MiB)
+#22 36.10   2c96a53.js (353 KiB)
+#22 36.10   d7ad387.js (514 KiB)[39m[22m
+#22 36.10 
+#22 36.10 [1m[33mWARNING in entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (1000 KiB). This can impact web performance.
+#22 36.10 Entrypoints:
+#22 36.10   app (2.18 MiB)
+#22 36.10       687a3b1.js
+#22 36.10       0daab17.js
+#22 36.10       c3a74d8.js
+#22 36.10       1ba3604.js
+#22 36.10 [39m[22m
+#22 36.11 ℹ [HPM] Proxy created: /audiobookshelf/api/  -> /
+#22 36.11 ℹ [HPM] Proxy created: /audiobookshelf/public/  -> /
+#22 36.11 ℹ [HPM] Proxy created: /audiobookshelf/hls/  -> /
+#22 36.11 ℹ [HPM] Proxy created: /audiobookshelf/auth/  -> /
+#22 36.11 ℹ [HPM] Proxy created: /audiobookshelf/feed/  -> /
+#22 36.11 ℹ [HPM] Proxy created: /audiobookshelf/status  -> /
+#22 36.11 ℹ [HPM] Proxy created: /audiobookshelf/login  -> /
+#22 36.11 ℹ [HPM] Proxy created: /audiobookshelf/logout  -> /
+#22 36.11 ℹ [HPM] Proxy created: /audiobookshelf/init  -> /
+#22 36.19 ℹ Generating output directory: dist/
+#22 36.20 ℹ Generating pages
+#22 36.27 ✔ Generated route "/config"
+#22 36.27 ✔ Generated route "/account"
+#22 36.27 ✔ Generated route "/config/api-keys"
+#22 36.27 ✔ Generated route "/config/email"
+#22 36.27 ✔ Generated route "/config/libraries"
+#22 36.27 ✔ Generated route "/batch"
+#22 36.27 ✔ Generated route "/config/authentication"
+#22 36.27 ✔ Generated route "/config/backups"
+#22 36.27 ✔ Generated route "/config/log"
+#22 36.27 ✔ Generated route "/config/rss-feeds"
+#22 36.27 ✔ Generated route "/config/notifications"
+#22 36.27 ✔ Generated route "/config/users"
+#22 36.27 ✔ Generated route "/config/sessions"
+#22 36.27 ✔ Generated route "/config/item-metadata-utils"
+#22 36.27 ✔ Generated route "/config/item-metadata-utils/custom-metadata-providers"
+#22 36.27 ✔ Generated route "/config/stats"
+#22 36.27 ✔ Generated route "/config/item-metadata-utils/tags"
+#22 36.27 ✔ Generated route "/login"
+#22 36.27 ✔ Generated route "/config/item-metadata-utils/genres"
+#22 36.27 ✔ Generated route "/upload"
+#22 36.27 ✔ Generated route "/oops"
+#22 36.27 ✔ Generated route "/"
+#22 36.28 ✔ Client-side fallback created: 200.html
+#22 DONE 36.5s
+
+#23 [stage-3 4/6] COPY --from=build-client /client/dist /app/client/dist
+#23 DONE 0.1s
+
+#24 [stage-3 5/6] COPY --from=build-server /server /app
+#24 DONE 0.3s
+
+#25 [stage-3 6/6] COPY --from=build-server /usr/local/lib/nusqlite3/libnusqlite3.so /usr/local/lib/nusqlite3/libnusqlite3.so
+#25 DONE 0.1s
+
+#26 exporting to image
+#26 exporting layers
+#26 exporting layers 3.3s done
+#26 exporting manifest sha256:62f146e5d45fadafa302d3f6ed525c935423ea4c068073e5f2b21dd483b3352d 0.0s done
+#26 exporting config sha256:e837272e96ce21d19f0ffa722c3c8b7007394b4ba8cd6ed5a4c245a767aa2dc3 0.0s done
+#26 exporting attestation manifest sha256:698e3e961ab486a95a5ca89b2bb9cf29358fd7581c5ed67cd4582bd239ab83a2 0.0s done
+#26 exporting manifest list sha256:276928c0a5ac3ee8ad0f4169769ecba443809fabcbb1564b4ce0bb409ba4a353 done
+#26 naming to docker.io/library/abs-image-check:latest done
+#26 unpacking to docker.io/library/abs-image-check:latest
+#26 unpacking to docker.io/library/abs-image-check:latest 1.1s done
+#26 DONE 4.5s
+exit: 0

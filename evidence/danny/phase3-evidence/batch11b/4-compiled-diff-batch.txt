@@ -1,0 +1,263 @@
+files 472 473 only-a [] only-b [ 'server/scanner/dynamicKey.js' ]
+=== server/Database.js
+10a11,13
+> function lazy(load) {
+>     return load();
+> }
+212,236c215,239
+<         require('./models/User').init(this.sequelize);
+<         require('./models/Session').init(this.sequelize);
+<         require('./models/ApiKey').init(this.sequelize);
+<         require('./models/Library').init(this.sequelize);
+<         require('./models/LibraryFolder').init(this.sequelize);
+<         require('./models/Book').init(this.sequelize);
+<         require('./models/Podcast').init(this.sequelize);
+<         require('./models/PodcastEpisode').init(this.sequelize);
+<         require('./models/LibraryItem').init(this.sequelize);
+<         require('./models/MediaProgress').init(this.sequelize);
+<         require('./models/Series').init(this.sequelize);
+<         require('./models/BookSeries').init(this.sequelize);
+<         require('./models/Author').init(this.sequelize);
+<         require('./models/BookAuthor').init(this.sequelize);
+<         require('./models/Collection').init(this.sequelize);
+<         require('./models/CollectionBook').init(this.sequelize);
+<         require('./models/Playlist').init(this.sequelize);
+<         require('./models/PlaylistMediaItem').init(this.sequelize);
+<         require('./models/Device').init(this.sequelize);
+<         require('./models/PlaybackSession').init(this.sequelize);
+<         require('./models/Feed').init(this.sequelize);
+<         require('./models/FeedEpisode').init(this.sequelize);
+<         require('./models/Setting').init(this.sequelize);
+<         require('./models/CustomMetadataProvider').init(this.sequelize);
+<         require('./models/MediaItemShare').init(this.sequelize);
+---
+>         lazy(() => require('./models/User')).init(this.sequelize);
+>         lazy(() => require('./models/Session')).init(this.sequelize);
+>         lazy(() => require('./models/ApiKey')).init(this.sequelize);
+>         lazy(() => require('./models/Library')).init(this.sequelize);
+>         lazy(() => require('./models/LibraryFolder')).init(this.sequelize);
+>         lazy(() => require('./models/Book')).init(this.sequelize);
+>         lazy(() => require('./models/Podcast')).init(this.sequelize);
+>         lazy(() => require('./models/PodcastEpisode')).init(this.sequelize);
+>         lazy(() => require('./models/LibraryItem')).init(this.sequelize);
+>         lazy(() => require('./models/MediaProgress')).init(this.sequelize);
+>         lazy(() => require('./models/Series')).init(this.sequelize);
+>         lazy(() => require('./models/BookSeries')).init(this.sequelize);
+>         lazy(() => require('./models/Author')).init(this.sequelize);
+>         lazy(() => require('./models/BookAuthor')).init(this.sequelize);
+>         lazy(() => require('./models/Collection')).init(this.sequelize);
+>         lazy(() => require('./models/CollectionBook')).init(this.sequelize);
+>         lazy(() => require('./models/Playlist')).init(this.sequelize);
+>         lazy(() => require('./models/PlaylistMediaItem')).init(this.sequelize);
+>         lazy(() => require('./models/Device')).init(this.sequelize);
+>         lazy(() => require('./models/PlaybackSession')).init(this.sequelize);
+>         lazy(() => require('./models/Feed')).init(this.sequelize);
+>         lazy(() => require('./models/FeedEpisode')).init(this.sequelize);
+>         lazy(() => require('./models/Setting')).init(this.sequelize);
+>         lazy(() => require('./models/CustomMetadataProvider')).init(this.sequelize);
+>         lazy(() => require('./models/MediaItemShare')).init(this.sequelize);
+264c267
+<             await require('./utils/migrations/absMetadataMigration').migrate(this);
+---
+>             await lazy(() => require('./utils/migrations/absMetadataMigration')).migrate(this);
+=== server/scanner/AbsMetadataFileScanner.js
+6a7,8
+> const dynamicKey = require("./dynamicKey");
+> const { setKey } = dynamicKey;
+36c38
+<                 bookMetadata[key] = abMetadata[key];
+---
+>                 setKey(bookMetadata, key, abMetadata[key]);
+59c61
+<                 podcastMetadata[key] = abMetadata[key];
+---
+>                 setKey(podcastMetadata, key, abMetadata[key]);
+=== server/scanner/AudioFileScanner.js
+10a11,12
+> const dynamicKey = require("./dynamicKey");
+> const { getKey, setKey } = dynamicKey;
+281c283
+<                     bookMetadata[mapping.key] = value;
+---
+>                     setKey(bookMetadata, mapping.key, value);
+334,335c336,337
+<                     podcastMetadata[mapping.key] = value;
+<                     libraryScan.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastMetadata[mapping.key]}`);
+---
+>                     setKey(podcastMetadata, mapping.key, value);
+>                     libraryScan.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastMetadata, mapping.key)}`);
+388c390
+<                         scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastEpisode[mapping.key]}`);
+---
+>                         scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastEpisode, mapping.key)}`);
+397c399
+<                         scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastEpisode[mapping.key]}`);
+---
+>                         scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastEpisode, mapping.key)}`);
+404,405c406,407
+<                     podcastEpisode[mapping.key] = value;
+<                     scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastEpisode[mapping.key]}`);
+---
+>                     setKey(podcastEpisode, mapping.key, value);
+>                     scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastEpisode, mapping.key)}`);
+=== server/scanner/BookScanner.js
+25a26,27
+> const dynamicKey = require("./dynamicKey");
+> const { getKey, setKey } = dynamicKey;
+152c154
+<             if (bookMetadata[key] === undefined || (Array.isArray(bookMetadata[key]) && !bookMetadata[key].length))
+---
+>             if (getKey(bookMetadata, key) === undefined || (Array.isArray(getKey(bookMetadata, key)) && !getKey(bookMetadata, key).length))
+276,278c278,280
+<             else if (bookMetadata[key] !== media[key]) {
+<                 libraryScan.addLog(LogLevel.DEBUG, `Updating book ${key} "${media[key]}" => "${bookMetadata[key]}" for book "${bookMetadata.title}"`);
+<                 media[key] = bookMetadata[key];
+---
+>             else if (getKey(bookMetadata, key) !== getKey(media, key)) {
+>                 libraryScan.addLog(LogLevel.DEBUG, `Updating book ${key} "${getKey(media, key)}" => "${getKey(bookMetadata, key)}" for book "${bookMetadata.title}"`);
+>                 setKey(media, key, getKey(bookMetadata, key));
+632,633c634,635
+<                     else if (ebookMetdataObject[key] && key !== 'sequence') {
+<                         this.bookMetadata[key] = ebookMetdataObject[key];
+---
+>                     else if (getKey(ebookMetdataObject, key) && key !== 'sequence') {
+>                         setKey(this.bookMetadata, key, getKey(ebookMetdataObject, key));
+=== server/scanner/LibraryItemScanData.js
+5a6,7
+> const dynamicKey = require("./dynamicKey");
+> const { getKey, setKey } = dynamicKey;
+112,114c114,116
+<             if (existingLibraryItem[key] !== this[key]) {
+<                 libraryScan.addLog(LogLevel.DEBUG, `Library item "${existingLibraryItem.relPath}" key "${key}" changed from "${existingLibraryItem[key]}" to "${this[key]}"`);
+<                 existingLibraryItem[key] = this[key];
+---
+>             if (getKey(existingLibraryItem, key) !== getKey(this, key)) {
+>                 libraryScan.addLog(LogLevel.DEBUG, `Library item "${existingLibraryItem.relPath}" key "${key}" changed from "${getKey(existingLibraryItem, key)}" to "${getKey(this, key)}"`);
+>                 setKey(existingLibraryItem, key, getKey(this, key));
+199c201
+<             if (existingLibraryFile.metadata[key] !== scannedLibraryFile.metadata[key]) {
+---
+>             if (getKey(existingLibraryFile.metadata, key) !== getKey(scannedLibraryFile.metadata, key)) {
+201c203
+<                     libraryScan.addLog(LogLevel.DEBUG, `Library file "${existingLibraryFile.metadata.relPath}" for library item "${libraryItemPath}" key "${key}" changed from "${existingLibraryFile.metadata[key]}" to "${scannedLibraryFile.metadata[key]}"`);
+---
+>                     libraryScan.addLog(LogLevel.DEBUG, `Library file "${existingLibraryFile.metadata.relPath}" for library item "${libraryItemPath}" key "${key}" changed from "${getKey(existingLibraryFile.metadata, key)}" to "${getKey(scannedLibraryFile.metadata, key)}"`);
+204c206
+<                     libraryScan.addLog(LogLevel.DEBUG, `Library file for library item "${libraryItemPath}" key "${key}" changed from "${existingLibraryFile.metadata[key]}" to "${scannedLibraryFile.metadata[key]}"`);
+---
+>                     libraryScan.addLog(LogLevel.DEBUG, `Library file for library item "${libraryItemPath}" key "${key}" changed from "${getKey(existingLibraryFile.metadata, key)}" to "${getKey(scannedLibraryFile.metadata, key)}"`);
+206c208
+<                 existingLibraryFile.metadata[key] = scannedLibraryFile.metadata[key];
+---
+>                 setKey(existingLibraryFile.metadata, key, getKey(scannedLibraryFile.metadata, key));
+234,235c236,237
+<             if (keysToMap.includes(key) && this.mediaMetadata[key]) {
+<                 bookMetadata[key] = this.mediaMetadata[key];
+---
+>             if (keysToMap.includes(key) && getKey(this.mediaMetadata, key)) {
+>                 setKey(bookMetadata, key, getKey(this.mediaMetadata, key));
+=== server/scanner/LibraryScanner.js
+391c391
+<             if (isSingleMediaFile(fileUpdateGroup, itemDir))
+---
+>             if (isSingleMediaEntry(itemDir, fileUpdateGroup[itemDir]))
+510c510
+<     return isSingleMediaFile(fileUpdateGroup, itemDir) ? scanUtils.checkFilepathIsAudioFile(fileUpdateGroup[itemDir]) : fileUpdateGroup[itemDir].some(scanUtils.checkFilepathIsAudioFile);
+---
+>     return isSingleMediaEntry(itemDir, fileUpdateGroup[itemDir]) ? scanUtils.checkFilepathIsAudioFile(fileUpdateGroup[itemDir]) : fileUpdateGroup[itemDir].some(scanUtils.checkFilepathIsAudioFile);
+513c513,516
+<     return itemDir === fileUpdateGroup[itemDir];
+---
+>     return isSingleMediaEntry(itemDir, fileUpdateGroup[itemDir]);
+> }
+> function isSingleMediaEntry(itemDir, entry) {
+>     return itemDir === entry;
+=== server/scanner/NfoFileScanner.js
+3a4,5
+> const dynamicKey = require("./dynamicKey");
+> const { getKey, setKey } = dynamicKey;
+43,44c45,46
+<                 else if (nfoMetadata[key] && key !== 'sequence') {
+<                     bookMetadata[key] = nfoMetadata[key];
+---
+>                 else if (getKey(nfoMetadata, key) && key !== 'sequence') {
+>                     setKey(bookMetadata, key, getKey(nfoMetadata, key));
+=== server/scanner/OpfFileScanner.js
+3a4,5
+> const dynamicKey = require("./dynamicKey");
+> const { getKey, setKey } = dynamicKey;
+38,39c40,41
+<                 else if (opfMetadata[key] && key !== 'sequence') {
+<                     bookMetadata[key] = opfMetadata[key];
+---
+>                 else if (getKey(opfMetadata, key) && key !== 'sequence') {
+>                     setKey(bookMetadata, key, getKey(opfMetadata, key));
+=== server/scanner/PodcastScanner.js
+15a16,17
+> const dynamicKey = require("./dynamicKey");
+> const { getKey, setKey } = dynamicKey;
+138c140
+<             if (podcastMetadata[key] === undefined || (Array.isArray(podcastMetadata[key]) && !podcastMetadata[key].length))
+---
+>             if (getKey(podcastMetadata, key) === undefined || (Array.isArray(getKey(podcastMetadata, key)) && !getKey(podcastMetadata, key).length))
+158,160c160,162
+<             else if (podcastMetadata[key] !== media[key]) {
+<                 libraryScan.addLog(LogLevel.DEBUG, `Updating podcast ${key} "${media[key]}" => "${podcastMetadata[key]}" for podcast "${podcastMetadata.title}"`);
+<                 media[key] = podcastMetadata[key];
+---
+>             else if (getKey(podcastMetadata, key) !== getKey(media, key)) {
+>                 libraryScan.addLog(LogLevel.DEBUG, `Updating podcast ${key} "${getKey(media, key)}" => "${getKey(podcastMetadata, key)}" for podcast "${podcastMetadata.title}"`);
+>                 setKey(media, key, getKey(podcastMetadata, key));
+=== server/scanner/Scanner.js
+12a13,14
+> const dynamicKey = require("./dynamicKey");
+> const { getKey } = dynamicKey;
+115c117
+<             if (matchDataTransformed[key]) {
+---
+>             if (getKey(matchDataTransformed, key)) {
+119c121
+<                         if (Array.isArray(matchDataTransformed[key]))
+---
+>                         if (Array.isArray(getKey(matchDataTransformed, key)))
+122c124
+<                             Logger.warn(`[Scanner] quickMatch genres is not an array ${matchDataTransformed[key]}`);
+---
+>                             Logger.warn(`[Scanner] quickMatch genres is not an array ${getKey(matchDataTransformed, key)}`);
+131,132c133,134
+<                 else if (libraryItem.media[key] !== matchDataTransformed[key] && (!libraryItem.media[key] || options.overrideDetails)) {
+<                     updatePayload[key] = matchDataTransformed[key];
+---
+>                 else if (getKey(libraryItem.media, key) !== getKey(matchDataTransformed, key) && (!getKey(libraryItem.media, key) || options.overrideDetails)) {
+>                     updatePayload[key] = getKey(matchDataTransformed, key);
+142c144
+<             if (matchData[key] && detailKeysToUpdate.includes(key)) {
+---
+>             if (getKey(matchData, key) && detailKeysToUpdate.includes(key)) {
+154c156
+<                         if (Array.isArray(matchData[key]))
+---
+>                         if (Array.isArray(getKey(matchData, key)))
+157c159
+<                             Logger.warn(`[Scanner] quickMatch genres is not an array ${matchData[key]}`);
+---
+>                             Logger.warn(`[Scanner] quickMatch genres is not an array ${getKey(matchData, key)}`);
+169c171
+<                         if (Array.isArray(matchData[key]))
+---
+>                         if (Array.isArray(getKey(matchData, key)))
+179,180c181,182
+<                 else if (!libraryItem.media[key] || options.overrideDetails) {
+<                     updatePayload[key] = matchData[key];
+---
+>                 else if (!getKey(libraryItem.media, key) || options.overrideDetails) {
+>                     updatePayload[key] = getKey(matchData, key);
+329,331c331,333
+<             if (matchDataTransformed[key]) {
+<                 if (episode[key] !== matchDataTransformed[key] && (!episode[key] || options.overrideDetails)) {
+<                     updatePayload[key] = matchDataTransformed[key];
+---
+>             if (getKey(matchDataTransformed, key)) {
+>                 if (getKey(episode, key) !== getKey(matchDataTransformed, key) && (!getKey(episode, key) || options.overrideDetails)) {
+>                     updatePayload[key] = getKey(matchDataTransformed, key);
+DIFFERING FILES 10

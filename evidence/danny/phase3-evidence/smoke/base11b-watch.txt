@@ -1,0 +1,11 @@
+== items before
+5 ['Audio Book', 'JSON Title', 'Loose Book', 'NFO Title', 'OPF Title']
+== items after adding Author Three/Book Three
+6 ['Audio Book', 'Book Three', 'JSON Title', 'Loose Book', 'NFO Title', 'OPF Title']
+== socket
+event user_online id,username,type,session,lastSeen,createdAt
+event init userId,username,usersOnline
+== log files
+./daily/DATE.txt
+./scans/DATE_UUID.txt
+== ERROR and WARN lines

@@ -1,0 +1,18 @@
+== status
+{"app":"audiobookshelf","serverVersion":"2.37.0","isInit":false,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""},"ConfigPath":"/config","MetadataPath":"/metadata"} [200]
+== init
+OK [200]
+== status after init
+{"app":"audiobookshelf","serverVersion":"2.37.0","isInit":true,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""}} [200]
+== login
+user: root type: root accessToken present: True
+== login wrong password
+[401]
+== container log ERROR and WARN
+[2026-10-10 03:35:22.968] ERROR: [LocalAuth] Failed login attempt for username "root" from ip ::1 (Invalid password)
+== container node
+v24.21.0
+== container files
+-rw-r--r--    1 root     root          3291 Oct 10 03:34 /app/dist-server/index.js
+-rw-r--r--    1 root     root           637 Oct 10 03:34 /app/dist-server/server/scanner/dynamicKey.js
+-rw-r--r--    1 root     root          1119 Oct 10 03:34 /app/dist-server/server/utils/queryValue.js

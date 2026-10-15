@@ -1,0 +1,5 @@
+STATUS 400
+LOCATION 
+{
+ "message": "Invalid callback URL - must be same-origin"
+}

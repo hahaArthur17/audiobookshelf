@@ -1,0 +1,3033 @@
+diff -ruw base/server/utils/areEquivalent.js new/server/utils/areEquivalent.js
+--- base/server/utils/areEquivalent.js	2026-10-10 17:00:49.960585038 +1300
++++ new/server/utils/areEquivalent.js	2026-10-10 17:00:49.899941552 +1300
+@@ -15,7 +15,7 @@
+  @param value1 First item to compare
+  @param value2 Other item to compare
+  @param stack Used internally to track circular refs - don't set it
+-module.exports = function areEquivalent(value1, value2, numToString = false, stack = []) {
++function areEquivalent(value1, value2, numToString = false, stack = []) {
+     if (numToString) {
+         if (value1 !== null && !isNaN(value1))
+             value1 = String(value1);
+@@ -54,6 +54,8 @@
+         throw new Error(`areEquivalent value1 is circular`);
+     }
+     stack.push(value1);
++    const obj1 = value1;
++    const obj2 = value2;
+     if (Array.isArray(value1)) {
+         if (!Array.isArray(value2)) {
+             return false;
+@@ -69,8 +71,8 @@
+         }
+         return true;
+     }
+-    const keys1 = Object.keys(value1);
+-    const keys2 = Object.keys(value2);
++    const keys1 = Object.keys(obj1);
++    const keys2 = Object.keys(obj2);
+     const numKeys = keys1.length;
+     if (keys2.length !== numKeys) {
+         return false;
+@@ -86,10 +88,11 @@
+         }
+     }
+     for (let i = 0; i < numKeys; i++) {
+-        if (!areEquivalent(value1[keys1[i]], value2[keys1[i]], numToString, stack)) {
++        if (!areEquivalent(obj1[keys1[i]], obj2[keys1[i]], numToString, stack)) {
+             return false;
+         }
+     }
+     stack.pop();
+     return true;
+-};
++}
++module.exports = areEquivalent;
+diff -ruw base/server/utils/comicBookExtractors.js new/server/utils/comicBookExtractors.js
+--- base/server/utils/comicBookExtractors.js	2026-10-10 17:00:49.960260300 +1300
++++ new/server/utils/comicBookExtractors.js	2026-10-10 17:00:49.899529258 +1300
+@@ -1,13 +1,49 @@
+ "use strict";
+-const Path = require('path');
+-const os = require('os');
+-const unrar = require('node-unrar-js');
+-const Logger = require('../Logger');
+-const fs = require('../libs/fsExtra');
+-const StreamZip = require('../libs/nodeStreamZip');
+-const Archive = require('../libs/libarchive/archive');
+-const { isWritable } = require('./fileUtils');
+-const { sanitizePath } = require('../libs/archiver/archiverUtils');
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || (function () {
++    var ownKeys = function(o) {
++        ownKeys = Object.getOwnPropertyNames || function (o) {
++            var ar = [];
++            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
++            return ar;
++        };
++        return ownKeys(o);
++    };
++    return function (mod) {
++        if (mod && mod.__esModule) return mod;
++        var result = {};
++        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
++        __setModuleDefault(result, mod);
++        return result;
++    };
++})();
++const Path = require("path");
++const os = require("os");
++const unrar = __importStar(require("node-unrar-js"));
++const Logger = require("../Logger");
++const fsExtra = require("../libs/fsExtra");
++const StreamZip = require("../libs/nodeStreamZip");
++const Archive = require("../libs/libarchive/archive");
++const fileUtils = require("./fileUtils");
++const archiverUtils = require("../libs/archiver/archiverUtils");
++const { isWritable } = fileUtils;
++const { sanitizePath } = archiverUtils;
++const fs = fsExtra;
+ function sanitizeArchivePath(filename) {
+     const sanitizedPath = Path.normalize(sanitizePath(filename));
+     if (!sanitizedPath || sanitizedPath === '.' || sanitizedPath === '..' || sanitizedPath.startsWith(`..${Path.sep}`) || Path.isAbsolute(sanitizedPath)) {
+@@ -127,7 +163,7 @@
+     }
+     async open() {
+         const buffer = await this.getBuffer();
+-        this.archive = await Archive.open(buffer);
++        this.archive = (await Archive.open(buffer));
+         Logger.debug(`[CbzComicBookExtractor] Opened comic book "${this.comicPath}"`);
+     }
+     async getFilePaths() {
+diff -ruw base/server/utils/constants.js new/server/utils/constants.js
+--- base/server/utils/constants.js	2026-10-10 17:00:49.955343609 +1300
++++ new/server/utils/constants.js	2026-10-10 17:00:49.893895306 +1300
+@@ -1,20 +1,20 @@
+ "use strict";
+-module.exports.ScanResult = {
++const ScanResult = {
+     NOTHING: 0,
+     ADDED: 1,
+     UPDATED: 2,
+     REMOVED: 3,
+     UPTODATE: 4
+ };
+-module.exports.BookCoverAspectRatio = {
++const BookCoverAspectRatio = {
+     STANDARD: 0, // 1.6:1
+     SQUARE: 1
+ };
+-module.exports.BookshelfView = {
++const BookshelfView = {
+     STANDARD: 0,
+     DETAIL: 1
+ };
+-module.exports.LogLevel = {
++const LogLevel = {
+     TRACE: 0,
+     DEBUG: 1,
+     INFO: 2,
+@@ -23,13 +23,13 @@
+     FATAL: 5,
+     NOTE: 6
+ };
+-module.exports.PlayMethod = {
++const PlayMethod = {
+     DIRECTPLAY: 0,
+     DIRECTSTREAM: 1,
+     TRANSCODE: 2,
+     LOCAL: 3
+ };
+-module.exports.AudioMimeType = {
++const AudioMimeType = {
+     MP3: 'audio/mpeg',
+     M4B: 'audio/mp4',
+     M4A: 'audio/mp4',
+@@ -50,3 +50,11 @@
+     MPEG: 'audio/mpeg',
+     MPG: 'audio/mpeg'
+ };
++module.exports = {
++    ScanResult,
++    BookCoverAspectRatio,
++    BookshelfView,
++    LogLevel,
++    PlayMethod,
++    AudioMimeType
++};
+diff -ruw base/server/utils/ffmpegHelpers.js new/server/utils/ffmpegHelpers.js
+--- base/server/utils/ffmpegHelpers.js	2026-10-10 17:00:49.960003961 +1300
++++ new/server/utils/ffmpegHelpers.js	2026-10-10 17:00:49.899242398 +1300
+@@ -1,12 +1,17 @@
+ "use strict";
+-const axios = require('axios');
+-const ssrfFilter = require('ssrf-req-filter');
+-const Ffmpeg = require('../libs/fluentFfmpeg');
+-const ffmpgegUtils = require('../libs/fluentFfmpeg/utils');
+-const fs = require('../libs/fsExtra');
+-const Path = require('path');
+-const Logger = require('../Logger');
+-const { filePathToPOSIX, copyToExisting } = require('./fileUtils');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const axios_1 = __importDefault(require("axios"));
++const ssrf_req_filter_1 = __importDefault(require("ssrf-req-filter"));
++const Ffmpeg = require("../libs/fluentFfmpeg");
++const ffmpgegUtils = require("../libs/fluentFfmpeg/utils");
++const fsExtra = require("../libs/fsExtra");
++const Path = require("path");
++const Logger = require("../Logger");
++const fileUtils = require("./fileUtils");
++const { filePathToPOSIX, copyToExisting } = fileUtils;
++const fs = fsExtra;
+ function escapeSingleQuotes(path) {
+     return filePathToPOSIX(path).replace(/'/g, "'\\''");
+ }
+@@ -39,7 +44,6 @@
+         return null;
+     }
+ }
+-module.exports.writeConcatFile = writeConcatFile;
+ async function extractCoverArt(filepath, outputpath) {
+     var dirname = Path.dirname(outputpath);
+     await fs.ensureDir(dirname);
+@@ -61,7 +65,6 @@
+         ffmpeg.run();
+     });
+ }
+-module.exports.extractCoverArt = extractCoverArt;
+ async function resizeImage(filePath, outputPath, width, height) {
+     return new Promise((resolve) => {
+         var ffmpeg = Ffmpeg(filePath);
+@@ -81,15 +84,14 @@
+         ffmpeg.run();
+     });
+ }
+-module.exports.resizeImage = resizeImage;
+-module.exports.downloadPodcastEpisode = (podcastEpisodeDownload) => {
++const downloadPodcastEpisode = (podcastEpisodeDownload) => {
+     return new Promise(async (resolve) => {
+         const userAgents = ['audiobookshelf (+https://audiobookshelf.org; like iTMS)', 'audiobookshelf (+https://audiobookshelf.org)'];
+         let response = null;
+         let lastError = null;
+         for (const userAgent of userAgents) {
+             try {
+-                response = await axios({
++                response = await (0, axios_1.default)({
+                     url: podcastEpisodeDownload.url,
+                     method: 'GET',
+                     responseType: 'stream',
+@@ -98,8 +100,8 @@
+                         'User-Agent': userAgent
+                     },
+                     timeout: global.PodcastDownloadTimeout,
+-                    httpAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : ssrfFilter(podcastEpisodeDownload.url),
+-                    httpsAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : ssrfFilter(podcastEpisodeDownload.url)
++                    httpAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : (0, ssrf_req_filter_1.default)(podcastEpisodeDownload.url),
++                    httpsAgent: global.DisableSsrfRequestFilter?.(podcastEpisodeDownload.url) ? null : (0, ssrf_req_filter_1.default)(podcastEpisodeDownload.url)
+                 });
+                 Logger.debug(`[ffmpegHelpers] Successfully connected with User-Agent: ${userAgent}`);
+                 break;
+@@ -148,10 +150,12 @@
+             'episode-type': podcastEpisode.episodeType
+         };
+         for (const tag in taggings) {
+-            if (taggings[tag]) {
+-                if (taggings[tag].length > 10000) {
+-                    Logger.warn(`[ffmpegHelpers] Episode download tag "${tag}" is too long (${taggings[tag].length} characters) - trimming it down`);
+-                    taggings[tag] = taggings[tag].slice(0, 10000);
++            const tagValue = taggings[tag];
++            if (tagValue) {
++                const tagString = tagValue;
++                if (tagString.length > 10000) {
++                    Logger.warn(`[ffmpegHelpers] Episode download tag "${tag}" is too long (${tagString.length} characters) - trimming it down`);
++                    taggings[tag] = tagString.slice(0, 10000);
+                 }
+                 ffmpeg.addOption('-metadata', `${tag}=${taggings[tag]}`);
+             }
+@@ -195,8 +199,9 @@
+ function generateFFMetadata(metadata, chapters) {
+     let ffmetadataContent = ';FFMETADATA1\n';
+     for (const key in metadata) {
+-        if (metadata[key]) {
+-            ffmetadataContent += `${key}=${escapeFFMetadataValue(metadata[key])}\n`;
++        const value = metadata[key];
++        if (value) {
++            ffmetadataContent += `${key}=${escapeFFMetadataValue(value)}\n`;
+         }
+     }
+     if (chapters) {
+@@ -212,7 +217,6 @@
+     }
+     return ffmetadataContent;
+ }
+-module.exports.generateFFMetadata = generateFFMetadata;
+ async function writeFFMetadataFile(metadata, chapters, ffmetadataPath) {
+     try {
+         await fs.writeFile(ffmetadataPath, generateFFMetadata(metadata, chapters));
+@@ -224,7 +228,6 @@
+         return false;
+     }
+ }
+-module.exports.writeFFMetadataFile = writeFFMetadataFile;
+ async function addCoverAndMetadataToFile(audioFilePath, coverFilePath, metadataFilePath, track, mimeType, progressCB = null, ffmpeg = Ffmpeg(), copyFunc = copyToExisting) {
+     const isMp4 = mimeType === 'audio/mp4';
+     const isMp3 = mimeType === 'audio/mpeg';
+@@ -314,7 +317,6 @@
+         ffmpeg.run();
+     });
+ }
+-module.exports.addCoverAndMetadataToFile = addCoverAndMetadataToFile;
+ function escapeFFMetadataValue(value) {
+     return value.replace(/([;=\n\\#])/g, '\\$1');
+ }
+@@ -342,7 +344,6 @@
+     });
+     return ffmetadata;
+ }
+-module.exports.getFFMetadataObject = getFFMetadataObject;
+ async function mergeAudioFiles(audioTracks, duration, itemCachePath, outputFilePath, encodingOptions, progressCB = null, ffmpeg = Ffmpeg()) {
+     const audioBitrate = encodingOptions.bitrate || '128k';
+     const audioCodec = encodingOptions.codec || 'aac';
+@@ -411,4 +412,14 @@
+         ffmpeg.run();
+     });
+ }
+-module.exports.mergeAudioFiles = mergeAudioFiles;
++module.exports = {
++    writeConcatFile,
++    extractCoverArt,
++    resizeImage,
++    downloadPodcastEpisode,
++    generateFFMetadata,
++    writeFFMetadataFile,
++    addCoverAndMetadataToFile,
++    getFFMetadataObject,
++    mergeAudioFiles
++};
+diff -ruw base/server/utils/fileUtils.js new/server/utils/fileUtils.js
+--- base/server/utils/fileUtils.js	2026-10-10 17:00:49.957229766 +1300
++++ new/server/utils/fileUtils.js	2026-10-10 17:00:49.896080968 +1300
+@@ -1,18 +1,23 @@
+ "use strict";
+-const axios = require('axios');
+-const Path = require('path');
+-const ssrfFilter = require('ssrf-req-filter');
+-const exec = require('child_process').exec;
+-const fs = require('../libs/fsExtra');
+-const rra = require('../libs/recursiveReaddirAsync');
+-const Logger = require('../Logger');
+-const { AudioMimeType } = require('./constants');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const axios_1 = __importDefault(require("axios"));
++const Path = require("path");
++const ssrf_req_filter_1 = __importDefault(require("ssrf-req-filter"));
++const childProcess = require("child_process");
++const fsExtra = require("../libs/fsExtra");
++const rra = require("../libs/recursiveReaddirAsync");
++const Logger = require("../Logger");
++const constants = require("./constants");
++const exec = childProcess.exec;
++const { AudioMimeType } = constants;
++const fs = fsExtra;
+ const filePathToPOSIX = (path) => {
+     if (!global.isWin || !path)
+         return path;
+     return path.startsWith('\\\\') ? '\\\\' + path.slice(2).replace(/\\/g, '/') : path.replace(/\\/g, '/');
+ };
+-module.exports.filePathToPOSIX = filePathToPOSIX;
+ function isSameOrSubPath(parentPath, childPath) {
+     parentPath = filePathToPOSIX(parentPath);
+     childPath = filePathToPOSIX(childPath);
+@@ -23,7 +28,6 @@
+         (!relativePath.startsWith('..') && !Path.isAbsolute(relativePath)) // Sub path
+     );
+ }
+-module.exports.isSameOrSubPath = isSameOrSubPath;
+ function getFileStat(path) {
+     try {
+         return fs.stat(path);
+@@ -49,11 +53,10 @@
+         return false;
+     }
+ }
+-module.exports.getFileTimestampsWithIno = getFileTimestampsWithIno;
+-module.exports.getFileSize = async (path) => {
++const getFileSize = async (path) => {
+     return (await getFileStat(path))?.size || 0;
+ };
+-module.exports.getFileMTimeMs = async (path) => {
++const getFileMTimeMs = async (path) => {
+     try {
+         return (await getFileStat(path))?.mtimeMs || 0;
+     }
+@@ -71,7 +74,6 @@
+         return false;
+     }
+ }
+-module.exports.checkPathIsFile = checkPathIsFile;
+ function getIno(path) {
+     return fs
+         .stat(path, { bigint: true })
+@@ -81,7 +83,6 @@
+         return null;
+     });
+ }
+-module.exports.getIno = getIno;
+ async function readTextFile(path) {
+     try {
+         var data = await fs.readFile(path);
+@@ -92,8 +93,7 @@
+         return '';
+     }
+ }
+-module.exports.readTextFile = readTextFile;
+-module.exports.shouldIgnoreFile = (path) => {
++const shouldIgnoreFile = (path) => {
+     if (Path.basename(path).startsWith('.')) {
+         return 'dotfile';
+     }
+@@ -111,7 +111,7 @@
+     }
+     return null;
+ };
+-module.exports.recurseFiles = async (path, relPathToReplace = null) => {
++const recurseFiles = async (path, relPathToReplace = null) => {
+     path = filePathToPOSIX(path);
+     if (!path.endsWith('/'))
+         path = path + '/';
+@@ -133,13 +133,13 @@
+         realPath: true,
+         normalizePath: false
+     };
+-    let list = await rra.list(path, options);
++    const list = (await rra.list(path, options));
+     if (list.error) {
+         Logger.error('[fileUtils] Recurse files error', list.error);
+         return [];
+     }
+     const directoriesToIgnore = [];
+-    list = list
++    const filePathItems = list
+         .filter((item) => {
+         if (item.error) {
+             Logger.error(`[fileUtils] Recurse files file "${item.fullname}" has error`, item.error);
+@@ -157,7 +157,7 @@
+             directoriesToIgnore.push(dirname);
+             return false;
+         }
+-        const shouldIgnore = this.shouldIgnoreFile(relpath);
++        const shouldIgnore = fileUtils.shouldIgnoreFile(relpath);
+         if (shouldIgnore) {
+             Logger.debug(`[fileUtils] Ignoring ${shouldIgnore} - "${relpath}"`);
+             return false;
+@@ -182,10 +182,10 @@
+             deep: item.deep
+         };
+     });
+-    list.sort((a, b) => a.deep - b.deep);
+-    return list;
++    filePathItems.sort((a, b) => a.deep - b.deep);
++    return filePathItems;
+ };
+-module.exports.getFilePathItemFromFileUpdate = (fileUpdate) => {
++const getFilePathItemFromFileUpdate = (fileUpdate) => {
+     let relPath = fileUpdate.relPath;
+     if (relPath.startsWith('/'))
+         relPath = relPath.slice(1);
+@@ -199,10 +199,10 @@
+         deep: relPath.split('/').length - 1
+     };
+ };
+-module.exports.downloadFile = (url, filepath, contentTypeFilter = null) => {
++const downloadFile = (url, filepath, contentTypeFilter = null) => {
+     return new Promise(async (resolve, reject) => {
+         Logger.debug(`[fileUtils] Downloading file to ${filepath}`);
+-        axios({
++        (0, axios_1.default)({
+             url,
+             method: 'GET',
+             responseType: 'stream',
+@@ -210,8 +210,8 @@
+                 'User-Agent': 'audiobookshelf (+https://audiobookshelf.org)'
+             },
+             timeout: 30000,
+-            httpAgent: global.DisableSsrfRequestFilter?.(url) ? null : ssrfFilter(url),
+-            httpsAgent: global.DisableSsrfRequestFilter?.(url) ? null : ssrfFilter(url)
++            httpAgent: global.DisableSsrfRequestFilter?.(url) ? null : (0, ssrf_req_filter_1.default)(url),
++            httpsAgent: global.DisableSsrfRequestFilter?.(url) ? null : (0, ssrf_req_filter_1.default)(url)
+         })
+             .then((response) => {
+             if (contentTypeFilter && !contentTypeFilter?.(response.headers?.['content-type'])) {
+@@ -230,7 +230,7 @@
+                     lastProgress = progress;
+                 }
+             });
+-            writer.on('finish', resolve);
++            writer.on('finish', () => resolve());
+             writer.on('error', reject);
+         })
+             .catch((err) => {
+@@ -239,13 +239,13 @@
+         });
+     });
+ };
+-module.exports.downloadImageFile = (url, filepath) => {
++const downloadImageFile = (url, filepath) => {
+     const contentTypeFilter = (contentType) => {
+         return contentType?.startsWith('image/') && contentType !== 'image/svg+xml';
+     };
+-    return this.downloadFile(url, filepath, contentTypeFilter);
++    return fileUtils.downloadFile(url, filepath, contentTypeFilter);
+ };
+-module.exports.sanitizeFilename = (filename, colonReplacement = ' - ') => {
++const sanitizeFilename = (filename, colonReplacement = ' - ') => {
+     if (typeof filename !== 'string') {
+         return false;
+     }
+@@ -291,7 +291,7 @@
+     }
+     return sanitized;
+ };
+-module.exports.getAudioMimeTypeFromExtname = (extname) => {
++const getAudioMimeTypeFromExtname = (extname) => {
+     if (!extname || !extname.length)
+         return null;
+     const formatUpper = extname.slice(1).toUpperCase();
+@@ -299,7 +299,7 @@
+         return AudioMimeType[formatUpper];
+     return null;
+ };
+-module.exports.removeFile = (path) => {
++const removeFile = (path) => {
+     if (!path)
+         return false;
+     return fs
+@@ -310,12 +310,12 @@
+         return false;
+     });
+ };
+-module.exports.encodeUriPath = (path) => {
++const encodeUriPath = (path) => {
+     const uri = new URL('/', 'file://');
+     uri.pathname = path;
+     return uri.pathname;
+ };
+-module.exports.isWritable = async (directory) => {
++const isWritable = async (directory) => {
+     try {
+         const accessTestFile = Path.join(directory, 'accessTest');
+         await fs.writeFile(accessTestFile, '');
+@@ -327,7 +327,7 @@
+         return false;
+     }
+ };
+-module.exports.getWindowsDrives = async () => {
++const getWindowsDrives = async () => {
+     if (!global.isWin) {
+         return [];
+     }
+@@ -355,7 +355,7 @@
+         });
+     });
+ };
+-module.exports.getDirectoriesInPath = async (dirPath, level) => {
++const getDirectoriesInPath = async (dirPath, level) => {
+     try {
+         const paths = await fs.readdir(dirPath);
+         let dirs = await Promise.all(paths.map(async (dirname) => {
+@@ -367,13 +367,13 @@
+             if (!lstat?.isDirectory())
+                 return null;
+             return {
+-                path: this.filePathToPOSIX(fullPath),
++                path: fileUtils.filePathToPOSIX(fullPath),
+                 dirname,
+                 level
+             };
+         }));
+-        dirs = dirs.filter((d) => d);
+-        return dirs;
++        const foundDirs = dirs.filter((d) => !!d);
++        return foundDirs;
+     }
+     catch (error) {
+         Logger.error('Failed to readdir', dirPath, error);
+@@ -403,4 +403,27 @@
+         });
+     });
+ }
+-module.exports.copyToExisting = copyToExisting;
++const fileUtils = {
++    filePathToPOSIX,
++    isSameOrSubPath,
++    getFileTimestampsWithIno,
++    getFileSize,
++    getFileMTimeMs,
++    checkPathIsFile,
++    getIno,
++    readTextFile,
++    shouldIgnoreFile,
++    recurseFiles,
++    getFilePathItemFromFileUpdate,
++    downloadFile,
++    downloadImageFile,
++    sanitizeFilename,
++    getAudioMimeTypeFromExtname,
++    removeFile,
++    encodeUriPath,
++    isWritable,
++    getWindowsDrives,
++    getDirectoriesInPath,
++    copyToExisting
++};
++module.exports = fileUtils;
+diff -ruw base/server/utils/generators/abmetadataGenerator.js new/server/utils/generators/abmetadataGenerator.js
+--- base/server/utils/generators/abmetadataGenerator.js	2026-10-10 17:00:49.955195053 +1300
++++ new/server/utils/generators/abmetadataGenerator.js	2026-10-10 17:00:49.893705390 +1300
+@@ -1,6 +1,6 @@
+ "use strict";
+-const Logger = require('../../Logger');
+-const parseSeriesString = require('../parsers/parseSeriesString');
++const Logger = require("../../Logger");
++const parseSeriesString = require("../parsers/parseSeriesString");
+ const mediaTypeKeys = {
+     book: {
+         tags: 'stringArray',
+@@ -97,7 +97,6 @@
+         return null;
+     }
+ }
+-module.exports.parseJson = parseJsonMetadataText;
+ function validateMetadataValue(key, value, expectedType) {
+     if (expectedType === 'string') {
+         if (value === null)
+@@ -162,3 +161,4 @@
+     }
+     return chapters;
+ }
++module.exports = { parseJson: parseJsonMetadataText };
+diff -ruw base/server/utils/generators/hlsPlaylistGenerator.js new/server/utils/generators/hlsPlaylistGenerator.js
+--- base/server/utils/generators/hlsPlaylistGenerator.js	2026-10-10 17:00:49.955304953 +1300
++++ new/server/utils/generators/hlsPlaylistGenerator.js	2026-10-10 17:00:49.893841431 +1300
+@@ -1,5 +1,6 @@
+ "use strict";
+-const fs = require('../../libs/fsExtra');
++const fsExtra = require("../../libs/fsExtra");
++const fs = fsExtra;
+ function getPlaylistStr(segmentName, duration, segmentLength, hlsSegmentType) {
+     var ext = hlsSegmentType === 'fmp4' ? 'm4s' : 'ts';
+     var lines = [
+diff -ruw base/server/utils/generators/opmlGenerator.js new/server/utils/generators/opmlGenerator.js
+--- base/server/utils/generators/opmlGenerator.js	2026-10-10 17:00:49.955270049 +1300
++++ new/server/utils/generators/opmlGenerator.js	2026-10-10 17:00:49.893797275 +1300
+@@ -1,7 +1,7 @@
+ "use strict";
+-const xml = require('../../libs/xml');
+-const escapeForXML = require('../../libs/xml/escapeForXML');
+-module.exports.generate = (podcasts, indent = true) => {
++const xml = require("../../libs/xml");
++const escapeForXML = require("../../libs/xml/escapeForXML");
++const generate = (podcasts, indent = true) => {
+     const bodyItems = [];
+     podcasts.forEach((podcast) => {
+         if (!podcast.feedURL)
+@@ -15,8 +15,9 @@
+         if (podcast.description) {
+             feedAttributes.description = escapeForXML(podcast.description);
+         }
+-        if (podcast.itunesPageUrl) {
+-            feedAttributes.htmlUrl = escapeForXML(podcast.itunesPageUrl);
++        const podcastWithPageUrl = podcast;
++        if (podcastWithPageUrl.itunesPageUrl) {
++            feedAttributes.htmlUrl = escapeForXML(podcastWithPageUrl.itunesPageUrl);
+         }
+         if (podcast.language) {
+             feedAttributes.language = escapeForXML(podcast.language);
+@@ -50,3 +51,4 @@
+     ];
+     return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml(data, indent);
+ };
++module.exports = { generate };
+diff -ruw base/server/utils/htmlEntities.js new/server/utils/htmlEntities.js
+--- base/server/utils/htmlEntities.js	2026-10-10 17:00:49.956256690 +1300
++++ new/server/utils/htmlEntities.js	2026-10-10 17:00:49.895051306 +1300
+@@ -2232,4 +2232,4 @@
+     "&zwj;": "‍",
+     "&zwnj;": "‌"
+ };
+-module.exports.entities = entities;
++module.exports = { entities };
+diff -ruw base/server/utils/htmlSanitizer.js new/server/utils/htmlSanitizer.js
+--- base/server/utils/htmlSanitizer.js	2026-10-10 17:00:49.957141469 +1300
++++ new/server/utils/htmlSanitizer.js	2026-10-10 17:00:49.895993439 +1300
+@@ -1,6 +1,7 @@
+ "use strict";
+-const sanitizeHtml = require('../libs/sanitizeHtml');
+-const { entities } = require('./htmlEntities');
++const sanitizeHtml = require("../libs/sanitizeHtml");
++const htmlEntities = require("./htmlEntities");
++const { entities } = htmlEntities;
+ function sanitize(html) {
+     if (typeof html !== 'string') {
+         return '';
+@@ -16,7 +17,6 @@
+     };
+     return sanitizeHtml(html, sanitizerOptions);
+ }
+-module.exports.sanitize = sanitize;
+ function stripAllTags(html, shouldDecodeEntities = true) {
+     if (typeof html !== 'string')
+         return '';
+@@ -27,7 +27,6 @@
+     let sanitized = sanitizeHtml(html, sanitizerOptions);
+     return shouldDecodeEntities ? decodeHTMLEntities(sanitized) : sanitized;
+ }
+-module.exports.stripAllTags = stripAllTags;
+ function decodeHTMLEntities(strToDecode) {
+     return strToDecode.replace(/\&([^;]+);?/g, function (entity) {
+         if (entity in entities) {
+@@ -36,3 +35,7 @@
+         return entity;
+     });
+ }
++module.exports = {
++    sanitize,
++    stripAllTags
++};
+diff -ruw base/server/utils/index.js new/server/utils/index.js
+--- base/server/utils/index.js	2026-10-10 17:00:49.955012513 +1300
++++ new/server/utils/index.js	2026-10-10 17:00:49.893474291 +1300
+@@ -1,9 +1,46 @@
+ "use strict";
+-const Path = require('path');
+-const uuid = require('uuid');
+-const Logger = require('../Logger');
+-const { parseString } = require('xml2js');
+-const areEquivalent = require('./areEquivalent');
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || (function () {
++    var ownKeys = function(o) {
++        ownKeys = Object.getOwnPropertyNames || function (o) {
++            var ar = [];
++            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
++            return ar;
++        };
++        return ownKeys(o);
++    };
++    return function (mod) {
++        if (mod && mod.__esModule) return mod;
++        var result = {};
++        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
++        __setModuleDefault(result, mod);
++        return result;
++    };
++})();
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const Path = require("path");
++const uuid = __importStar(require("uuid"));
++const xml2js_1 = __importDefault(require("xml2js"));
++const Logger = require("../Logger");
++const areEquivalent = require("./areEquivalent");
++const { parseString } = xml2js_1.default;
+ const levenshteinDistance = (str1, str2, caseSensitive = false) => {
+     str1 = String(str1);
+     str2 = String(str2);
+@@ -31,7 +68,6 @@
+     }
+     return track[str2.length][str1.length];
+ };
+-module.exports.levenshteinDistance = levenshteinDistance;
+ const levenshteinSimilarity = (str1, str2, caseSensitive = false) => {
+     const distance = levenshteinDistance(str1, str2, caseSensitive);
+     const maxLength = Math.max(str1.length, str2.length);
+@@ -39,17 +75,16 @@
+         return 1;
+     return 1 - distance / maxLength;
+ };
+-module.exports.levenshteinSimilarity = levenshteinSimilarity;
+-module.exports.isObject = (val) => {
++const isObject = (val) => {
+     return val !== null && typeof val === 'object';
+ };
+-module.exports.comparePaths = (path1, path2) => {
++const comparePaths = (path1, path2) => {
+     return path1 === path2 || Path.normalize(path1) === Path.normalize(path2);
+ };
+-module.exports.isNullOrNaN = (num) => {
++const isNullOrNaN = (num) => {
+     return num === null || isNaN(num);
+ };
+-module.exports.clampPositiveInt = (value, max) => {
++const clampPositiveInt = (value, max) => {
+     if (value == null || !Number.isFinite(value) || value <= 0)
+         return null;
+     return Math.min(Math.floor(value), max);
+@@ -67,8 +102,7 @@
+         });
+     });
+ };
+-module.exports.xmlToJSON = xmlToJSON;
+-module.exports.getId = (prepend = '') => {
++const getId = (prepend = '') => {
+     var _id = Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);
+     if (prepend)
+         return prepend + '_' + _id;
+@@ -101,7 +135,6 @@
+     }
+     return timeParts.join(' ');
+ }
+-module.exports.elapsedPretty = elapsedPretty;
+ function secondsToTimestamp(seconds, includeMs = false, alwaysIncludeHours = false) {
+     var _seconds = seconds;
+     var _minutes = Math.floor(seconds / 60);
+@@ -119,37 +152,35 @@
+     }
+     return `${_hours}:${_minutes.toString().padStart(2, '0')}:${_seconds.toString().padStart(2, '0')}${msString}`;
+ }
+-module.exports.secondsToTimestamp = secondsToTimestamp;
+-module.exports.reqSupportsWebp = (req) => {
++const reqSupportsWebp = (req) => {
+     if (!req || !req.headers || !req.headers.accept)
+         return false;
+     return req.headers.accept.includes('image/webp') || req.headers.accept === '*/*';
+ };
+-module.exports.areEquivalent = areEquivalent;
+-module.exports.copyValue = (val) => {
++const copyValue = (val) => {
+     if (val === undefined || val === '')
+         return null;
+     else if (!val)
+         return val;
+-    if (!this.isObject(val))
++    if (!utils.isObject(val))
+         return val;
+     if (Array.isArray(val)) {
+-        return val.map(this.copyValue);
++        return val.map(utils.copyValue);
+     }
+     else {
+         var final = {};
+         for (const key in val) {
+-            final[key] = this.copyValue(val[key]);
++            final[key] = utils.copyValue(val[key]);
+         }
+         return final;
+     }
+ };
+-module.exports.toNumber = (val, fallback = 0) => {
++const toNumber = (val, fallback = 0) => {
+     if (isNaN(val) || val === null)
+         return fallback;
+     return Number(val);
+ };
+-module.exports.cleanStringForSearch = (str) => {
++const cleanStringForSearch = (str) => {
+     if (!str)
+         return '';
+     return str
+@@ -168,19 +199,19 @@
+     }
+     return [title, null];
+ };
+-module.exports.getTitleIgnorePrefix = (title) => {
++const getTitleIgnorePrefix = (title) => {
+     return getTitleParts(title)[0];
+ };
+-module.exports.getTitlePrefixAtEnd = (title) => {
++const getTitlePrefixAtEnd = (title) => {
+     let [sort, prefix] = getTitleParts(title);
+     return prefix ? `${sort}, ${prefix}` : title;
+ };
+-module.exports.escapeRegExp = (str) => {
++const escapeRegExp = (str) => {
+     if (typeof str !== 'string')
+         return '';
+     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+ };
+-module.exports.validateUrl = (rawUrl) => {
++const validateUrl = (rawUrl) => {
+     if (!rawUrl || typeof rawUrl !== 'string')
+         return null;
+     try {
+@@ -191,17 +222,17 @@
+         return null;
+     }
+ };
+-module.exports.isUUID = (str) => {
++const isUUID = (str) => {
+     if (!str || typeof str !== 'string')
+         return false;
+     return uuid.validate(str);
+ };
+-module.exports.isValidASIN = (str) => {
++const isValidASIN = (str) => {
+     if (!str || typeof str !== 'string')
+         return false;
+     return /^[A-Z0-9]{10}$/.test(str);
+ };
+-module.exports.timestampToSeconds = (timestamp) => {
++const timestampToSeconds = (timestamp) => {
+     if (typeof timestamp !== 'string') {
+         return null;
+     }
+@@ -228,7 +259,6 @@
+         this.status = status;
+     }
+ }
+-module.exports.ValidationError = ValidationError;
+ class NotFoundError extends Error {
+     constructor(message, status = 404) {
+         super(message);
+@@ -236,8 +266,7 @@
+         this.status = status;
+     }
+ }
+-module.exports.NotFoundError = NotFoundError;
+-module.exports.getQueryParamAsString = (query, paramName, defaultValue = '', required = false, maxLength = 1000) => {
++const getQueryParamAsString = (query, paramName, defaultValue = '', required = false, maxLength = 1000) => {
+     const value = query[paramName];
+     if (value === undefined || value === null) {
+         if (required) {
+@@ -253,3 +282,31 @@
+     }
+     return String(value);
+ };
++const utils = {
++    levenshteinDistance,
++    levenshteinSimilarity,
++    isObject,
++    comparePaths,
++    isNullOrNaN,
++    clampPositiveInt,
++    xmlToJSON,
++    getId,
++    elapsedPretty,
++    secondsToTimestamp,
++    reqSupportsWebp,
++    areEquivalent,
++    copyValue,
++    toNumber,
++    cleanStringForSearch,
++    getTitleIgnorePrefix,
++    getTitlePrefixAtEnd,
++    escapeRegExp,
++    validateUrl,
++    isUUID,
++    isValidASIN,
++    timestampToSeconds,
++    ValidationError,
++    NotFoundError,
++    getQueryParamAsString
++};
++module.exports = utils;
+diff -ruw base/server/utils/libraryHelpers.js new/server/utils/libraryHelpers.js
+--- base/server/utils/libraryHelpers.js	2026-10-10 17:00:49.959631108 +1300
++++ new/server/utils/libraryHelpers.js	2026-10-10 17:00:49.898792149 +1300
+@@ -1,13 +1,16 @@
+ "use strict";
+-const { createNewSortInstance } = require('../libs/fastSort');
+-const Database = require('../Database');
+-const Logger = require('../Logger');
+-const { getTitlePrefixAtEnd, isNullOrNaN, getTitleIgnorePrefix } = require('../utils/index');
++const fastSort = require("../libs/fastSort");
++const DatabaseModule = require("../Database");
++const Logger = require("../Logger");
++const utils = require("../utils/index");
++const { createNewSortInstance } = fastSort;
++const Database = DatabaseModule;
++const { getTitlePrefixAtEnd, isNullOrNaN, getTitleIgnorePrefix } = utils;
+ const naturalSort = createNewSortInstance({
+     comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+ });
+ const VALID_COLLAPSE_SUBSERIES_SORTS = new Set(['addedAt', 'size', 'birthtimeMs', 'mtimeMs', 'media.duration', 'media.metadata.publishedYear', 'media.metadata.authorName', 'media.metadata.authorNameLF', 'media.metadata.title', 'sequence', 'progress', 'progress.createdAt', 'progress.finishedAt', 'random']);
+-module.exports = {
++const libraryHelpers = {
+     getSeriesFromBooks(libraryItems, filterSeries, hideSingleBookSeries) {
+         const _series = {};
+         const seriesToFilterOut = {};
+@@ -49,7 +52,7 @@
+         });
+     },
+     collapseBookSeries(libraryItems, filterSeries, hideSingleBookSeries) {
+-        const seriesObjects = this.getSeriesFromBooks(libraryItems, filterSeries, hideSingleBookSeries).filter((s) => s.id != filterSeries);
++        const seriesObjects = libraryHelpers.getSeriesFromBooks(libraryItems, filterSeries, hideSingleBookSeries).filter((s) => s.id != filterSeries);
+         const filteredLibraryItems = [];
+         libraryItems.forEach((li) => {
+             if (li.mediaType != 'book')
+@@ -110,7 +113,7 @@
+             .filter((li) => {
+             return user.checkCanAccessLibraryItem(li);
+         });
+-        const collapsedItems = this.collapseBookSeries(libraryItems, seriesId, library.settings.hideSingleBookSeries);
++        const collapsedItems = libraryHelpers.collapseBookSeries(libraryItems, seriesId, library.settings.hideSingleBookSeries);
+         if (!(collapsedItems.length == 1 && collapsedItems[0].collapsedSeries)) {
+             libraryItems = collapsedItems;
+             payload.total = libraryItems.length;
+@@ -194,7 +197,8 @@
+                 };
+                 json.collapsedSeries.seriesSequenceList = naturalSort(li.collapsedSeries.books.filter((b) => b.filterSeriesSequence).map((b) => b.filterSeriesSequence))
+                     .asc()
+-                    .reduce((ranges, currentSequence) => {
++                    .reduce((ranges, sequence) => {
++                    let currentSequence = sequence;
+                     let lastRange = ranges.at(-1);
+                     let isNumber = /^(\d+|\d+\.\d*|\d*\.\d+)$/.test(currentSequence);
+                     if (isNumber)
+@@ -214,3 +218,4 @@
+         }));
+     }
+ };
++module.exports = libraryHelpers;
+diff -ruw base/server/utils/longTimeout.js new/server/utils/longTimeout.js
+--- base/server/utils/longTimeout.js	2026-10-10 17:00:49.960514715 +1300
++++ new/server/utils/longTimeout.js	2026-10-10 17:00:49.899847385 +1300
+@@ -5,7 +5,7 @@
+         this.timer = null;
+     }
+     clear() {
+-        clearTimeout(this.timer);
++        clearTimeout(this.timer ?? undefined);
+     }
+     set(fn, timeout) {
+         const maxValue = 2147483647;
+diff -ruw base/server/utils/migrations/absMetadataMigration.js new/server/utils/migrations/absMetadataMigration.js
+--- base/server/utils/migrations/absMetadataMigration.js	2026-10-10 17:00:49.954039007 +1300
++++ new/server/utils/migrations/absMetadataMigration.js	2026-10-10 17:00:49.892400750 +1300
+@@ -1,9 +1,10 @@
+ "use strict";
+-const Path = require('path');
+-const Logger = require('../../Logger');
+-const fsExtra = require('../../libs/fsExtra');
+-const fileUtils = require('../fileUtils');
+-const LibraryFile = require('../../objects/files/LibraryFile');
++const Path = require("path");
++const Logger = require("../../Logger");
++const fsExtraModule = require("../../libs/fsExtra");
++const fileUtils = require("../fileUtils");
++const LibraryFile = require("../../objects/files/LibraryFile");
++const fsExtra = fsExtraModule;
+ async function writeMetadataFileForItem(libraryItem) {
+     const storeMetadataWithItem = global.ServerSettings.storeMetadataWithItem && !libraryItem.isFile;
+     const metadataPath = storeMetadataWithItem ? libraryItem.path : Path.join(global.MetadataPath, 'items', libraryItem.id);
+@@ -43,7 +44,8 @@
+     });
+ }
+ async function runMigration(Database, offset = 0, totalCreated = 0) {
+-    const libraryItems = await Database.libraryItemModel.getLibraryItemsIncrement(offset, 500, { isMissing: false });
++    const libraryItemModel = Database.libraryItemModel;
++    const libraryItems = await libraryItemModel.getLibraryItemsIncrement(offset, 500, { isMissing: false });
+     if (!libraryItems.length)
+         return totalCreated;
+     let numCreated = 0;
+@@ -57,8 +59,9 @@
+     }
+     return runMigration(Database, offset + libraryItems.length, totalCreated + numCreated);
+ }
+-module.exports.migrate = async (Database) => {
++const migrate = async (Database) => {
+     Logger.info(`[absMetadataMigration] Starting metadata.json migration`);
+     const totalCreated = await runMigration(Database);
+     Logger.info(`[absMetadataMigration] Finished metadata.json migration (${totalCreated} files created)`);
+ };
++module.exports = { migrate };
+diff -ruw base/server/utils/migrations/dbMigration.js new/server/utils/migrations/dbMigration.js
+--- base/server/utils/migrations/dbMigration.js	2026-10-10 17:00:49.954111602 +1300
++++ new/server/utils/migrations/dbMigration.js	2026-10-10 17:00:49.892483862 +1300
+@@ -1,11 +1,14 @@
+ "use strict";
+-const { DataTypes, QueryInterface } = require('sequelize');
+-const Path = require('path');
+-const uuidv4 = require('uuid').v4;
+-const Logger = require('../../Logger');
+-const fs = require('../../libs/fsExtra');
+-const oldDbFiles = require('./oldDbFiles');
+-const parseNameString = require('../parsers/parseNameString');
++const sequelize = require("sequelize");
++const Path = require("path");
++const uuid = require("uuid");
++const Logger = require("../../Logger");
++const fsExtra = require("../../libs/fsExtra");
++const oldDbFiles = require("./oldDbFiles");
++const parseNameString = require("../parsers/parseNameString");
++const { DataTypes } = sequelize;
++const uuidv4 = uuid.v4;
++const fs = fsExtra;
+ const oldDbIdMap = {
+     users: {},
+     libraries: {},
+@@ -310,7 +313,7 @@
+                 }
+                 return oldDbIdMap.libraries[li.libraryId];
+             })
+-                .filter((lid) => lid))
++                .filter((lid) => !!lid))
+         ];
+         if (!librariesWithThisAuthor.length) {
+             Logger.error(`[dbMigration] Author ${oldAuthor.name} was not found in any libraries`);
+@@ -346,7 +349,7 @@
+                     return null;
+                 return oldDbIdMap.libraries[li.libraryId];
+             })
+-                .filter((lid) => lid))
++                .filter((lid) => !!lid))
+         ];
+         if (!librariesWithThisSeries.length) {
+             Logger.error(`[dbMigration] Series ${oldSeries.name} was not found in any libraries`);
+@@ -860,7 +863,7 @@
+         await DatabaseModels[model].bulkCreate(newFeedRecords[model]);
+     }
+ }
+-module.exports.migrate = async (DatabaseModels) => {
++const migrate = async (DatabaseModels) => {
+     Logger.info(`[dbMigration] Starting migration`);
+     const start = Date.now();
+     await handleMigrateLibraries(DatabaseModels);
+@@ -883,7 +886,7 @@
+     const elapsed = Date.now() - start;
+     Logger.info(`[dbMigration] Migration complete. Elapsed ${(elapsed / 1000).toFixed(2)}s`);
+ };
+-module.exports.checkShouldMigrate = async () => {
++const checkShouldMigrate = async () => {
+     if (await oldDbFiles.checkHasOldDb())
+         return true;
+     return oldDbFiles.checkHasOldDbZip();
+@@ -910,8 +913,9 @@
+     }
+ }
+ async function handleOldLibraryItems(ctx) {
+-    const oldLibraryItems = await oldDbFiles.loadOldData('libraryItems');
+-    const libraryItems = await ctx.models.libraryItem.findAllExpandedWhere();
++    const models = ctx.models;
++    const oldLibraryItems = (await oldDbFiles.loadOldData('libraryItems'));
++    const libraryItems = await models.libraryItem.findAllExpandedWhere();
+     const bulkUpdateItems = [];
+     const bulkUpdateEpisodes = [];
+     for (const libraryItem of libraryItems) {
+@@ -924,8 +928,9 @@
+                     oldLibraryItemId: matchingOldLibraryItem.id
+                 }
+             });
+-            if (libraryItem.media.podcastEpisodes?.length && matchingOldLibraryItem.media.episodes?.length) {
+-                for (const podcastEpisode of libraryItem.media.podcastEpisodes) {
++            const libraryItemMedia = libraryItem.media;
++            if (libraryItemMedia.podcastEpisodes?.length && matchingOldLibraryItem.media.episodes?.length) {
++                for (const podcastEpisode of libraryItemMedia.podcastEpisodes) {
+                     const matchingOldPodcastEpisode = matchingOldLibraryItem.media.episodes.find((oep) => oep.audioFile?.ino && oep.audioFile.ino === podcastEpisode.audioFile?.ino);
+                     if (matchingOldPodcastEpisode) {
+                         oldDbIdMap.podcastEpisodes[matchingOldPodcastEpisode.id] = podcastEpisode.id;
+@@ -941,20 +946,21 @@
+         }
+     }
+     if (bulkUpdateEpisodes.length) {
+-        await ctx.models.podcastEpisode.bulkCreate(bulkUpdateEpisodes, {
++        await models.podcastEpisode.bulkCreate(bulkUpdateEpisodes, {
+             updateOnDuplicate: ['extraData']
+         });
+     }
+     if (bulkUpdateItems.length) {
+-        await ctx.models.libraryItem.bulkCreate(bulkUpdateItems, {
++        await models.libraryItem.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['extraData']
+         });
+     }
+     Logger.info(`[dbMigration] Migration 2.3.0+: Updated ${bulkUpdateItems.length} library items & ${bulkUpdateEpisodes.length} episodes`);
+ }
+ async function handleOldLibraries(ctx) {
+-    const oldLibraries = await oldDbFiles.loadOldData('libraries');
+-    const libraries = await ctx.models.library.getAllWithFolders();
++    const models = ctx.models;
++    const oldLibraries = (await oldDbFiles.loadOldData('libraries'));
++    const libraries = await models.library.getAllWithFolders();
+     let librariesUpdated = 0;
+     for (const library of libraries) {
+         const matchingOldLibrary = oldLibraries.find((ol) => {
+@@ -965,7 +971,7 @@
+             return folderPaths.join(',') === library.libraryFolders.map((f) => f.path).join(',');
+         });
+         if (matchingOldLibrary) {
+-            const newExtraData = library.extraData || {};
++            const newExtraData = (library.extraData || {});
+             newExtraData.oldLibraryId = matchingOldLibrary.id;
+             library.extraData = newExtraData;
+             library.changed('extraData', true);
+@@ -977,8 +983,9 @@
+     Logger.info(`[dbMigration] Migration 2.3.0+: Updated ${librariesUpdated} libraries`);
+ }
+ async function handleOldUsers(ctx) {
++    const models = ctx.models;
+     const usersNew = await ctx.userModel.findAll({
+-        include: ctx.models.mediaProgress
++        include: models.mediaProgress
+     });
+     let usersUpdated = 0;
+     for (const user of usersNew) {
+@@ -997,9 +1004,11 @@
+                 user.changed('bookmarks', true);
+             }
+         }
+-        const librariesAccessible = user.permissions?.librariesAccessible || [];
++        const permissions = user.permissions;
++        const librariesAccessible = permissions?.librariesAccessible || [];
+         if (librariesAccessible.length) {
+-            user.permissions.librariesAccessible = librariesAccessible
++            ;
++            permissions.librariesAccessible = librariesAccessible
+                 .map((lid) => {
+                 if (!lid.startsWith('lib_') && lid !== 'main')
+                     return lid; // Already not an old library id so dont change
+@@ -1011,9 +1020,11 @@
+                 user.changed('permissions', true);
+             }
+         }
+-        const seriesHideFromContinueListening = user.extraData?.seriesHideFromContinueListening || [];
++        const userExtraData = user.extraData;
++        const seriesHideFromContinueListening = userExtraData?.seriesHideFromContinueListening || [];
+         if (seriesHideFromContinueListening.length) {
+-            user.extraData.seriesHideFromContinueListening = seriesHideFromContinueListening
++            ;
++            userExtraData.seriesHideFromContinueListening = seriesHideFromContinueListening
+                 .map((seriesId) => {
+                 if (seriesId.startsWith('se_')) {
+                     hasUpdates = true;
+@@ -1033,7 +1044,7 @@
+     }
+     Logger.info(`[dbMigration] Migration 2.3.0+: Updated ${usersUpdated} users`);
+ }
+-module.exports.migrationPatch = async (ctx) => {
++const migrationPatch = async (ctx) => {
+     const queryInterface = ctx.sequelize.getQueryInterface();
+     const librariesTableDescription = await queryInterface.describeTable('libraries');
+     if (librariesTableDescription?.extraData) {
+@@ -1063,7 +1074,8 @@
+     Logger.info(`[dbMigration] Migration patch 2.3.0+ finished. Elapsed ${(elapsed / 1000).toFixed(2)}s`);
+ };
+ async function migrationPatch2LibraryItems(ctx, offset = 0) {
+-    const libraryItems = await ctx.models.libraryItem.findAll({
++    const models = ctx.models;
++    const libraryItems = await models.libraryItem.findAll({
+         limit: 500,
+         offset
+     });
+@@ -1086,7 +1098,7 @@
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} library items`);
+-        await ctx.models.libraryItem.bulkCreate(bulkUpdateItems, {
++        await models.libraryItem.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['size']
+         });
+     }
+@@ -1096,7 +1108,8 @@
+     return migrationPatch2LibraryItems(ctx, offset + libraryItems.length);
+ }
+ async function migrationPatch2Books(ctx, offset = 0) {
+-    const books = await ctx.models.book.findAll({
++    const models = ctx.models;
++    const books = await models.book.findAll({
+         limit: 500,
+         offset
+     });
+@@ -1121,7 +1134,7 @@
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} books`);
+-        await ctx.models.book.bulkCreate(bulkUpdateItems, {
++        await models.book.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['duration', 'titleIgnorePrefix']
+         });
+     }
+@@ -1131,7 +1144,8 @@
+     return migrationPatch2Books(ctx, offset + books.length);
+ }
+ async function migrationPatch2Podcasts(ctx, offset = 0) {
+-    const podcasts = await ctx.models.podcast.findAll({
++    const models = ctx.models;
++    const podcasts = await models.podcast.findAll({
+         limit: 500,
+         offset
+     });
+@@ -1146,7 +1160,7 @@
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} podcasts`);
+-        await ctx.models.podcast.bulkCreate(bulkUpdateItems, {
++        await models.podcast.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['titleIgnorePrefix']
+         });
+     }
+@@ -1156,7 +1170,8 @@
+     return migrationPatch2Podcasts(ctx, offset + podcasts.length);
+ }
+ async function migrationPatch2Series(ctx, offset = 0) {
+-    const allSeries = await ctx.models.series.findAll({
++    const models = ctx.models;
++    const allSeries = await models.series.findAll({
+         limit: 500,
+         offset
+     });
+@@ -1171,7 +1186,7 @@
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} series`);
+-        await ctx.models.series.bulkCreate(bulkUpdateItems, {
++        await models.series.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['nameIgnorePrefix']
+         });
+     }
+@@ -1181,7 +1196,8 @@
+     return migrationPatch2Series(ctx, offset + allSeries.length);
+ }
+ async function migrationPatch2Authors(ctx, offset = 0) {
+-    const authors = await ctx.models.author.findAll({
++    const models = ctx.models;
++    const authors = await models.author.findAll({
+         limit: 500,
+         offset
+     });
+@@ -1198,7 +1214,7 @@
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} authors`);
+-        await ctx.models.author.bulkCreate(bulkUpdateItems, {
++        await models.author.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['lastFirst']
+         });
+     }
+@@ -1208,9 +1224,10 @@
+     return migrationPatch2Authors(ctx, offset + authors.length);
+ }
+ async function migrationPatch2BookAuthors(ctx, offset = 0) {
+-    const bookAuthors = await ctx.models.bookAuthor.findAll({
++    const models = ctx.models;
++    const bookAuthors = await models.bookAuthor.findAll({
+         include: {
+-            model: ctx.models.author
++            model: models.author
+         },
+         limit: 500,
+         offset
+@@ -1234,9 +1251,10 @@
+     return migrationPatch2BookAuthors(ctx, offset + bookAuthors.length);
+ }
+ async function migrationPatch2BookSeries(ctx, offset = 0) {
+-    const allBookSeries = await ctx.models.bookSeries.findAll({
++    const models = ctx.models;
++    const allBookSeries = await models.bookSeries.findAll({
+         include: {
+-            model: ctx.models.series
++            model: models.series
+         },
+         limit: 500,
+         offset
+@@ -1259,7 +1277,7 @@
+     }
+     return migrationPatch2BookSeries(ctx, offset + allBookSeries.length);
+ }
+-module.exports.migrationPatch2 = async (ctx) => {
++const migrationPatch2 = async (ctx) => {
+     const queryInterface = ctx.sequelize.getQueryInterface();
+     const feedTableDescription = await queryInterface.describeTable('feeds');
+     const authorsTableDescription = await queryInterface.describeTable('authors');
+@@ -1333,3 +1351,9 @@
+         throw new Error('Migration 2.3.3+ failed ' + error);
+     }
+ };
++module.exports = {
++    migrate,
++    checkShouldMigrate,
++    migrationPatch,
++    migrationPatch2
++};
+diff -ruw base/server/utils/migrations/oldDbFiles.js new/server/utils/migrations/oldDbFiles.js
+--- base/server/utils/migrations/oldDbFiles.js	2026-10-10 17:00:49.954899842 +1300
++++ new/server/utils/migrations/oldDbFiles.js	2026-10-10 17:00:49.893348107 +1300
+@@ -1,11 +1,15 @@
+ "use strict";
+-const { once } = require('events');
+-const { createInterface } = require('readline');
+-const Path = require('path');
+-const Logger = require('../../Logger');
+-const fs = require('../../libs/fsExtra');
+-const archiver = require('../../libs/archiver');
+-const StreamZip = require('../../libs/nodeStreamZip');
++const events = require("events");
++const readline = require("readline");
++const Path = require("path");
++const Logger = require("../../Logger");
++const fsExtra = require("../../libs/fsExtra");
++const archiverLib = require("../../libs/archiver");
++const StreamZip = require("../../libs/nodeStreamZip");
++const { once } = events;
++const { createInterface } = readline;
++const fs = fsExtra;
++const archiver = archiverLib;
+ async function processDbFile(filepath) {
+     if (!fs.pathExistsSync(filepath)) {
+         Logger.error(`[oldDbFiles] Db file does not exist at "${filepath}"`);
+@@ -63,13 +67,13 @@
+         return null;
+     }
+ }
+-module.exports.loadOldData = async (dbName) => {
++const loadOldData = async (dbName) => {
+     const dbPath = Path.join(global.ConfigPath, dbName, 'data');
+     const dbData = await loadDbData(dbPath) || [];
+     Logger.info(`[oldDbFiles] ${dbData.length} ${dbName} loaded`);
+     return dbData;
+ };
+-module.exports.zipWrapOldDb = async () => {
++const zipWrapOldDb = async () => {
+     const dbs = {
+         libraryItems: Path.join(global.ConfigPath, 'libraryItems'),
+         users: Path.join(global.ConfigPath, 'users'),
+@@ -109,7 +113,7 @@
+         archive.finalize();
+     });
+ };
+-module.exports.checkHasOldDb = async () => {
++const checkHasOldDb = async () => {
+     const dbs = {
+         libraryItems: Path.join(global.ConfigPath, 'libraryItems'),
+         users: Path.join(global.ConfigPath, 'users'),
+@@ -129,7 +133,7 @@
+     }
+     return false;
+ };
+-module.exports.checkHasOldDbZip = async () => {
++const checkHasOldDbZip = async () => {
+     const oldDbPath = Path.join(global.ConfigPath, 'oldDb.zip');
+     if (!await fs.pathExists(oldDbPath)) {
+         return false;
+@@ -137,9 +141,9 @@
+     const zip = new StreamZip.async({ file: oldDbPath });
+     await zip.extract(null, global.ConfigPath);
+     await zip.close();
+-    return this.checkHasOldDb();
++    return oldDbFiles.checkHasOldDb();
+ };
+-module.exports.checkExtractItemsUsersAndLibraries = async () => {
++const checkExtractItemsUsersAndLibraries = async () => {
+     const oldDbPath = Path.join(global.ConfigPath, 'oldDb.zip');
+     const zip = new StreamZip.async({ file: oldDbPath });
+     const libraryItemsPath = Path.join(global.ConfigPath, 'libraryItems');
+@@ -166,7 +170,7 @@
+     await zip.close();
+     return true;
+ };
+-module.exports.removeOldItemsUsersAndLibrariesFolders = async () => {
++const removeOldItemsUsersAndLibrariesFolders = async () => {
+     const libraryItemsPath = Path.join(global.ConfigPath, 'libraryItems');
+     const usersPath = Path.join(global.ConfigPath, 'users');
+     const librariesPath = Path.join(global.ConfigPath, 'libraries');
+@@ -174,3 +178,12 @@
+     await fs.remove(usersPath);
+     await fs.remove(librariesPath);
+ };
++const oldDbFiles = {
++    loadOldData,
++    zipWrapOldDb,
++    checkHasOldDb,
++    checkHasOldDbZip,
++    checkExtractItemsUsersAndLibraries,
++    removeOldItemsUsersAndLibrariesFolders
++};
++module.exports = oldDbFiles;
+diff -ruw base/server/utils/notifications.js new/server/utils/notifications.js
+--- base/server/utils/notifications.js	2026-10-10 17:00:49.960392020 +1300
++++ new/server/utils/notifications.js	2026-10-10 17:00:49.899698043 +1300
+@@ -1,6 +1,7 @@
+ "use strict";
+-const { version } = require('../../package.json');
+-module.exports.notificationData = {
++const packageJson = require("../../package.json");
++const { version } = packageJson;
++const notificationData = {
+     events: [
+         {
+             name: 'onPodcastEpisodeDownloaded',
+@@ -108,3 +109,4 @@
+         }
+     ]
+ };
++module.exports = { notificationData };
+diff -ruw base/server/utils/parsers/parseComicInfoMetadata.js new/server/utils/parsers/parseComicInfoMetadata.js
+--- base/server/utils/parsers/parseComicInfoMetadata.js	2026-10-10 17:00:49.955897332 +1300
++++ new/server/utils/parsers/parseComicInfoMetadata.js	2026-10-10 17:00:49.894571566 +1300
+@@ -1,5 +1,5 @@
+ "use strict";
+-module.exports.parse = (comicInfoJson) => {
++const parse = (comicInfoJson) => {
+     if (!comicInfoJson?.ComicInfo)
+         return null;
+     const ComicSeries = comicInfoJson.ComicInfo.Series?.[0]?.trim() || null;
+@@ -23,3 +23,4 @@
+         description: ComicSummary
+     };
+ };
++module.exports = { parse };
+diff -ruw base/server/utils/parsers/parseComicMetadata.js new/server/utils/parsers/parseComicMetadata.js
+--- base/server/utils/parsers/parseComicMetadata.js	2026-10-10 17:00:49.955631081 +1300
++++ new/server/utils/parsers/parseComicMetadata.js	2026-10-10 17:00:49.894240999 +1300
+@@ -1,10 +1,12 @@
+ "use strict";
+-const Path = require('path');
+-const Logger = require('../../Logger');
+-const parseComicInfoMetadata = require('./parseComicInfoMetadata');
+-const globals = require('../globals');
+-const { xmlToJSON } = require('../index');
+-const { createComicBookExtractor } = require('../comicBookExtractors.js');
++const Path = require("path");
++const Logger = require("../../Logger");
++const parseComicInfoMetadata = require("./parseComicInfoMetadata");
++const globals = require("../globals");
++const utils = require("../index");
++const comicBookExtractors = require("../comicBookExtractors");
++const { xmlToJSON } = utils;
++const { createComicBookExtractor } = comicBookExtractors;
+ async function extractCoverImage(comicPath, comicImageFilepath, outputCoverPath) {
+     let archive = null;
+     try {
+@@ -20,7 +22,6 @@
+         archive?.close();
+     }
+ }
+-module.exports.extractCoverImage = extractCoverImage;
+ async function parse(ebookFile) {
+     const comicPath = ebookFile.metadata.path;
+     Logger.debug(`[parseComicMetadata] Parsing comic metadata at "${comicPath}"`);
+@@ -31,14 +32,15 @@
+         const filePaths = await archive.getFilePaths().catch((error) => {
+             Logger.error(`[parseComicMetadata] Failed to get file paths from comic at "${comicPath}"`, error);
+         });
+-        filePaths.sort((a, b) => {
++        const comicFilePaths = filePaths;
++        comicFilePaths.sort((a, b) => {
+             return a.localeCompare(b, undefined, {
+                 numeric: true,
+                 sensitivity: 'base'
+             });
+         });
+         let metadata = null;
+-        const comicInfoPath = filePaths.find((filePath) => filePath === 'ComicInfo.xml');
++        const comicInfoPath = comicFilePaths.find((filePath) => filePath === 'ComicInfo.xml');
+         if (comicInfoPath) {
+             const comicInfoData = await archive.extractToBuffer(comicInfoPath);
+             if (comicInfoData) {
+@@ -54,7 +56,7 @@
+             ebookFormat: ebookFile.ebookFormat,
+             metadata
+         };
+-        const firstImagePath = filePaths.find((filePath) => globals.SupportedImageTypes.includes(Path.extname(filePath).toLowerCase().slice(1)));
++        const firstImagePath = comicFilePaths.find((filePath) => globals.SupportedImageTypes.includes(Path.extname(filePath).toLowerCase().slice(1)));
+         if (firstImagePath) {
+             payload.ebookCoverPath = firstImagePath;
+         }
+@@ -71,4 +73,7 @@
+         archive?.close();
+     }
+ }
+-module.exports.parse = parse;
++module.exports = {
++    extractCoverImage,
++    parse
++};
+diff -ruw base/server/utils/parsers/parseEbookMetadata.js new/server/utils/parsers/parseEbookMetadata.js
+--- base/server/utils/parsers/parseEbookMetadata.js	2026-10-10 17:00:49.955997819 +1300
++++ new/server/utils/parsers/parseEbookMetadata.js	2026-10-10 17:00:49.894688288 +1300
+@@ -1,6 +1,6 @@
+ "use strict";
+-const parseEpubMetadata = require('./parseEpubMetadata');
+-const parseComicMetadata = require('./parseComicMetadata');
++const parseEpubMetadata = require("./parseEpubMetadata");
++const parseComicMetadata = require("./parseComicMetadata");
+ async function parse(ebookFile) {
+     if (!ebookFile)
+         return null;
+@@ -12,7 +12,6 @@
+     }
+     return null;
+ }
+-module.exports.parse = parse;
+ async function extractCoverImage(ebookFileScanData, outputCoverPath) {
+     if (!ebookFileScanData?.ebookCoverPath)
+         return false;
+@@ -24,4 +23,7 @@
+     }
+     return false;
+ }
+-module.exports.extractCoverImage = extractCoverImage;
++module.exports = {
++    parse,
++    extractCoverImage
++};
+diff -ruw base/server/utils/parsers/parseEpubMetadata.js new/server/utils/parsers/parseEpubMetadata.js
+--- base/server/utils/parsers/parseEpubMetadata.js	2026-10-10 17:00:49.955960502 +1300
++++ new/server/utils/parsers/parseEpubMetadata.js	2026-10-10 17:00:49.894645762 +1300
+@@ -1,9 +1,10 @@
+ "use strict";
+-const Path = require('path');
+-const Logger = require('../../Logger');
+-const StreamZip = require('../../libs/nodeStreamZip');
+-const parseOpfMetadata = require('./parseOpfMetadata');
+-const { xmlToJSON } = require('../index');
++const Path = require("path");
++const Logger = require("../../Logger");
++const StreamZip = require("../../libs/nodeStreamZip");
++const parseOpfMetadata = require("./parseOpfMetadata");
++const utils = require("../index");
++const { xmlToJSON } = utils;
+ async function extractFileFromEpub(epubPath, filepath) {
+     const zip = new StreamZip.async({ file: epubPath });
+     const data = await zip.entryData(filepath).catch((error) => {
+@@ -35,7 +36,6 @@
+     });
+     return success;
+ }
+-module.exports.extractCoverImage = extractCoverImage;
+ async function parse(ebookFile) {
+     const epubPath = ebookFile.metadata.path;
+     Logger.debug(`Parsing metadata from epub at "${epubPath}"`);
+@@ -87,4 +87,7 @@
+     }
+     return payload;
+ }
+-module.exports.parse = parse;
++module.exports = {
++    extractCoverImage,
++    parse
++};
+diff -ruw base/server/utils/parsers/parseFullName.js new/server/utils/parsers/parseFullName.js
+--- base/server/utils/parsers/parseFullName.js	2026-10-10 17:00:49.955451524 +1300
++++ new/server/utils/parsers/parseFullName.js	2026-10-10 17:00:49.894030016 +1300
+@@ -1,5 +1,5 @@
+ "use strict";
+-module.exports = (nameToParse, partToReturn, fixCase, stopOnError, useLongLists) => {
++function parseFullName(nameToParse, partToReturn, fixCase, stopOnError, useLongLists) {
+     var i, j, k, l, m, n, part, comma, titleList, suffixList, prefixList, regex, partToCheck, partFound, partsFoundCount, firstComma, remainingCommas, nameParts = [], nameCommas = [null], partsFound = [], conjunctionList = ['&', 'and', 'et', 'e', 'of', 'the', 'und', 'y'], parsedName = {
+         title: '', first: '', middle: '', last: '', nick: '', suffix: '', error: []
+     };
+@@ -59,7 +59,8 @@
+                             namePartWords[j] = namePartWords[j].slice(0, 3) +
+                                 namePartWords[j].slice(3).toLowerCase();
+                         }
+-                        else if (namePartLabels[j] === 'suffix' &&
++                        else if (
++                        namePartLabels[j] === 'suffix' &&
+                             namePartWords[j].slice(-1) !== '.' &&
+                             !suffixList.indexOf(namePartWords[j].toLowerCase())) { // Convert suffix abbreviations to UPPER CASE
+                             if (namePartWords[j] === namePartWords[j].toLowerCase()) {
+@@ -307,4 +308,5 @@
+     parsedName.middle = nameParts.join(' ');
+     parsedName = fixParsedNameCase(parsedName, fixCase);
+     return partToReturn === 'all' ? parsedName : parsedName[partToReturn];
+-};
++}
++module.exports = parseFullName;
+diff -ruw base/server/utils/parsers/parseNameString.js new/server/utils/parsers/parseNameString.js
+--- base/server/utils/parsers/parseNameString.js	2026-10-10 17:00:49.956058479 +1300
++++ new/server/utils/parsers/parseNameString.js	2026-10-10 17:00:49.894763732 +1300
+@@ -1,5 +1,5 @@
+ "use strict";
+-const parseFullName = require('./parseFullName');
++const parseFullName = require("./parseFullName");
+ function parseName(name) {
+     var parts = parseFullName(name);
+     var firstName = parts.first;
+@@ -18,7 +18,7 @@
+         return true; // had spaces but not a first name i.e. "von Mises", must be last name only
+     return false;
+ }
+-module.exports.nameToLastFirst = (firstLast) => {
++const nameToLastFirst = (firstLast) => {
+     var nameObj = parseName(firstLast);
+     if (!nameObj.last_name)
+         return nameObj.first_name;
+@@ -26,7 +26,7 @@
+         return nameObj.last_name;
+     return `${nameObj.last_name}, ${nameObj.first_name}`;
+ };
+-module.exports.parse = (nameString) => {
++const parse = (nameString) => {
+     if (!nameString)
+         return null;
+     let splitNames = [];
+@@ -83,3 +83,7 @@
+         names: namesArray // Array of first last
+     };
+ };
++module.exports = {
++    nameToLastFirst,
++    parse
++};
+diff -ruw base/server/utils/parsers/parseNfoMetadata.js new/server/utils/parsers/parseNfoMetadata.js
+--- base/server/utils/parsers/parseNfoMetadata.js	2026-10-10 17:00:49.956145774 +1300
++++ new/server/utils/parsers/parseNfoMetadata.js	2026-10-10 17:00:49.894870225 +1300
+@@ -98,8 +98,8 @@
+     }
+     return metadata;
+ }
+-module.exports = { parseNfoMetadata };
+ function extractYear(str) {
+     const match = str.match(/\d{4}/g);
+     return match ? match[match.length - 1] : null;
+ }
++module.exports = { parseNfoMetadata };
+diff -ruw base/server/utils/parsers/parseOpfMetadata.js new/server/utils/parsers/parseOpfMetadata.js
+--- base/server/utils/parsers/parseOpfMetadata.js	2026-10-10 17:00:49.955734682 +1300
++++ new/server/utils/parsers/parseOpfMetadata.js	2026-10-10 17:00:49.894368112 +1300
+@@ -1,21 +1,24 @@
+ "use strict";
+-const { xmlToJSON } = require('../index');
+-const htmlSanitizer = require('../htmlSanitizer');
++const utils = require("../index");
++const htmlSanitizer = require("../htmlSanitizer");
++const { xmlToJSON } = utils;
+ function parseCreators(metadata) {
+-    if (!metadata['dc:creator']?.length)
++    const dcCreators = metadata['dc:creator'];
++    if (!dcCreators?.length)
+         return null;
+-    return metadata['dc:creator'].map((c) => {
++    return dcCreators.map((c) => {
+         if (typeof c !== 'object' || !c['$'] || !c['_'])
+             return false;
+         const namespace = Object.keys(c['$'])
+             .find((key) => key.startsWith('xmlns:'))
+             ?.split(':')[1] || 'opf';
++        const attributes = c['$'];
+         const creator = {
+             value: c['_'],
+-            role: c['$'][`${namespace}:role`] || null,
+-            fileAs: c['$'][`${namespace}:file-as`] || null
++            role: attributes[`${namespace}:role`] || null,
++            fileAs: attributes[`${namespace}:file-as`] || null
+         };
+-        const id = c['$']['id'];
++        const id = attributes['id'];
+         if (id && metadata.meta.refines?.some((r) => r.refines === `#${id}`)) {
+             const creatorMeta = metadata.meta.refines.filter((r) => r.refines === `#${id}`);
+             if (creatorMeta) {
+@@ -29,12 +32,14 @@
+ function fetchCreators(creators, role) {
+     if (!creators?.length)
+         return null;
+-    return [...new Set(creators.filter((c) => c.role === role && c.value).map((c) => c.value))];
++    const creatorObjects = creators;
++    return [...new Set(creatorObjects.filter((c) => c.role === role && c.value).map((c) => c.value))];
+ }
+ function fetchTagString(metadata, tag) {
+-    if (!metadata[tag] || !metadata[tag].length)
++    const tagValues = metadata[tag];
++    if (!tagValues || !tagValues.length)
+         return null;
+-    let value = metadata[tag][0];
++    let value = tagValues[0];
+       EXAMPLES:
+       "dc:title": [
+         {
+@@ -67,9 +72,10 @@
+     return fetchTagString(metadata, 'dc:publisher');
+ }
+ function fetchIdentifier(metadata, scheme) {
+-    if (!metadata['dc:identifier']?.length)
++    const identifiers = metadata['dc:identifier'];
++    if (!identifiers?.length)
+         return null;
+-    const identifierObj = metadata['dc:identifier'].find((i) => {
++    const identifierObj = identifiers.find((i) => {
+         if (!i['$'])
+             return false;
+         const namespace = Object.keys(i['$'])
+@@ -99,9 +105,10 @@
+     return htmlSanitizer.stripAllTags(description);
+ }
+ function fetchGenres(metadata) {
+-    if (!metadata['dc:subject'] || !metadata['dc:subject'].length)
++    const subjects = metadata['dc:subject'];
++    if (!subjects || !subjects.length)
+         return [];
+-    return [...new Set(metadata['dc:subject'].filter((g) => g && typeof g === 'string'))];
++    return [...new Set(subjects.filter((g) => !!(g && typeof g === 'string')))];
+ }
+ function fetchLanguage(metadata) {
+     return fetchTagString(metadata, 'dc:language');
+@@ -111,11 +118,13 @@
+         return [];
+     const result = [];
+     for (let i = 0; i < metadataMeta.length; i++) {
+-        if (metadataMeta[i].$?.name === 'calibre:series' && metadataMeta[i].$.content?.trim()) {
+-            const name = metadataMeta[i].$.content.trim();
++        const meta = metadataMeta[i];
++        const nextMeta = metadataMeta[i + 1];
++        if (meta.$?.name === 'calibre:series' && meta.$.content?.trim()) {
++            const name = meta.$.content.trim();
+             let sequence = null;
+-            if (metadataMeta[i + 1]?.$?.name === 'calibre:series_index' && metadataMeta[i + 1].$?.content?.trim()) {
+-                sequence = metadataMeta[i + 1].$.content.trim();
++            if (nextMeta?.$?.name === 'calibre:series_index' && nextMeta.$?.content?.trim()) {
++                sequence = nextMeta.$.content.trim();
+             }
+             result.push({ name, sequence });
+         }
+@@ -142,21 +151,22 @@
+     }
+ }
+ function fetchTags(metadata) {
+-    if (!metadata['dc:tag'] || !metadata['dc:tag'].length)
++    const tags = metadata['dc:tag'];
++    if (!tags || !tags.length)
+         return [];
+-    return [...new Set(metadata['dc:tag'].filter((tag) => tag && typeof tag === 'string'))];
++    return [...new Set(tags.filter((tag) => !!(tag && typeof tag === 'string')))];
+ }
+ function stripPrefix(str) {
+     if (!str)
+         return '';
+     return str.split(':').pop();
+ }
+-module.exports.parseOpfMetadataJson = (json) => {
++const parseOpfMetadataJson = (json) => {
+     const packageKey = Object.keys(json).find((key) => stripPrefix(key) === 'package');
+     if (!packageKey)
+         return null;
+     const prefix = packageKey.split(':').shift();
+-    let metadata = prefix ? json[packageKey][`${prefix}:metadata`] || json[packageKey].metadata : json[packageKey].metadata;
++    let metadata = (prefix ? json[packageKey][`${prefix}:metadata`] || json[packageKey].metadata : json[packageKey].metadata);
+     if (!metadata)
+         return null;
+     if (Array.isArray(metadata)) {
+@@ -164,18 +174,19 @@
+             return null;
+         metadata = metadata[0];
+     }
+-    const metadataMeta = prefix ? metadata[`${prefix}:meta`] || metadata.meta : metadata.meta;
+-    metadata.meta = {};
++    const metadataMeta = (prefix ? metadata[`${prefix}:meta`] || metadata.meta : metadata.meta);
++    const opfMetadata = metadata;
++    opfMetadata.meta = {};
+     if (metadataMeta?.length) {
+         metadataMeta.forEach((meta) => {
+             if (meta?.['$']?.name) {
+-                metadata.meta[meta['$'].name] = [meta['$'].content || ''];
++                opfMetadata.meta[meta['$'].name] = [meta['$'].content || ''];
+             }
+             else if (meta?.['$']?.refines) {
+-                if (!metadata.meta.refines) {
+-                    metadata.meta.refines = [];
++                if (!opfMetadata.meta.refines) {
++                    opfMetadata.meta.refines = [];
+                 }
+-                metadata.meta.refines.push({
++                opfMetadata.meta.refines.push({
+                     value: meta._,
+                     refines: meta['$'].refines,
+                     property: meta['$'].property
+@@ -202,9 +213,14 @@
+         tags: fetchTags(metadata)
+     };
+ };
+-module.exports.parseOpfMetadataXML = async (xml) => {
++const parseOpfMetadataXML = async (xml) => {
+     const json = await xmlToJSON(xml);
+     if (!json)
+         return null;
+-    return this.parseOpfMetadataJson(json);
++    return parseOpfMetadata.parseOpfMetadataJson(json);
+ };
++const parseOpfMetadata = {
++    parseOpfMetadataJson,
++    parseOpfMetadataXML
++};
++module.exports = parseOpfMetadata;
+diff -ruw base/server/utils/parsers/parseOPML.js new/server/utils/parsers/parseOPML.js
+--- base/server/utils/parsers/parseOPML.js	2026-10-10 17:00:49.956180476 +1300
++++ new/server/utils/parsers/parseOPML.js	2026-10-10 17:00:49.894927329 +1300
+@@ -1,6 +1,39 @@
+ "use strict";
+-const h = require('htmlparser2');
+-const Logger = require('../../Logger');
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || (function () {
++    var ownKeys = function(o) {
++        ownKeys = Object.getOwnPropertyNames || function (o) {
++            var ar = [];
++            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
++            return ar;
++        };
++        return ownKeys(o);
++    };
++    return function (mod) {
++        if (mod && mod.__esModule) return mod;
++        var result = {};
++        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
++        __setModuleDefault(result, mod);
++        return result;
++    };
++})();
++const h = __importStar(require("htmlparser2"));
++const Logger = require("../../Logger");
+ function parse(opmlText) {
+     var feeds = [];
+     var parser = new h.Parser({
+@@ -21,4 +54,4 @@
+     parser.write(opmlText);
+     return feeds;
+ }
+-module.exports.parse = parse;
++module.exports = { parse };
+diff -ruw base/server/utils/parsers/parseOverdriveMediaMarkers.js new/server/utils/parsers/parseOverdriveMediaMarkers.js
+--- base/server/utils/parsers/parseOverdriveMediaMarkers.js	2026-10-10 17:00:49.955855739 +1300
++++ new/server/utils/parsers/parseOverdriveMediaMarkers.js	2026-10-10 17:00:49.894520789 +1300
+@@ -1,6 +1,9 @@
+ "use strict";
+-const xml2js = require('xml2js');
+-const Logger = require('../../Logger');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const xml2js_1 = __importDefault(require("xml2js"));
++const Logger = require("../../Logger");
+ function cleanOverdriveMediaMarkers(overdriveMediaMarkers) {
+     Logger.debug('[parseOverdriveMediaMarkers] Cleaning up overdrive media markers');
+     returns an array of arrays of objects. Each inner array corresponds to an audio track, with it's objects being a chapter:
+@@ -20,7 +23,7 @@
+     const parsedOverdriveMediaMarkers = [];
+     overdriveMediaMarkers.forEach((item, index) => {
+         let parsed_result = null;
+-        xml2js.parseString(item, function (err, result) {
++        xml2js_1.default.parseString(item, function (err, result) {
+             result.Markers.Marker is the result of parsing the XML for the MediaMarker tags for the MP3 file (Part##.mp3)
+             it is shaped like this, and needs further cleaning below:
+             [
+@@ -104,8 +107,8 @@
+     parsedChapters = addChapterEndTimes(parsedChapters, length); // we need all the start times sorted out before we can add the end times
+     return parsedChapters;
+ }
+-module.exports.parseOverdriveMediaMarkersAsChapters = (includedAudioFiles) => {
+-    const overdriveMediaMarkers = includedAudioFiles.map((af) => af.metaTags.tagOverdriveMediaMarker).filter((af) => af) || [];
++const parseOverdriveMediaMarkersAsChapters = (includedAudioFiles) => {
++    const overdriveMediaMarkers = includedAudioFiles.map((af) => af.metaTags.tagOverdriveMediaMarker).filter((af) => !!af) || [];
+     if (!overdriveMediaMarkers.length)
+         return null;
+     var cleanedOverdriveMediaMarkers = cleanOverdriveMediaMarkers(overdriveMediaMarkers);
+@@ -113,3 +116,4 @@
+         return null;
+     return generateParsedChapters(includedAudioFiles, cleanedOverdriveMediaMarkers);
+ };
++module.exports = { parseOverdriveMediaMarkersAsChapters };
+diff -ruw base/server/utils/parsers/parseSeriesString.js new/server/utils/parsers/parseSeriesString.js
+--- base/server/utils/parsers/parseSeriesString.js	2026-10-10 17:00:49.955663416 +1300
++++ new/server/utils/parsers/parseSeriesString.js	2026-10-10 17:00:49.894281669 +1300
+@@ -1,5 +1,5 @@
+ "use strict";
+-module.exports.parse = (seriesString) => {
++const parse = (seriesString) => {
+     if (!seriesString || typeof seriesString !== 'string')
+         return null;
+     let sequence = null;
+@@ -14,3 +14,4 @@
+         sequence
+     };
+ };
++module.exports = { parse };
+diff -ruw base/server/utils/parsers/parseUserAgent.js new/server/utils/parsers/parseUserAgent.js
+--- base/server/utils/parsers/parseUserAgent.js	2026-10-10 17:00:49.955376204 +1300
++++ new/server/utils/parsers/parseUserAgent.js	2026-10-10 17:00:49.893937931 +1300
+@@ -1,5 +1,5 @@
+ "use strict";
+-const uaParserJs = require('../../libs/uaParser');
++const uaParserJs = require("../../libs/uaParser");
+ function parseUserAgent(userAgent) {
+     if (!userAgent)
+         return null;
+Only in new/server/utils/parsers: types.js
+diff -ruw base/server/utils/podcastUtils.js new/server/utils/podcastUtils.js
+--- base/server/utils/podcastUtils.js	2026-10-10 17:00:49.959806491 +1300
++++ new/server/utils/podcastUtils.js	2026-10-10 17:00:49.899005529 +1300
+@@ -1,19 +1,26 @@
+ "use strict";
+-const axios = require('axios');
+-const ssrfFilter = require('ssrf-req-filter');
+-const Logger = require('../Logger');
+-const { xmlToJSON, timestampToSeconds } = require('./index');
+-const htmlSanitizer = require('../utils/htmlSanitizer');
+-const Fuse = require('../libs/fusejs');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const axios_1 = __importDefault(require("axios"));
++const ssrf_req_filter_1 = __importDefault(require("ssrf-req-filter"));
++const Logger = require("../Logger");
++const utils = require("./index");
++const htmlSanitizer = require("../utils/htmlSanitizer");
++const FuseLib = require("../libs/fusejs");
++const { xmlToJSON, timestampToSeconds } = utils;
++const Fuse = FuseLib;
+ function extractFirstArrayItem(json, key) {
+-    if (!json[key]?.length)
++    const values = json[key];
++    if (!values?.length)
+         return null;
+-    return json[key][0];
++    return values[0];
+ }
+ function extractStringOrStringify(json) {
+     try {
+-        if (typeof json[Object.keys(json)[0]]?.[0] === 'string') {
+-            return json[Object.keys(json)[0]][0];
++        const firstValue = json[Object.keys(json)[0]];
++        if (typeof firstValue?.[0] === 'string') {
++            return firstValue[0];
+         }
+         return JSON.stringify(json);
+     }
+@@ -26,21 +33,23 @@
+     if (!item)
+         return '';
+     if (typeof item === 'object') {
+-        if (item?.['_'] && typeof item['_'] === 'string')
+-            return item['_'];
+-        return extractStringOrStringify(item);
++        const element = item;
++        if (element?.['_'] && typeof element['_'] === 'string')
++            return element['_'];
++        return extractStringOrStringify(element);
+     }
+     return typeof item === 'string' ? item : '';
+ }
+ function extractImage(channel) {
+-    if (!channel.image || !channel.image.url || !channel.image.url.length) {
++    const channelImage = channel.image;
++    if (!channelImage || !channelImage.url || !channelImage.url.length) {
+         if (!channel['itunes:image'] || !channel['itunes:image'].length || !channel['itunes:image'][0]['$']) {
+             return null;
+         }
+         var itunesImage = channel['itunes:image'][0]['$'];
+         return itunesImage.href || null;
+     }
+-    return channel.image.url[0] || null;
++    return channelImage.url[0] || null;
+ }
+ function extractCategories(channel) {
+     if (!channel['itunes:category'] || !channel['itunes:category'].length)
+@@ -178,8 +187,9 @@
+             Logger.warn(`[podcastUtils] Invalid chapter data for ${episode.enclosure.url}`);
+         }
+         else {
+-            episode.chapters = cleanedChapters.map((chapter, index) => {
+-                const nextChapter = cleanedChapters[index + 1];
++            const validChapters = cleanedChapters;
++            episode.chapters = validChapters.map((chapter, index) => {
++                const nextChapter = validChapters[index + 1];
+                 const end = nextChapter ? nextChapter.start : episode.durationSeconds;
+                 return {
+                     id: chapter.id,
+@@ -247,7 +257,7 @@
+     }
+     return podcast;
+ }
+-module.exports.parsePodcastRssFeedXml = async (xml, excludeEpisodeMetadata = false, includeRaw = false) => {
++const parsePodcastRssFeedXml = async (xml, excludeEpisodeMetadata = false, includeRaw = false) => {
+     if (!xml)
+         return null;
+     const json = await xmlToJSON(xml);
+@@ -270,13 +280,13 @@
+         };
+     }
+ };
+-module.exports.getPodcastFeed = (feedUrl, excludeEpisodeMetadata = false) => {
++const getPodcastFeed = (feedUrl, excludeEpisodeMetadata = false) => {
+     Logger.debug(`[podcastUtils] getPodcastFeed for "${feedUrl}"`);
+     let userAgent = 'audiobookshelf (+https://audiobookshelf.org; like iTMS)';
+     if (feedUrl.startsWith('https://www.cbc.ca')) {
+         userAgent = 'audiobookshelf (+https://audiobookshelf.org; like iTMS) - CBC';
+     }
+-    return axios({
++    return (0, axios_1.default)({
+         url: feedUrl,
+         method: 'GET',
+         timeout: global.PodcastDownloadTimeout,
+@@ -286,8 +296,8 @@
+             'Accept-Encoding': 'gzip, compress, deflate',
+             'User-Agent': userAgent
+         },
+-        httpAgent: global.DisableSsrfRequestFilter?.(feedUrl) ? null : ssrfFilter(feedUrl),
+-        httpsAgent: global.DisableSsrfRequestFilter?.(feedUrl) ? null : ssrfFilter(feedUrl)
++        httpAgent: global.DisableSsrfRequestFilter?.(feedUrl) ? null : (0, ssrf_req_filter_1.default)(feedUrl),
++        httpsAgent: global.DisableSsrfRequestFilter?.(feedUrl) ? null : (0, ssrf_req_filter_1.default)(feedUrl)
+     })
+         .then(async (data) => {
+         const contentType = data.headers?.['content-type'] || ''; // e.g. text/xml; charset=iso-8859-1
+@@ -302,7 +312,7 @@
+             return null;
+         }
+         Logger.debug(`[podcastUtils] getPodcastFeed for "${feedUrl}" success - parsing xml`);
+-        const payload = await this.parsePodcastRssFeedXml(data.data, excludeEpisodeMetadata);
++        const payload = await podcastUtils.parsePodcastRssFeedXml(data.data, excludeEpisodeMetadata);
+         if (!payload) {
+             return null;
+         }
+@@ -314,20 +324,20 @@
+             if (feedUrl.startsWith('http://') && error.request._options.protocol === 'https:') {
+                 Logger.info('Redirection from http to https detected. Upgrading Request', error.request._options.href);
+                 feedUrl = feedUrl.replace('http://', 'https://');
+-                return this.getPodcastFeed(feedUrl, excludeEpisodeMetadata);
++                return podcastUtils.getPodcastFeed(feedUrl, excludeEpisodeMetadata);
+             }
+         }
+         Logger.error('[podcastUtils] getPodcastFeed Error', error);
+         return null;
+     });
+ };
+-module.exports.findMatchingEpisodes = async (feedUrl, searchTitle) => {
+-    const feed = await this.getPodcastFeed(feedUrl).catch(() => {
++const findMatchingEpisodes = async (feedUrl, searchTitle) => {
++    const feed = await podcastUtils.getPodcastFeed(feedUrl).catch(() => {
+         return null;
+     });
+-    return this.findMatchingEpisodesInFeed(feed, searchTitle);
++    return podcastUtils.findMatchingEpisodesInFeed(feed, searchTitle);
+ };
+-module.exports.findMatchingEpisodesInFeed = (feed, searchTitle, threshold = 0.4) => {
++const findMatchingEpisodesInFeed = (feed, searchTitle, threshold = 0.4) => {
+     if (!feed?.episodes) {
+         return null;
+     }
+@@ -348,3 +358,10 @@
+     });
+     return matches;
+ };
++const podcastUtils = {
++    parsePodcastRssFeedXml,
++    getPodcastFeed,
++    findMatchingEpisodes,
++    findMatchingEpisodesInFeed
++};
++module.exports = podcastUtils;
+diff -ruw base/server/utils/prober.js new/server/utils/prober.js
+--- base/server/utils/prober.js	2026-10-10 17:00:49.960689190 +1300
++++ new/server/utils/prober.js	2026-10-10 17:00:49.900073562 +1300
+@@ -1,7 +1,9 @@
+ "use strict";
+-const ffprobe = require('../libs/nodeFfprobe');
+-const MediaProbeData = require('../scanner/MediaProbeData');
+-const Logger = require('../Logger');
++const nodeFfprobe = require("../libs/nodeFfprobe");
++const MediaProbeData = require("../scanner/MediaProbeData");
++const Logger = require("../Logger");
++const isNaN = globalThis.isNaN;
++const ffprobe = nodeFfprobe;
+ function tryGrabBitRate(stream, all_streams, total_bit_rate) {
+     if (!isNaN(stream.bit_rate) && stream.bit_rate) {
+         return Number(stream.bit_rate);
+@@ -293,7 +295,6 @@
+         };
+     });
+ }
+-module.exports.probe = probe;
+ function rawProbe(filepath) {
+     if (process.env.FFPROBE_PATH) {
+         ffprobe.FFPROBE_PATH = process.env.FFPROBE_PATH;
+@@ -304,4 +305,7 @@
+         };
+     });
+ }
+-module.exports.rawProbe = rawProbe;
++module.exports = {
++    probe,
++    rawProbe
++};
+diff -ruw base/server/utils/profiler.js new/server/utils/profiler.js
+--- base/server/utils/profiler.js	2026-10-10 17:00:49.960624978 +1300
++++ new/server/utils/profiler.js	2026-10-10 17:00:49.899993031 +1300
+@@ -1,13 +1,14 @@
+ "use strict";
+-const { performance, createHistogram } = require('perf_hooks');
+-const util = require('util');
+-const Logger = require('../Logger');
++const perf_hooks_1 = require("perf_hooks");
++const util = require("util");
++const Logger = require("../Logger");
+ const histograms = new Map();
+ function profile(asyncFunc, isFindQuery = true, funcName = asyncFunc.name) {
+     if (!histograms.has(funcName)) {
+-        const histogram = createHistogram();
+-        histogram.values = [];
+-        histograms.set(funcName, histogram);
++        const histogram = (0, perf_hooks_1.createHistogram)();
++        const profilerHistogram = histogram;
++        profilerHistogram.values = [];
++        histograms.set(funcName, profilerHistogram);
+     }
+     const histogram = histograms.get(funcName);
+     return async (...args) => {
+@@ -17,7 +18,7 @@
+             findOptions.logging = (query, time) => Logger.info(`[${funcName}] ${query} Elapsed time: ${time}ms`);
+             findOptions.benchmark = true;
+         }
+-        const start = performance.now();
++        const start = perf_hooks_1.performance.now();
+         try {
+             const result = await asyncFunc(...args);
+             return result;
+@@ -27,7 +28,7 @@
+             throw error;
+         }
+         finally {
+-            const end = performance.now();
++            const end = perf_hooks_1.performance.now();
+             const duration = Math.round(end - start);
+             histogram.record(duration);
+             histogram.values.push(duration);
+diff -ruw base/server/utils/queries/adminStats.js new/server/utils/queries/adminStats.js
+--- base/server/utils/queries/adminStats.js	2026-10-10 17:00:49.959314488 +1300
++++ new/server/utils/queries/adminStats.js	2026-10-10 17:00:49.898385535 +1300
+@@ -1,8 +1,9 @@
+ "use strict";
+-const Sequelize = require('sequelize');
+-const Database = require('../../Database');
+-const PlaybackSession = require('../../models/PlaybackSession');
+-const fsExtra = require('../../libs/fsExtra');
++const Sequelize = require("sequelize");
++const DatabaseModule = require("../../Database");
++const fsExtraModule = require("../../libs/fsExtra");
++const Database = DatabaseModule;
++const fsExtra = fsExtraModule;
+ module.exports = {
+     async getListeningSessionsForYear(year) {
+         const sessions = await Database.playbackSessionModel.findAll({
+@@ -68,19 +69,20 @@
+         let totalListeningTime = 0;
+         for (const ls of listeningSessions) {
+             totalListeningTime += ls.timeListening || 0;
+-            const authors = ls.mediaMetadata?.authors || [];
++            const mediaMetadata = ls.mediaMetadata;
++            const authors = mediaMetadata?.authors || [];
+             authors.forEach((au) => {
+                 if (!authorListeningMap[au.name])
+                     authorListeningMap[au.name] = 0;
+                 authorListeningMap[au.name] += ls.timeListening || 0;
+             });
+-            const narrators = ls.mediaMetadata?.narrators || [];
++            const narrators = mediaMetadata?.narrators || [];
+             narrators.forEach((narrator) => {
+                 if (!narratorListeningMap[narrator])
+                     narratorListeningMap[narrator] = 0;
+                 narratorListeningMap[narrator] += ls.timeListening || 0;
+             });
+-            const genres = (ls.mediaMetadata?.genres || []).filter((g) => g && !g.toLowerCase().includes('audiobook') && !g.toLowerCase().includes('audio book'));
++            const genres = (mediaMetadata?.genres || []).filter((g) => g && !g.toLowerCase().includes('audiobook') && !g.toLowerCase().includes('audio book'));
+             genres.forEach((genre) => {
+                 if (!genreListeningMap[genre])
+                     genreListeningMap[genre] = 0;
+@@ -134,7 +136,8 @@
+         };
+     },
+     async getTotalSize() {
+-        const [mediaTypeStats] = await Database.sequelize.query(`SELECT li.mediaType, SUM(li.size) AS totalSize, COUNT(*) AS numItems FROM libraryItems li group by li.mediaType;`);
++        const [mediaTypeStatsRows] = await Database.sequelize.query(`SELECT li.mediaType, SUM(li.size) AS totalSize, COUNT(*) AS numItems FROM libraryItems li group by li.mediaType;`);
++        const mediaTypeStats = mediaTypeStatsRows;
+         const bookStats = mediaTypeStats.find((m) => m.mediaType === 'book');
+         const podcastStats = mediaTypeStats.find((m) => m.mediaType === 'podcast');
+         return {
+diff -ruw base/server/utils/queries/authorFilters.js new/server/utils/queries/authorFilters.js
+--- base/server/utils/queries/authorFilters.js	2026-10-10 17:00:49.959408966 +1300
++++ new/server/utils/queries/authorFilters.js	2026-10-10 17:00:49.898505536 +1300
+@@ -1,6 +1,7 @@
+ "use strict";
+-const Sequelize = require('sequelize');
+-const Database = require('../../Database');
++const Sequelize = require("sequelize");
++const DatabaseModule = require("../../Database");
++const Database = DatabaseModule;
+ module.exports = {
+     async getAuthorsTotalCount(libraryId) {
+         const authorsCount = await Database.authorModel.count({
+diff -ruw base/server/utils/queries/libraryFilters.js new/server/utils/queries/libraryFilters.js
+--- base/server/utils/queries/libraryFilters.js	2026-10-10 17:00:49.957502155 +1300
++++ new/server/utils/queries/libraryFilters.js	2026-10-10 17:00:49.896373030 +1300
+@@ -1,11 +1,14 @@
+ "use strict";
+-const Sequelize = require('sequelize');
+-const Logger = require('../../Logger');
+-const Database = require('../../Database');
+-const libraryItemsBookFilters = require('./libraryItemsBookFilters');
+-const libraryItemsPodcastFilters = require('./libraryItemsPodcastFilters');
+-const { createNewSortInstance } = require('../../libs/fastSort');
+-const { profile } = require('../../utils/profiler');
++const Sequelize = require("sequelize");
++const Logger = require("../../Logger");
++const DatabaseModule = require("../../Database");
++const libraryItemsBookFilters = require("./libraryItemsBookFilters");
++const libraryItemsPodcastFilters = require("./libraryItemsPodcastFilters");
++const fastSort = require("../../libs/fastSort");
++const profiler = require("../../utils/profiler");
++const { createNewSortInstance } = fastSort;
++const { profile } = profiler;
++const Database = DatabaseModule;
+ const naturalSort = createNewSortInstance({
+     comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+ });
+@@ -167,7 +170,7 @@
+             {
+                 libraryId: library.id,
+                 createdAt: {
+-                    [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
++                    [Sequelize.Op.gte]: new Date(new Date().valueOf() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+                 }
+             }
+         ];
+@@ -181,8 +184,9 @@
+             if (!user.canAccessExplicitContent) {
+                 attrQuery += ' AND b.explicit = 0';
+             }
+-            if (!user.permissions?.accessAllTags && user.permissions?.itemTagsSelected?.length) {
+-                if (user.permissions.selectedTagsNotAccessible) {
++            const permissions = user.permissions;
++            if (!permissions?.accessAllTags && permissions?.itemTagsSelected?.length) {
++                if (permissions.selectedTagsNotAccessible) {
+                     attrQuery += ' AND (SELECT count(*) FROM json_each(tags) WHERE json_valid(tags) AND json_each.value IN (:userTagsSelected)) = 0';
+                 }
+                 else {
+@@ -262,7 +266,7 @@
+             where: {
+                 libraryId: library.id,
+                 createdAt: {
+-                    [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
++                    [Sequelize.Op.gte]: new Date(new Date().valueOf() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+                 }
+             },
+             replacements,
+@@ -503,8 +507,9 @@
+                 }
+                 if (book.publisher)
+                     data.publishers.add(book.publisher);
+-                if (book.publishedYear && !isNaN(book.publishedYear) && book.publishedYear > 0 && book.publishedYear < 3000) {
+-                    const decade = (Math.floor(book.publishedYear / 10) * 10).toString();
++                const publishedYear = book.publishedYear;
++                if (publishedYear && !isNaN(publishedYear) && publishedYear > 0 && publishedYear < 3000) {
++                    const decade = (Math.floor(publishedYear / 10) * 10).toString();
+                     data.publishedDecades.add(decade);
+                 }
+                 if (book.language)
+@@ -525,17 +530,18 @@
+             });
+             authors.forEach((a) => data.authors.push({ id: a.id, name: a.name }));
+         }
+-        data.authors = naturalSort(data.authors).asc((au) => au.name);
+-        data.genres = naturalSort([...data.genres]).asc();
+-        data.tags = naturalSort([...data.tags]).asc();
+-        data.series = naturalSort(data.series).asc((se) => se.name);
+-        data.narrators = naturalSort([...data.narrators]).asc();
+-        data.publishers = naturalSort([...data.publishers]).asc();
+-        data.publishedDecades = naturalSort([...data.publishedDecades]).asc();
+-        data.languages = naturalSort([...data.languages]).asc();
+-        data.loadedAt = Date.now();
+-        Database.libraryFilterData[libraryId] = data;
++        const filterData = data;
++        filterData.authors = naturalSort(data.authors).asc((au) => au.name);
++        filterData.genres = naturalSort([...data.genres]).asc();
++        filterData.tags = naturalSort([...data.tags]).asc();
++        filterData.series = naturalSort(data.series).asc((se) => se.name);
++        filterData.narrators = naturalSort([...data.narrators]).asc();
++        filterData.publishers = naturalSort([...data.publishers]).asc();
++        filterData.publishedDecades = naturalSort([...data.publishedDecades]).asc();
++        filterData.languages = naturalSort([...data.languages]).asc();
++        filterData.loadedAt = Date.now();
++        Database.libraryFilterData[libraryId] = filterData;
+         Logger.debug(`Loaded filterdata in ${((Date.now() - start) / 1000).toFixed(2)}s`);
+-        return data;
++        return filterData;
+     }
+ };
+diff -ruw base/server/utils/queries/libraryItemFilters.js new/server/utils/queries/libraryItemFilters.js
+--- base/server/utils/queries/libraryItemFilters.js	2026-10-10 17:00:49.958426510 +1300
++++ new/server/utils/queries/libraryItemFilters.js	2026-10-10 17:00:49.897358253 +1300
+@@ -1,8 +1,9 @@
+ "use strict";
+-const Sequelize = require('sequelize');
+-const Database = require('../../Database');
+-const libraryItemsBookFilters = require('./libraryItemsBookFilters');
+-const libraryItemsPodcastFilters = require('./libraryItemsPodcastFilters');
++const Sequelize = require("sequelize");
++const DatabaseModule = require("../../Database");
++const libraryItemsBookFilters = require("./libraryItemsBookFilters");
++const libraryItemsPodcastFilters = require("./libraryItemsPodcastFilters");
++const Database = DatabaseModule;
+ module.exports = {
+     async getAllLibraryItemsWithTags(tags) {
+         const libraryItems = [];
+diff -ruw base/server/utils/queries/libraryItemsBookFilters.js new/server/utils/queries/libraryItemsBookFilters.js
+--- base/server/utils/queries/libraryItemsBookFilters.js	2026-10-10 17:00:49.958565862 +1300
++++ new/server/utils/queries/libraryItemsBookFilters.js	2026-10-10 17:00:49.897511292 +1300
+@@ -1,11 +1,13 @@
+ "use strict";
+-const Sequelize = require('sequelize');
+-const Database = require('../../Database');
+-const Logger = require('../../Logger');
+-const authorFilters = require('./authorFilters');
+-const ShareManager = require('../../managers/ShareManager');
+-const { profile } = require('../profiler');
+-const stringifySequelizeQuery = require('../stringifySequelizeQuery');
++const Sequelize = require("sequelize");
++const DatabaseModule = require("../../Database");
++const Logger = require("../../Logger");
++const authorFilters = require("./authorFilters");
++const ShareManager = require("../../managers/ShareManager");
++const profiler = require("../profiler");
++const stringifySequelizeQuery = require("../stringifySequelizeQuery");
++const { profile } = profiler;
++const Database = DatabaseModule;
+ const countCache = new Map();
+ module.exports = {
+     getUserPermissionBookWhereQuery(user) {
+@@ -18,9 +20,10 @@
+                 explicit: false
+             });
+         }
+-        if (!user.permissions?.accessAllTags && user.permissions?.itemTagsSelected?.length) {
+-            replacements['userTagsSelected'] = user.permissions.itemTagsSelected;
+-            if (user.permissions.selectedTagsNotAccessible) {
++        const permissions = user.permissions;
++        if (!permissions?.accessAllTags && permissions?.itemTagsSelected?.length) {
++            replacements['userTagsSelected'] = permissions.itemTagsSelected;
++            if (permissions.selectedTagsNotAccessible) {
+                 bookWhere.push(Sequelize.where(Sequelize.literal(`(SELECT count(*) FROM json_each(tags) WHERE json_valid(tags) AND json_each.value IN (:userTagsSelected))`), 0));
+             }
+             else {
+@@ -84,16 +87,17 @@
+     getMediaGroupQuery(group, value) {
+         if (!group)
+             return { mediaWhere: {}, replacements: {} };
+-        let mediaWhere = {};
++        const mediaWhereHash = {};
++        let mediaWhere = mediaWhereHash;
+         const replacements = {};
+         if (group === 'progress') {
+             if (value === 'not-finished') {
+-                mediaWhere['$mediaProgresses.isFinished$'] = {
++                mediaWhereHash['$mediaProgresses.isFinished$'] = {
+                     [Sequelize.Op.or]: [null, false]
+                 };
+             }
+             else if (value === 'not-started') {
+-                mediaWhere[Sequelize.Op.and] = [
++                mediaWhereHash[Sequelize.Op.and] = [
+                     {
+                         '$mediaProgresses.currentTime$': {
+                             [Sequelize.Op.or]: [null, 0]
+@@ -107,10 +111,10 @@
+                 ];
+             }
+             else if (value === 'finished') {
+-                mediaWhere['$mediaProgresses.isFinished$'] = true;
++                mediaWhereHash['$mediaProgresses.isFinished$'] = true;
+             }
+             else if (value === 'in-progress') {
+-                mediaWhere[Sequelize.Op.and] = [
++                mediaWhereHash[Sequelize.Op.and] = [
+                     {
+                         [Sequelize.Op.or]: [
+                             {
+@@ -131,7 +135,7 @@
+                 ];
+             }
+             else if (value === 'audio-in-progress') {
+-                mediaWhere[Sequelize.Op.and] = [
++                mediaWhereHash[Sequelize.Op.and] = [
+                     {
+                         '$mediaProgresses.currentTime$': {
+                             [Sequelize.Op.gt]: 0
+@@ -168,25 +172,25 @@
+             }
+         }
+         else if (group === 'series' && value === 'no-series') {
+-            mediaWhere['$series.id$'] = null;
++            mediaWhereHash['$series.id$'] = null;
+         }
+         else if (group === 'abridged') {
+-            mediaWhere['abridged'] = true;
++            mediaWhereHash['abridged'] = true;
+         }
+         else if (group === 'explicit') {
+-            mediaWhere['explicit'] = true;
++            mediaWhereHash['explicit'] = true;
+         }
+         else if (['genres', 'tags', 'narrators'].includes(group)) {
+-            mediaWhere[group] = Sequelize.where(Sequelize.literal(`(SELECT count(*) FROM json_each(${group}) WHERE json_valid(${group}) AND json_each.value = :filterValue)`), {
++            mediaWhereHash[group] = Sequelize.where(Sequelize.literal(`(SELECT count(*) FROM json_each(${group}) WHERE json_valid(${group}) AND json_each.value = :filterValue)`), {
+                 [Sequelize.Op.gte]: 1
+             });
+             replacements.filterValue = value;
+         }
+         else if (group === 'publishers') {
+-            mediaWhere['publisher'] = value;
++            mediaWhereHash['publisher'] = value;
+         }
+         else if (group === 'languages') {
+-            mediaWhere['language'] = value;
++            mediaWhereHash['language'] = value;
+         }
+         else if (group === 'tracks') {
+             if (value === 'none') {
+@@ -203,12 +207,12 @@
+         }
+         else if (group === 'ebooks') {
+             if (value === 'ebook') {
+-                mediaWhere['ebookFile'] = {
++                mediaWhereHash['ebookFile'] = {
+                     [Sequelize.Op.not]: null
+                 };
+             }
+             else if (value == 'no-ebook') {
+-                mediaWhere['ebookFile'] = {
++                mediaWhereHash['ebookFile'] = {
+                     [Sequelize.Op.eq]: null
+                 };
+             }
+@@ -218,20 +222,21 @@
+                 let key = value;
+                 if (value === 'cover')
+                     key = 'coverPath';
+-                mediaWhere[key] = {
++                mediaWhereHash[key] = {
+                     [Sequelize.Op.or]: [null, '']
+                 };
+             }
+             else if (['genres', 'tags', 'narrators', 'chapters'].includes(value)) {
+-                mediaWhere[value] = {
+-                    [Sequelize.Op.or]: [null, Sequelize.where(Sequelize.fn('json_array_length', Sequelize.col(value)), 0)]
++                const column = value;
++                mediaWhereHash[column] = {
++                    [Sequelize.Op.or]: [null, Sequelize.where(Sequelize.fn('json_array_length', Sequelize.col(column)), 0)]
+                 };
+             }
+             else if (value === 'authors') {
+-                mediaWhere['$authors.id$'] = null;
++                mediaWhereHash['$authors.id$'] = null;
+             }
+             else if (value === 'series') {
+-                mediaWhere['$series.id$'] = null;
++                mediaWhereHash['$series.id$'] = null;
+             }
+         }
+         else if (group === 'publishedDecades') {
+@@ -302,7 +307,7 @@
+         return [];
+     },
+     async getCollapseSeriesBooksToExclude(bookFindOptions, seriesWhere, replacements = {}) {
+-        const allSeries = await Database.seriesModel.findAll({
++        const allSeriesRows = await Database.seriesModel.findAll({
+             attributes: ['id', 'name', [Sequelize.literal('(SELECT count(*) FROM bookSeries bs WHERE bs.seriesId = series.id)'), 'numBooks']],
+             distinct: true,
+             subQuery: false,
+@@ -321,6 +326,7 @@
+             ],
+             order: [Sequelize.literal('CAST(`books.bookSeries.sequence` AS FLOAT) ASC NULLS LAST')]
+         });
++        const allSeries = allSeriesRows;
+         const bookSeriesToInclude = [];
+         const booksToInclude = [];
+         let booksToExclude = [];
+@@ -497,7 +503,7 @@
+         }
+         else if (filterGroup === 'recent') {
+             libraryItemWhere['createdAt'] = {
+-                [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
++                [Sequelize.Op.gte]: new Date(new Date().valueOf() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+             };
+         }
+         if (filterGroup !== 'progress' && ['progress.createdAt', 'progress.finishedAt', 'progress'].includes(sortBy)) {
+@@ -741,7 +747,7 @@
+             libraryItem.media = book;
+             return libraryItem;
+         })
+-            .filter((s) => s);
++            .filter((s) => !!s);
+         return {
+             libraryItems,
+             count
+@@ -1016,7 +1022,7 @@
+         }
+         const matchJsonValue = textSearchQuery.matchExpression('json_each.value');
+         const narratorMatches = [];
+-        const [narratorResults] = await Database.sequelize.query(`SELECT value, count(*) AS numBooks FROM books b, libraryItems li, json_each(b.narrators) WHERE json_valid(b.narrators) AND ${matchJsonValue} AND b.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value LIMIT :limit OFFSET :offset;`, {
++        const [narratorResultRows] = await Database.sequelize.query(`SELECT value, count(*) AS numBooks FROM books b, libraryItems li, json_each(b.narrators) WHERE json_valid(b.narrators) AND ${matchJsonValue} AND b.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value LIMIT :limit OFFSET :offset;`, {
+             replacements: {
+                 libraryId: library.id,
+                 limit,
+@@ -1024,14 +1030,14 @@
+             },
+             raw: true
+         });
+-        for (const row of narratorResults) {
++        for (const row of narratorResultRows) {
+             narratorMatches.push({
+                 name: row.value,
+                 numBooks: row.numBooks
+             });
+         }
+         const tagMatches = [];
+-        const [tagResults] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM books b, libraryItems li, json_each(b.tags) WHERE json_valid(b.tags) AND ${matchJsonValue} AND b.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
++        const [tagResultRows] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM books b, libraryItems li, json_each(b.tags) WHERE json_valid(b.tags) AND ${matchJsonValue} AND b.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
+             replacements: {
+                 libraryId: library.id,
+                 limit,
+@@ -1039,14 +1045,14 @@
+             },
+             raw: true
+         });
+-        for (const row of tagResults) {
++        for (const row of tagResultRows) {
+             tagMatches.push({
+                 name: row.value,
+                 numItems: row.numItems
+             });
+         }
+         const genreMatches = [];
+-        const [genreResults] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM books b, libraryItems li, json_each(b.genres) WHERE json_valid(b.genres) AND ${matchJsonValue} AND b.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
++        const [genreResultRows] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM books b, libraryItems li, json_each(b.genres) WHERE json_valid(b.genres) AND ${matchJsonValue} AND b.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
+             replacements: {
+                 libraryId: library.id,
+                 limit,
+@@ -1054,7 +1060,7 @@
+             },
+             raw: true
+         });
+-        for (const row of genreResults) {
++        for (const row of genreResultRows) {
+             genreMatches.push({
+                 name: row.value,
+                 numItems: row.numItems
+@@ -1115,13 +1121,13 @@
+     },
+     async getGenresWithCount(libraryId) {
+         const genres = [];
+-        const [genreResults] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM books b, libraryItems li, json_each(b.genres) WHERE json_valid(b.genres) AND b.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC;`, {
++        const [genreResultRows] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM books b, libraryItems li, json_each(b.genres) WHERE json_valid(b.genres) AND b.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC;`, {
+             replacements: {
+                 libraryId
+             },
+             raw: true
+         });
+-        for (const row of genreResults) {
++        for (const row of genreResultRows) {
+             genres.push({
+                 genre: row.value,
+                 count: row.numItems
+@@ -1130,11 +1136,12 @@
+         return genres;
+     },
+     async getBookLibraryStats(libraryId) {
+-        const [statResults] = await Database.sequelize.query(`SELECT SUM(li.size) AS totalSize, SUM(b.duration) AS totalDuration, SUM(json_array_length(b.audioFiles)) AS numAudioFiles, COUNT(*) AS totalItems FROM libraryItems li, books b WHERE b.id = li.mediaId AND li.libraryId = :libraryId;`, {
++        const [statResultRows] = await Database.sequelize.query(`SELECT SUM(li.size) AS totalSize, SUM(b.duration) AS totalDuration, SUM(json_array_length(b.audioFiles)) AS numAudioFiles, COUNT(*) AS totalItems FROM libraryItems li, books b WHERE b.id = li.mediaId AND li.libraryId = :libraryId;`, {
+             replacements: {
+                 libraryId
+             }
+         });
++        const statResults = statResultRows;
+         return {
+             totalSize: statResults?.[0]?.totalSize || 0,
+             totalDuration: statResults?.[0]?.totalDuration || 0,
+diff -ruw base/server/utils/queries/libraryItemsPodcastFilters.js new/server/utils/queries/libraryItemsPodcastFilters.js
+--- base/server/utils/queries/libraryItemsPodcastFilters.js	2026-10-10 17:00:49.957940028 +1300
++++ new/server/utils/queries/libraryItemsPodcastFilters.js	2026-10-10 17:00:49.896813291 +1300
+@@ -1,9 +1,11 @@
+ "use strict";
+-const Sequelize = require('sequelize');
+-const Database = require('../../Database');
+-const Logger = require('../../Logger');
+-const { profile } = require('../../utils/profiler');
+-const stringifySequelizeQuery = require('../stringifySequelizeQuery');
++const Sequelize = require("sequelize");
++const DatabaseModule = require("../../Database");
++const Logger = require("../../Logger");
++const profiler = require("../../utils/profiler");
++const stringifySequelizeQuery = require("../stringifySequelizeQuery");
++const { profile } = profiler;
++const Database = DatabaseModule;
+ const countCache = new Map();
+ module.exports = {
+     getUserPermissionPodcastWhereQuery(user) {
+@@ -14,9 +16,10 @@
+                 explicit: false
+             });
+         }
+-        if (!user.permissions?.accessAllTags && user.permissions?.itemTagsSelected?.length) {
+-            replacements['userTagsSelected'] = user.permissions.itemTagsSelected;
+-            if (user.permissions.selectedTagsNotAccessible) {
++        const permissions = user.permissions;
++        if (!permissions?.accessAllTags && permissions?.itemTagsSelected?.length) {
++            replacements['userTagsSelected'] = permissions.itemTagsSelected;
++            if (permissions.selectedTagsNotAccessible) {
+                 podcastWhere.push(Sequelize.where(Sequelize.literal(`(SELECT count(*) FROM json_each(tags) WHERE json_valid(tags) AND json_each.value IN (:userTagsSelected))`), 0));
+             }
+             else {
+@@ -134,7 +137,7 @@
+         }
+         else if (filterGroup === 'recent') {
+             libraryItemWhere['createdAt'] = {
+-                [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
++                [Sequelize.Op.gte]: new Date(new Date().valueOf() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+             };
+         }
+         const podcastIncludes = [];
+@@ -230,7 +233,7 @@
+         }
+         else if (filterGroup === 'recent') {
+             podcastEpisodeWhere['createdAt'] = {
+-                [Sequelize.Op.gte]: new Date(new Date() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
++                [Sequelize.Op.gte]: new Date(new Date().valueOf() - 60 * 24 * 60 * 60 * 1000) // 60 days ago
+             };
+         }
+         const podcastEpisodeOrder = [];
+@@ -363,7 +366,7 @@
+         }
+         const matchJsonValue = textSearchQuery.matchExpression('json_each.value');
+         const tagMatches = [];
+-        const [tagResults] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.tags) WHERE json_valid(p.tags) AND ${matchJsonValue} AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
++        const [tagResultRows] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.tags) WHERE json_valid(p.tags) AND ${matchJsonValue} AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
+             replacements: {
+                 libraryId: library.id,
+                 limit,
+@@ -371,14 +374,14 @@
+             },
+             raw: true
+         });
+-        for (const row of tagResults) {
++        for (const row of tagResultRows) {
+             tagMatches.push({
+                 name: row.value,
+                 numItems: row.numItems
+             });
+         }
+         const genreMatches = [];
+-        const [genreResults] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND ${matchJsonValue} AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
++        const [genreResultRows] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND ${matchJsonValue} AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC LIMIT :limit OFFSET :offset;`, {
+             replacements: {
+                 libraryId: library.id,
+                 limit,
+@@ -386,7 +389,7 @@
+             },
+             raw: true
+         });
+-        for (const row of genreResults) {
++        for (const row of genreResultRows) {
+             genreMatches.push({
+                 name: row.value,
+                 numItems: row.numItems
+@@ -446,16 +449,18 @@
+         return episodeResults;
+     },
+     async getPodcastLibraryStats(libraryId) {
+-        const [sizeResults] = await Database.sequelize.query(`SELECT SUM(li.size) AS totalSize FROM libraryItems li WHERE li.mediaType = "podcast" AND li.libraryId = :libraryId;`, {
++        const [sizeResultRows] = await Database.sequelize.query(`SELECT SUM(li.size) AS totalSize FROM libraryItems li WHERE li.mediaType = "podcast" AND li.libraryId = :libraryId;`, {
+             replacements: {
+                 libraryId
+             }
+         });
+-        const [statResults] = await Database.sequelize.query(`SELECT SUM(json_extract(pe.audioFile, '$.duration')) AS totalDuration, COUNT(DISTINCT(li.id)) AS totalItems, COUNT(pe.id) AS numAudioFiles FROM libraryItems li, podcasts p LEFT OUTER JOIN podcastEpisodes pe ON pe.podcastId = p.id WHERE p.id = li.mediaId AND li.libraryId = :libraryId;`, {
++        const [statResultRows] = await Database.sequelize.query(`SELECT SUM(json_extract(pe.audioFile, '$.duration')) AS totalDuration, COUNT(DISTINCT(li.id)) AS totalItems, COUNT(pe.id) AS numAudioFiles FROM libraryItems li, podcasts p LEFT OUTER JOIN podcastEpisodes pe ON pe.podcastId = p.id WHERE p.id = li.mediaId AND li.libraryId = :libraryId;`, {
+             replacements: {
+                 libraryId
+             }
+         });
++        const sizeResults = sizeResultRows;
++        const statResults = statResultRows;
+         return {
+             totalDuration: statResults?.[0]?.totalDuration || 0,
+             numAudioFiles: statResults?.[0]?.numAudioFiles || 0,
+@@ -465,13 +470,13 @@
+     },
+     async getGenresWithCount(libraryId) {
+         const genres = [];
+-        const [genreResults] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC;`, {
++        const [genreResultRows] = await Database.sequelize.query(`SELECT value, count(*) AS numItems FROM podcasts p, libraryItems li, json_each(p.genres) WHERE json_valid(p.genres) AND p.id = li.mediaId AND li.libraryId = :libraryId GROUP BY value ORDER BY numItems DESC;`, {
+             replacements: {
+                 libraryId
+             },
+             raw: true
+         });
+-        for (const row of genreResults) {
++        for (const row of genreResultRows) {
+             genres.push({
+                 genre: row.value,
+                 count: row.numItems
+diff -ruw base/server/utils/queries/seriesFilters.js new/server/utils/queries/seriesFilters.js
+--- base/server/utils/queries/seriesFilters.js	2026-10-10 17:00:49.959470986 +1300
++++ new/server/utils/queries/seriesFilters.js	2026-10-10 17:00:49.898581397 +1300
+@@ -1,8 +1,9 @@
+ "use strict";
+-const Sequelize = require('sequelize');
+-const Logger = require('../../Logger');
+-const Database = require('../../Database');
+-const libraryItemsBookFilters = require('./libraryItemsBookFilters');
++const Sequelize = require("sequelize");
++const Logger = require("../../Logger");
++const DatabaseModule = require("../../Database");
++const libraryItemsBookFilters = require("./libraryItemsBookFilters");
++const Database = DatabaseModule;
+ module.exports = {
+     decode(text) {
+         try {
+@@ -82,8 +83,9 @@
+             if (!user.canAccessExplicitContent) {
+                 attrQuery += ' AND b.explicit = 0';
+             }
+-            if (!user.permissions?.accessAllTags && user.permissions?.itemTagsSelected?.length) {
+-                if (user.permissions.selectedTagsNotAccessible) {
++            const permissions = user.permissions;
++            if (!permissions?.accessAllTags && permissions?.itemTagsSelected?.length) {
++                if (permissions.selectedTagsNotAccessible) {
+                     attrQuery += ' AND (SELECT count(*) FROM json_each(tags) WHERE json_valid(tags) AND json_each.value IN (:userTagsSelected)) = 0';
+                 }
+                 else {
+Only in new/server/utils/queries: types.js
+diff -ruw base/server/utils/queries/userStats.js new/server/utils/queries/userStats.js
+--- base/server/utils/queries/userStats.js	2026-10-10 17:00:49.958285432 +1300
++++ new/server/utils/queries/userStats.js	2026-10-10 17:00:49.897195721 +1300
+@@ -1,9 +1,9 @@
+ "use strict";
+-const Sequelize = require('sequelize');
+-const Database = require('../../Database');
+-const PlaybackSession = require('../../models/PlaybackSession');
+-const MediaProgress = require('../../models/MediaProgress');
+-const fsExtra = require('../../libs/fsExtra');
++const Sequelize = require("sequelize");
++const DatabaseModule = require("../../Database");
++const fsExtraModule = require("../../libs/fsExtra");
++const Database = DatabaseModule;
++const fsExtra = fsExtraModule;
+ module.exports = {
+     async getUserListeningSessionsForYear(userId, year) {
+         const sessions = await Database.playbackSessionModel.findAll({
+@@ -96,19 +96,20 @@
+                 else if (ls.displayTitle) {
+                     bookListeningMap[ls.displayTitle] += listeningSessionListeningTime;
+                 }
+-                const authors = ls.mediaMetadata?.authors || [];
++                const mediaMetadata = ls.mediaMetadata;
++                const authors = mediaMetadata?.authors || [];
+                 authors.forEach((au) => {
+                     if (!authorListeningMap[au.name])
+                         authorListeningMap[au.name] = 0;
+                     authorListeningMap[au.name] += listeningSessionListeningTime;
+                 });
+-                const narrators = ls.mediaMetadata?.narrators || [];
++                const narrators = mediaMetadata?.narrators || [];
+                 narrators.forEach((narrator) => {
+                     if (!narratorListeningMap[narrator])
+                         narratorListeningMap[narrator] = 0;
+                     narratorListeningMap[narrator] += listeningSessionListeningTime;
+                 });
+-                const genres = (ls.mediaMetadata?.genres || []).filter((g) => g && !g.toLowerCase().includes('audiobook') && !g.toLowerCase().includes('audio book'));
++                const genres = (mediaMetadata?.genres || []).filter((g) => g && !g.toLowerCase().includes('audiobook') && !g.toLowerCase().includes('audio book'));
+                 genres.forEach((genre) => {
+                     if (!genreListeningMap[genre])
+                         genreListeningMap[genre] = 0;
+diff -ruw base/server/utils/rateLimiterFactory.js new/server/utils/rateLimiterFactory.js
+--- base/server/utils/rateLimiterFactory.js	2026-10-10 17:00:49.957062360 +1300
++++ new/server/utils/rateLimiterFactory.js	2026-10-10 17:00:49.895904371 +1300
+@@ -1,7 +1,7 @@
+ "use strict";
+-const { rateLimit, RateLimitRequestHandler } = require('express-rate-limit');
+-const Logger = require('../Logger');
+-const requestIp = require('../libs/requestIp');
++const express_rate_limit_1 = require("express-rate-limit");
++const Logger = require("../Logger");
++const requestIp = require("../libs/requestIp");
+ class RateLimiterFactory {
+     static DEFAULT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+     static DEFAULT_MAX = 40; // 40 attempts
+@@ -35,13 +35,13 @@
+         if (process.env.RATE_LIMIT_AUTH_MESSAGE) {
+             message = process.env.RATE_LIMIT_AUTH_MESSAGE;
+         }
+-        this.authRateLimiter = rateLimit({
++        this.authRateLimiter = (0, express_rate_limit_1.rateLimit)({
+             windowMs,
+             max,
+             standardHeaders: true,
+             legacyHeaders: false,
+             keyGenerator: (req) => {
+-                return requestIp.getClientIp(req) || req.ip;
++                return (requestIp.getClientIp(req) || req.ip);
+             },
+             handler: (req, res) => {
+                 const userAgent = req.get('User-Agent') || 'Unknown';
+diff -ruw base/server/utils/scandir.js new/server/utils/scandir.js
+--- base/server/utils/scandir.js	2026-10-10 17:00:49.960859603 +1300
++++ new/server/utils/scandir.js	2026-10-10 17:00:49.900275068 +1300
+@@ -1,9 +1,10 @@
+ "use strict";
+-const Path = require('path');
+-const { filePathToPOSIX } = require('./fileUtils');
+-const globals = require('./globals');
+-const LibraryFile = require('../objects/files/LibraryFile');
+-const parseNameString = require('./parsers/parseNameString');
++const Path = require("path");
++const fileUtils = require("./fileUtils");
++const globals = require("./globals");
++const LibraryFile = require("../objects/files/LibraryFile");
++const parseNameString = require("./parsers/parseNameString");
++const { filePathToPOSIX } = fileUtils;
+ function isMediaFile(mediaType, ext, audiobooksOnly = false) {
+     if (!ext)
+         return false;
+@@ -27,7 +28,6 @@
+     const extclean = ext.slice(1).toLowerCase();
+     return globals.SupportedAudioTypes.includes(extclean);
+ }
+-module.exports.checkFilepathIsAudioFile = checkFilepathIsAudioFile;
+ function groupFileItemsIntoLibraryItemDirs(mediaType, fileItems, audiobooksOnly, includeNonMediaFiles = false) {
+     const itemsFiltered = fileItems.filter((i) => {
+         return i.deep > 0 || (mediaType === 'book' && isMediaFile(mediaType, i.extension, audiobooksOnly));
+@@ -86,7 +86,6 @@
+     });
+     return libraryItemGroup;
+ }
+-module.exports.groupFileItemsIntoLibraryItemDirs = groupFileItemsIntoLibraryItemDirs;
+ function buildLibraryFile(libraryItemPath, files) {
+     return Promise.all(files.map(async (file) => {
+         const filePath = Path.posix.join(libraryItemPath, file);
+@@ -95,7 +94,6 @@
+         return newLibraryFile;
+     }));
+ }
+-module.exports.buildLibraryFile = buildLibraryFile;
+ function getBookDataFromDir(relPath, parseSubtitle = false) {
+     const splitDir = relPath.split('/');
+     const titleFolder = splitDir.pop(); // Audio files will always be in the directory named for the title
+@@ -117,7 +115,6 @@
+         publishedYear
+     };
+ }
+-module.exports.getBookDataFromDir = getBookDataFromDir;
+ function getNarrator(folder) {
+     const pattern = /^(?<title>.*) \{(?<narrators>.*)\}$/;
+     const match = folder.match(pattern);
+@@ -129,9 +126,11 @@
+     const parts = folder.split(' - ');
+     for (let i = 0; i < parts.length; i++) {
+         const match = parts[i].match(pattern);
+-        if (match && !(match.groups.suffix && !(match.groups.volumeLabel || match.groups.trailingDot))) {
+-            volumeNumber = isNaN(match.groups.sequence) ? match.groups.sequence : Number(match.groups.sequence).toString();
+-            parts[i] = match.groups.suffix;
++        const groups = match?.groups;
++        if (match && groups && !(groups.suffix && !(groups.volumeLabel || groups.trailingDot))) {
++            const sequenceMatch = groups.sequence;
++            volumeNumber = isNaN(sequenceMatch) ? sequenceMatch : Number(sequenceMatch).toString();
++            parts[i] = groups.suffix;
+             if (!parts[i]) {
+                 parts.splice(i, 1);
+             }
+@@ -188,4 +187,10 @@
+         path: fullPath
+     };
+ }
+-module.exports.getDataFromMediaDir = getDataFromMediaDir;
++module.exports = {
++    checkFilepathIsAudioFile,
++    groupFileItemsIntoLibraryItemDirs,
++    buildLibraryFile,
++    getBookDataFromDir,
++    getDataFromMediaDir
++};
+Only in new/server/utils: types.js
+diff -ruw base/server/utils/zipHelpers.js new/server/utils/zipHelpers.js
+--- base/server/utils/zipHelpers.js	2026-10-10 17:00:49.960480104 +1300
++++ new/server/utils/zipHelpers.js	2026-10-10 17:00:49.899804104 +1300
+@@ -1,9 +1,9 @@
+ "use strict";
+-const Path = require('path');
+-const { Response } = require('express');
+-const Logger = require('../Logger');
+-const archiver = require('../libs/archiver');
+-module.exports.zipDirectoryPipe = (path, filename, res) => {
++const Path = require("path");
++const Logger = require("../Logger");
++const archiverLib = require("../libs/archiver");
++const archiver = archiverLib;
++const zipDirectoryPipe = (path, filename, res) => {
+     return new Promise((resolve, reject) => {
+         res.attachment(filename);
+         const archive = archiver('zip', {
+@@ -35,7 +35,7 @@
+         archive.finalize();
+     });
+ };
+-module.exports.zipDirectoriesPipe = (pathObjects, filename, res) => {
++const zipDirectoriesPipe = (pathObjects, filename, res) => {
+     return new Promise((resolve, reject) => {
+         res.attachment(filename);
+         const archive = archiver('zip', {
+@@ -74,7 +74,7 @@
+         archive.finalize();
+     });
+ };
+-module.exports.handleDownloadError = (error, res) => {
++const handleDownloadError = (error, res) => {
+     if (!res.headersSent) {
+         if (error.code === 'ENOENT') {
+             return res.status(404).send('File not found');
+@@ -84,3 +84,8 @@
+         }
+     }
+ };
++module.exports = {
++    zipDirectoryPipe,
++    zipDirectoriesPipe,
++    handleDownloadError
++};

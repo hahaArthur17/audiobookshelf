@@ -1,0 +1,199 @@
+2d1
+< const { Request, Response, NextFunction } = require("express");
+11,13c10,12
+< const { reqSupportsWebp, clampPositiveInt } = require("../utils/index");
+< const { ScanResult, AudioMimeType } = require("../utils/constants");
+< const { getAudioMimeTypeFromExtname, encodeUriPath } = require("../utils/fileUtils");
+---
+> const utils = require("../utils/index");
+> const constants = require("../utils/constants");
+> const fileUtils = require("../utils/fileUtils");
+20a20,24
+> const queryValue = require("../utils/queryValue");
+> const { reqSupportsWebp, clampPositiveInt } = utils;
+> const { ScanResult, AudioMimeType } = constants;
+> const { getAudioMimeTypeFromExtname, encodeUriPath } = fileUtils;
+> const { optionalString, requiredString } = queryValue;
+33c37
+<         const includeEntities = (req.query.include || "").split(",");
+---
+>         const includeEntities = (optionalString(req.query.include) || "").split(",");
+37c41
+<                 const episodeId = req.query.episode || null;
+---
+>                 const episodeId = optionalString(req.query.episode) || null;
+65c69,70
+<             mediaItemIds.push(...req.libraryItem.media.podcastEpisodes.map((ep) => ep.id));
+---
+>             const podcast = req.libraryItem.media;
+>             mediaItemIds.push(...podcast.podcastEpisodes.map((ep) => ep.id));
+67a73
+>             const book = req.libraryItem.media;
+69,70c75,76
+<             if (req.libraryItem.media.authors?.length) {
+<                 authorIds.push(...req.libraryItem.media.authors.map((au) => au.id));
+---
+>             if (book.authors?.length) {
+>                 authorIds.push(...book.authors.map((au) => au.id));
+72,73c78,79
+<             if (req.libraryItem.media.series?.length) {
+<                 seriesIds.push(...req.libraryItem.media.series.map((se) => se.id));
+---
+>             if (book.series?.length) {
+>                 seriesIds.push(...book.series.map((se) => se.id));
+138c144,145
+<             if (mediaPayload.autoDownloadEpisodes !== undefined && req.libraryItem.media.autoDownloadEpisodes !== mediaPayload.autoDownloadEpisodes) {
+---
+>             const podcast = req.libraryItem.media;
+>             if (mediaPayload.autoDownloadEpisodes !== undefined && podcast.autoDownloadEpisodes !== mediaPayload.autoDownloadEpisodes) {
+141c148
+<             else if (mediaPayload.autoDownloadSchedule !== undefined && req.libraryItem.media.autoDownloadSchedule !== mediaPayload.autoDownloadSchedule) {
+---
+>             else if (mediaPayload.autoDownloadSchedule !== undefined && podcast.autoDownloadSchedule !== mediaPayload.autoDownloadSchedule) {
+151c158,159
+<             const seriesUpdateData = await req.libraryItem.media.updateSeriesFromRequest(mediaPayload.metadata.series, req.libraryItem.libraryId);
+---
+>             const book = req.libraryItem.media;
+>             const seriesUpdateData = await book.updateSeriesFromRequest(mediaPayload.metadata.series, req.libraryItem.libraryId);
+165a174
+>             const book = req.libraryItem.media;
+167c176
+<             const authorUpdateData = await req.libraryItem.media.updateAuthorsFromRequest(authorNames, req.libraryItem.libraryId);
+---
+>             const authorUpdateData = await book.updateAuthorsFromRequest(authorNames, req.libraryItem.libraryId);
+239,240c248,250
+<         if (validationResult.updated) {
+<             req.libraryItem.media.coverPath = validationResult.cover;
+---
+>         const validCoverResult = validationResult;
+>         if (validCoverResult.updated) {
+>             req.libraryItem.media.coverPath = validCoverResult.cover;
+285,287c295,297
+<             format: format || (reqSupportsWebp(req) ? "webp" : "jpeg"),
+<             height: clampPositiveInt(height ? parseInt(height) : null, 4096),
+<             width: clampPositiveInt(width ? parseInt(width) : null, 4096)
+---
+>             format: optionalString(format) || (reqSupportsWebp(req) ? "webp" : "jpeg"),
+>             height: clampPositiveInt(height ? parseInt(requiredString(height)) : null, 4096),
+>             width: clampPositiveInt(width ? parseInt(requiredString(width)) : null, 4096)
+302a313
+>         const podcast = req.libraryItem.media;
+304c315
+<         if (!req.libraryItem.media.podcastEpisodes.some((ep) => ep.id === episodeId)) {
+---
+>         if (!podcast.podcastEpisodes.some((ep) => ep.id === episodeId)) {
+315a327
+>         const book = req.libraryItem.media;
+320c332
+<         if (orderedFileData.some((fileData) => !fileData?.ino || !req.libraryItem.media.audioFiles.some((af) => af.ino === fileData.ino))) {
+---
+>         if (orderedFileData.some((fileData) => !fileData?.ino || !book.audioFiles.some((af) => af.ino === fileData.ino))) {
+326c338
+<             const audioFile = req.libraryItem.media.audioFiles.find((af) => af.ino === fileData.ino);
+---
+>             const audioFile = book.audioFiles.find((af) => af.ino === fileData.ino);
+338,340c350,352
+<         req.libraryItem.media.audioFiles = updatedAudioFiles;
+<         req.libraryItem.media.changed("audioFiles", true);
+<         await req.libraryItem.media.save();
+---
+>         book.audioFiles = updatedAudioFiles;
+>         book.changed("audioFiles", true);
+>         await book.save();
+389c401,402
+<                 mediaItemIds.push(...libraryItem.media.podcastEpisodes.map((ep) => ep.id));
+---
+>                 const podcast = libraryItem.media;
+>                 mediaItemIds.push(...podcast.podcastEpisodes.map((ep) => ep.id));
+393,394c406,408
+<                 if (libraryItem.media.series?.length) {
+<                     seriesIds.push(...libraryItem.media.series.map((se) => se.id));
+---
+>                 const book = libraryItem.media;
+>                 if (book.series?.length) {
+>                     seriesIds.push(...book.series.map((se) => se.id));
+396,397c410,411
+<                 if (libraryItem.media.authors?.length) {
+<                     authorIds.push(...libraryItem.media.authors.map((au) => au.id));
+---
+>                 if (book.authors?.length) {
+>                     authorIds.push(...book.authors.map((au) => au.id));
+454c468,469
+<                 const seriesUpdateData = await libraryItem.media.updateSeriesFromRequest(mediaPayload.metadata.series, libraryItem.libraryId);
+---
+>                 const book = libraryItem.media;
+>                 const seriesUpdateData = await book.updateSeriesFromRequest(mediaPayload.metadata.series, libraryItem.libraryId);
+467a483
+>                 const book = libraryItem.media;
+469c485
+<                 const authorUpdateData = await libraryItem.media.updateAuthorsFromRequest(authorNames, libraryItem.libraryId);
+---
+>                 const authorUpdateData = await book.updateAuthorsFromRequest(authorNames, libraryItem.libraryId);
+599a616
+>         const scanResultValues = ScanResult;
+601c618
+<             result: Object.keys(ScanResult).find((key) => ScanResult[key] == result)
+---
+>             result: Object.keys(ScanResult).find((key) => scanResultValues[key] == result)
+623a641
+>         const book = req.libraryItem.media;
+630,631c648,649
+<         if (chapters.length !== req.libraryItem.media.chapters.length) {
+<             req.libraryItem.media.chapters = chapters.map((c, index) => {
+---
+>         if (chapters.length !== book.chapters.length) {
+>             book.chapters = chapters.map((c, index) => {
+643c661
+<                 const currentChapter = req.libraryItem.media.chapters[index];
+---
+>                 const currentChapter = book.chapters[index];
+653,654c671,672
+<             req.libraryItem.media.changed("chapters", true);
+<             await req.libraryItem.media.save();
+---
+>             book.changed("chapters", true);
+>             await book.save();
+698,704c716,723
+<             if (req.libraryItem.media.audioFiles.some((af) => af.ino === req.params.fileid)) {
+<                 req.libraryItem.media.audioFiles = req.libraryItem.media.audioFiles.filter((af) => af.ino !== req.params.fileid);
+<                 req.libraryItem.media.changed("audioFiles", true);
+<             }
+<             else if (req.libraryItem.media.ebookFile?.ino === req.params.fileid) {
+<                 req.libraryItem.media.ebookFile = null;
+<                 req.libraryItem.media.changed("ebookFile", true);
+---
+>             const book = req.libraryItem.media;
+>             if (book.audioFiles.some((af) => af.ino === req.params.fileid)) {
+>                 book.audioFiles = book.audioFiles.filter((af) => af.ino !== req.params.fileid);
+>                 book.changed("audioFiles", true);
+>             }
+>             else if (book.ebookFile?.ino === req.params.fileid) {
+>                 book.ebookFile = null;
+>                 book.changed("ebookFile", true);
+706c725
+<             if (!req.libraryItem.media.hasMediaFiles) {
+---
+>             if (!book.hasMediaFiles) {
+711c730,731
+<             const episodeToRemove = req.libraryItem.media.podcastEpisodes.find((ep) => ep.audioFile.ino === req.params.fileid);
+---
+>             const podcast = req.libraryItem.media;
+>             const episodeToRemove = podcast.podcastEpisodes.find((ep) => ep.audioFile.ino === req.params.fileid);
+722c742
+<             req.libraryItem.media.podcastEpisodes = req.libraryItem.media.podcastEpisodes.filter((ep) => ep.audioFile.ino !== req.params.fileid);
+---
+>             podcast.podcastEpisodes = podcast.podcastEpisodes.filter((ep) => ep.audioFile.ino !== req.params.fileid);
+797a818
+>         const book = req.libraryItem.media;
+818,820c839,841
+<         req.libraryItem.media.ebookFile = primaryEbookFile;
+<         req.libraryItem.media.changed("ebookFile", true);
+<         await req.libraryItem.media.save();
+---
+>         book.ebookFile = primaryEbookFile;
+>         book.changed("ebookFile", true);
+>         await book.save();
+828c849
+<         req.libraryItem.isMissing = !req.libraryItem.media.hasMediaFiles;
+---
+>         req.libraryItem.isMissing = !book.hasMediaFiles;

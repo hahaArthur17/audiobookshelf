@@ -1,0 +1,20 @@
+danny/phase3
+5b2067d0 phase3 batch 12: LibraryItemController to TypeScript
+ed0fece6 phase3 batch 11d-fix: correct deferred work notes
+9694c3c5 phase3 batch 11d: deferred work and Log
+commit 5b2067d0e2c4911e5a4aef91dae15f5d25b83d65
+Author: Danny Pham <305835648+dannyinit@users.noreply.github.com>
+Date:   Sat Oct 10 18:36:39 2026 +1300
+
+    phase3 batch 12: LibraryItemController to TypeScript
+    
+    Deferred work item 1, option (b), with exception 8 to rule 17.
+    35 as, 0 as unknown as, 10 non-null assertions, all tagged.
+    Compiled JS differs from the JavaScript only by module style, aliases
+    and the existing queryValue accessor calls (checked mechanically).
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+ MIGRATION.md                                       |  64 ++-
+ ...yItemController.js => LibraryItemController.ts} | 514 ++++++++++-----------
+ 2 files changed, 313 insertions(+), 265 deletions(-)

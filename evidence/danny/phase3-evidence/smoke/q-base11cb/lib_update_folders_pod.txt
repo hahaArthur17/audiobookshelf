@@ -1,0 +1,23 @@
+STATUS 200
+LOCATION 
+{
+ "createdAt": "MASK",
+ "displayOrder": 1,
+ "folders": [],
+ "icon": "database",
+ "id": "MASK",
+ "lastScan": "MASK",
+ "lastScanVersion": "MASK",
+ "lastUpdate": "MASK",
+ "mediaType": "podcast",
+ "name": "Pods",
+ "provider": "google",
+ "settings": {
+  "autoScanCronExpression": null,
+  "coverAspectRatio": 1,
+  "disableWatcher": false,
+  "markAsFinishedPercentComplete": null,
+  "markAsFinishedTimeRemaining": 10,
+  "podcastSearchRegion": "us"
+ }
+}

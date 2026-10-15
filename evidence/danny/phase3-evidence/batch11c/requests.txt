@@ -1,0 +1,199 @@
+# --- job 1: query value accessors ---
+au_find_none GET /api/authors/{AU}
+au_find_once GET /api/authors/{AU}?include=items,series
+au_find_twice GET /api/authors/{AU}?include=items&include=series
+au_img_none GET /api/authors/{AU}/image
+au_img_once GET /api/authors/{AU}/image?width=100&height=100&format=jpeg
+au_img_twice GET /api/authors/{AU}/image?width=1&width=2&height=3&height=4&format=a&format=b
+au_img_nan GET /api/authors/{AU}/image?width=abc&height=xyz
+au_img_raw GET /api/authors/{AU}/image?raw=1
+co_find_none GET /api/collections/{CO}
+co_find_once GET /api/collections/{CO}?include=rssfeed
+co_find_twice GET /api/collections/{CO}?include=rssfeed&include=x
+fs_none GET /api/filesystem
+fs_once GET /api/filesystem?path={WORK}/lib&level=1
+fs_twice GET /api/filesystem?path={WORK}/lib&path={WORK}/lib
+me_prog_none GET /api/me/items-in-progress
+me_prog_once GET /api/me/items-in-progress?limit=1
+me_prog_twice GET /api/me/items-in-progress?limit=1&limit=2
+me_prog_nan GET /api/me/items-in-progress?limit=abc
+tasks_none GET /api/tasks
+tasks_once GET /api/tasks?include=queue
+tasks_twice GET /api/tasks?include=queue&include=x
+pod_check_none GET /api/podcasts/{PI}/checknew
+pod_check_once GET /api/podcasts/{PI}/checknew?limit=2
+pod_check_twice GET /api/podcasts/{PI}/checknew?limit=1&limit=2
+pod_check_nan GET /api/podcasts/{PI}/checknew?limit=abc
+se_find_none GET /api/series/{SE}
+se_find_once GET /api/series/{SE}?include=progress,rssfeed
+se_find_twice GET /api/series/{SE}?include=progress&include=rssfeed
+sess_none GET /api/sessions
+sess_user GET /api/sessions?user={UID}
+sess_user_bad GET /api/sessions?user=notauuid
+sess_user_twice GET /api/sessions?user={UID}&user={UID}
+sess_sort GET /api/sessions?sort=duration
+sess_sort_bad GET /api/sessions?sort=bogus
+sess_sort_twice GET /api/sessions?sort=duration&sort=updatedAt
+share_none GET /public/share/slug1
+share_once GET /public/share/slug1?t=1
+share_twice GET /public/share/slug1?t=1&t=2
+share_nan GET /public/share/slug1?t=abc
+users_none GET /api/users
+users_once GET /api/users?include=latestSession
+users_twice GET /api/users?include=latestSession&include=x
+# Auth paramsToCookies (job 1) and OidcAuthStrategy (job 2)
+noauth_oidc_web_none GET /auth/openid
+noauth_oidc_web_cb GET /auth/openid?callback=http://localhost/login
+noauth_oidc_web_cb_bad GET /auth/openid?callback=http://evil.example/login
+noauth_oidc_web_cb_twice GET /auth/openid?callback=http://localhost/a&callback=http://localhost/b
+noauth_oidc_web_redirect_uri GET /auth/openid?redirect_uri=http://localhost/login
+noauth_oidc_web_state GET /auth/openid?state=abc
+noauth_oidc_resp_bad GET /auth/openid?response_type=token
+noauth_oidc_resp_twice GET /auth/openid?response_type=code&response_type=code&redirect_uri=audiobookshelf://oauth&code_challenge=c1
+noauth_oidc_mob_ok GET /auth/openid?response_type=code&redirect_uri=audiobookshelf://oauth&code_challenge=c1&state=st1
+noauth_oidc_mob_nochal GET /auth/openid?response_type=code&redirect_uri=audiobookshelf://oauth&state=st2
+noauth_oidc_mob_badmeth GET /auth/openid?response_type=code&redirect_uri=audiobookshelf://oauth&code_challenge=c1&code_challenge_method=plain&state=st3
+noauth_oidc_mob_s256 GET /auth/openid?response_type=code&redirect_uri=audiobookshelf://oauth&code_challenge=c1&code_challenge_method=S256&state=st4
+noauth_oidc_mob_baduri GET /auth/openid?response_type=code&redirect_uri=other://x&code_challenge=c1&state=st5
+noauth_oidc_mob_uri_twice GET /auth/openid?response_type=code&redirect_uri=audiobookshelf://oauth&redirect_uri=audiobookshelf://oauth&code_challenge=c1&state=st6
+noauth_oidc_mob_chal_twice GET /auth/openid?response_type=code&redirect_uri=audiobookshelf://oauth&code_challenge=c1&code_challenge=c2&state=st7
+noauth_oidc_mob_state_twice GET /auth/openid?response_type=code&redirect_uri=audiobookshelf://oauth&code_challenge=c1&state=st8&state=st9
+noauth_mr_none GET /auth/openid/mobile-redirect
+noauth_mr_badstate GET /auth/openid/mobile-redirect?state=nope&code=x
+noauth_mr_ok GET /auth/openid/mobile-redirect?state=st1&code=thecode
+noauth_mr_again GET /auth/openid/mobile-redirect?state=st1&code=thecode
+noauth_mr_nocode GET /auth/openid/mobile-redirect?state=st4
+noauth_mr_code_twice GET /auth/openid/mobile-redirect?state=st6&code=a&code=b
+noauth_mr_state_twice GET /auth/openid/mobile-redirect?state=st7&state=st7&code=a
+noauth_oidc_web_cb_ok GET /auth/openid?callback=http://localhost:{PORT}/audiobookshelf/login
+noauth_oidc_web_cb_rel GET /auth/openid?callback=/audiobookshelf/login
+noauth_oidc_web_cb_ok_twice GET /auth/openid?callback=/audiobookshelf/login&callback=/audiobookshelf/x
+noauth_oidc_web_redirect_ok GET /auth/openid?redirect_uri=http://localhost:{PORT}/login
+noauth_oidc_mob_st10 GET /auth/openid?response_type=code&redirect_uri=audiobookshelf://oauth&code_challenge=c1&state=st10
+noauth_mr_code_twice2 GET /auth/openid/mobile-redirect?state=st10&code=a&code=b
+noauth_oidc_mob_st11 GET /auth/openid?response_type=code&redirect_uri=audiobookshelf://oauth&code_challenge=c1&state=st11
+noauth_mr_code_obj GET /auth/openid/mobile-redirect?state=st11&code[x]=1
+# --- job 3: LibraryController ---
+lib_all_none GET /api/libraries
+lib_all_once GET /api/libraries?include=stats
+lib_all_twice GET /api/libraries?include=stats&include=x
+lib_one_none GET /api/libraries/{BL}
+lib_one_once GET /api/libraries/{BL}?include=filterdata
+lib_one_twice GET /api/libraries/{BL}?include=filterdata&include=x
+lib_items_none GET /api/libraries/{BL}/items
+lib_items_page GET /api/libraries/{BL}/items?limit=2&page=1
+lib_items_limit_twice GET /api/libraries/{BL}/items?limit=1&limit=2
+lib_items_page_twice GET /api/libraries/{BL}/items?limit=2&page=0&page=1
+lib_items_limit_nan GET /api/libraries/{BL}/items?limit=abc
+lib_items_page_nan GET /api/libraries/{BL}/items?limit=2&page=abc
+lib_items_limit_neg GET /api/libraries/{BL}/items?limit=-1
+lib_items_limit_float GET /api/libraries/{BL}/items?limit=1.5
+lib_items_limit_empty GET /api/libraries/{BL}/items?limit=
+lib_items_sort GET /api/libraries/{BL}/items?sort=media.metadata.title&desc=1
+lib_items_sort_twice GET /api/libraries/{BL}/items?sort=media.metadata.title&sort=addedAt&desc=1&desc=1
+lib_items_filter GET /api/libraries/{BL}/items?filter=genres.VGhyaWxsZXI%3D
+lib_items_filter_twice GET /api/libraries/{BL}/items?filter=genres.VGhyaWxsZXI%3D&filter=x
+lib_items_minified GET /api/libraries/{BL}/items?minified=1&limit=3
+lib_items_collapse GET /api/libraries/{BL}/items?collapseseries=1
+lib_items_include GET /api/libraries/{BL}/items?include=rssfeed,numEpisodesIncomplete,share
+lib_items_include_twice GET /api/libraries/{BL}/items?include=rssfeed&include=share
+lib_items_pod GET /api/libraries/{PL}/items?include=numEpisodesIncomplete&sort=media.metadata.title
+lib_series_none GET /api/libraries/{BL}/series
+lib_series_page GET /api/libraries/{BL}/series?limit=1&page=0&sort=name&desc=1&minified=1&include=rssfeed
+lib_series_filter GET /api/libraries/{BL}/series?filter=progress.bm90LXN0YXJ0ZWQ%3D
+lib_series_twice GET /api/libraries/{BL}/series?limit=1&limit=1&include=a&include=b
+lib_series_one GET /api/libraries/{BL}/series/{SE}
+lib_series_one_inc GET /api/libraries/{BL}/series/{SE}?include=progress,rssfeed
+lib_series_one_twice GET /api/libraries/{BL}/series/{SE}?include=progress&include=rssfeed
+lib_coll_none GET /api/libraries/{BL}/collections
+lib_coll_page GET /api/libraries/{BL}/collections?limit=1&page=0&sort=name&desc=1&minified=1&include=rssfeed
+lib_coll_twice GET /api/libraries/{BL}/collections?include=a&include=b&sort=a&sort=b
+lib_pl_none GET /api/libraries/{BL}/playlists
+lib_pl_page GET /api/libraries/{BL}/playlists?limit=1&page=0
+lib_pers_none GET /api/libraries/{BL}/personalized
+lib_pers_once GET /api/libraries/{BL}/personalized?limit=2&include=rssfeed
+lib_pers_twice GET /api/libraries/{BL}/personalized?limit=1&limit=2&include=a&include=b
+lib_pers_pod GET /api/libraries/{PL}/personalized?limit=2
+lib_search_none GET /api/libraries/{BL}/search
+lib_search_once GET /api/libraries/{BL}/search?q=book&limit=2
+lib_search_twice GET /api/libraries/{BL}/search?q=book&q=opf
+lib_search_limit_twice GET /api/libraries/{BL}/search?q=book&limit=1&limit=2
+lib_search_pod GET /api/libraries/{PL}/search?q=show
+lib_stats GET /api/libraries/{BL}/stats
+lib_filterdata GET /api/libraries/{BL}/filterdata
+lib_authors_none GET /api/libraries/{BL}/authors
+lib_authors_page GET /api/libraries/{BL}/authors?limit=2&page=0&sort=name&desc=1&minified=1&include=numBooks
+lib_authors_page1 GET /api/libraries/{BL}/authors?limit=2&page=1&sort=numBooks
+lib_authors_nan GET /api/libraries/{BL}/authors?limit=abc&page=1
+lib_authors_twice GET /api/libraries/{BL}/authors?limit=1&limit=2&page=0&sort=name&sort=x
+lib_authors_lastfirst GET /api/libraries/{BL}/authors?sort=lastFirst&limit=3
+lib_authors_addedat GET /api/libraries/{BL}/authors?sort=addedAt&desc=1&limit=3
+lib_narrators GET /api/libraries/{BL}/narrators
+lib_recent_none GET /api/libraries/{PL}/recent-episodes
+lib_recent_page GET /api/libraries/{PL}/recent-episodes?limit=1&page=1
+lib_recent_twice GET /api/libraries/{PL}/recent-episodes?limit=1&limit=2
+lib_recent_book GET /api/libraries/{BL}/recent-episodes
+lib_opml GET /api/libraries/{PL}/opml
+lib_podtitles GET /api/libraries/{PL}/podcast-titles
+lib_dlq GET /api/libraries/{PL}/episode-downloads
+lib_dl_none GET /api/libraries/{BL}/download
+lib_dl_twice GET /api/libraries/{BL}/download?ids={BI_OPF}&ids={BI_NFO}
+lib_dl_once GET /api/libraries/{BL}/download?ids={BI_OPF},{BI_NFO}
+lib_bad_id GET /api/libraries/nope/items
+lib_matchall_403 GET /api/libraries/{BL}/matchall?x=1
+# --- job 4: LibraryItemController ---
+li_find_none GET /api/items/{BI_AUDIO}
+li_find_exp GET /api/items/{BI_AUDIO}?expanded=1
+li_find_exp_inc GET /api/items/{BI_AUDIO}?expanded=1&include=progress,rssfeed,authors,share,downloads
+li_find_exp_twice GET /api/items/{BI_AUDIO}?expanded=1&expanded=1&include=progress&include=rssfeed
+li_find_exp_str GET /api/items/{BI_AUDIO}?expanded=01
+li_find_exp0 GET /api/items/{BI_AUDIO}?expanded=0&include=progress
+li_find_opf GET /api/items/{BI_OPF}?expanded=1&include=progress,authors
+li_find_pod GET /api/items/{PI}?expanded=1&include=progress,downloads
+li_find_pod_ep GET /api/items/{PI}?expanded=1&include=progress&episode={EP}
+li_find_pod_ep_twice GET /api/items/{PI}?expanded=1&include=progress&episode={EP}&episode={EP}
+li_cover_none GET /api/items/{BI_AUDIO}/cover
+li_cover_q GET /api/items/{BI_AUDIO}/cover?width=100&height=100&format=jpeg&ts=1
+li_cover_raw GET /api/items/{BI_AUDIO}/cover?raw=1
+li_cover_twice GET /api/items/{BI_AUDIO}/cover?width=1&width=2&ts=1&ts=2
+li_cover_nan GET /api/items/{BI_AUDIO}/cover?width=abc
+li_meta GET /api/items/{BI_JSON}/metadata-object
+li_batch_get POST /api/items/batch/get {"libraryItemIds":["{BI_OPF}","{BI_AUDIO}","{PI}"]}
+li_play_ep POST /api/items/{PI}/play/{EP} {"deviceInfo":{"clientName":"qrun","deviceId":"qrun-dev"},"mediaPlayer":"html5","forceDirectPlay":true}
+li_update_media PATCH /api/items/{BI_NFO}/media {"metadata":{"subtitle":"Sub"},"tags":["t1"]}
+li_update_media_pod PATCH /api/items/{PI2}/media {"metadata":{"author":"New Host"},"autoDownloadEpisodes":false}
+li_find_after_update GET /api/items/{BI_NFO}?expanded=1
+li_batch_update POST /api/items/batch/update [{"id":"{BI_JSON}","mediaPayload":{"metadata":{"publisher":"P2"}}}]
+li_find_after_batch GET /api/items/{BI_JSON}?expanded=1
+li_del_none DELETE /api/items/{BI_LOOSE}
+li_batch_del_twice POST /api/items/batch/delete?hard=1&hard=1 {"libraryItemIds":["{BI_WAV}"]}
+li_lib_items_after GET /api/libraries/{BL}/items
+lib_rmmeta_abs POST /api/libraries/{BL}/remove-metadata?ext=abs
+lib_rmmeta_twice POST /api/libraries/{BL}/remove-metadata?ext=abs&ext=abs
+lib_items_final GET /api/libraries/{BL}/items?include=rssfeed
+li_del_hard_once DELETE /api/items/{BI_NFO}?hard=1
+lib_items_after_hard GET /api/libraries/{BL}/items
+# --- job 3: LibraryController routes without query values (changed code: aliases, payload types) ---
+lib_create POST /api/libraries {"name":"Extra","mediaType":"book","folders":[{"fullPath":"{WORK}/lib/extra"}],"settings":{"coverAspectRatio":0,"markAsFinishedPercentComplete":"50","autoScanCronExpression":"0 0 * * *","metadataPrecedence":["folderStructure"],"bogus":1}}
+lib_create_bad_settings POST /api/libraries {"name":"Extra2","folders":[{"path":"{WORK}/lib/extra2"}],"settings":{"markAsFinishedPercentComplete":"abc"}}
+lib_create_bad_folders POST /api/libraries {"name":"Extra3","folders":[{}]}
+lib_reorder POST /api/libraries/order [{"id":"{BL}","newOrder":2},{"id":"{PL}","newOrder":1}]
+lib_reorder_bad POST /api/libraries/order [{"id":"nope","newOrder":1}]
+lib_update PATCH /api/libraries/{BL} {"name":"Books2","settings":{"hideSingleBookSeries":true,"markAsFinishedTimeRemaining":5,"onlyShowLaterBooksInContinueSeries":true},"displayOrder":"3"}
+lib_update_bad PATCH /api/libraries/{BL} {"settings":{"coverAspectRatio":"x"}}
+lib_narrators_before GET /api/libraries/{BL}/narrators
+lib_narr_update PATCH /api/libraries/{BL}/narrators/TkZPIE5hcnJhdG9y {"name":"Renamed Narrator"}
+lib_narr_update2 PATCH /api/libraries/{BL}/narrators/UmVhZGVyIE9uZQ%3D%3D {"name":"Renamed Reader"}
+lib_narr_update_noname PATCH /api/libraries/{BL}/narrators/TkZPIE5hcnJhdG9y {}
+lib_narrators_after GET /api/libraries/{BL}/narrators
+lib_narr_remove DELETE /api/libraries/{BL}/narrators/VGFnIE5hcnJhdG9y
+lib_narr_bad PATCH /api/libraries/{BL}/narrators/%25%25 {"name":"x"}
+lib_narr_remove_bad DELETE /api/libraries/{BL}/narrators/%25%25
+lib_narrators_after2 GET /api/libraries/{BL}/narrators
+lib_issues DELETE /api/libraries/{BL}/issues
+lib_update_folders_pod PATCH /api/libraries/{PL} {"folders":[]}
+lib_items_pod_after GET /api/libraries/{PL}/items
+lib_update_folders_book PATCH /api/libraries/{BL} {"folders":[{"fullPath":"{WORK}/lib/books2"}]}
+lib_items_book_after GET /api/libraries/{BL}/items
+lib_delete DELETE /api/libraries/{PL}
+lib_all_final GET /api/libraries

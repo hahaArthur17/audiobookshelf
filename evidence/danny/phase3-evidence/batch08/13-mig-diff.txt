@@ -1,0 +1,86 @@
+24c24
+<   durationSeconds: 0.015
+---
+>   durationSeconds: 0.011
+33c33
+<   durationSeconds: 0.011
+---
+>   durationSeconds: 0.008
+48c48
+<   durationSeconds: 0.009
+---
+>   durationSeconds: 0.005
+62c62
+<   durationSeconds: 0.145
+---
+>   durationSeconds: 0.107
+68,69c68,69
+<     at Database.<anonymous> (/home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+<     at /home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+---
+>     at Database.<anonymous> (REPO/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+>     at REPO/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+71,75c71,75
+<     at Query.run (/home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+<     at /home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/sequelize.js:315:28
+<     at async SQLiteQueryInterface.renameTable (/home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/abstract/query-interface.js:139:12)
+<     at async changeConstraints (REPO/dist-server/server/migrations/v2.17.3-fk-constraints.js:211:9)
+<     at async Object.up (REPO/dist-server/server/migrations/v2.17.3-fk-constraints.js:30:13)
+---
+>     at Query.run (REPO/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+>     at REPO/node_modules/sequelize/lib/sequelize.js:315:28
+>     at async SQLiteQueryInterface.renameTable (REPO/node_modules/sequelize/lib/dialects/abstract/query-interface.js:139:12)
+>     at async changeConstraints (REPO/dist-server/server/migrations/v2.17.3-fk-constraints.js:186:9)
+>     at async Object.up (REPO/dist-server/server/migrations/v2.17.3-fk-constraints.js:22:13)
+82c82
+<     sql: 'ALTER TABLE `libraryItems_13_backup` RENAME TO `libraryItems`;'
+---
+>     sql: 'ALTER TABLE `libraryItems_58_backup` RENAME TO `libraryItems`;'
+87c87
+<     sql: 'ALTER TABLE `libraryItems_13_backup` RENAME TO `libraryItems`;'
+---
+>     sql: 'ALTER TABLE `libraryItems_58_backup` RENAME TO `libraryItems`;'
+89c89
+<   sql: 'ALTER TABLE `libraryItems_13_backup` RENAME TO `libraryItems`;',
+---
+>   sql: 'ALTER TABLE `libraryItems_58_backup` RENAME TO `libraryItems`;',
+96c96
+<   durationSeconds: 0.01
+---
+>   durationSeconds: 0.007
+108c108
+<   durationSeconds: 0.005
+---
+>   durationSeconds: 0.01
+120c120
+<   durationSeconds: 0.005
+---
+>   durationSeconds: 0.004
+141c141
+<   durationSeconds: 0.011
+---
+>   durationSeconds: 0.01
+167c167
+<   durationSeconds: 0.044
+---
+>   durationSeconds: 0.034
+191c191
+<   durationSeconds: 0.029
+---
+>   durationSeconds: 0.024
+219c219
+<   durationSeconds: 0.052
+---
+>   durationSeconds: 0.048
+229c229
+<   durationSeconds: 0.008
+---
+>   durationSeconds: 0.007
+240c240
+<   durationSeconds: 0.012
+---
+>   durationSeconds: 0.013
+250c250
+<   durationSeconds: 0.004
+---
+>   durationSeconds: 0.006

@@ -1,0 +1,50 @@
+90330ca2 phase3 batch 7: server/controllers
+d9bb5d74 phase3: name exception 4 of rule 17
+bef5fe3d phase3 batch 3c: replace QueryFindOptions
+634aeaba phase3: fix batch 5 and 6 notes
+---status
+---smallfix
+phase3: name exception 4 of rule 17
+
+ MIGRATION.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+---stat
+ MIGRATION.md                                       |  50 ++++-
+ .../{ApiKeyController.js => ApiKeyController.ts}   |  87 +++++----
+ .../{AuthorController.js => AuthorController.ts}   | 165 ++++++++--------
+ .../{BackupController.js => BackupController.ts}   |  86 +++------
+ server/controllers/CacheController.js              |  42 -----
+ server/controllers/CacheController.ts              |  30 +++
+ ...ectionController.js => CollectionController.ts} | 147 +++++++--------
+ ...ller.js => CustomMetadataProviderController.ts} |  44 ++---
+ .../{EmailController.js => EmailController.ts}     |  59 ++----
+ ...SystemController.js => FileSystemController.ts} |  45 ++---
+ .../{MeController.js => MeController.ts}           | 175 ++++++-----------
+ .../{MiscController.js => MiscController.ts}       | 210 +++++++++------------
+ ...tionController.js => NotificationController.ts} |  81 +++-----
+ ...PlaylistController.js => PlaylistController.ts} | 183 +++++++++---------
+ .../{PodcastController.js => PodcastController.ts} | 203 +++++++++-----------
+ .../{RSSFeedController.js => RSSFeedController.ts} |  61 ++----
+ .../{SeriesController.js => SeriesController.ts}   |  71 +++----
+ .../{SessionController.js => SessionController.ts} | 176 ++++++++---------
+ .../{ShareController.js => ShareController.ts}     | 141 +++++++-------
+ .../{StatsController.js => StatsController.ts}     |  34 +---
+ .../{ToolsController.js => ToolsController.ts}     |  77 +++-----
+ .../{UserController.js => UserController.ts}       | 161 ++++++++--------
+ server/controllers/types.ts                        |  11 ++
+ server/routers/ApiRouter.ts                        |  17 +-
+ 24 files changed, 1000 insertions(+), 1356 deletions(-)
+---protected
+---remaining-js
+server/controllers/LibraryController.js
+server/controllers/LibraryItemController.js
+---ts-count
+22
+---build-tail
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+---error-count
+0
+---test
+  356 passing (2s)

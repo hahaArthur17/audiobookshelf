@@ -1,0 +1,12 @@
+Batch 3a independent verification (advisor review, 2026-10-09)
+Baseline: 1d3c512f (phase3: tighten type rules after audit). Commit checked: e31a29ec (batch 3a: models).
+
+Measured by Danny (outputs in this folder: 4-verification.txt, 4b-spot-checks.txt, 5-compiled-diff-files.txt, 6-compiled-diff.txt): clean build 0 error TS, 356 passing, ts=116 js=76; tsconfig, eslint config and test/ unchanged since 7d10b8fc; any 0; @ts directives 0; null as unknown as 0 in models; smoke tests identical to the original (RESPONSES-IDENTICAL, API-IDENTICAL, empty library only).
+Files against 1d3c512f: 15 renamed, 11 added, 10 deleted, 11 modified. Outside server/models: MIGRATION.md, package.json (adds @types/jsonwebtoken), package-lock.json and 8 source files (OidcAuthStrategy, AudioTrack, absMetadataMigration, dbMigration, authorFilters, libraryItemsBookFilters, libraryItemsPodcastFilters, seriesFilters). server/models: 26 files, 7016 non-blank lines.
+Compiled JS diff (4,110 lines, reviewed after removing comments, requires and constructor boilerplate): only same-object aliases, added parentheses, shorthand property expansion, and one removed extra argument (getMediaItemsInProgress took 4 parameters). AudioTrack, libraryItemsPodcastFilters and seriesFilters have no compiled change.
+Casts in server/models: 68 (88 "as X" matches minus 20 "as unknown as"), about 9.7 per 1,000 non-blank lines, against 21.3 for the whole converted set at the audit (same raw counting). Agent reported 85 for the whole batch; not measured separately for the 8 files outside models.
+NOTE lines added: 11, which map to the 9 reported bugs. Two bugs (Library getMaxDisplayOrder, Collection getOldCollectionsJsonExpanded) confirmed in the code; the others only from NOTE lines.
+Open points: about 8 casts narrowing media by mediaType remain because rule 5 forbids rewriting expressions; rule 17 was read narrowly (11 "as number" casts split by reason); tag d is 45 of 85; extra init overload per model is a type-level shortcut; AudioTrack.setFromStream title widened to string | null; devDependency @types/jsonwebtoken added, Log entry not yet checked.
+Casts are erased in the compiled JS, so identical JS does not prove the cast counts; the counts come from the source.
+
+Usage (Claude Code /usage): before: session 6%, week 8% (resets Oct 14); after: cost $19.51, API 44m 5s, wall 58m 37s (includes idle), session 55%, week 14%. The percentages include other use.

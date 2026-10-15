@@ -1,0 +1,77 @@
+== branch
+danny/phase3
+== log
+9694c3c5 phase3 batch 11d: deferred work and Log
+4ba708be phase3 batch 11d-4: tags for server top-level files, server/controllers, server/finders, server/providers, server/migrations
+093e7495 phase3 batch 11d-3: tags for server/scanner, server/managers, server/models
+a7414b61 phase3 batch 11d-2: tags for server/objects, server/auth, server/routers
+241b3f8d phase3 batch 11d-1: tags for server/utils
+78b3c0b1 phase3 batch 11c-3: LibraryController to TypeScript
+cf79d521 phase3 batch 11c-2: OidcQuery
+ca74c5a5 phase3 batch 11c-1: typed query values
+81ad6a7f phase3 batch 11b-3: scanner dynamic keys
+f5a43f82 phase3 batch 11b-2: lazy models in Database
+4fc58fd8 phase3 batch 11b-1: Sequelize class statics
+18b19b45 phase3 batch 11a: honest null types, FilteredLibraryItem, FsExtra casts
+== status
+== files changed since 78b3c0b1
+ server/objects/PodcastEpisodeDownload.ts           |  7 +-
+ server/objects/Stream.ts                           | 15 ++--
+ server/objects/files/AudioFile.ts                  |  9 +--
+ server/objects/files/LibraryFile.ts                |  5 +-
+ server/objects/metadata/AudioMetaTags.ts           |  7 +-
+ server/objects/metadata/FileMetadata.ts            | 10 +--
+ server/objects/settings/EmailSettings.ts           |  5 +-
+ server/objects/settings/ServerSettings.ts          | 12 ++--
+ server/providers/Audible.ts                        |  1 +
+ server/providers/Audnexus.ts                       |  2 +
+ server/providers/CustomProviderAdapter.ts          |  3 +
+ server/providers/FantLab.ts                        |  1 +
+ server/providers/GoogleBooks.ts                    |  1 +
+ server/providers/iTunes.ts                         |  2 +
+ server/routers/ApiRouter.ts                        | 18 ++---
+ server/scanner/AbsMetadataFileScanner.ts           |  4 +-
+ server/scanner/AudioFileScanner.ts                 | 12 ++--
+ server/scanner/BookScanner.ts                      | 44 +++++++-----
+ server/scanner/LibraryItemScanData.ts              |  6 +-
+ server/scanner/LibraryItemScanner.ts               |  2 +-
+ server/scanner/LibraryScan.ts                      | 11 ++-
+ server/scanner/LibraryScanner.ts                   | 20 +++---
+ server/scanner/MediaProbeData.ts                   |  2 +-
+ server/scanner/NfoFileScanner.ts                   |  8 ++-
+ server/scanner/OpfFileScanner.ts                   |  2 +-
+ server/scanner/PodcastScanner.ts                   |  9 +--
+ server/scanner/ScanLogger.ts                       |  2 +-
+ server/scanner/Scanner.ts                          | 14 ++--
+ server/utils/areEquivalent.ts                      | 14 ++--
+ server/utils/comicBookExtractors.ts                |  6 +-
+ server/utils/ffmpegHelpers.ts                      |  8 +--
+ server/utils/fileUtils.ts                          | 14 ++--
+ server/utils/generators/abmetadataGenerator.ts     |  2 +-
+ server/utils/generators/opmlGenerator.ts           |  2 +-
+ server/utils/index.ts                              |  8 +--
+ server/utils/libraryHelpers.ts                     | 24 +++----
+ server/utils/migrations/dbMigration.ts             | 50 +++++++-------
+ server/utils/migrations/oldDbFiles.ts              |  2 +-
+ server/utils/parsers/parseComicMetadata.ts         |  2 +-
+ server/utils/parsers/parseEpubMetadata.ts          |  2 +-
+ server/utils/parsers/parseFullName.ts              | 18 ++---
+ server/utils/parsers/parseOpfMetadata.ts           | 24 +++----
+ server/utils/parsers/parseOverdriveMediaMarkers.ts | 10 +--
+ server/utils/parsers/parseUserAgent.ts             |  2 +-
+ server/utils/podcastUtils.ts                       | 36 +++++-----
+ server/utils/prober.ts                             | 10 +--
+ server/utils/profiler.ts                           |  6 +-
+ server/utils/queries/adminStats.ts                 | 10 +--
+ server/utils/queries/authorFilters.ts              |  2 +-
+ server/utils/queries/libraryFilters.ts             | 28 ++++----
+ server/utils/queries/libraryItemFilters.ts         | 10 +--
+ server/utils/queries/libraryItemsBookFilters.ts    | 80 +++++++++++-----------
+ server/utils/queries/libraryItemsPodcastFilters.ts | 38 +++++-----
+ server/utils/queries/seriesFilters.ts              | 12 ++--
+ server/utils/queries/userStats.ts                  | 10 +--
+ server/utils/rateLimiterFactory.ts                 | 10 +--
+ server/utils/scandir.ts                            | 20 +++---
+ server/utils/stringifySequelizeQuery.ts            |  2 +-
+ server/utils/zipHelpers.ts                         |  2 +-
+ 102 files changed, 608 insertions(+), 460 deletions(-)

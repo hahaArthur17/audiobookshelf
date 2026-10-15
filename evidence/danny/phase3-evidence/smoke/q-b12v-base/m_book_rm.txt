@@ -1,0 +1,132 @@
+STATUS 200
+LOCATION 
+{
+ "libraryItem": {
+  "addedAt": "MASK",
+  "birthtimeMs": "MASK",
+  "ctimeMs": "MASK",
+  "folderId": "MASK",
+  "id": "MASK",
+  "ino": "MASK",
+  "isFile": false,
+  "isInvalid": false,
+  "isMissing": false,
+  "lastScan": "MASK",
+  "libraryFiles": [
+   {
+    "addedAt": "MASK",
+    "fileType": "ebook",
+    "ino": "MASK",
+    "isSupplementary": false,
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".pdf",
+     "filename": "Book Three.pdf",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Author One/Book Three/Book Three.pdf",
+     "relPath": "Book Three.pdf",
+     "size": 10
+    },
+    "updatedAt": "MASK"
+   },
+   {
+    "addedAt": "MASK",
+    "fileType": "image",
+    "ino": "MASK",
+    "isSupplementary": null,
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".jpg",
+     "filename": "cover.jpg",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Author One/Book Three/cover.jpg",
+     "relPath": "cover.jpg",
+     "size": 248
+    },
+    "updatedAt": "MASK"
+   },
+   {
+    "addedAt": "MASK",
+    "fileType": "metadata",
+    "ino": "MASK",
+    "isSupplementary": null,
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".json",
+     "filename": "metadata.json",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Author One/Book Three/metadata.json",
+     "relPath": "metadata.json",
+     "size": 278
+    },
+    "updatedAt": "MASK"
+   }
+  ],
+  "libraryId": "MASK",
+  "media": {
+   "audioFiles": [],
+   "chapters": [],
+   "coverPath": "ROOT/metadata/items/UUID/cover.jpg",
+   "ebookFile": {
+    "addedAt": "MASK",
+    "ebookFormat": "pdf",
+    "fileType": "ebook",
+    "ino": "MASK",
+    "isSupplementary": null,
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".pdf",
+     "filename": "Book Three.pdf",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Author One/Book Three/Book Three.pdf",
+     "relPath": "Book Three.pdf",
+     "size": 10
+    },
+    "updatedAt": "MASK"
+   },
+   "id": "MASK",
+   "libraryItemId": "MASK",
+   "metadata": {
+    "abridged": false,
+    "asin": null,
+    "authors": [
+     {
+      "id": "MASK",
+      "name": "Other Author"
+     }
+    ],
+    "description": "JSON description",
+    "explicit": false,
+    "genres": [
+     "Science Fiction"
+    ],
+    "isbn": null,
+    "language": "English",
+    "narrators": [
+     "JSON Narrator"
+    ],
+    "publishedDate": null,
+    "publishedYear": "1998",
+    "publisher": "JSON Publisher",
+    "series": [],
+    "subtitle": null,
+    "title": "New Title"
+   },
+   "tags": [
+    "tag one"
+   ]
+  },
+  "mediaType": "book",
+  "mtimeMs": "MASK",
+  "oldLibraryItemId": null,
+  "path": "ROOT/lib/books/Author One/Book Three",
+  "relPath": "Author One/Book Three",
+  "scanVersion": "2.37.0",
+  "updatedAt": "MASK"
+ },
+ "updated": true
+}

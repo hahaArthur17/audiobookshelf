@@ -1,0 +1,687 @@
+diff -ruw /tmp/flt-base-b7/server/controllers/ApiKeyController.js /tmp/flt-new-b7/server/controllers/ApiKeyController.js
+--- /tmp/flt-base-b7/server/controllers/ApiKeyController.js	2026-10-10 00:10:03.807820214 +1300
++++ /tmp/flt-new-b7/server/controllers/ApiKeyController.js	2026-10-10 00:10:03.890485914 +1300
+@@ -1,8 +1,8 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const uuidv4 = require('uuid').v4;
+-const Logger = require('../Logger');
+-const Database = require('../Database');
++const uuid = require("uuid");
++const Logger = require("../Logger");
++const Database = require("../Database");
++const uuidv4 = uuid.v4;
+ class ApiKeyController {
+     constructor() { }
+     async getAll(req, res) {
+@@ -52,14 +52,15 @@
+             return res.sendStatus(500);
+         }
+         const expiresAt = req.body.expiresIn ? new Date(Date.now() + req.body.expiresIn * 1000) : null;
+-        const apiKeyInstance = await Database.apiKeyModel.create({
++        const apiKeyInstance = (await Database.apiKeyModel.create(
++        {
+             id: keyId,
+             name: req.body.name,
+             expiresAt,
+             userId: req.body.userId,
+             isActive: !!req.body.isActive,
+             createdByUserId: req.user.id
+-        });
++        }));
+         apiKeyInstance.dataValues.user = await apiKeyInstance.getUser({
+             attributes: ['id', 'username', 'type']
+         });
+@@ -72,11 +73,11 @@
+         });
+     }
+     async update(req, res) {
+-        const apiKey = await Database.apiKeyModel.findByPk(req.params.id, {
++        const apiKey = (await Database.apiKeyModel.findByPk(req.params.id, {
+             include: {
+                 model: Database.userModel
+             }
+-        });
++        }));
+         if (!apiKey) {
+             return res.sendStatus(404);
+         }
+diff -ruw /tmp/flt-base-b7/server/controllers/AuthorController.js /tmp/flt-new-b7/server/controllers/AuthorController.js
+--- /tmp/flt-base-b7/server/controllers/AuthorController.js	2026-10-10 00:10:03.812809843 +1300
++++ /tmp/flt-new-b7/server/controllers/AuthorController.js	2026-10-10 00:10:03.894639095 +1300
+@@ -1,15 +1,16 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const sequelize = require('sequelize');
+-const fs = require('../libs/fsExtra');
+-const { createNewSortInstance } = require('../libs/fastSort');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
+-const CacheManager = require('../managers/CacheManager');
+-const CoverManager = require('../managers/CoverManager');
+-const AuthorFinder = require('../finders/AuthorFinder');
+-const { reqSupportsWebp, isValidASIN, clampPositiveInt } = require('../utils/index');
++const sequelize = require("sequelize");
++const fs = require("../libs/fsExtra");
++const fastSort = require("../libs/fastSort");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
++const CacheManager = require("../managers/CacheManager");
++const CoverManager = require("../managers/CoverManager");
++const AuthorFinder = require("../finders/AuthorFinder");
++const utils = require("../utils/index");
++const { createNewSortInstance } = fastSort;
++const { reqSupportsWebp, isValidASIN, clampPositiveInt } = utils;
+ const naturalSort = createNewSortInstance({
+     comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+ });
+@@ -19,7 +20,7 @@
+         const include = (req.query.include || '').split(',');
+         const authorJson = req.author.toOldJSON();
+         if (include.includes('items')) {
+-            const libraryItems = await Database.libraryItemModel.getForAuthor(req.author, req.user);
++            const libraryItems = (await Database.libraryItemModel.getForAuthor(req.author, req.user));
+             if (include.includes('series')) {
+                 const seriesMap = {};
+                 libraryItems.forEach((li) => {
+@@ -86,7 +87,7 @@
+         if (existingAuthor) {
+             Logger.info(`[AuthorController] Merging author "${req.author.name}" with "${existingAuthor.name}"`);
+             const bookAuthorsToCreate = [];
+-            const allItemsWithAuthor = await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id);
++            const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id));
+             const libraryItems = [];
+             allItemsWithAuthor.forEach((libraryItem) => {
+                 libraryItem.media.authors = libraryItem.media.authors.filter((au) => au.id !== req.author.id);
+@@ -131,7 +132,7 @@
+         if (hasUpdated) {
+             let numBooksForAuthor = 0;
+             if (authorNameUpdate) {
+-                const allItemsWithAuthor = await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id);
++                const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id));
+                 numBooksForAuthor = allItemsWithAuthor.length;
+                 const libraryItems = [];
+                 for (const libraryItem of allItemsWithAuthor) {
+@@ -163,7 +164,7 @@
+         if (req.author.imagePath) {
+             await CacheManager.purgeImageCache(req.author.id); // Purge cache
+         }
+-        const allItemsWithAuthor = await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id);
++        const allItemsWithAuthor = (await Database.authorModel.getAllLibraryItemsForAuthor(req.author.id));
+         allItemsWithAuthor.forEach((libraryItem) => {
+             libraryItem.media.authors = libraryItem.media.authors.filter((au) => au.id !== req.author.id);
+         });
+diff -ruw /tmp/flt-base-b7/server/controllers/BackupController.js /tmp/flt-new-b7/server/controllers/BackupController.js
+--- /tmp/flt-base-b7/server/controllers/BackupController.js	2026-10-10 00:10:03.810182351 +1300
++++ /tmp/flt-new-b7/server/controllers/BackupController.js	2026-10-10 00:10:03.892380481 +1300
+@@ -1,10 +1,9 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Path = require('path');
+-const fs = require('../libs/fsExtra');
+-const Logger = require('../Logger');
+-const Database = require('../Database');
+-const fileUtils = require('../utils/fileUtils');
++const Path = require("path");
++const fs = require("../libs/fsExtra");
++const Logger = require("../Logger");
++const Database = require("../Database");
++const fileUtils = require("../utils/fileUtils");
+ class BackupController {
+     constructor() { }
+     getAll(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/CacheController.js /tmp/flt-new-b7/server/controllers/CacheController.js
+--- /tmp/flt-base-b7/server/controllers/CacheController.js	2026-10-10 00:10:03.810701891 +1300
++++ /tmp/flt-new-b7/server/controllers/CacheController.js	2026-10-10 00:10:03.892735283 +1300
+@@ -1,6 +1,5 @@
+ "use strict";
+-const { Request, Response } = require('express');
+-const CacheManager = require('../managers/CacheManager');
++const CacheManager = require("../managers/CacheManager");
+ class CacheController {
+     constructor() { }
+     async purgeCache(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/CollectionController.js /tmp/flt-new-b7/server/controllers/CollectionController.js
+--- /tmp/flt-base-b7/server/controllers/CollectionController.js	2026-10-10 00:10:03.810435003 +1300
++++ /tmp/flt-new-b7/server/controllers/CollectionController.js	2026-10-10 00:10:03.892541544 +1300
+@@ -1,11 +1,10 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Sequelize = require('sequelize');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
+-const htmlSanitizer = require('../utils/htmlSanitizer');
+-const RssFeedManager = require('../managers/RssFeedManager');
++require("sequelize");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
++const htmlSanitizer = require("../utils/htmlSanitizer");
++const RssFeedManager = require("../managers/RssFeedManager");
+ class CollectionController {
+     constructor() { }
+     async create(req, res) {
+@@ -99,13 +98,13 @@
+         }
+         let collectionBooksUpdated = false;
+         if (req.body.books?.length) {
+-            const collectionBooks = await req.collection.getCollectionBooks({
++            const collectionBooks = (await req.collection.getCollectionBooks({
+                 include: {
+                     model: Database.bookModel,
+                     include: Database.libraryItemModel
+                 },
+                 order: [['order', 'ASC']]
+-            });
++            }));
+             collectionBooks.sort((a, b) => {
+                 const aIndex = req.body.books.findIndex((lid) => lid === a.book.libraryItem.id);
+                 const bIndex = req.body.books.findIndex((lid) => lid === b.book.libraryItem.id);
+diff -ruw /tmp/flt-base-b7/server/controllers/CustomMetadataProviderController.js /tmp/flt-new-b7/server/controllers/CustomMetadataProviderController.js
+--- /tmp/flt-base-b7/server/controllers/CustomMetadataProviderController.js	2026-10-10 00:10:03.807035873 +1300
++++ /tmp/flt-new-b7/server/controllers/CustomMetadataProviderController.js	2026-10-10 00:10:03.889873703 +1300
+@@ -1,9 +1,9 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
+-const { validateUrl } = require('../utils/index');
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
++const utils = require("../utils/index");
++const { validateUrl } = utils;
+ class CustomMetadataProviderController {
+     constructor() { }
+     async getAll(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/EmailController.js /tmp/flt-new-b7/server/controllers/EmailController.js
+--- /tmp/flt-base-b7/server/controllers/EmailController.js	2026-10-10 00:10:03.810300231 +1300
++++ /tmp/flt-new-b7/server/controllers/EmailController.js	2026-10-10 00:10:03.892451552 +1300
+@@ -1,8 +1,7 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
+ class EmailController {
+     constructor() { }
+     getSettings(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/FileSystemController.js /tmp/flt-new-b7/server/controllers/FileSystemController.js
+--- /tmp/flt-base-b7/server/controllers/FileSystemController.js	2026-10-10 00:10:03.812309337 +1300
++++ /tmp/flt-new-b7/server/controllers/FileSystemController.js	2026-10-10 00:10:03.894084919 +1300
+@@ -1,11 +1,11 @@
+ "use strict";
+-const { Request, Response } = require('express');
+-const Path = require('path');
+-const Logger = require('../Logger');
+-const fs = require('../libs/fsExtra');
+-const { toNumber } = require('../utils/index');
+-const fileUtils = require('../utils/fileUtils');
+-const Database = require('../Database');
++const Path = require("path");
++const Logger = require("../Logger");
++const fs = require("../libs/fsExtra");
++const utils = require("../utils/index");
++const fileUtils = require("../utils/fileUtils");
++const Database = require("../Database");
++const { toNumber } = utils;
+ class FileSystemController {
+     constructor() { }
+     async getPaths(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/MeController.js /tmp/flt-new-b7/server/controllers/MeController.js
+--- /tmp/flt-base-b7/server/controllers/MeController.js	2026-10-10 00:10:03.809759652 +1300
++++ /tmp/flt-new-b7/server/controllers/MeController.js	2026-10-10 00:10:03.892069823 +1300
+@@ -1,13 +1,15 @@
+ "use strict";
+-const { Request, Response } = require('express');
+-const { Op } = require('sequelize');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
+-const { sort } = require('../libs/fastSort');
+-const { toNumber, isNullOrNaN, isUUID } = require('../utils/index');
+-const userStats = require('../utils/queries/userStats');
+-const parseUserAgent = require('../utils/parsers/parseUserAgent');
++const sequelize = require("sequelize");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
++const fastSort = require("../libs/fastSort");
++const utils = require("../utils/index");
++const userStats = require("../utils/queries/userStats");
++const parseUserAgent = require("../utils/parsers/parseUserAgent");
++const { Op } = sequelize;
++const { sort } = fastSort;
++const { toNumber, isNullOrNaN, isUUID } = utils;
+ class MeController {
+     constructor() { }
+     getCurrentUser(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/MiscController.js /tmp/flt-new-b7/server/controllers/MiscController.js
+--- /tmp/flt-base-b7/server/controllers/MiscController.js	2026-10-10 00:10:03.807142450 +1300
++++ /tmp/flt-new-b7/server/controllers/MiscController.js	2026-10-10 00:10:03.889954651 +1300
+@@ -1,20 +1,22 @@
+ "use strict";
+-const Sequelize = require('sequelize');
+-const Path = require('path');
+-const { Request, Response } = require('express');
+-const fs = require('../libs/fsExtra');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
+-const Watcher = require('../Watcher');
+-const libraryItemFilters = require('../utils/queries/libraryItemFilters');
+-const cron = require('../libs/nodeCron');
+-const { isObject, getTitleIgnorePrefix } = require('../utils/index');
+-const ServerSettings = require('../objects/settings/ServerSettings');
+-const { sanitizeFilename } = require('../utils/fileUtils');
+-const { sanitize } = require('../utils/htmlSanitizer');
+-const TaskManager = require('../managers/TaskManager');
+-const adminStats = require('../utils/queries/adminStats');
++const Sequelize = require("sequelize");
++const Path = require("path");
++const fs = require("../libs/fsExtra");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
++const Watcher = require("../Watcher");
++const libraryItemFilters = require("../utils/queries/libraryItemFilters");
++const cron = require("../libs/nodeCron");
++const utils = require("../utils/index");
++const ServerSettings = require("../objects/settings/ServerSettings");
++const fileUtils = require("../utils/fileUtils");
++const htmlSanitizer = require("../utils/htmlSanitizer");
++const TaskManager = require("../managers/TaskManager");
++const adminStats = require("../utils/queries/adminStats");
++const { isObject, getTitleIgnorePrefix } = utils;
++const { sanitizeFilename } = fileUtils;
++const { sanitize } = htmlSanitizer;
+ class MiscController {
+     constructor() { }
+     async handleUpload(req, res) {
+@@ -460,6 +462,7 @@
+         let hasUpdates = false;
+         const currentAuthenticationSettings = Database.serverSettings.authenticationSettings;
+         const originalAuthMethods = [...currentAuthenticationSettings.authActiveAuthMethods];
++        const currentAuthenticationValues = currentAuthenticationSettings;
+         for (const key in currentAuthenticationSettings) {
+             if (settingsUpdate[key] === undefined)
+                 continue;
+@@ -513,7 +516,7 @@
+                     updatedValue = null;
+                 if (key === 'authLoginCustomMessage' && updatedValue)
+                     updatedValue = sanitize(updatedValue) || null;
+-                let currentValue = currentAuthenticationSettings[key];
++                let currentValue = currentAuthenticationValues[key];
+                 if (currentValue === '' && key != 'authOpenIDSubfolderForRedirectURLs')
+                     currentValue = null;
+                 if (updatedValue !== currentValue) {
+diff -ruw /tmp/flt-base-b7/server/controllers/NotificationController.js /tmp/flt-new-b7/server/controllers/NotificationController.js
+--- /tmp/flt-base-b7/server/controllers/NotificationController.js	2026-10-10 00:10:03.808408365 +1300
++++ /tmp/flt-new-b7/server/controllers/NotificationController.js	2026-10-10 00:10:03.890943428 +1300
+@@ -1,8 +1,8 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Database = require('../Database');
+-const { version } = require('../../package.json');
+-const NotificationManager = require('../managers/NotificationManager');
++const Database = require("../Database");
++const packageJson = require("../../package.json");
++const NotificationManager = require("../managers/NotificationManager");
++const { version } = packageJson;
+ class NotificationController {
+     constructor() { }
+     get(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/PlaylistController.js /tmp/flt-new-b7/server/controllers/PlaylistController.js
+--- /tmp/flt-base-b7/server/controllers/PlaylistController.js	2026-10-10 00:10:03.807970565 +1300
++++ /tmp/flt-new-b7/server/controllers/PlaylistController.js	2026-10-10 00:10:03.890602096 +1300
+@@ -1,9 +1,8 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
+-const htmlSanitizer = require('../utils/htmlSanitizer');
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
++const htmlSanitizer = require("../utils/htmlSanitizer");
+ class PlaylistController {
+     constructor() { }
+     async create(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/PodcastController.js /tmp/flt-new-b7/server/controllers/PodcastController.js
+--- /tmp/flt-base-b7/server/controllers/PodcastController.js	2026-10-10 00:10:03.811978765 +1300
++++ /tmp/flt-new-b7/server/controllers/PodcastController.js	2026-10-10 00:10:03.893760006 +1300
+@@ -1,17 +1,19 @@
+ "use strict";
+-const Path = require('path');
+-const { Request, Response, NextFunction } = require('express');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
+-const fs = require('../libs/fsExtra');
+-const cron = require('../libs/nodeCron');
+-const { getPodcastFeed, findMatchingEpisodes } = require('../utils/podcastUtils');
+-const { getFileTimestampsWithIno, filePathToPOSIX, isSameOrSubPath } = require('../utils/fileUtils');
+-const { validateUrl } = require('../utils/index');
+-const htmlSanitizer = require('../utils/htmlSanitizer');
+-const Scanner = require('../scanner/Scanner');
+-const CoverManager = require('../managers/CoverManager');
++const Path = require("path");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
++const fs = require("../libs/fsExtra");
++const cron = require("../libs/nodeCron");
++const podcastUtils = require("../utils/podcastUtils");
++const fileUtils = require("../utils/fileUtils");
++const utils = require("../utils/index");
++const htmlSanitizer = require("../utils/htmlSanitizer");
++const Scanner = require("../scanner/Scanner");
++const CoverManager = require("../managers/CoverManager");
++const { getPodcastFeed, findMatchingEpisodes } = podcastUtils;
++const { getFileTimestampsWithIno, filePathToPOSIX, isSameOrSubPath } = fileUtils;
++const { validateUrl } = utils;
+ class PodcastController {
+     async create(req, res) {
+         if (!req.user.isAdminOrUp) {
+@@ -63,7 +65,7 @@
+         });
+         if (!success)
+             return res.status(400).send('Invalid podcast path');
+-        const libraryItemFolderStats = await getFileTimestampsWithIno(podcastPath);
++        const libraryItemFolderStats = (await getFileTimestampsWithIno(podcastPath));
+         let relPath = podcastPath.replace(libraryFolderPath, '');
+         if (relPath.startsWith('/'))
+             relPath = relPath.slice(1);
+@@ -71,7 +73,7 @@
+         const transaction = await Database.sequelize.transaction();
+         try {
+             const podcast = await Database.podcastModel.createFromRequest(payload.media, transaction);
+-            newLibraryItem = await Database.libraryItemModel.create({
++            newLibraryItem = (await Database.libraryItemModel.create({
+                 ino: libraryItemFolderStats.ino,
+                 path: podcastPath,
+                 relPath,
+@@ -90,7 +92,7 @@
+                 libraryFolderId: folder.id,
+                 title: podcast.title,
+                 titleIgnorePrefix: podcast.titleIgnorePrefix
+-            }, { transaction });
++            }, { transaction }));
+             await transaction.commit();
+         }
+         catch (error) {
+@@ -98,7 +100,7 @@
+             await transaction.rollback();
+             return res.status(500).send('Failed to create podcast');
+         }
+-        newLibraryItem.media = await newLibraryItem.getMediaExpanded();
++        newLibraryItem.media = (await newLibraryItem.getMediaExpanded());
+         if (typeof payload.media.metadata.imageUrl === 'string' && payload.media.metadata.imageUrl.startsWith('http')) {
+             const coverResponse = await CoverManager.downloadCoverFromUrlNew(payload.media.metadata.imageUrl, newLibraryItem.id, newLibraryItem.path, true);
+             if (coverResponse.error) {
+@@ -242,6 +244,7 @@
+         if (!Array.isArray(episodes) || !episodes.length) {
+             return res.sendStatus(400);
+         }
++        ;
+         this.podcastManager.downloadPodcastEpisodes(req.libraryItem, episodes);
+         res.sendStatus(200);
+     }
+diff -ruw /tmp/flt-base-b7/server/controllers/RSSFeedController.js /tmp/flt-new-b7/server/controllers/RSSFeedController.js
+--- /tmp/flt-base-b7/server/controllers/RSSFeedController.js	2026-10-10 00:10:03.809584114 +1300
++++ /tmp/flt-new-b7/server/controllers/RSSFeedController.js	2026-10-10 00:10:03.891953284 +1300
+@@ -1,8 +1,7 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Logger = require('../Logger');
+-const Database = require('../Database');
+-const RssFeedManager = require('../managers/RssFeedManager');
++const Logger = require("../Logger");
++const Database = require("../Database");
++const RssFeedManager = require("../managers/RssFeedManager");
+ class RSSFeedController {
+     constructor() { }
+     async getAll(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/SeriesController.js /tmp/flt-new-b7/server/controllers/SeriesController.js
+--- /tmp/flt-base-b7/server/controllers/SeriesController.js	2026-10-10 00:10:03.809476777 +1300
++++ /tmp/flt-new-b7/server/controllers/SeriesController.js	2026-10-10 00:10:03.891875273 +1300
+@@ -1,10 +1,9 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
+-const RssFeedManager = require('../managers/RssFeedManager');
+-const libraryItemsBookFilters = require('../utils/queries/libraryItemsBookFilters');
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
++const RssFeedManager = require("../managers/RssFeedManager");
++const libraryItemsBookFilters = require("../utils/queries/libraryItemsBookFilters");
+ class SeriesController {
+     constructor() { }
+     async findOne(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/SessionController.js /tmp/flt-new-b7/server/controllers/SessionController.js
+--- /tmp/flt-base-b7/server/controllers/SessionController.js	2026-10-10 00:10:03.812414202 +1300
++++ /tmp/flt-new-b7/server/controllers/SessionController.js	2026-10-10 00:10:03.894199166 +1300
+@@ -1,12 +1,14 @@
+ "use strict";
+-const Path = require('path');
+-const { Request, Response, NextFunction } = require('express');
+-const Logger = require('../Logger');
+-const Database = require('../Database');
+-const { toNumber, isUUID } = require('../utils/index');
+-const { getAudioMimeTypeFromExtname, encodeUriPath } = require('../utils/fileUtils');
+-const { PlayMethod } = require('../utils/constants');
+-const ShareManager = require('../managers/ShareManager');
++const Path = require("path");
++const Logger = require("../Logger");
++const Database = require("../Database");
++const utils = require("../utils/index");
++const fileUtils = require("../utils/fileUtils");
++const constants = require("../utils/constants");
++const ShareManager = require("../managers/ShareManager");
++const { toNumber, isUUID } = utils;
++const { getAudioMimeTypeFromExtname, encodeUriPath } = fileUtils;
++const { PlayMethod } = constants;
+ class SessionController {
+     constructor() { }
+     async getAllWithUserData(req, res) {
+@@ -42,7 +44,7 @@
+                 userId
+             };
+         }
+-        const { rows, count } = await Database.playbackSessionModel.findAndCountAll({
++        const { rows, count } = (await Database.playbackSessionModel.findAndCountAll({
+             where,
+             include: [
+                 {
+@@ -56,7 +58,7 @@
+             order: [[orderKey, orderDesc]],
+             limit: itemsPerPage,
+             offset: itemsPerPage * page
+-        });
++        }));
+         const sessions = rows.map((session) => {
+             const oldPlaybackSession = Database.playbackSessionModel.getOldPlaybackSession(session);
+             if (session.user) {
+diff -ruw /tmp/flt-base-b7/server/controllers/ShareController.js /tmp/flt-new-b7/server/controllers/ShareController.js
+--- /tmp/flt-base-b7/server/controllers/ShareController.js	2026-10-10 00:10:03.812586856 +1300
++++ /tmp/flt-new-b7/server/controllers/ShareController.js	2026-10-10 00:10:03.894383249 +1300
+@@ -1,15 +1,17 @@
+ "use strict";
+-const { Request, Response } = require('express');
+-const uuid = require('uuid');
+-const Path = require('path');
+-const { Op } = require('sequelize');
+-const Logger = require('../Logger');
+-const Database = require('../Database');
+-const { PlayMethod } = require('../utils/constants');
+-const { getAudioMimeTypeFromExtname, encodeUriPath } = require('../utils/fileUtils');
+-const zipHelpers = require('../utils/zipHelpers');
+-const PlaybackSession = require('../objects/PlaybackSession');
+-const ShareManager = require('../managers/ShareManager');
++const uuid = require("uuid");
++const Path = require("path");
++const sequelize = require("sequelize");
++const Logger = require("../Logger");
++const Database = require("../Database");
++const constants = require("../utils/constants");
++const fileUtils = require("../utils/fileUtils");
++const zipHelpers = require("../utils/zipHelpers");
++const PlaybackSession = require("../objects/PlaybackSession");
++const ShareManager = require("../managers/ShareManager");
++const { Op } = sequelize;
++const { PlayMethod } = constants;
++const { getAudioMimeTypeFromExtname, encodeUriPath } = fileUtils;
+ class ShareController {
+     constructor() { }
+     async getMediaItemShareBySlug(req, res) {
+@@ -248,7 +250,8 @@
+             if (!mediaItem) {
+                 return res.status(404).send('Media item not found');
+             }
+-            const mediaItemShare = await Database.mediaItemShareModel.create({
++            const mediaItemShare = await Database.mediaItemShareModel.create(
++            {
+                 slug,
+                 expiresAt: expiresAt || null,
+                 mediaItemId,
+diff -ruw /tmp/flt-base-b7/server/controllers/StatsController.js /tmp/flt-new-b7/server/controllers/StatsController.js
+--- /tmp/flt-base-b7/server/controllers/StatsController.js	2026-10-10 00:10:03.806941352 +1300
++++ /tmp/flt-new-b7/server/controllers/StatsController.js	2026-10-10 00:10:03.889812384 +1300
+@@ -1,7 +1,6 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Logger = require('../Logger');
+-const adminStats = require('../utils/queries/adminStats');
++const Logger = require("../Logger");
++const adminStats = require("../utils/queries/adminStats");
+ class StatsController {
+     constructor() { }
+     async getServerStats(req, res) {
+diff -ruw /tmp/flt-base-b7/server/controllers/ToolsController.js /tmp/flt-new-b7/server/controllers/ToolsController.js
+--- /tmp/flt-base-b7/server/controllers/ToolsController.js	2026-10-10 00:10:03.807681812 +1300
++++ /tmp/flt-new-b7/server/controllers/ToolsController.js	2026-10-10 00:10:03.890378240 +1300
+@@ -1,7 +1,6 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const Logger = require('../Logger');
+-const Database = require('../Database');
++const Logger = require("../Logger");
++const Database = require("../Database");
+ class ToolsController {
+     constructor() { }
+     async encodeM4b(req, res) {
+Only in /tmp/flt-new-b7/server/controllers: types.js
+diff -ruw /tmp/flt-base-b7/server/controllers/UserController.js /tmp/flt-new-b7/server/controllers/UserController.js
+--- /tmp/flt-base-b7/server/controllers/UserController.js	2026-10-10 00:10:03.806626897 +1300
++++ /tmp/flt-new-b7/server/controllers/UserController.js	2026-10-10 00:10:03.889555075 +1300
+@@ -1,10 +1,11 @@
+ "use strict";
+-const { Request, Response, NextFunction } = require('express');
+-const uuidv4 = require('uuid').v4;
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const Database = require('../Database');
+-const { toNumber } = require('../utils/index');
++const uuid = require("uuid");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const Database = require("../Database");
++const utils = require("../utils/index");
++const uuidv4 = uuid.v4;
++const { toNumber } = utils;
+ class UserController {
+     constructor() { }
+     async findAll(req, res) {
+@@ -16,7 +17,7 @@
+         const users = allUsers.map((u) => u.toOldJSONForBrowser(hideRootToken, true));
+         if (includes.includes('latestSession')) {
+             for (const user of users) {
+-                const userSessions = await Database.getPlaybackSessions({ userId: user.id });
++                const userSessions = (await Database.getPlaybackSessions({ userId: user.id }));
+                 user.latestSession = userSessions.sort((a, b) => b.updatedAt - a.updatedAt).shift() || null;
+             }
+         }
+@@ -29,7 +30,7 @@
+             Logger.error(`Non-admin user "${req.user.username}" attempted to get user`);
+             return res.sendStatus(403);
+         }
+-        const mediaProgresses = await Database.mediaProgressModel.findAll({
++        const mediaProgresses = (await Database.mediaProgressModel.findAll({
+             where: {
+                 userId: req.reqUser.id
+             },
+@@ -47,7 +48,7 @@
+                     }
+                 }
+             ]
+-        });
++        }));
+         const oldMediaProgresses = mediaProgresses.map((mp) => {
+             const oldMediaProgress = mp.getOldMediaProgress();
+             oldMediaProgress.displayTitle = mp.mediaItem?.title;
+@@ -96,14 +97,15 @@
+             delete req.body.permissions.librariesAccessible;
+         }
+         const permissions = Database.userModel.getDefaultPermissionsForUserType(userType);
++        const permissionValues = permissions;
+         if (req.body.permissions && typeof req.body.permissions === 'object') {
+             for (const key in req.body.permissions) {
+-                if (permissions[key] !== undefined) {
++                if (permissionValues[key] !== undefined) {
+                     if (typeof req.body.permissions[key] !== 'boolean') {
+                         Logger.warn(`[UserController] create: Invalid permission value for key ${key}. Should be boolean`);
+                     }
+                     else {
+-                        permissions[key] = req.body.permissions[key];
++                        permissionValues[key] = req.body.permissions[key];
+                     }
+                 }
+                 else {
+@@ -204,13 +206,15 @@
+                 ...user.permissions
+             };
+             const defaultPermissions = Database.userModel.getDefaultPermissionsForUserType(updatePayload.type || user.type || 'user');
++            const permissionValues = permissions;
++            const defaultPermissionValues = defaultPermissions;
+             for (const key in updatePayload.permissions) {
+-                if (permissions[key] !== undefined || defaultPermissions[key] !== undefined) {
++                if (permissionValues[key] !== undefined || defaultPermissionValues[key] !== undefined) {
+                     if (typeof updatePayload.permissions[key] !== 'boolean') {
+                         Logger.warn(`[UserController] update: Invalid permission value for key ${key}. Should be boolean`);
+                     }
+-                    else if (permissions[key] !== updatePayload.permissions[key]) {
+-                        permissions[key] = updatePayload.permissions[key];
++                    else if (permissionValues[key] !== updatePayload.permissions[key]) {
++                        permissionValues[key] = updatePayload.permissions[key];
+                         hasPermissionsUpdates = true;
+                     }
+                 }
+@@ -289,7 +293,8 @@
+         for (const playlist of userPlaylists) {
+             await playlist.destroy();
+         }
+-        const [sessionsUpdated] = await Database.playbackSessionModel.update({
++        const [sessionsUpdated] = await Database.playbackSessionModel.update(
++        {
+             userId: null
+         }, {
+             where: {
+@@ -309,6 +314,7 @@
+         if (!req.reqUser.authOpenIDSub) {
+             return res.sendStatus(200);
+         }
++        ;
+         req.reqUser.extraData.authOpenIDSub = null;
+         req.reqUser.changed('extraData', true);
+         await req.reqUser.save();

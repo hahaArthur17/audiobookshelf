@@ -1,0 +1,23 @@
+.
+./books
+./books/Author One
+./books/Author One/Book One
+./books/Author One/Book One/desc.txt
+./books/Author One/Book One/reader.txt
+./books/Author One/Book Two
+./books/Author One/Book Two/Book Two.pdf
+./books/Author One/Book Two/metadata.nfo
+./books/Author Six
+./books/Author Six/Series Book
+./books/Author Six/Series Book/Series Book.epub
+./books/Author Two
+./books/Author Two/Audio Book
+./books/Author Two/Audio Book/01 - Part 1.wav
+./books/Author Two/Audio Book/02 - Part 2.wav
+./books/Tag Author
+./books/Tag Author/Tagged Book
+./books/Tag Author/Tagged Book/01.mp3
+./books/Tag Author/Tagged Book/02.mp3
+./podcasts
+./podcasts/Other Show
+./podcasts/Other Show/untagged.mp3

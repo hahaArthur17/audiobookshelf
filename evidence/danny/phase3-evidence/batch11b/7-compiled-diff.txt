@@ -1,0 +1,474 @@
+diff -ruw /tmp/out-base-b11b/server/Database.js /tmp/out-new-b11b/server/Database.js
+--- /tmp/out-base-b11b/server/Database.js	2026-10-10 14:02:19.872518963 +1300
++++ /tmp/out-new-b11b/server/Database.js	2026-10-10 14:02:21.030408488 +1300
+@@ -8,6 +8,9 @@
+ require("./Auth");
+ const MigrationManager = require("./managers/MigrationManager");
+ const { Sequelize, Op } = sequelize;
++function lazy(load) {
++    return load();
++}
+ class Database {
+     constructor() {
+         this.sequelize = null;
+@@ -209,31 +212,31 @@
+         await this.init();
+     }
+     buildModels(force = false) {
+-        require('./models/User').init(this.sequelize);
+-        require('./models/Session').init(this.sequelize);
+-        require('./models/ApiKey').init(this.sequelize);
+-        require('./models/Library').init(this.sequelize);
+-        require('./models/LibraryFolder').init(this.sequelize);
+-        require('./models/Book').init(this.sequelize);
+-        require('./models/Podcast').init(this.sequelize);
+-        require('./models/PodcastEpisode').init(this.sequelize);
+-        require('./models/LibraryItem').init(this.sequelize);
+-        require('./models/MediaProgress').init(this.sequelize);
+-        require('./models/Series').init(this.sequelize);
+-        require('./models/BookSeries').init(this.sequelize);
+-        require('./models/Author').init(this.sequelize);
+-        require('./models/BookAuthor').init(this.sequelize);
+-        require('./models/Collection').init(this.sequelize);
+-        require('./models/CollectionBook').init(this.sequelize);
+-        require('./models/Playlist').init(this.sequelize);
+-        require('./models/PlaylistMediaItem').init(this.sequelize);
+-        require('./models/Device').init(this.sequelize);
+-        require('./models/PlaybackSession').init(this.sequelize);
+-        require('./models/Feed').init(this.sequelize);
+-        require('./models/FeedEpisode').init(this.sequelize);
+-        require('./models/Setting').init(this.sequelize);
+-        require('./models/CustomMetadataProvider').init(this.sequelize);
+-        require('./models/MediaItemShare').init(this.sequelize);
++        lazy(() => require('./models/User')).init(this.sequelize);
++        lazy(() => require('./models/Session')).init(this.sequelize);
++        lazy(() => require('./models/ApiKey')).init(this.sequelize);
++        lazy(() => require('./models/Library')).init(this.sequelize);
++        lazy(() => require('./models/LibraryFolder')).init(this.sequelize);
++        lazy(() => require('./models/Book')).init(this.sequelize);
++        lazy(() => require('./models/Podcast')).init(this.sequelize);
++        lazy(() => require('./models/PodcastEpisode')).init(this.sequelize);
++        lazy(() => require('./models/LibraryItem')).init(this.sequelize);
++        lazy(() => require('./models/MediaProgress')).init(this.sequelize);
++        lazy(() => require('./models/Series')).init(this.sequelize);
++        lazy(() => require('./models/BookSeries')).init(this.sequelize);
++        lazy(() => require('./models/Author')).init(this.sequelize);
++        lazy(() => require('./models/BookAuthor')).init(this.sequelize);
++        lazy(() => require('./models/Collection')).init(this.sequelize);
++        lazy(() => require('./models/CollectionBook')).init(this.sequelize);
++        lazy(() => require('./models/Playlist')).init(this.sequelize);
++        lazy(() => require('./models/PlaylistMediaItem')).init(this.sequelize);
++        lazy(() => require('./models/Device')).init(this.sequelize);
++        lazy(() => require('./models/PlaybackSession')).init(this.sequelize);
++        lazy(() => require('./models/Feed')).init(this.sequelize);
++        lazy(() => require('./models/FeedEpisode')).init(this.sequelize);
++        lazy(() => require('./models/Setting')).init(this.sequelize);
++        lazy(() => require('./models/CustomMetadataProvider')).init(this.sequelize);
++        lazy(() => require('./models/MediaItemShare')).init(this.sequelize);
+         return this.sequelize.sync({ force, alter: false });
+     }
+     compareVersions(v1, v2) {
+@@ -261,7 +264,7 @@
+             }
+         }
+         if (this.serverSettings.buildNumber <= 0) {
+-            await require('./utils/migrations/absMetadataMigration').migrate(this);
++            await lazy(() => require('./utils/migrations/absMetadataMigration')).migrate(this);
+         }
+         await this.cleanDatabase();
+         this.hasRootUser = await this.models.user.getHasRootUser();
+diff -ruw /tmp/out-base-b11b/server/scanner/AbsMetadataFileScanner.js /tmp/out-new-b11b/server/scanner/AbsMetadataFileScanner.js
+--- /tmp/out-base-b11b/server/scanner/AbsMetadataFileScanner.js	2026-10-10 14:02:19.952511159 +1300
++++ /tmp/out-new-b11b/server/scanner/AbsMetadataFileScanner.js	2026-10-10 14:02:21.112833321 +1300
+@@ -4,6 +4,8 @@
+ const fileUtils = require("../utils/fileUtils");
+ const constants = require("../utils/constants");
+ const abmetadataGenerator = require("../utils/generators/abmetadataGenerator");
++const dynamicKey = require("./dynamicKey");
++const { setKey } = dynamicKey;
+ const { readTextFile } = fileUtils;
+ const { LogLevel } = constants;
+ class AbsMetadataFileScanner {
+@@ -33,7 +35,7 @@
+                     continue;
+                 if (key === 'chapters' && !abMetadata.chapters?.length)
+                     continue;
+-                bookMetadata[key] = abMetadata[key];
++                setKey(bookMetadata, key, abMetadata[key]);
+             }
+         }
+     }
+@@ -56,7 +58,7 @@
+                     continue;
+                 if (key === 'tags' && !abMetadata.tags?.length)
+                     continue;
+-                podcastMetadata[key] = abMetadata[key];
++                setKey(podcastMetadata, key, abMetadata[key]);
+             }
+         }
+     }
+diff -ruw /tmp/out-base-b11b/server/scanner/AudioFileScanner.js /tmp/out-new-b11b/server/scanner/AudioFileScanner.js
+--- /tmp/out-base-b11b/server/scanner/AudioFileScanner.js	2026-10-10 14:02:19.950613127 +1300
++++ /tmp/out-new-b11b/server/scanner/AudioFileScanner.js	2026-10-10 14:02:21.109401152 +1300
+@@ -8,6 +8,8 @@
+ const parseSeriesString = require("../utils/parsers/parseSeriesString");
+ require("../models/LibraryItem");
+ const AudioFile = require("../objects/files/AudioFile");
++const dynamicKey = require("./dynamicKey");
++const { getKey, setKey } = dynamicKey;
+ const { LogLevel } = constants;
+ const { parseOverdriveMediaMarkersAsChapters } = parseOverdriveMediaMarkers;
+ class AudioFileScanner {
+@@ -278,7 +280,7 @@
+                     }
+                 }
+                 else {
+-                    bookMetadata[mapping.key] = value;
++                    setKey(bookMetadata, mapping.key, value);
+                 }
+             }
+         });
+@@ -331,8 +333,8 @@
+                     libraryScan.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastMetadata.genres.join(', ')}`);
+                 }
+                 else {
+-                    podcastMetadata[mapping.key] = value;
+-                    libraryScan.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastMetadata[mapping.key]}`);
++                    setKey(podcastMetadata, mapping.key, value);
++                    libraryScan.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastMetadata, mapping.key)}`);
+                 }
+             }
+         });
+@@ -385,7 +387,7 @@
+                     if (pubJsDate && !isNaN(pubJsDate)) {
+                         podcastEpisode.publishedAt = pubJsDate.valueOf();
+                         podcastEpisode.pubDate = value;
+-                        scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastEpisode[mapping.key]}`);
++                        scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastEpisode, mapping.key)}`);
+                     }
+                     else {
+                         scanLogger.addLog(LogLevel.WARN, `Mapping pubDate with tag ${tagToUse} has invalid date "${value}"`);
+@@ -394,15 +396,15 @@
+                 else if (mapping.key === 'episodeType') {
+                     if (['full', 'trailer', 'bonus'].includes(value)) {
+                         podcastEpisode.episodeType = value;
+-                        scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastEpisode[mapping.key]}`);
++                        scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastEpisode, mapping.key)}`);
+                     }
+                     else {
+                         scanLogger.addLog(LogLevel.WARN, `Mapping episodeType with invalid value "${value}". Must be one of [full, trailer, bonus].`);
+                     }
+                 }
+                 else {
+-                    podcastEpisode[mapping.key] = value;
+-                    scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastEpisode[mapping.key]}`);
++                    setKey(podcastEpisode, mapping.key, value);
++                    scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastEpisode, mapping.key)}`);
+                 }
+             }
+         });
+diff -ruw /tmp/out-base-b11b/server/scanner/BookScanner.js /tmp/out-new-b11b/server/scanner/BookScanner.js
+--- /tmp/out-base-b11b/server/scanner/BookScanner.js	2026-10-10 14:02:19.947709505 +1300
++++ /tmp/out-new-b11b/server/scanner/BookScanner.js	2026-10-10 14:02:21.107540770 +1300
+@@ -23,6 +23,8 @@
+ const OpfFileScanner = require("./OpfFileScanner");
+ const NfoFileScanner = require("./NfoFileScanner");
+ const AbsMetadataFileScanner = require("./AbsMetadataFileScanner");
++const dynamicKey = require("./dynamicKey");
++const { getKey, setKey } = dynamicKey;
+ const uuidv4 = uuid.v4;
+ const { LogLevel } = constants;
+ const { getTitleIgnorePrefix, areEquivalent } = utils;
+@@ -149,7 +151,7 @@
+         let seriesUpdated = false;
+         const bookSeriesRemoved = [];
+         for (const key in bookMetadata) {
+-            if (bookMetadata[key] === undefined || (Array.isArray(bookMetadata[key]) && !bookMetadata[key].length))
++            if (getKey(bookMetadata, key) === undefined || (Array.isArray(getKey(bookMetadata, key)) && !getKey(bookMetadata, key).length))
+                 continue;
+             if (key === 'authors') {
+                 for (const authorName of bookMetadata.authors) {
+@@ -273,9 +275,9 @@
+                     hasMediaChanges = true;
+                 }
+             }
+-            else if (bookMetadata[key] !== media[key]) {
+-                libraryScan.addLog(LogLevel.DEBUG, `Updating book ${key} "${media[key]}" => "${bookMetadata[key]}" for book "${bookMetadata.title}"`);
+-                media[key] = bookMetadata[key];
++            else if (getKey(bookMetadata, key) !== getKey(media, key)) {
++                libraryScan.addLog(LogLevel.DEBUG, `Updating book ${key} "${getKey(media, key)}" => "${getKey(bookMetadata, key)}" for book "${bookMetadata.title}"`);
++                setKey(media, key, getKey(bookMetadata, key));
+                 hasMediaChanges = true;
+             }
+         }
+@@ -629,8 +631,8 @@
+                             this.bookMetadata.series = ebookMetdataObject.series;
+                         }
+                     }
+-                    else if (ebookMetdataObject[key] && key !== 'sequence') {
+-                        this.bookMetadata[key] = ebookMetdataObject[key];
++                    else if (getKey(ebookMetdataObject, key) && key !== 'sequence') {
++                        setKey(this.bookMetadata, key, getKey(ebookMetdataObject, key));
+                     }
+                 }
+             }
+Only in /tmp/out-new-b11b/server/scanner: dynamicKey.js
+diff -ruw /tmp/out-base-b11b/server/scanner/LibraryItemScanData.js /tmp/out-new-b11b/server/scanner/LibraryItemScanData.js
+--- /tmp/out-base-b11b/server/scanner/LibraryItemScanData.js	2026-10-10 14:02:19.935512817 +1300
++++ /tmp/out-new-b11b/server/scanner/LibraryItemScanData.js	2026-10-10 14:02:21.095402452 +1300
+@@ -3,6 +3,8 @@
+ const constants = require("../utils/constants");
+ require("../models/LibraryItem");
+ const globals = require("../utils/globals");
++const dynamicKey = require("./dynamicKey");
++const { getKey, setKey } = dynamicKey;
+ const { LogLevel } = constants;
+ class LibraryItemScanData {
+     constructor(data) {
+@@ -109,9 +111,9 @@
+         this.hasChanges = false;
+         this.hasPathChange = false;
+         for (const key of keysToCompare) {
+-            if (existingLibraryItem[key] !== this[key]) {
+-                libraryScan.addLog(LogLevel.DEBUG, `Library item "${existingLibraryItem.relPath}" key "${key}" changed from "${existingLibraryItem[key]}" to "${this[key]}"`);
+-                existingLibraryItem[key] = this[key];
++            if (getKey(existingLibraryItem, key) !== getKey(this, key)) {
++                libraryScan.addLog(LogLevel.DEBUG, `Library item "${existingLibraryItem.relPath}" key "${key}" changed from "${getKey(existingLibraryItem, key)}" to "${getKey(this, key)}"`);
++                setKey(existingLibraryItem, key, getKey(this, key));
+                 this.hasChanges = true;
+                 if (key === 'relPath' || key === 'path') {
+                     this.hasPathChange = true;
+@@ -196,14 +198,14 @@
+             hasChanges = true;
+         }
+         for (const key in existingLibraryFile.metadata) {
+-            if (existingLibraryFile.metadata[key] !== scannedLibraryFile.metadata[key]) {
++            if (getKey(existingLibraryFile.metadata, key) !== getKey(scannedLibraryFile.metadata, key)) {
+                 if (key !== 'path' && key !== 'relPath') {
+-                    libraryScan.addLog(LogLevel.DEBUG, `Library file "${existingLibraryFile.metadata.relPath}" for library item "${libraryItemPath}" key "${key}" changed from "${existingLibraryFile.metadata[key]}" to "${scannedLibraryFile.metadata[key]}"`);
++                    libraryScan.addLog(LogLevel.DEBUG, `Library file "${existingLibraryFile.metadata.relPath}" for library item "${libraryItemPath}" key "${key}" changed from "${getKey(existingLibraryFile.metadata, key)}" to "${getKey(scannedLibraryFile.metadata, key)}"`);
+                 }
+                 else {
+-                    libraryScan.addLog(LogLevel.DEBUG, `Library file for library item "${libraryItemPath}" key "${key}" changed from "${existingLibraryFile.metadata[key]}" to "${scannedLibraryFile.metadata[key]}"`);
++                    libraryScan.addLog(LogLevel.DEBUG, `Library file for library item "${libraryItemPath}" key "${key}" changed from "${getKey(existingLibraryFile.metadata, key)}" to "${getKey(scannedLibraryFile.metadata, key)}"`);
+                 }
+-                existingLibraryFile.metadata[key] = scannedLibraryFile.metadata[key];
++                setKey(existingLibraryFile.metadata, key, getKey(scannedLibraryFile.metadata, key));
+                 hasChanges = true;
+             }
+         }
+@@ -231,8 +233,8 @@
+     setBookMetadataFromFilenames(bookMetadata) {
+         const keysToMap = ['title', 'subtitle', 'publishedYear', 'asin'];
+         for (const key in this.mediaMetadata) {
+-            if (keysToMap.includes(key) && this.mediaMetadata[key]) {
+-                bookMetadata[key] = this.mediaMetadata[key];
++            if (keysToMap.includes(key) && getKey(this.mediaMetadata, key)) {
++                setKey(bookMetadata, key, getKey(this.mediaMetadata, key));
+             }
+         }
+         if (this.mediaMetadata.authors?.length) {
+diff -ruw /tmp/out-base-b11b/server/scanner/LibraryScanner.js /tmp/out-new-b11b/server/scanner/LibraryScanner.js
+--- /tmp/out-base-b11b/server/scanner/LibraryScanner.js	2026-10-10 14:02:19.955545982 +1300
++++ /tmp/out-new-b11b/server/scanner/LibraryScanner.js	2026-10-10 14:02:21.114400687 +1300
+@@ -388,7 +388,7 @@
+         Logger.debug(`[Scanner] scanFolderUpdates fileUpdateGroup`, fileUpdateGroup);
+         const updateGroup = { ...fileUpdateGroup };
+         for (const itemDir in updateGroup) {
+-            if (isSingleMediaFile(fileUpdateGroup, itemDir))
++            if (isSingleMediaEntry(itemDir, fileUpdateGroup[itemDir]))
+                 continue; // Media in root path
+             const itemDirNestedFiles = fileUpdateGroup[itemDir].filter((b) => b.includes('/'));
+             if (!itemDirNestedFiles.length)
+@@ -507,10 +507,13 @@
+     return libraryItem1.ino === libraryItem2.ino;
+ }
+ function hasAudioFiles(fileUpdateGroup, itemDir) {
+-    return isSingleMediaFile(fileUpdateGroup, itemDir) ? scanUtils.checkFilepathIsAudioFile(fileUpdateGroup[itemDir]) : fileUpdateGroup[itemDir].some(scanUtils.checkFilepathIsAudioFile);
++    return isSingleMediaEntry(itemDir, fileUpdateGroup[itemDir]) ? scanUtils.checkFilepathIsAudioFile(fileUpdateGroup[itemDir]) : fileUpdateGroup[itemDir].some(scanUtils.checkFilepathIsAudioFile);
+ }
+ function isSingleMediaFile(fileUpdateGroup, itemDir) {
+-    return itemDir === fileUpdateGroup[itemDir];
++    return isSingleMediaEntry(itemDir, fileUpdateGroup[itemDir]);
++}
++function isSingleMediaEntry(itemDir, entry) {
++    return itemDir === entry;
+ }
+ async function findLibraryItemByItemToItemInoMatch(libraryId, fullPath) {
+     const ino = await fileUtils.getIno(fullPath);
+diff -ruw /tmp/out-base-b11b/server/scanner/NfoFileScanner.js /tmp/out-new-b11b/server/scanner/NfoFileScanner.js
+--- /tmp/out-base-b11b/server/scanner/NfoFileScanner.js	2026-10-10 14:02:19.959510476 +1300
++++ /tmp/out-new-b11b/server/scanner/NfoFileScanner.js	2026-10-10 14:02:21.121789700 +1300
+@@ -1,6 +1,8 @@
+ "use strict";
+ const parseNfoMetadataModule = require("../utils/parsers/parseNfoMetadata");
+ const fileUtils = require("../utils/fileUtils");
++const dynamicKey = require("./dynamicKey");
++const { getKey, setKey } = dynamicKey;
+ const { parseNfoMetadata } = parseNfoMetadataModule;
+ const { readTextFile } = fileUtils;
+ class NfoFileScanner {
+@@ -40,8 +42,8 @@
+                         ];
+                     }
+                 }
+-                else if (nfoMetadata[key] && key !== 'sequence') {
+-                    bookMetadata[key] = nfoMetadata[key];
++                else if (getKey(nfoMetadata, key) && key !== 'sequence') {
++                    setKey(bookMetadata, key, getKey(nfoMetadata, key));
+                 }
+             }
+         }
+diff -ruw /tmp/out-base-b11b/server/scanner/OpfFileScanner.js /tmp/out-new-b11b/server/scanner/OpfFileScanner.js
+--- /tmp/out-base-b11b/server/scanner/OpfFileScanner.js	2026-10-10 14:02:19.957510671 +1300
++++ /tmp/out-new-b11b/server/scanner/OpfFileScanner.js	2026-10-10 14:02:21.117539896 +1300
+@@ -1,6 +1,8 @@
+ "use strict";
+ const parseOpfMetadata = require("../utils/parsers/parseOpfMetadata");
+ const fileUtils = require("../utils/fileUtils");
++const dynamicKey = require("./dynamicKey");
++const { getKey, setKey } = dynamicKey;
+ const { parseOpfMetadataXML } = parseOpfMetadata;
+ const { readTextFile } = fileUtils;
+ class OpfFileScanner {
+@@ -35,8 +37,8 @@
+                         bookMetadata.series = opfMetadata.series;
+                     }
+                 }
+-                else if (opfMetadata[key] && key !== 'sequence') {
+-                    bookMetadata[key] = opfMetadata[key];
++                else if (getKey(opfMetadata, key) && key !== 'sequence') {
++                    setKey(bookMetadata, key, getKey(opfMetadata, key));
+                 }
+             }
+         }
+diff -ruw /tmp/out-base-b11b/server/scanner/PodcastScanner.js /tmp/out-new-b11b/server/scanner/PodcastScanner.js
+--- /tmp/out-base-b11b/server/scanner/PodcastScanner.js	2026-10-10 14:02:19.937512622 +1300
++++ /tmp/out-new-b11b/server/scanner/PodcastScanner.js	2026-10-10 14:02:21.097402266 +1300
+@@ -13,6 +13,8 @@
+ require("../models/PodcastEpisode");
+ const AbsMetadataFileScanner = require("./AbsMetadataFileScanner");
+ const htmlSanitizer = require("../utils/htmlSanitizer");
++const dynamicKey = require("./dynamicKey");
++const { getKey, setKey } = dynamicKey;
+ const uuidv4 = uuid.v4;
+ const { LogLevel } = constants;
+ const { getTitleIgnorePrefix } = utils;
+@@ -135,7 +137,7 @@
+         }
+         const podcastMetadata = await this.getPodcastMetadataFromScanData(existingPodcastEpisodes, libraryItemData, libraryScan, existingLibraryItem.id);
+         for (const key in podcastMetadata) {
+-            if (podcastMetadata[key] === undefined || (Array.isArray(podcastMetadata[key]) && !podcastMetadata[key].length))
++            if (getKey(podcastMetadata, key) === undefined || (Array.isArray(getKey(podcastMetadata, key)) && !getKey(podcastMetadata, key).length))
+                 continue;
+             if (key === 'genres') {
+                 const existingGenres = media.genres || [];
+@@ -155,9 +157,9 @@
+                     hasMediaChanges = true;
+                 }
+             }
+-            else if (podcastMetadata[key] !== media[key]) {
+-                libraryScan.addLog(LogLevel.DEBUG, `Updating podcast ${key} "${media[key]}" => "${podcastMetadata[key]}" for podcast "${podcastMetadata.title}"`);
+-                media[key] = podcastMetadata[key];
++            else if (getKey(podcastMetadata, key) !== getKey(media, key)) {
++                libraryScan.addLog(LogLevel.DEBUG, `Updating podcast ${key} "${getKey(media, key)}" => "${getKey(podcastMetadata, key)}" for podcast "${podcastMetadata.title}"`);
++                setKey(media, key, getKey(podcastMetadata, key));
+                 hasMediaChanges = true;
+             }
+         }
+diff -ruw /tmp/out-base-b11b/server/scanner/Scanner.js /tmp/out-new-b11b/server/scanner/Scanner.js
+--- /tmp/out-base-b11b/server/scanner/Scanner.js	2026-10-10 14:02:19.940760957 +1300
++++ /tmp/out-new-b11b/server/scanner/Scanner.js	2026-10-10 14:02:21.100726524 +1300
+@@ -10,6 +10,8 @@
+ const LibraryScanner = require("./LibraryScanner");
+ const CoverManager = require("../managers/CoverManager");
+ const TaskManager = require("../managers/TaskManager");
++const dynamicKey = require("./dynamicKey");
++const { getKey } = dynamicKey;
+ const { getTitleIgnorePrefix } = utils;
+ const { findMatchingEpisodesInFeed, getPodcastFeed } = podcastUtils;
+ class Scanner {
+@@ -112,14 +114,14 @@
+             description: matchData.descriptionPlain || null
+         };
+         for (const key in matchDataTransformed) {
+-            if (matchDataTransformed[key]) {
++            if (getKey(matchDataTransformed, key)) {
+                 if (key === 'genres') {
+                     if (!libraryItem.media.genres.length || options.overrideDetails) {
+                         var genresArray = [];
+-                        if (Array.isArray(matchDataTransformed[key]))
++                        if (Array.isArray(getKey(matchDataTransformed, key)))
+                             genresArray = [...matchDataTransformed[key]];
+                         else {
+-                            Logger.warn(`[Scanner] quickMatch genres is not an array ${matchDataTransformed[key]}`);
++                            Logger.warn(`[Scanner] quickMatch genres is not an array ${getKey(matchDataTransformed, key)}`);
+                             genresArray = matchDataTransformed[key]
+                                 .split(',')
+                                 .map((v) => v.trim())
+@@ -128,8 +130,8 @@
+                         updatePayload[key] = genresArray;
+                     }
+                 }
+-                else if (libraryItem.media[key] !== matchDataTransformed[key] && (!libraryItem.media[key] || options.overrideDetails)) {
+-                    updatePayload[key] = matchDataTransformed[key];
++                else if (getKey(libraryItem.media, key) !== getKey(matchDataTransformed, key) && (!getKey(libraryItem.media, key) || options.overrideDetails)) {
++                    updatePayload[key] = getKey(matchDataTransformed, key);
+                 }
+             }
+         }
+@@ -139,7 +141,7 @@
+         const detailKeysToUpdate = ['title', 'subtitle', 'description', 'narrator', 'publisher', 'publishedYear', 'genres', 'tags', 'language', 'explicit', 'abridged', 'asin', 'isbn'];
+         const updatePayload = {};
+         for (const key in matchData) {
+-            if (matchData[key] && detailKeysToUpdate.includes(key)) {
++            if (getKey(matchData, key) && detailKeysToUpdate.includes(key)) {
+                 if (key === 'narrator') {
+                     if (!libraryItem.media.narrators?.length || options.overrideDetails) {
+                         updatePayload.narrators = matchData[key]
+@@ -151,10 +153,10 @@
+                 else if (key === 'genres') {
+                     if (!libraryItem.media.genres.length || options.overrideDetails) {
+                         let genresArray = [];
+-                        if (Array.isArray(matchData[key]))
++                        if (Array.isArray(getKey(matchData, key)))
+                             genresArray = [...matchData[key]];
+                         else {
+-                            Logger.warn(`[Scanner] quickMatch genres is not an array ${matchData[key]}`);
++                            Logger.warn(`[Scanner] quickMatch genres is not an array ${getKey(matchData, key)}`);
+                             genresArray = matchData[key]
+                                 .split(',')
+                                 .map((v) => v.trim())
+@@ -166,7 +168,7 @@
+                 else if (key === 'tags') {
+                     if (!libraryItem.media.tags.length || options.overrideDetails) {
+                         let tagsArray = [];
+-                        if (Array.isArray(matchData[key]))
++                        if (Array.isArray(getKey(matchData, key)))
+                             tagsArray = [...matchData[key]];
+                         else
+                             tagsArray = matchData[key]
+@@ -176,8 +178,8 @@
+                         updatePayload[key] = tagsArray;
+                     }
+                 }
+-                else if (!libraryItem.media[key] || options.overrideDetails) {
+-                    updatePayload[key] = matchData[key];
++                else if (!getKey(libraryItem.media, key) || options.overrideDetails) {
++                    updatePayload[key] = getKey(matchData, key);
+                 }
+             }
+         }
+@@ -326,9 +328,9 @@
+         };
+         const updatePayload = {};
+         for (const key in matchDataTransformed) {
+-            if (matchDataTransformed[key]) {
+-                if (episode[key] !== matchDataTransformed[key] && (!episode[key] || options.overrideDetails)) {
+-                    updatePayload[key] = matchDataTransformed[key];
++            if (getKey(matchDataTransformed, key)) {
++                if (getKey(episode, key) !== getKey(matchDataTransformed, key) && (!getKey(episode, key) || options.overrideDetails)) {
++                    updatePayload[key] = getKey(matchDataTransformed, key);
+                 }
+             }
+         }

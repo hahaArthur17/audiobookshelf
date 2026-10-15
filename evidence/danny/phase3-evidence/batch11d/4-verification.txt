@@ -1,0 +1,31 @@
+== branch and log
+danny/phase3
+9694c3c5 phase3 batch 11d: deferred work and Log
+4ba708be phase3 batch 11d-4: tags for server top-level files, server/controllers, server/finders, server/providers, server/migrations
+093e7495 phase3 batch 11d-3: tags for server/scanner, server/managers, server/models
+a7414b61 phase3 batch 11d-2: tags for server/objects, server/auth, server/routers
+241b3f8d phase3 batch 11d-1: tags for server/utils
+78b3c0b1 phase3 batch 11c-3: LibraryController to TypeScript
+cf79d521 phase3 batch 11c-2: OidcQuery
+== status
+== protected files changed since 78b3c0b1 (expect none)
+== files changed outside MIGRATION.md
+101
+== build
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+== tsc error count
+0
+== test
+    ✔ should stringify a sequelize query containing an op
+    ✔ should stringify a sequelize query containing a literal
+    ✔ should stringify a sequelize query containing a class
+    ✔ should ignore non-class functions
+
+
+  356 passing (2s)
+
+== lint
+lint exit: 0

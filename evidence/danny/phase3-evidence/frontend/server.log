@@ -1,0 +1,269 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-fe/config, METADATA_PATH=/tmp/abs-fe/metadata, PORT=3333, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 20:18:00.988] INFO: === Starting Server ===
+[2026-10-10 20:18:00.989] INFO: [Server] Init v2.37.0
+[2026-10-10 20:18:00.989] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 20:18:00.989] INFO: [Server] Platform: linux
+[2026-10-10 20:18:00.989] INFO: [Server] Arch: x64
+[2026-10-10 20:18:01.030] INFO: [BinaryManager] Found valid executable ffmpeg at /home/danny/Code/compx574/audiobookshelf/ffmpeg
+[2026-10-10 20:18:01.031] INFO: [BinaryManager] Updating process.env.FFMPEG_PATH
+[2026-10-10 20:18:01.069] INFO: [BinaryManager] Found valid executable ffprobe at /home/danny/Code/compx574/audiobookshelf/ffprobe
+[2026-10-10 20:18:01.069] INFO: [BinaryManager] Updating process.env.FFPROBE_PATH
+[2026-10-10 20:18:01.070] INFO: [BinaryManager] Found valid library libnusqlite3 at /home/danny/Code/compx574/audiobookshelf/libnusqlite3.so
+[2026-10-10 20:18:01.070] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-10 20:18:01.070] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-fe/config/absdatabase.sqlite
+[2026-10-10 20:18:01.071] INFO: [Database] Initializing db at "/tmp/abs-fe/config/absdatabase.sqlite"
+[2026-10-10 20:18:01.080] INFO: [Database] Loading extension /home/danny/Code/compx574/audiobookshelf/libnusqlite3.so
+[2026-10-10 20:18:01.081] INFO: [Database] Successfully loaded extension /home/danny/Code/compx574/audiobookshelf/libnusqlite3.so
+[2026-10-10 20:18:01.081] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-10 20:18:01.081] INFO: [Database] Db connection was successful
+[2026-10-10 20:18:01.101] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 20:18:01.407] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 20:18:01.407] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 20:18:01.413] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 20:18:01.419] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 20:18:01.424] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 20:18:01.429] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 20:18:01.435] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 20:18:01.441] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 20:18:01.467] INFO: [Database] running ANALYZE
+[2026-10-10 20:18:01.474] INFO: [Database] ANALYZE completed
+[2026-10-10 20:18:01.474] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 20:18:01.474] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 20:18:01.481] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 20:18:01.484] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 20:18:01.484] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 20:18:01.492] INFO: Listening on port :3333
+[2026-10-10 20:19:16.971] INFO: [Server] Initializing new server
+[2026-10-10 20:19:31.536] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 20:19:31.685] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io CzkntO46NOHVIHunAAAB
+[2026-10-10 20:19:47.531] INFO: [SocketAuthority] Socket CzkntO46NOHVIHunAAAB disconnected from client "root" after 15847ms (Reason: client namespace disconnect)
+[2026-10-10 20:19:47.649] INFO: [TokenManager] Refresh token invalidated, 1 sessions deleted
+[2026-10-10 20:19:52.228] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 20:21:25.309] INFO: [Watcher] Initializing watcher for "Test Books".
+[2026-10-10 20:21:25.316] INFO: [Watcher] "Test Books" Ready
+[2026-10-10 20:21:55.278] INFO: [Watcher] Initializing watcher for "Test Podcasts".
+[2026-10-10 20:21:55.280] INFO: [Watcher] "Test Podcasts" Ready
+[2026-10-10 20:22:03.373] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 20:22:03.373] INFO: [LibraryScanner] Starting (forced) library scan 02fac5c7-c2a5-4087-aa8e-92c6df6474b2 for Test Books
+[2026-10-10 20:22:03.598] ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "/tmp/abs-fe/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 20:22:03.598] ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 20:22:03.722] INFO: [LibraryScanner] Library scan "02fac5c7-c2a5-4087-aa8e-92c6df6474b2" completed in 0:00 | 7 Added | 0 Updated | 0 Missing
+[2026-10-10 20:22:03.728] INFO: [LibraryScan] Scan log saved "/tmp/abs-fe/metadata/logs/scans/2026-10-10_02fac5c7-c2a5-4087-aa8e-92c6df6474b2.txt"
+[2026-10-10 20:22:03.728] INFO: [LibraryController] Scan complete
+[2026-10-10 20:22:19.572] INFO: [LibraryScanner] Starting library scan 8f40b4de-a997-4760-8888-eebaa82ddccd for Test Books
+[2026-10-10 20:22:19.580] INFO: [LibraryScanner] Library scan "8f40b4de-a997-4760-8888-eebaa82ddccd" completed in 0:00 | 0 Added | 0 Updated | 0 Missing
+[2026-10-10 20:22:19.638] INFO: [LibraryScan] Scan log saved "/tmp/abs-fe/metadata/logs/scans/2026-10-10_8f40b4de-a997-4760-8888-eebaa82ddccd.txt"
+[2026-10-10 20:22:19.638] INFO: [LibraryController] Scan complete
+[2026-10-10 20:22:21.183] INFO: [LibraryScanner] Starting library scan 24eed83a-e18b-47ae-93a1-6eebe8d2c39d for Test Books
+[2026-10-10 20:22:21.188] INFO: [LibraryScanner] Library scan "24eed83a-e18b-47ae-93a1-6eebe8d2c39d" completed in 0:00 | 0 Added | 0 Updated | 0 Missing
+[2026-10-10 20:22:21.196] INFO: [LibraryScan] Scan log saved "/tmp/abs-fe/metadata/logs/scans/2026-10-10_24eed83a-e18b-47ae-93a1-6eebe8d2c39d.txt"
+[2026-10-10 20:22:21.196] INFO: [LibraryController] Scan complete
+[2026-10-10 20:22:54.615] INFO: [LibraryItemController] User "root" requested download for item "NFO Title" ebook at "/tmp/abs-fe/books/Author One/Book Two/Book Two.pdf"
+[2026-10-10 20:22:54.616] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Author One/Book Two/Book Two.pdf"
+[2026-10-10 20:23:27.864] INFO: [LibraryItemController] User "root" requested download for item "Loose Book" ebook at "/tmp/abs-fe/books/Loose Book.pdf"
+[2026-10-10 20:23:27.865] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Loose Book.pdf"
+[2026-10-10 20:28:55.835] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io jlLZ3omTQa8cEY4OAAAD
+[2026-10-10 20:29:08.485] INFO: [LibraryScanner] Starting library scan 80078455-0a70-4f54-a4fd-53b3d9d5913b for Test Podcasts
+[2026-10-10 20:29:08.583] INFO: [LibraryScanner] Library scan "80078455-0a70-4f54-a4fd-53b3d9d5913b" completed in 0:00 | 2 Added | 0 Updated | 0 Missing
+[2026-10-10 20:29:08.590] INFO: [LibraryScan] Scan log saved "/tmp/abs-fe/metadata/logs/scans/2026-10-10_80078455-0a70-4f54-a4fd-53b3d9d5913b.txt"
+[2026-10-10 20:29:08.592] INFO: [LibraryController] Scan complete
+[2026-10-10 20:29:15.376] INFO: [PlaybackSessionManager] startSession: Closing open session "Audio Book" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:29:17.607] INFO: [PlaybackSessionManager] startSession: Closing open session "Episode 1: Start" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:29:23.580] INFO: [PlaybackSessionManager] startSession: Closing open session "Episode 2: Next" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:29:23.617] INFO: [PlaybackSessionManager] startSession: Closing open session "Episode 1: Start" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:30:35.642] INFO: [PlaybackSessionManager] startSession: Closing open session "Episode 2: Next" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:30:39.898] INFO: [PlaybackSessionManager] startSession: Closing open session "Only" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:30:41.159] INFO: [MediaProgress] Marking media progress as finished because time remaining (0) is less than 10 seconds (media item 0e89d9f9-cc1f-403e-9124-becbef7d4c68)
+[2026-10-10 20:30:44.628] INFO: [LibraryItemController] User "root" requested download for item "JSON Title" ebook at "/tmp/abs-fe/books/Author One/Book Three/Book Three.pdf"
+[2026-10-10 20:30:44.629] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Author One/Book Three/Book Three.pdf"
+[2026-10-10 20:30:54.553] INFO: [LibraryItemController] User "root" requested download for item "OPF Title" ebook at "/tmp/abs-fe/books/Author One/Book One/Book One.pdf"
+[2026-10-10 20:30:54.553] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Author One/Book One/Book One.pdf"
+[2026-10-10 20:31:51.208] INFO: [SocketAuthority] Socket jlLZ3omTQa8cEY4OAAAD disconnected from client "root" after 175373ms (Reason: client namespace disconnect)
+[2026-10-10 20:31:51.220] INFO: [TokenManager] Refresh token invalidated, 1 sessions deleted
+[2026-10-10 20:31:56.405] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 20:32:23.309] INFO: [PlaybackSessionManager] startSession: Closing open session "Audio Book" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:32:23.351] INFO: [MediaProgress] Marking media progress as finished because time remaining (0.07102000000000008) is less than 10 seconds (media item 9c92218a-2cad-4184-b37b-cad19fbcf0b7)
+[2026-10-10 20:32:29.933] INFO: [PlaybackSessionManager] startSession: Closing open session "Only" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:32:29.963] INFO: [MediaProgress] Marking media progress as finished because time remaining (0.06367300000000009) is less than 10 seconds (media item 26c5b30e-a765-44eb-be40-d20c3c5e9f20)
+[2026-10-10 20:32:29.977] INFO: [PlaybackSessionManager] startSession: Closing open session "Episode 1: Start" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:33:47.125] INFO: [Watcher] Removed watcher for "Test Books"
+[2026-10-10 20:33:47.129] INFO: [LibraryController] Removing 7 library items in library "Test Books"
+[2026-10-10 20:33:47.129] INFO: [LibraryController] Removing library item "5f7654fc-26d7-4298-9c1e-97e721f3761e" from library "Test Books"
+[2026-10-10 20:33:47.255] INFO: [ApiRouter] Removed 1 media progress entries for library item "5f7654fc-26d7-4298-9c1e-97e721f3761e"
+[2026-10-10 20:33:47.262] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/5f7654fc-26d7-4298-9c1e-97e721f3761e"
+[2026-10-10 20:33:47.270] INFO: [LibraryController] Removing library item "bb5287e2-2846-44ca-8b9c-0aeaf2a29b68" from library "Test Books"
+[2026-10-10 20:33:47.279] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/bb5287e2-2846-44ca-8b9c-0aeaf2a29b68"
+[2026-10-10 20:33:47.285] INFO: [LibraryController] Removing library item "c480ea32-8df3-4dc7-abbe-d929e555be6c" from library "Test Books"
+[2026-10-10 20:33:47.292] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/c480ea32-8df3-4dc7-abbe-d929e555be6c"
+[2026-10-10 20:33:47.298] INFO: [LibraryController] Removing library item "7f42fed5-174c-4da5-b187-cf71a61c2e3a" from library "Test Books"
+[2026-10-10 20:33:47.307] INFO: [ApiRouter] Removed 1 media progress entries for library item "7f42fed5-174c-4da5-b187-cf71a61c2e3a"
+[2026-10-10 20:33:47.309] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/7f42fed5-174c-4da5-b187-cf71a61c2e3a"
+[2026-10-10 20:33:47.315] INFO: [LibraryController] Removing library item "adadd6e0-8509-4af2-82ae-7bb621ba65de" from library "Test Books"
+[2026-10-10 20:33:47.322] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/adadd6e0-8509-4af2-82ae-7bb621ba65de"
+[2026-10-10 20:33:47.327] INFO: [LibraryController] Removing library item "3425b2bc-cc7d-4468-85a5-8e5c45cea30b" from library "Test Books"
+[2026-10-10 20:33:47.336] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/3425b2bc-cc7d-4468-85a5-8e5c45cea30b"
+[2026-10-10 20:33:47.342] INFO: [LibraryController] Removing library item "c3e67bd6-0c5a-466d-9988-ae1fdbcd4773" from library "Test Books"
+[2026-10-10 20:33:47.349] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/c3e67bd6-0c5a-466d-9988-ae1fdbcd4773"
+[2026-10-10 20:33:47.360] INFO: [LibraryController] Updated 3 playback sessions to remove library id
+[2026-10-10 20:33:51.712] INFO: [Watcher] Removed watcher for "Test Podcasts"
+[2026-10-10 20:33:51.713] INFO: [LibraryController] Removing 2 library items in library "Test Podcasts"
+[2026-10-10 20:33:51.714] INFO: [LibraryController] Removing library item "4798ecb3-4863-42c9-8438-bfb5c6e1bd1b" from library "Test Podcasts"
+[2026-10-10 20:33:51.724] INFO: [ApiRouter] Removed 1 media progress entries for library item "4798ecb3-4863-42c9-8438-bfb5c6e1bd1b"
+[2026-10-10 20:33:51.727] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/4798ecb3-4863-42c9-8438-bfb5c6e1bd1b"
+[2026-10-10 20:33:51.734] INFO: [LibraryController] Removing library item "22ceba60-aeb6-490a-8d4c-0f5fceb4a71b" from library "Test Podcasts"
+[2026-10-10 20:33:51.742] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/22ceba60-aeb6-490a-8d4c-0f5fceb4a71b"
+[2026-10-10 20:33:51.759] INFO: [LibraryController] Updated 1 playback sessions to remove library id
+[2026-10-10 20:37:18.414] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io QZlf5Jn0iViGrwKjAAAF
+[2026-10-10 20:39:32.251] INFO: [Watcher] Initializing watcher for "My Books".
+[2026-10-10 20:39:32.254] INFO: [Watcher] "My Books" Ready
+[2026-10-10 20:39:38.511] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io 2jSlwJyR-3f1J9gPAAAH
+[2026-10-10 20:39:40.203] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 20:39:40.203] INFO: [LibraryScanner] Starting (forced) library scan 54de68db-34a7-45e2-9f07-9ced724d7705 for My Books
+[2026-10-10 20:39:40.361] ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "/tmp/abs-fe/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 20:39:40.361] ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+    at FsRead.readUntilFoundCallback [as callback] (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:181:39)
+    at FsRead.readCallback (/home/danny/Code/compx574/audiobookshelf/dist-server/server/libs/nodeStreamZip/index.js:907:25)
+    at FSReqCallback.wrapper [as oncomplete] (node:fs:670:5)
+[2026-10-10 20:39:40.506] INFO: [LibraryScanner] Library scan "54de68db-34a7-45e2-9f07-9ced724d7705" completed in 0:00 | 8 Added | 0 Updated | 0 Missing
+[2026-10-10 20:39:40.514] INFO: [LibraryScan] Scan log saved "/tmp/abs-fe/metadata/logs/scans/2026-10-10_54de68db-34a7-45e2-9f07-9ced724d7705.txt"
+[2026-10-10 20:39:40.515] INFO: [LibraryController] Scan complete
+[2026-10-10 20:40:06.139] INFO: [PlaybackSessionManager] startSession: Closing open session "Real Book" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:40:08.631] INFO: [PlaybackSessionManager] startSession: Closing open session "Only" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:40:27.548] INFO: [PlaybackSessionManager] startSession: Closing open session "Audio Book" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:40:40.847] INFO: [MediaProgress] Marking media progress as finished because time remaining (0.04408200000000306) is less than 10 seconds (media item cf587073-d384-412f-afcf-9f1c3ffab393)
+[2026-10-10 20:41:43.373] INFO: [PlaybackSessionManager] Starting session for user "root" and resetting progress for finished item "Real Book"
+[2026-10-10 20:41:54.353] INFO: [PlaybackSessionManager] Starting session for user "root" and resetting progress for finished item "Real Book"
+[2026-10-10 20:41:58.150] INFO: [PlaybackSessionManager] Starting session for user "root" and resetting progress for finished item "Real Book"
+[2026-10-10 20:44:57.738] INFO: [ApiRouter] Removed 1 media progress entries for library item "fce75840-db1a-4266-a520-dc1d6c3af7af"
+[2026-10-10 20:44:57.742] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/fce75840-db1a-4266-a520-dc1d6c3af7af"
+[2026-10-10 20:44:57.751] INFO: [LibraryItemController] Deleting library item from file system at "/tmp/abs-fe/books/Author Six/Series Book"
+[2026-10-10 20:44:57.771] INFO: [ApiRouter] Removed author "Author Six" with no books
+[2026-10-10 20:45:03.636] INFO: [ApiRouter] Removed 1 media progress entries for library item "119d14c6-78fb-47d5-b2e0-62bdf4158056"
+[2026-10-10 20:45:03.641] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/119d14c6-78fb-47d5-b2e0-62bdf4158056"
+[2026-10-10 20:45:03.652] INFO: [LibraryItemController] Deleting library item from file system at "/tmp/abs-fe/books/Author Two/Audio Book"
+[2026-10-10 20:45:03.669] INFO: [ApiRouter] Removed author "Author Two" with no books
+[2026-10-10 20:45:15.960] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Author Six/Series Book" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Author Six/Series Book'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Author Six/Series Book'
+}
+[2026-10-10 20:45:15.961] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Author Six/Series Book/Series Book.epub" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Author Six/Series Book/Series Book.epub'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Author Six/Series Book/Series Book.epub'
+}
+[2026-10-10 20:45:15.961] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Author Six/Series Book/Series Book.mp3" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Author Six/Series Book/Series Book.mp3'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Author Six/Series Book/Series Book.mp3'
+}
+[2026-10-10 20:45:15.962] INFO: [LibraryScanner] File update group "Author Six/Series Book" does not exist - ignoring
+[2026-10-10 20:45:15.963] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Author Two/Audio Book" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Author Two/Audio Book'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Author Two/Audio Book'
+}
+[2026-10-10 20:45:15.963] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Author Two/Audio Book/02 - Part 2.wav" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Author Two/Audio Book/02 - Part 2.wav'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Author Two/Audio Book/02 - Part 2.wav'
+}
+[2026-10-10 20:45:15.963] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Author Two/Audio Book/01 - Part 1.wav" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Author Two/Audio Book/01 - Part 1.wav'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Author Two/Audio Book/01 - Part 1.wav'
+}
+[2026-10-10 20:45:15.963] INFO: [LibraryScanner] File update group "Author Two/Audio Book" does not exist - ignoring
+[2026-10-10 20:45:28.813] INFO: [LibraryItemController] User "root" requested download for item "OPF Title" ebook at "/tmp/abs-fe/books/Author One/Book One/Book One.pdf"
+[2026-10-10 20:45:28.813] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Author One/Book One/Book One.pdf"
+[2026-10-10 20:46:24.355] WARN: Cover image not found in manifest for epub at "/tmp/abs-fe/books/Ebook Author/EPUB Book/EPUB Book.epub"
+[2026-10-10 20:47:27.741] INFO: [LibraryItemController] User "root" requested download for item "PDF Book" ebook at "/tmp/abs-fe/books/Ebook Author/PDF Book/PDF Book.pdf"
+[2026-10-10 20:47:27.743] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Ebook Author/PDF Book/PDF Book.pdf"
+[2026-10-10 20:47:34.461] WARN: Cover image not found in manifest for epub at "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 20:48:03.522] INFO: [PlaybackSessionManager] startSession: Closing open session "Real Book" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:48:04.523] INFO: [LibraryItemController] User "root" requested download for item "Combo Book" ebook at "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 20:48:04.523] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 20:48:14.542] INFO: [LibraryItemController] User "root" requested download for item "EPUB Book" ebook at "/tmp/abs-fe/books/Ebook Author/EPUB Book/EPUB Book.epub"
+[2026-10-10 20:48:14.543] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Ebook Author/EPUB Book/EPUB Book.epub"
+[2026-10-10 20:48:25.901] INFO: [LibraryItemController] User "root" requested download for item "EPUB Book" ebook at "/tmp/abs-fe/books/Ebook Author/EPUB Book/EPUB Book.epub"
+[2026-10-10 20:48:25.901] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Ebook Author/EPUB Book/EPUB Book.epub"
+[2026-10-10 20:48:28.579] INFO: [LibraryItemController] User "root" requested download for item "PDF Book" ebook at "/tmp/abs-fe/books/Ebook Author/PDF Book/PDF Book.pdf"
+[2026-10-10 20:48:28.580] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Ebook Author/PDF Book/PDF Book.pdf"
+[2026-10-10 20:48:36.706] INFO: [SocketAuthority] Socket 2jSlwJyR-3f1J9gPAAAH disconnected from client "root" after 538195ms (Reason: transport close)
+[2026-10-10 20:48:37.247] INFO: [SocketAuthority] Socket QZlf5Jn0iViGrwKjAAAF disconnected from client "root" after 678833ms (Reason: transport close)
+[2026-10-10 20:56:54.613] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io ZIBCfO-ET6JkJ_KnAAAJ
+[2026-10-10 20:57:03.022] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/3c52a03c-9790-43df-a539-f4bb60208c43"
+[2026-10-10 20:57:03.036] INFO: [LibraryItemController] Deleting library item from file system at "/tmp/abs-fe/books/Author One/Book Two"
+[2026-10-10 20:57:03.052] INFO: [ApiRouter] Removed author "NFO Author" with no books
+[2026-10-10 20:57:15.345] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Author One/Book Two" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Author One/Book Two'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Author One/Book Two'
+}
+[2026-10-10 20:57:15.346] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Author One/Book Two/Book Two.pdf" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Author One/Book Two/Book Two.pdf'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Author One/Book Two/Book Two.pdf'
+}
+[2026-10-10 20:57:15.347] WARN: [Utils] Failed to get ino for path "/tmp/abs-fe/books/Author One/Book Two/metadata.nfo" [Error: ENOENT: no such file or directory, stat '/tmp/abs-fe/books/Author One/Book Two/metadata.nfo'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/tmp/abs-fe/books/Author One/Book Two/metadata.nfo'
+}
+[2026-10-10 20:57:15.347] INFO: [LibraryScanner] File update group "Author One/Book Two" does not exist - ignoring
+[2026-10-10 20:58:19.256] INFO: [LibraryItemController] User "root" requested download for item "Combo Book" ebook at "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 20:58:19.258] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 20:58:31.003] INFO: [PlaybackSessionManager] startSession: Closing open session "Real Book" for user "root" (Device: Linux x86_64 / Chrome)
+[2026-10-10 20:58:34.434] INFO: [LibraryItemController] User "root" requested download for item "Combo Book" ebook at "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 20:58:34.434] INFO: [LibraryItemController] Downloaded ebook file "/tmp/abs-fe/books/Combo Author/Combo Book/Combo Book.epub"
+[2026-10-10 21:11:06.879] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/226be6f7-ffeb-46cd-b9ac-15a2bcc2dbed"
+[2026-10-10 21:11:26.706] INFO: [LibraryScanner] Starting library scan 63d7deb5-c655-4812-abba-452572902614 for My Books
+[2026-10-10 21:11:26.730] INFO: [LibraryScanner] Library scan "63d7deb5-c655-4812-abba-452572902614" completed in 0:00 | 1 Added | 0 Updated | 0 Missing
+[2026-10-10 21:11:26.735] INFO: [LibraryScan] Scan log saved "/tmp/abs-fe/metadata/logs/scans/2026-10-10_63d7deb5-c655-4812-abba-452572902614.txt"
+[2026-10-10 21:11:26.736] INFO: [LibraryController] Scan complete
+[2026-10-10 21:11:35.763] INFO: [SocketAuthority] Socket ZIBCfO-ET6JkJ_KnAAAJ disconnected from client "root" after 881150ms (Reason: transport close)
+[2026-10-10 21:11:35.930] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io clOSUWYnNP58gFJzAAAL
+[2026-10-10 21:11:49.172] INFO: [ApiRouter] Removing item metadata at "/tmp/abs-fe/metadata/items/d3324acd-eb4a-4a58-ad92-45a25d486cb4"
+[2026-10-10 21:11:49.200] INFO: [ApiRouter] Removed author "OPF Author" with no books
+[2026-10-10 21:11:49.208] INFO: [ApiRouter] Series "OPF Series" is now empty. Removing series
+[2026-10-10 21:11:53.101] INFO: [SocketAuthority] Socket clOSUWYnNP58gFJzAAAL disconnected from client "root" after 17171ms (Reason: transport close)
+[2026-10-10 21:11:53.242] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io fLlCfF9xPe2MWWKmAAAN
+[2026-10-10 21:11:54.014] INFO: [SocketAuthority] Socket fLlCfF9xPe2MWWKmAAAN disconnected from client "root" after 773ms (Reason: transport close)
+[2026-10-10 21:11:54.147] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io Mbqqun4qPL8yrJBjAAAP
+[2026-10-10 21:11:54.592] INFO: [SocketAuthority] Socket Mbqqun4qPL8yrJBjAAAP disconnected from client "root" after 445ms (Reason: transport close)
+[2026-10-10 21:11:54.735] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io QwACZFw9npxQ6gH0AAAR
+[2026-10-10 21:11:54.947] INFO: [SocketAuthority] Socket QwACZFw9npxQ6gH0AAAR disconnected from client "root" after 212ms (Reason: transport close)
+[2026-10-10 21:11:55.067] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io vUCv12hP0NVAqchWAAAT
+[2026-10-10 21:11:55.170] INFO: [SocketAuthority] Socket vUCv12hP0NVAqchWAAAT disconnected from client "root" after 103ms (Reason: transport close)
+[2026-10-10 21:11:55.292] INFO: [SocketAuthority] Socket Connected to /audiobookshelf/socket.io 5gByZV-TCXvxd_BNAAAV
+[2026-10-10 21:12:01.208] INFO: [LibraryScanner] Starting library scan 1f15224b-ee09-48b1-b61c-760d350d6cc3 for My Books
+[2026-10-10 21:12:01.262] INFO: [LibraryScanner] Library scan "1f15224b-ee09-48b1-b61c-760d350d6cc3" completed in 0:00 | 1 Added | 0 Updated | 0 Missing
+[2026-10-10 21:12:01.268] INFO: [LibraryScan] Scan log saved "/tmp/abs-fe/metadata/logs/scans/2026-10-10_1f15224b-ee09-48b1-b61c-760d350d6cc3.txt"
+[2026-10-10 21:12:01.268] INFO: [LibraryController] Scan complete
+[2026-10-10 21:17:24.617] INFO: [LibraryScanner] Scanning file update group and library item was deleted "Loose Book" - marking as missing
+[2026-10-10 21:19:47.011] ERROR: [fileUtils] Recurse files error [Error: ENOTDIR: not a directory, scandir '/tmp/abs-fe/books/Loose Book.pdf'] {
+  errno: -20,
+  code: 'ENOTDIR',
+  syscall: 'scandir',
+  path: '/tmp/abs-fe/books/Loose Book.pdf'
+}
+[2026-10-10 21:50:04.957] INFO: [SocketAuthority] Socket 5gByZV-TCXvxd_BNAAAV disconnected from client "root" after 2289665ms (Reason: transport close)

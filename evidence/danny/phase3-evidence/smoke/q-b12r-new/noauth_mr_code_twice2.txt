@@ -1,0 +1,3 @@
+STATUS 302
+LOCATION Location: audiobookshelf://oauth?code=a%2Cb&state=st10
+TEXT Found. Redirecting to audiobookshelf://oauth?code=a%2Cb&state=st10

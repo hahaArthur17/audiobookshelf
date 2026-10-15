@@ -1,0 +1,23 @@
+Batch 5 and 6 (server/managers, server/scanner): independent verification, 2026-10-09
+Baseline for comparisons: d3617ecd (commit before batch 5). Commits checked: 5405f2f3 (batch 5), 7fe92c59 (batch 6).
+
+Measured (commands run by the user, outputs in this folder):
+- git status clean; two commits as expected; tsconfig.server.json, eslint.config.mjs and test unchanged.
+- 31 .js files converted (33 .ts including managers/types.ts and scanner/types.ts), 0 .js left in server/managers and server/scanner.
+- tsc: 0 errors at baseline, at HEAD, and at 5405f2f3 alone. npm test: 356 passing, no failing.
+- Casts: grep gives 239 raw matches; 7 are false matches in log and SQL strings ("as missing", "as NOT", "as version", "as maxVersion", "as count", "as absdatabase.failed.sqlite."), so 232 casts (176 plain + 56 as unknown as). Same as the agent's report.
+- Per target type, the agent's counts match exactly when counted by full target type (string 11, string[] 10, number 8). Counted by prefix, string[] is 12 (two casts are to string[] | undefined, the Sequelize changed() result), string is 12 (one is to string & {...}) and number is 9 (one is to number | null).
+- as Record<string, unknown>: 75 (71 in the 8 scanner files of exception 2, 4 elsewhere). as Error: 17 (16 catch variables plus one in BackupManager). Per-file counts match the Log.
+- Tags: 200 cast( comments cover the 232 casts (one comment covers a line with several casts or a multi-line expression). 14 cast(c) comments, each matches a Bugs entry. One cast has no tag of its own (AudioFileScanner.ts line 176).
+- Non-null !: 148 by grep (agent: 151); the grep is approximate.
+- Files changed outside server/managers and server/scanner: same list as the Log (package.json adds @types/nodemailer and @types/semver).
+- Compiled JS vs baseline: server/libs identical; fsExtra/index.js still emitted. In managers and scanner every file differs because tsc writes double quotes and module-style aliases (const { a } = x). Logic-level differences: CronManager drops an ignored argument (the original executePodcastCron has one parameter); PodcastManager and PlaybackSessionManager use a local alias of the same value. require() lists keep the same order in every file except BackupManager (duplicate fileUtils require removed) and RssFeedManager (express type-only import removed). axios.default === axios is true. LibraryScanner: module.exports moves from before to after the helper function declarations (hoisted, no effect).
+- Smoke test with sample files (ffmpeg installed): original and converted give the same 5 library items (OPF, NFO, metadata.json, loose file, 2-track audio), same metadata, no ERROR or WARN lines. One difference: tie order of authorsWithCount (all count 1); the query orders by count DESC only, so the tie order is arbitrary.
+
+Code read (not run): 7 of the 12 new Bugs entries were found in the code as the NOTEs describe: NotificationManager.onTest (also never called), MigrationManager default global.configPath (never set; Server.js sets global.ConfigPath), CoverSearchManager onError called with one argument, Podcast model has no asin, AudioFileScanner filename author/series (the cast is needed because the type has authors and seriesName), PodcastFinder.search returns null for an empty term, Scanner results.length.
+Not checked: the other 5 Bugs entries (CronManager fallback title, RssFeedManager null entity, PodcastManager failed timestamps and empty feed title, MediaProbeData video-only file, LibraryScanner null push) rest on the NOTE lines only.
+
+Not covered by tests or smoke: PodcastScanner and PodcastManager at runtime, the Scanner.ts match flow (needs network), file watcher rescans, epub parsing, covers, no-require-cycles check.
+Difference from the agent's report: "compiled JS of files outside the batch is unchanged" is not exact; SocketAuthority.js and ffmpegHelpers.js differ in comments or line breaks only.
+
+Usage (Claude Code /usage; one session for batches 5 and 6): before: cost $3.18, API 7m 41s, wall 36m 57s (the session already had work on the counter), session 16%, week 17% (resets Oct 14); after: cost $48.13, API 1h 1m 23s, wall 5h 8m 20s (includes idle), session 23% (the session window reset during the run), week 31%. Batch 5 and 6 alone, if the earlier part is other work: about $44.95 and 53m 42s API. The percentages include other use. Batch 6 has no counter of its own.

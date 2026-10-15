@@ -1,0 +1,184 @@
+STATUS 200
+LOCATION 
+{
+ "addedAt": "MASK",
+ "birthtimeMs": "MASK",
+ "ctimeMs": "MASK",
+ "folderId": "MASK",
+ "id": "MASK",
+ "ino": "MASK",
+ "isFile": false,
+ "isInvalid": false,
+ "isMissing": false,
+ "lastScan": "MASK",
+ "libraryFiles": [
+  {
+   "addedAt": "MASK",
+   "fileType": "ebook",
+   "ino": "MASK",
+   "isSupplementary": true,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".epub",
+    "filename": "Series Book.epub",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author Six/Series Book/Series Book.epub",
+    "relPath": "Series Book.epub",
+    "size": 9
+   },
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "fileType": "audio",
+   "ino": "MASK",
+   "isSupplementary": null,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".mp3",
+    "filename": "Series Book.mp3",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author Six/Series Book/Series Book.mp3",
+    "relPath": "Series Book.mp3",
+    "size": 4527
+   },
+   "updatedAt": "MASK"
+  }
+ ],
+ "libraryId": "MASK",
+ "media": {
+  "audioFiles": [
+   {
+    "addedAt": "MASK",
+    "bitRate": 32000,
+    "channelLayout": "mono",
+    "channels": 1,
+    "chapters": [],
+    "codec": "mp3",
+    "discNumFromFilename": null,
+    "discNumFromMeta": null,
+    "duration": 1.07102,
+    "embeddedCoverArt": null,
+    "error": null,
+    "exclude": false,
+    "format": "MP2/3 (MPEG audio layer 2/3)",
+    "index": 1,
+    "ino": "MASK",
+    "language": null,
+    "manuallyVerified": false,
+    "metaTags": {
+     "tagEncoder": "Lavf60.16.100",
+     "tagTitle": "Only"
+    },
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".mp3",
+     "filename": "Series Book.mp3",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Author Six/Series Book/Series Book.mp3",
+     "relPath": "Series Book.mp3",
+     "size": 4527
+    },
+    "mimeType": "audio/mpeg",
+    "timeBase": "1/14112000",
+    "trackNumFromFilename": null,
+    "trackNumFromMeta": null,
+    "updatedAt": "MASK"
+   }
+  ],
+  "chapters": [],
+  "coverPath": null,
+  "duration": 1.07102,
+  "ebookFile": null,
+  "id": "MASK",
+  "libraryItemId": "MASK",
+  "metadata": {
+   "abridged": false,
+   "asin": null,
+   "authorName": "Author Six",
+   "authorNameLF": "Six, Author",
+   "authors": [
+    {
+     "id": "MASK",
+     "name": "Author Six"
+    }
+   ],
+   "description": null,
+   "descriptionPlain": null,
+   "explicit": false,
+   "genres": [],
+   "isbn": null,
+   "language": null,
+   "narratorName": "",
+   "narrators": [],
+   "publishedDate": null,
+   "publishedYear": null,
+   "publisher": null,
+   "series": [],
+   "seriesName": "",
+   "subtitle": null,
+   "title": "Only",
+   "titleIgnorePrefix": "Only"
+  },
+  "numAudioFiles": 1,
+  "numChapters": 0,
+  "numTracks": 1,
+  "size": 4527,
+  "tags": [],
+  "tracks": [
+   {
+    "addedAt": "MASK",
+    "bitRate": 32000,
+    "channelLayout": "mono",
+    "channels": 1,
+    "chapters": [],
+    "codec": "mp3",
+    "contentUrl": "/api/items/UUID/file/535163",
+    "discNumFromFilename": null,
+    "discNumFromMeta": null,
+    "duration": 1.07102,
+    "embeddedCoverArt": null,
+    "error": null,
+    "exclude": false,
+    "format": "MP2/3 (MPEG audio layer 2/3)",
+    "index": 1,
+    "ino": "MASK",
+    "language": null,
+    "manuallyVerified": false,
+    "metaTags": {
+     "tagEncoder": "Lavf60.16.100",
+     "tagTitle": "Only"
+    },
+    "metadata": {
+     "birthtimeMs": "MASK",
+     "ctimeMs": "MASK",
+     "ext": ".mp3",
+     "filename": "Series Book.mp3",
+     "mtimeMs": "MASK",
+     "path": "ROOT/lib/books/Author Six/Series Book/Series Book.mp3",
+     "relPath": "Series Book.mp3",
+     "size": 4527
+    },
+    "mimeType": "audio/mpeg",
+    "startOffset": 0,
+    "timeBase": "1/14112000",
+    "title": "Series Book.mp3",
+    "trackNumFromFilename": null,
+    "trackNumFromMeta": null,
+    "updatedAt": "MASK"
+   }
+  ]
+ },
+ "mediaType": "book",
+ "mtimeMs": "MASK",
+ "numFiles": 2,
+ "oldLibraryItemId": null,
+ "path": "ROOT/lib/books/Author Six/Series Book",
+ "relPath": "Author Six/Series Book",
+ "scanVersion": "2.37.0",
+ "size": 4536,
+ "updatedAt": "MASK"
+}

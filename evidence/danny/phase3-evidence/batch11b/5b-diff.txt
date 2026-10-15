@@ -1,0 +1,906 @@
+diff --git a/server/Database.ts b/server/Database.ts
+index ab61327d..a9b521d6 100644
+--- a/server/Database.ts
++++ b/server/Database.ts
+@@ -18,11 +18,21 @@ import type NotificationSettings = require('./objects/settings/NotificationSetti
+ import type EmailSettings = require('./objects/settings/EmailSettings')
+ import type { ModelsSequelize, ModelRegistry } from './models/types'
+ import type { LibraryFilterData } from './utils/types'
+-import type { DataTypes as SequelizeDataTypes, WhereOptions } from 'sequelize'
++import type { WhereOptions } from 'sequelize'
+ import type sqlite3 = require('sqlite3')
+ import type oldPlaybackSession = require('./objects/PlaybackSession')
+ const { Sequelize, Op } = sequelize
+ 
++/**
++ * Calls `load` (a require() call written at the call site, so the module is still required there, when the
++ * caller runs) and returns its result typed as the module the caller names, for example
++ * `lazy<typeof import('./models/User')>(() => require('./models/User'))`
++ */
++function lazy<T>(load: () => unknown): T {
++  // cast(d): require() is typed any; the caller names the type of the module it requires
++  return load() as T
++}
++
+ /**
+  * Fields that are null until init (Database.init runs first in Server.init, before the routes, managers and
+  * queries that read them): sequelize is set by connect (the models are on sequelize.models after buildModels),
+@@ -330,32 +340,32 @@ class Database {
+   }
+ 
+   buildModels(force = false) {
+-    // cast(d): require() is typed any; the models are required here (lazily, in this order), not at module load
+-    (require('./models/User') as typeof import('./models/User')).init(this.sequelize)
+-    ;(require('./models/Session') as typeof import('./models/Session')).init(this.sequelize)
+-    ;(require('./models/ApiKey') as typeof import('./models/ApiKey')).init(this.sequelize)
+-    ;(require('./models/Library') as typeof import('./models/Library')).init(this.sequelize)
+-    ;(require('./models/LibraryFolder') as typeof import('./models/LibraryFolder')).init(this.sequelize)
+-    ;(require('./models/Book') as typeof import('./models/Book')).init(this.sequelize)
+-    ;(require('./models/Podcast') as typeof import('./models/Podcast')).init(this.sequelize)
+-    ;(require('./models/PodcastEpisode') as typeof import('./models/PodcastEpisode')).init(this.sequelize)
+-    ;(require('./models/LibraryItem') as typeof import('./models/LibraryItem')).init(this.sequelize)
+-    ;(require('./models/MediaProgress') as typeof import('./models/MediaProgress')).init(this.sequelize)
+-    ;(require('./models/Series') as typeof import('./models/Series')).init(this.sequelize)
+-    ;(require('./models/BookSeries') as typeof import('./models/BookSeries')).init(this.sequelize)
+-    ;(require('./models/Author') as typeof import('./models/Author')).init(this.sequelize)
+-    ;(require('./models/BookAuthor') as typeof import('./models/BookAuthor')).init(this.sequelize)
+-    ;(require('./models/Collection') as typeof import('./models/Collection')).init(this.sequelize)
+-    ;(require('./models/CollectionBook') as typeof import('./models/CollectionBook')).init(this.sequelize)
+-    ;(require('./models/Playlist') as typeof import('./models/Playlist')).init(this.sequelize)
+-    ;(require('./models/PlaylistMediaItem') as typeof import('./models/PlaylistMediaItem')).init(this.sequelize)
+-    ;(require('./models/Device') as typeof import('./models/Device')).init(this.sequelize)
+-    ;(require('./models/PlaybackSession') as typeof import('./models/PlaybackSession')).init(this.sequelize)
+-    ;(require('./models/Feed') as typeof import('./models/Feed')).init(this.sequelize)
+-    ;(require('./models/FeedEpisode') as typeof import('./models/FeedEpisode')).init(this.sequelize)
+-    ;(require('./models/Setting') as typeof import('./models/Setting')).init(this.sequelize)
+-    ;(require('./models/CustomMetadataProvider') as typeof import('./models/CustomMetadataProvider')).init(this.sequelize)
+-    ;(require('./models/MediaItemShare') as typeof import('./models/MediaItemShare')).init(this.sequelize)
++    // The models are required here (lazily, in this order), not at module load
++    lazy<typeof import('./models/User')>(() => require('./models/User')).init(this.sequelize)
++    lazy<typeof import('./models/Session')>(() => require('./models/Session')).init(this.sequelize)
++    lazy<typeof import('./models/ApiKey')>(() => require('./models/ApiKey')).init(this.sequelize)
++    lazy<typeof import('./models/Library')>(() => require('./models/Library')).init(this.sequelize)
++    lazy<typeof import('./models/LibraryFolder')>(() => require('./models/LibraryFolder')).init(this.sequelize)
++    lazy<typeof import('./models/Book')>(() => require('./models/Book')).init(this.sequelize)
++    lazy<typeof import('./models/Podcast')>(() => require('./models/Podcast')).init(this.sequelize)
++    lazy<typeof import('./models/PodcastEpisode')>(() => require('./models/PodcastEpisode')).init(this.sequelize)
++    lazy<typeof import('./models/LibraryItem')>(() => require('./models/LibraryItem')).init(this.sequelize)
++    lazy<typeof import('./models/MediaProgress')>(() => require('./models/MediaProgress')).init(this.sequelize)
++    lazy<typeof import('./models/Series')>(() => require('./models/Series')).init(this.sequelize)
++    lazy<typeof import('./models/BookSeries')>(() => require('./models/BookSeries')).init(this.sequelize)
++    lazy<typeof import('./models/Author')>(() => require('./models/Author')).init(this.sequelize)
++    lazy<typeof import('./models/BookAuthor')>(() => require('./models/BookAuthor')).init(this.sequelize)
++    lazy<typeof import('./models/Collection')>(() => require('./models/Collection')).init(this.sequelize)
++    lazy<typeof import('./models/CollectionBook')>(() => require('./models/CollectionBook')).init(this.sequelize)
++    lazy<typeof import('./models/Playlist')>(() => require('./models/Playlist')).init(this.sequelize)
++    lazy<typeof import('./models/PlaylistMediaItem')>(() => require('./models/PlaylistMediaItem')).init(this.sequelize)
++    lazy<typeof import('./models/Device')>(() => require('./models/Device')).init(this.sequelize)
++    lazy<typeof import('./models/PlaybackSession')>(() => require('./models/PlaybackSession')).init(this.sequelize)
++    lazy<typeof import('./models/Feed')>(() => require('./models/Feed')).init(this.sequelize)
++    lazy<typeof import('./models/FeedEpisode')>(() => require('./models/FeedEpisode')).init(this.sequelize)
++    lazy<typeof import('./models/Setting')>(() => require('./models/Setting')).init(this.sequelize)
++    lazy<typeof import('./models/CustomMetadataProvider')>(() => require('./models/CustomMetadataProvider')).init(this.sequelize)
++    lazy<typeof import('./models/MediaItemShare')>(() => require('./models/MediaItemShare')).init(this.sequelize)
+ 
+     return this.sequelize.sync({ force, alter: false })
+   }
+@@ -404,8 +414,8 @@ class Database {
+     }
+     // Build migrations
+     if (this.serverSettings.buildNumber <= 0) {
+-      // cast(d): require() is typed any; the module is required here (lazily), not at module load
+-      await (require('./utils/migrations/absMetadataMigration') as typeof import('./utils/migrations/absMetadataMigration')).migrate(this)
++      // The module is required here (lazily), not at module load
++      await lazy<typeof import('./utils/migrations/absMetadataMigration')>(() => require('./utils/migrations/absMetadataMigration')).migrate(this)
+     }
+ 
+     await this.cleanDatabase()
+@@ -663,8 +673,7 @@ class Database {
+     this.libraryFilterData[libraryId].numIssues = await this.libraryItemModel.count({
+       where: {
+         libraryId,
+-        // cast(b): sequelize.js sets Op on the Sequelize class, its types do not declare it
+-        [(Sequelize as typeof Sequelize & { Op: typeof Op }).Op.or]: [
++        [Sequelize.Op.or]: [
+           {
+             isMissing: true
+           },
+@@ -898,10 +907,8 @@ WHERE EXISTS (
+     const bookAuthors = 'bookAuthors'
+     const authors = 'authors'
+     const columns = [
+-      // cast(b): sequelize.js sets the data types on the Sequelize class, its types do not declare them
+-      { name: 'authorNamesFirstLast', source: `${authors}.name`, spec: { type: (Sequelize as typeof Sequelize & typeof SequelizeDataTypes).STRING, allowNull: true } },
+-      // cast(b): as above
+-      { name: 'authorNamesLastFirst', source: `${authors}.lastFirst`, spec: { type: (Sequelize as typeof Sequelize & typeof SequelizeDataTypes).STRING, allowNull: true } }
++      { name: 'authorNamesFirstLast', source: `${authors}.name`, spec: { type: Sequelize.STRING, allowNull: true } },
++      { name: 'authorNamesLastFirst', source: `${authors}.lastFirst`, spec: { type: Sequelize.STRING, allowNull: true } }
+     ]
+     const authorsSort = `${bookAuthors}.createdAt ASC`
+     const columnNames = columns.map((column) => column.name).join(', ')
+diff --git a/server/managers/MigrationManager.ts b/server/managers/MigrationManager.ts
+index 3109f0d5..3af77ba0 100644
+--- a/server/managers/MigrationManager.ts
++++ b/server/managers/MigrationManager.ts
+@@ -5,8 +5,7 @@ import path = require('path')
+ import Module = require('module')
+ import fs = require('../libs/fsExtra')
+ import Logger = require('../Logger')
+-// cast(b): sequelize sets QueryTypes on the Sequelize class at runtime; its types only export it from the module
+-const { Sequelize, DataTypes } = sequelizeModule as typeof sequelizeModule & { Sequelize: { QueryTypes: typeof sequelizeModule.QueryTypes } }
++const { Sequelize, DataTypes } = sequelizeModule
+ 
+ /**
+  * Migration as the vendored umzug lists it
+diff --git a/server/migrations/v2.15.0-series-column-unique.ts b/server/migrations/v2.15.0-series-column-unique.ts
+index caf24308..4cef25df 100644
+--- a/server/migrations/v2.15.0-series-column-unique.ts
++++ b/server/migrations/v2.15.0-series-column-unique.ts
+@@ -1,4 +1,3 @@
+-import type { QueryTypes, Sequelize } from 'sequelize'
+ import type { MigrationOptions } from './types'
+ 
+ /**
+@@ -132,8 +131,7 @@ async function up({ context: { queryInterface, logger } }: MigrationOptions): Pr
+           name: duplicate.name,
+           libraryId: duplicate.libraryId
+         },
+-        // cast(b): sequelize sets QueryTypes on the Sequelize prototype at runtime; its types only export it from the module
+-        type: (queryInterface.sequelize as Sequelize & { QueryTypes: typeof QueryTypes }).QueryTypes.SELECT
++        type: queryInterface.sequelize.QueryTypes.SELECT
+       }
+     )
+ 
+diff --git a/server/migrations/v2.17.3-fk-constraints.ts b/server/migrations/v2.17.3-fk-constraints.ts
+index 775f9b5f..cb4f051f 100644
+--- a/server/migrations/v2.17.3-fk-constraints.ts
++++ b/server/migrations/v2.17.3-fk-constraints.ts
+@@ -1,4 +1,4 @@
+-import type { ColumnDescription, QueryInterface, QueryTypes, Sequelize } from 'sequelize'
++import type { ColumnDescription, QueryInterface } from 'sequelize'
+ import type { MigrationOptions } from './types'
+ 
+ /**
+@@ -248,8 +248,7 @@ async function changeConstraints(queryInterface: QueryInterface, tableName: stri
+ 
+     // Validate that all foreign key constraints are correct
+     const result = await execQuery(`PRAGMA foreign_key_check(${quotedTableName});`, {
+-      // cast(b): sequelize sets QueryTypes on the Sequelize class at runtime; its types only export it from the module
+-      type: (queryInterface.sequelize.Sequelize as typeof Sequelize & { QueryTypes: typeof QueryTypes }).QueryTypes.SELECT
++      type: queryInterface.sequelize.Sequelize.QueryTypes.SELECT
+     })
+ 
+     // There are foreign key violations, exit
+diff --git a/server/migrations/v2.17.6-share-add-isdownloadable.ts b/server/migrations/v2.17.6-share-add-isdownloadable.ts
+index 266befcf..ed0c8427 100644
+--- a/server/migrations/v2.17.6-share-add-isdownloadable.ts
++++ b/server/migrations/v2.17.6-share-add-isdownloadable.ts
+@@ -1,4 +1,3 @@
+-import type { DataTypes as SequelizeDataTypes, Sequelize } from 'sequelize'
+ import type { MigrationOptions } from './types'
+ 
+ const migrationVersion = '2.17.6'
+@@ -19,8 +18,7 @@ async function up({ context: { queryInterface, logger } }: MigrationOptions): Pr
+     if (!tableDescription.isDownloadable) {
+       logger.info(`${loggerPrefix} Adding isDownloadable column to mediaItemShares table`)
+       await queryInterface.addColumn('mediaItemShares', 'isDownloadable', {
+-        // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+-        type: (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataTypes }).DataTypes.BOOLEAN,
++        type: queryInterface.sequelize.Sequelize.DataTypes.BOOLEAN,
+         defaultValue: false,
+         allowNull: false
+       })
+diff --git a/server/migrations/v2.19.1-copy-title-to-library-items.ts b/server/migrations/v2.19.1-copy-title-to-library-items.ts
+index f6b8cc8e..038440b7 100644
+--- a/server/migrations/v2.19.1-copy-title-to-library-items.ts
++++ b/server/migrations/v2.19.1-copy-title-to-library-items.ts
+@@ -1,5 +1,4 @@
+ import util = require('util')
+-import type { DataTypes as SequelizeDataTypes, Sequelize } from 'sequelize'
+ import type { ModelAttributeColumnOptions, QueryInterface } from 'sequelize'
+ import type { MigrationContext, MigrationOptions } from './types'
+ 
+@@ -24,14 +23,12 @@ async function up({ context: { queryInterface, logger } }: MigrationOptions): Pr
+   // Upwards migration script
+   logger.info(`${loggerPrefix} UPGRADE BEGIN: ${migrationName}`)
+ 
+-  // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+-  await addColumn(queryInterface, logger, 'libraryItems', 'title', { type: (queryInterface.sequelize.Sequelize as typeof Sequelize & typeof SequelizeDataTypes).STRING, allowNull: true })
++  await addColumn(queryInterface, logger, 'libraryItems', 'title', { type: queryInterface.sequelize.Sequelize.STRING, allowNull: true })
+   await copyColumn(queryInterface, logger, 'books', 'title', 'id', 'libraryItems', 'title', 'mediaId')
+   await addTrigger(queryInterface, logger, 'books', 'title', 'id', 'libraryItems', 'title', 'mediaId')
+   await addIndex(queryInterface, logger, 'libraryItems', ['libraryId', 'mediaType', { name: 'title', collate: 'NOCASE' }])
+ 
+-  // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+-  await addColumn(queryInterface, logger, 'libraryItems', 'titleIgnorePrefix', { type: (queryInterface.sequelize.Sequelize as typeof Sequelize & typeof SequelizeDataTypes).STRING, allowNull: true })
++  await addColumn(queryInterface, logger, 'libraryItems', 'titleIgnorePrefix', { type: queryInterface.sequelize.Sequelize.STRING, allowNull: true })
+   await copyColumn(queryInterface, logger, 'books', 'titleIgnorePrefix', 'id', 'libraryItems', 'titleIgnorePrefix', 'mediaId')
+   await addTrigger(queryInterface, logger, 'books', 'titleIgnorePrefix', 'id', 'libraryItems', 'titleIgnorePrefix', 'mediaId')
+   await addIndex(queryInterface, logger, 'libraryItems', ['libraryId', 'mediaType', { name: 'titleIgnorePrefix', collate: 'NOCASE' }])
+diff --git a/server/migrations/v2.19.4-improve-podcast-queries.ts b/server/migrations/v2.19.4-improve-podcast-queries.ts
+index ec123eb5..f23a9fa3 100644
+--- a/server/migrations/v2.19.4-improve-podcast-queries.ts
++++ b/server/migrations/v2.19.4-improve-podcast-queries.ts
+@@ -1,6 +1,5 @@
+ // util is not used; kept as a side-effect import so the module still requires it, as the JavaScript did
+ import 'util'
+-import type { DataTypes as SequelizeDataTypes, Sequelize } from 'sequelize'
+ import type { ModelAttributeColumnOptions, QueryInterface } from 'sequelize'
+ import type { MigrationContext, MigrationOptions } from './types'
+ 
+@@ -22,15 +21,13 @@ async function up({ context: { queryInterface, logger } }: MigrationOptions): Pr
+   logger.info(`${loggerPrefix} UPGRADE BEGIN: ${migrationName}`)
+ 
+   // Add numEpisodes column to podcasts table
+-  // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+-  await addColumn(queryInterface, logger, 'podcasts', 'numEpisodes', { type: (queryInterface.sequelize.Sequelize as typeof Sequelize & typeof SequelizeDataTypes).INTEGER, allowNull: false, defaultValue: 0 })
++  await addColumn(queryInterface, logger, 'podcasts', 'numEpisodes', { type: queryInterface.sequelize.Sequelize.INTEGER, allowNull: false, defaultValue: 0 })
+ 
+   // Populate numEpisodes column with the number of episodes for each podcast
+   await populateNumEpisodes(queryInterface, logger)
+ 
+   // Add podcastId column to mediaProgresses table
+-  // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+-  await addColumn(queryInterface, logger, 'mediaProgresses', 'podcastId', { type: (queryInterface.sequelize.Sequelize as typeof Sequelize & typeof SequelizeDataTypes).UUID, allowNull: true })
++  await addColumn(queryInterface, logger, 'mediaProgresses', 'podcastId', { type: queryInterface.sequelize.Sequelize.UUID, allowNull: true })
+ 
+   // Populate podcastId column with the podcastId for each mediaProgress
+   await populatePodcastId(queryInterface, logger)
+diff --git a/server/migrations/v2.20.0-improve-author-sort-queries.ts b/server/migrations/v2.20.0-improve-author-sort-queries.ts
+index 293c562c..c3d8f42e 100644
+--- a/server/migrations/v2.20.0-improve-author-sort-queries.ts
++++ b/server/migrations/v2.20.0-improve-author-sort-queries.ts
+@@ -1,6 +1,6 @@
+ import util = require('util')
+ import sequelize = require('sequelize')
+-import type { DataTypes as SequelizeDataTypes, ModelAttributeColumnOptions, QueryInterface } from 'sequelize'
++import type { ModelAttributeColumnOptions, QueryInterface } from 'sequelize'
+ import type { MigrationContext, MigrationOptions } from './types'
+ const { Sequelize } = sequelize
+ 
+@@ -14,10 +14,8 @@ const bookAuthors = 'bookAuthors'
+ const authors = 'authors'
+ const podcastEpisodes = 'podcastEpisodes'
+ const columns = [
+-  // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+-  { name: 'authorNamesFirstLast', source: `${authors}.name`, spec: { type: (Sequelize as typeof Sequelize & typeof SequelizeDataTypes).STRING, allowNull: true } },
+-  // cast(b): sequelize copies the data types onto the Sequelize class at runtime; its types only export them from the module
+-  { name: 'authorNamesLastFirst', source: `${authors}.lastFirst`, spec: { type: (Sequelize as typeof Sequelize & typeof SequelizeDataTypes).STRING, allowNull: true } }
++  { name: 'authorNamesFirstLast', source: `${authors}.name`, spec: { type: Sequelize.STRING, allowNull: true } },
++  { name: 'authorNamesLastFirst', source: `${authors}.lastFirst`, spec: { type: Sequelize.STRING, allowNull: true } }
+ ]
+ const authorsSort = `${bookAuthors}.createdAt ASC`
+ const columnNames = columns.map((column) => column.name).join(', ')
+diff --git a/server/migrations/v2.26.0-create-auth-tables.ts b/server/migrations/v2.26.0-create-auth-tables.ts
+index 8ba6e683..933dc6f6 100644
+--- a/server/migrations/v2.26.0-create-auth-tables.ts
++++ b/server/migrations/v2.26.0-create-auth-tables.ts
+@@ -1,4 +1,3 @@
+-import type { DataTypes as SequelizeDataTypes, Sequelize } from 'sequelize'
+ import type { MigrationOptions } from './types'
+ 
+ const migrationVersion = '2.26.0'
+@@ -21,8 +20,7 @@ async function up({ context: { queryInterface, logger } }: MigrationOptions): Pr
+   } else {
+     // Create table
+     logger.info(`${loggerPrefix} creating table "sessions"`)
+-    // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+-    const DataTypes = (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataTypes }).DataTypes
++    const DataTypes = queryInterface.sequelize.Sequelize.DataTypes
+     await queryInterface.createTable('sessions', {
+       id: {
+         type: DataTypes.UUID,
+@@ -68,8 +66,7 @@ async function up({ context: { queryInterface, logger } }: MigrationOptions): Pr
+   } else {
+     // Create table
+     logger.info(`${loggerPrefix} creating table "apiKeys"`)
+-    // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+-    const DataTypes = (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataTypes }).DataTypes
++    const DataTypes = queryInterface.sequelize.Sequelize.DataTypes
+     await queryInterface.createTable('apiKeys', {
+       id: {
+         type: DataTypes.UUID,
+diff --git a/server/migrations/v2.35.0-add-last-refresh-token.ts b/server/migrations/v2.35.0-add-last-refresh-token.ts
+index b33bdb2d..1e4ec1ee 100644
+--- a/server/migrations/v2.35.0-add-last-refresh-token.ts
++++ b/server/migrations/v2.35.0-add-last-refresh-token.ts
+@@ -1,4 +1,3 @@
+-import type { DataTypes as SequelizeDataTypes, Sequelize } from 'sequelize'
+ import type { MigrationOptions } from './types'
+ 
+ const migrationVersion = '2.35.0'
+@@ -20,8 +19,7 @@ async function up({ context: { queryInterface, logger } }: MigrationOptions): Pr
+     if (!tableDescription.lastRefreshToken) {
+       logger.info(`${loggerPrefix} Adding lastRefreshToken column to sessions table`)
+       await queryInterface.addColumn('sessions', 'lastRefreshToken', {
+-        // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+-        type: (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataTypes }).DataTypes.STRING,
++        type: queryInterface.sequelize.Sequelize.DataTypes.STRING,
+         allowNull: true
+       })
+     } else {
+@@ -31,8 +29,7 @@ async function up({ context: { queryInterface, logger } }: MigrationOptions): Pr
+     if (!tableDescription.lastRefreshTokenExpiresAt) {
+       logger.info(`${loggerPrefix} Adding lastRefreshTokenExpiresAt column to sessions table`)
+       await queryInterface.addColumn('sessions', 'lastRefreshTokenExpiresAt', {
+-        // cast(b): sequelize sets DataTypes on the Sequelize class at runtime; its types only export it from the module
+-        type: (queryInterface.sequelize.Sequelize as typeof Sequelize & { DataTypes: typeof SequelizeDataTypes }).DataTypes.DATE,
++        type: queryInterface.sequelize.Sequelize.DataTypes.DATE,
+         allowNull: true
+       })
+     } else {
+diff --git a/server/scanner/AbsMetadataFileScanner.ts b/server/scanner/AbsMetadataFileScanner.ts
+index b72cd342..465b9c1b 100644
+--- a/server/scanner/AbsMetadataFileScanner.ts
++++ b/server/scanner/AbsMetadataFileScanner.ts
+@@ -7,6 +7,8 @@ import type LibraryScan = require('./LibraryScan')
+ import type ScanLogger = require('./ScanLogger')
+ import type LibraryItemScanData = require('./LibraryItemScanData')
+ import type { BookMetadataObject, PodcastMetadataObject } from './types'
++import dynamicKey = require('./dynamicKey')
++const { setKey } = dynamicKey
+ const { readTextFile } = fileUtils
+ const { LogLevel } = constants
+ 
+@@ -51,8 +53,7 @@ class AbsMetadataFileScanner {
+         if (key === 'tags' && !abMetadata.tags?.length) continue
+         if (key === 'chapters' && !abMetadata.chapters?.length) continue
+ 
+-        // cast(d): dynamic metadata key
+-        (bookMetadata as Record<string, unknown>)[key] = abMetadata[key]
++        setKey(bookMetadata, key, abMetadata[key])
+       }
+     }
+   }
+@@ -85,8 +86,7 @@ class AbsMetadataFileScanner {
+         if (abMetadata[key] === undefined || abMetadata[key] === null) continue
+         if (key === 'tags' && !abMetadata.tags?.length) continue
+ 
+-        // cast(d): dynamic metadata key
+-        (podcastMetadata as Record<string, unknown>)[key] = abMetadata[key]
++        setKey(podcastMetadata, key, abMetadata[key])
+       }
+     }
+   }
+diff --git a/server/scanner/AudioFileScanner.ts b/server/scanner/AudioFileScanner.ts
+index cb00f3dc..bd99517c 100644
+--- a/server/scanner/AudioFileScanner.ts
++++ b/server/scanner/AudioFileScanner.ts
+@@ -17,6 +17,8 @@ import type LibraryItemScanData = require('./LibraryItemScanData')
+ import type { AudioFileObject, ChapterObject, LibraryFileObject } from '../models/types'
+ import type { BookMetadataObject, PodcastMetadataObject } from './types'
+ import type AudioMetaTags = require('../objects/metadata/AudioMetaTags')
++import dynamicKey = require('./dynamicKey')
++const { getKey, setKey } = dynamicKey
+ const { LogLevel } = constants
+ 
+ /**
+@@ -392,8 +394,7 @@ class AudioFileScanner {
+             ]
+           }
+         } else {
+-          // cast(d): dynamic metadata key
+-          (bookMetadata as Record<string, unknown>)[mapping.key] = value
++          setKey(bookMetadata, mapping.key, value)
+         }
+       }
+     })
+@@ -456,10 +457,8 @@ class AudioFileScanner {
+           podcastMetadata.genres = this.parseGenresString(value)
+           libraryScan.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${podcastMetadata.genres.join(', ')}`)
+         } else {
+-          // cast(d): dynamic metadata key
+-          (podcastMetadata as Record<string, unknown>)[mapping.key] = value
+-          // cast(d): dynamic metadata key
+-          libraryScan.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${(podcastMetadata as Record<string, unknown>)[mapping.key]}`)
++          setKey(podcastMetadata, mapping.key, value)
++          libraryScan.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastMetadata, mapping.key)}`)
+         }
+       }
+     })
+@@ -521,24 +520,21 @@ class AudioFileScanner {
+           if (pubJsDate && !isNaN(pubJsDate as unknown as number)) {
+             podcastEpisode.publishedAt = pubJsDate.valueOf()
+             podcastEpisode.pubDate = value
+-            // cast(d): dynamic metadata key
+-            scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${(podcastEpisode as unknown as Record<string, unknown>)[mapping.key]}`)
++            scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastEpisode, mapping.key)}`)
+           } else {
+             scanLogger.addLog(LogLevel.WARN, `Mapping pubDate with tag ${tagToUse} has invalid date "${value}"`)
+           }
+         } else if (mapping.key === 'episodeType') {
+           if (['full', 'trailer', 'bonus'].includes(value)) {
+             podcastEpisode.episodeType = value
+-            // cast(d): dynamic metadata key
+-            scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${(podcastEpisode as unknown as Record<string, unknown>)[mapping.key]}`)
++            scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastEpisode, mapping.key)}`)
+           } else {
+             scanLogger.addLog(LogLevel.WARN, `Mapping episodeType with invalid value "${value}". Must be one of [full, trailer, bonus].`)
+           }
+         } else {
+-          // cast(d): dynamic metadata key (description, subtitle, season, episode, title: string columns)
+-          (podcastEpisode as unknown as Record<string, unknown>)[mapping.key] = value
+-          // cast(d): dynamic metadata key
+-          scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${(podcastEpisode as unknown as Record<string, unknown>)[mapping.key]}`)
++          // Dynamic metadata key: description, subtitle, season, episode, title: string columns
++          setKey(podcastEpisode, mapping.key, value)
++          scanLogger.addLog(LogLevel.DEBUG, `Mapping metadata to key ${tagToUse} => ${mapping.key}: ${getKey(podcastEpisode, mapping.key)}`)
+         }
+       }
+     })
+diff --git a/server/scanner/BookScanner.ts b/server/scanner/BookScanner.ts
+index 99a6f686..06e93368 100644
+--- a/server/scanner/BookScanner.ts
++++ b/server/scanner/BookScanner.ts
+@@ -35,6 +35,8 @@ import type LibraryItemScanData = require('./LibraryItemScanData')
+ import type { AudioFileObject, EBookFileObject, LibraryFileObject, LibrarySettingsObject } from '../models/types'
+ import type { EBookFileScanData, EBookMetadata } from '../utils/parsers/types'
+ import type { BookMetadataObject } from './types'
++import dynamicKey = require('./dynamicKey')
++const { getKey, setKey } = dynamicKey
+ const uuidv4 = uuid.v4
+ const { LogLevel } = constants
+ const { getTitleIgnorePrefix, areEquivalent } = utils
+@@ -261,8 +263,8 @@ class BookScanner {
+ 
+     for (const key in bookMetadata) {
+       // Ignore unset metadata and empty arrays
+-      // cast(d): dynamic metadata key (all 4 casts)
+-      if ((bookMetadata as Record<string, unknown>)[key] === undefined || (Array.isArray((bookMetadata as Record<string, unknown>)[key]) && !((bookMetadata as Record<string, unknown>)[key] as unknown[]).length)) continue
++      // cast(d): dynamic metadata key (the length read: Array.isArray does not narrow the second getKey call)
++      if (getKey(bookMetadata, key) === undefined || (Array.isArray(getKey(bookMetadata, key)) && !(getKey(bookMetadata, key) as unknown[]).length)) continue
+ 
+       if (key === 'authors') {
+         // Check for authors added
+@@ -381,12 +383,10 @@ class BookScanner {
+           media.coverPath = bookMetadata.coverPath!
+           hasMediaChanges = true
+         }
+-        // cast(d): dynamic metadata key (both casts)
+-      } else if ((bookMetadata as Record<string, unknown>)[key] !== (media as unknown as Record<string, unknown>)[key]) {
+-        // cast(d): dynamic metadata key (both casts)
+-        libraryScan.addLog(LogLevel.DEBUG, `Updating book ${key} "${(media as unknown as Record<string, unknown>)[key]}" => "${(bookMetadata as Record<string, unknown>)[key]}" for book "${bookMetadata.title}"`)
+-        // cast(d): dynamic metadata key (both casts; the metadata sources only set strings, booleans and the arrays handled above, matching the book fields)
+-        ;(media as unknown as Record<string, unknown>)[key] = (bookMetadata as Record<string, unknown>)[key]
++      } else if (getKey(bookMetadata, key) !== getKey(media, key)) {
++        libraryScan.addLog(LogLevel.DEBUG, `Updating book ${key} "${getKey(media, key)}" => "${getKey(bookMetadata, key)}" for book "${bookMetadata.title}"`)
++        // Dynamic metadata key: the metadata sources only set strings, booleans and the arrays handled above, matching the book fields
++        setKey(media, key, getKey(bookMetadata, key))
+         hasMediaChanges = true
+       }
+     }
+@@ -818,10 +818,8 @@ class BookScanner {
+             if (ebookMetdataObject.series?.length) {
+               this.bookMetadata.series = ebookMetdataObject.series
+             }
+-            // cast(d): dynamic metadata key
+-          } else if ((ebookMetdataObject as Record<string, unknown>)[key] && key !== 'sequence') {
+-            // cast(d): dynamic metadata key (both casts)
+-            (this.bookMetadata as Record<string, unknown>)[key] = (ebookMetdataObject as Record<string, unknown>)[key]
++          } else if (getKey(ebookMetdataObject, key) && key !== 'sequence') {
++            setKey(this.bookMetadata, key, getKey(ebookMetdataObject, key))
+           }
+         }
+       }
+diff --git a/server/scanner/LibraryItemScanData.ts b/server/scanner/LibraryItemScanData.ts
+index 25668bb9..6e3e98a6 100644
+--- a/server/scanner/LibraryItemScanData.ts
++++ b/server/scanner/LibraryItemScanData.ts
+@@ -10,6 +10,8 @@ import type LibraryScan = require('./LibraryScan')
+ import type ScanLogger = require('./ScanLogger')
+ import type { AudioFileObject, EBookFileObject, LibraryFileObject } from '../models/types'
+ import type { BookMetadataObject, NewLibraryItemObject } from './types'
++import dynamicKey = require('./dynamicKey')
++const { getKey, setKey } = dynamicKey
+ const { LogLevel } = constants
+ 
+ interface LibraryFileModifiedObject {
+@@ -216,12 +218,10 @@ class LibraryItemScanData {
+     this.hasChanges = false
+     this.hasPathChange = false
+     for (const key of keysToCompare) {
+-      // cast(d): dynamic metadata key (both casts)
+-      if ((existingLibraryItem as unknown as Record<string, unknown>)[key] !== (this as unknown as Record<string, unknown>)[key]) {
+-        // cast(d): dynamic metadata key (both casts)
+-        libraryScan.addLog(LogLevel.DEBUG, `Library item "${existingLibraryItem.relPath}" key "${key}" changed from "${(existingLibraryItem as unknown as Record<string, unknown>)[key]}" to "${(this as unknown as Record<string, unknown>)[key]}"`)
+-        // cast(d): dynamic metadata key (both casts; the keys are libraryFolderId, ino, path, relPath and isFile, which have the same types on both)
+-        ;(existingLibraryItem as unknown as Record<string, unknown>)[key] = (this as unknown as Record<string, unknown>)[key]
++      if (getKey(existingLibraryItem, key) !== getKey(this, key)) {
++        libraryScan.addLog(LogLevel.DEBUG, `Library item "${existingLibraryItem.relPath}" key "${key}" changed from "${getKey(existingLibraryItem, key)}" to "${getKey(this, key)}"`)
++        // Dynamic metadata key: the keys are libraryFolderId, ino, path, relPath and isFile, which have the same types on both
++        setKey(existingLibraryItem, key, getKey(this, key))
+         this.hasChanges = true
+ 
+         if (key === 'relPath' || key === 'path') {
+@@ -330,17 +330,14 @@ class LibraryItemScanData {
+     }
+ 
+     for (const key in existingLibraryFile.metadata) {
+-      // cast(d): dynamic metadata key (both casts)
+-      if ((existingLibraryFile.metadata as unknown as Record<string, unknown>)[key] !== (scannedLibraryFile.metadata as unknown as Record<string, unknown>)[key]) {
++      if (getKey(existingLibraryFile.metadata, key) !== getKey(scannedLibraryFile.metadata, key)) {
+         if (key !== 'path' && key !== 'relPath') {
+-          // cast(d): dynamic metadata key (both casts)
+-          libraryScan.addLog(LogLevel.DEBUG, `Library file "${existingLibraryFile.metadata.relPath}" for library item "${libraryItemPath}" key "${key}" changed from "${(existingLibraryFile.metadata as unknown as Record<string, unknown>)[key]}" to "${(scannedLibraryFile.metadata as unknown as Record<string, unknown>)[key]}"`)
++          libraryScan.addLog(LogLevel.DEBUG, `Library file "${existingLibraryFile.metadata.relPath}" for library item "${libraryItemPath}" key "${key}" changed from "${getKey(existingLibraryFile.metadata, key)}" to "${getKey(scannedLibraryFile.metadata, key)}"`)
+         } else {
+-          // cast(d): dynamic metadata key (both casts)
+-          libraryScan.addLog(LogLevel.DEBUG, `Library file for library item "${libraryItemPath}" key "${key}" changed from "${(existingLibraryFile.metadata as unknown as Record<string, unknown>)[key]}" to "${(scannedLibraryFile.metadata as unknown as Record<string, unknown>)[key]}"`)
++          libraryScan.addLog(LogLevel.DEBUG, `Library file for library item "${libraryItemPath}" key "${key}" changed from "${getKey(existingLibraryFile.metadata, key)}" to "${getKey(scannedLibraryFile.metadata, key)}"`)
+         }
+-        // cast(d): dynamic metadata key (both casts; the same file metadata keys on both)
+-        (existingLibraryFile.metadata as unknown as Record<string, unknown>)[key] = (scannedLibraryFile.metadata as unknown as Record<string, unknown>)[key]
++        // Dynamic metadata key: the same file metadata keys on both
++        setKey(existingLibraryFile.metadata, key, getKey(scannedLibraryFile.metadata, key))
+         hasChanges = true
+       }
+     }
+@@ -386,10 +383,8 @@ class LibraryItemScanData {
+   setBookMetadataFromFilenames(bookMetadata: BookMetadataObject) {
+     const keysToMap = ['title', 'subtitle', 'publishedYear', 'asin']
+     for (const key in this.mediaMetadata) {
+-      // cast(d): dynamic metadata key
+-      if (keysToMap.includes(key) && (this.mediaMetadata as unknown as Record<string, unknown>)[key]) {
+-        // cast(d): dynamic metadata key (both casts)
+-        (bookMetadata as Record<string, unknown>)[key] = (this.mediaMetadata as unknown as Record<string, unknown>)[key]
++      if (keysToMap.includes(key) && getKey(this.mediaMetadata, key)) {
++        setKey(bookMetadata, key, getKey(this.mediaMetadata, key))
+       }
+     }
+ 
+diff --git a/server/scanner/LibraryScanner.ts b/server/scanner/LibraryScanner.ts
+index 901ab7ec..31cc395f 100644
+--- a/server/scanner/LibraryScanner.ts
++++ b/server/scanner/LibraryScanner.ts
+@@ -514,10 +514,9 @@ class LibraryScanner {
+     //    Test Case: Moving audio files from library item folder to author folder should trigger a re-scan of the item
+     const updateGroup = { ...fileUpdateGroup }
+     for (const itemDir in updateGroup) {
+-      if (isSingleMediaFile(fileUpdateGroup, itemDir)) continue // Media in root path
++      if (isSingleMediaEntry(itemDir, fileUpdateGroup[itemDir])) continue // Media in root path
+ 
+-      // cast(d): root media files (a string) were skipped just above, so this is the item's list of files
+-      const itemDirNestedFiles = (fileUpdateGroup[itemDir] as string[]).filter((b) => b.includes('/'))
++      const itemDirNestedFiles = fileUpdateGroup[itemDir].filter((b) => b.includes('/'))
+       if (!itemDirNestedFiles.length) continue
+ 
+       const firstNest = itemDirNestedFiles[0].split('/').shift()
+@@ -669,13 +668,21 @@ function ItemToItemInoMatch(libraryItem1: InoMatchItem, libraryItem2: InoMatchIt
+ }
+ 
+ function hasAudioFiles(fileUpdateGroup: FileUpdateGroup, itemDir: string) {
+-  // cast(d): record is string | string[], single-file check is in a separate function
+-  // cast(d): (as string[]) otherwise the entry is an item dir with its list of files
+-  return isSingleMediaFile(fileUpdateGroup, itemDir) ? scanUtils.checkFilepathIsAudioFile(fileUpdateGroup[itemDir] as string) : (fileUpdateGroup[itemDir] as string[]).some(scanUtils.checkFilepathIsAudioFile)
++  return isSingleMediaEntry(itemDir, fileUpdateGroup[itemDir]) ? scanUtils.checkFilepathIsAudioFile(fileUpdateGroup[itemDir]) : fileUpdateGroup[itemDir].some(scanUtils.checkFilepathIsAudioFile)
+ }
+ 
+ function isSingleMediaFile(fileUpdateGroup: FileUpdateGroup, itemDir: string) {
+-  return itemDir === fileUpdateGroup[itemDir]
++  return isSingleMediaEntry(itemDir, fileUpdateGroup[itemDir])
++}
++
++/**
++ * Whether the file update group entry of `itemDir` is a single media file in the folder root.
++ * groupFileItemsIntoLibraryItemDirs stores such a file as a string equal to its own key
++ * (`libraryItemGroup[item.name] = item.name`) and every other entry as the list of files of an item dir,
++ * so the entry is a string exactly when it equals its key (the same check the JavaScript did).
++ */
++function isSingleMediaEntry(itemDir: string, entry: string | string[]): entry is string {
++  return itemDir === entry
+ }
+ 
+ async function findLibraryItemByItemToItemInoMatch(libraryId: string, fullPath: string) {
+diff --git a/server/scanner/NfoFileScanner.ts b/server/scanner/NfoFileScanner.ts
+index bc3b319b..5d19df2d 100644
+--- a/server/scanner/NfoFileScanner.ts
++++ b/server/scanner/NfoFileScanner.ts
+@@ -3,6 +3,8 @@ import fileUtils = require('../utils/fileUtils')
+ import type LibraryFile = require('../objects/files/LibraryFile')
+ import type { LibraryFileObject } from '../models/types'
+ import type { BookMetadataObject } from './types'
++import dynamicKey = require('./dynamicKey')
++const { getKey, setKey } = dynamicKey
+ const { parseNfoMetadata } = parseNfoMetadataModule
+ const { readTextFile } = fileUtils
+ 
+@@ -47,10 +49,8 @@ class NfoFileScanner {
+               }
+             ]
+           }
+-          // cast(d): dynamic metadata key
+-        } else if ((nfoMetadata as Record<string, unknown>)[key] && key !== 'sequence') {
+-          // cast(d): dynamic metadata key (both casts)
+-          (bookMetadata as Record<string, unknown>)[key] = (nfoMetadata as Record<string, unknown>)[key]
++        } else if (getKey(nfoMetadata, key) && key !== 'sequence') {
++          setKey(bookMetadata, key, getKey(nfoMetadata, key))
+         }
+       }
+     }
+diff --git a/server/scanner/OpfFileScanner.ts b/server/scanner/OpfFileScanner.ts
+index 96546d00..f02da35f 100644
+--- a/server/scanner/OpfFileScanner.ts
++++ b/server/scanner/OpfFileScanner.ts
+@@ -3,6 +3,8 @@ import fileUtils = require('../utils/fileUtils')
+ import type LibraryFile = require('../objects/files/LibraryFile')
+ import type { LibraryFileObject } from '../models/types'
+ import type { BookMetadataObject } from './types'
++import dynamicKey = require('./dynamicKey')
++const { getKey, setKey } = dynamicKey
+ const { parseOpfMetadataXML } = parseOpfMetadata
+ const { readTextFile } = fileUtils
+ 
+@@ -40,10 +42,8 @@ class OpfFileScanner {
+           if (opfMetadata.series?.length) {
+             bookMetadata.series = opfMetadata.series
+           }
+-          // cast(d): dynamic metadata key
+-        } else if ((opfMetadata as Record<string, unknown>)[key] && key !== 'sequence') {
+-          // cast(d): dynamic metadata key (both casts)
+-          (bookMetadata as Record<string, unknown>)[key] = (opfMetadata as Record<string, unknown>)[key]
++        } else if (getKey(opfMetadata, key) && key !== 'sequence') {
++          setKey(bookMetadata, key, getKey(opfMetadata, key))
+         }
+       }
+     }
+diff --git a/server/scanner/PodcastScanner.ts b/server/scanner/PodcastScanner.ts
+index ee7e1ffd..3bb60527 100644
+--- a/server/scanner/PodcastScanner.ts
++++ b/server/scanner/PodcastScanner.ts
+@@ -22,6 +22,8 @@ import type ScanLogger = require('./ScanLogger')
+ import type LibraryItemScanData = require('./LibraryItemScanData')
+ import type { AudioFileObject, LibraryFileObject, LibrarySettingsObject } from '../models/types'
+ import type { PodcastMetadataObject } from './types'
++import dynamicKey = require('./dynamicKey')
++const { getKey, setKey } = dynamicKey
+ const uuidv4 = uuid.v4
+ const { LogLevel } = constants
+ const { getTitleIgnorePrefix } = utils
+@@ -205,8 +207,8 @@ class PodcastScanner {
+ 
+     for (const key in podcastMetadata) {
+       // Ignore unset metadata and empty arrays
+-      // cast(d): dynamic metadata key (all 4 casts)
+-      if ((podcastMetadata as Record<string, unknown>)[key] === undefined || (Array.isArray((podcastMetadata as Record<string, unknown>)[key]) && !((podcastMetadata as Record<string, unknown>)[key] as unknown[]).length)) continue
++      // cast(d): dynamic metadata key (the length read: Array.isArray does not narrow the second getKey call)
++      if (getKey(podcastMetadata, key) === undefined || (Array.isArray(getKey(podcastMetadata, key)) && !(getKey(podcastMetadata, key) as unknown[]).length)) continue
+ 
+       if (key === 'genres') {
+         const existingGenres = media.genres || []
+@@ -224,12 +226,10 @@ class PodcastScanner {
+           media.changed('tags', true)
+           hasMediaChanges = true
+         }
+-        // cast(d): dynamic metadata key (both casts)
+-      } else if ((podcastMetadata as Record<string, unknown>)[key] !== (media as unknown as Record<string, unknown>)[key]) {
+-        // cast(d): dynamic metadata key (both casts)
+-        libraryScan.addLog(LogLevel.DEBUG, `Updating podcast ${key} "${(media as unknown as Record<string, unknown>)[key]}" => "${(podcastMetadata as Record<string, unknown>)[key]}" for podcast "${podcastMetadata.title}"`)
+-        // cast(d): dynamic metadata key (both casts; the podcast metadata keys are podcast fields of the same types: strings, explicit boolean)
+-        ;(media as unknown as Record<string, unknown>)[key] = (podcastMetadata as Record<string, unknown>)[key]
++      } else if (getKey(podcastMetadata, key) !== getKey(media, key)) {
++        libraryScan.addLog(LogLevel.DEBUG, `Updating podcast ${key} "${getKey(media, key)}" => "${getKey(podcastMetadata, key)}" for podcast "${podcastMetadata.title}"`)
++        // Dynamic metadata key: the podcast metadata keys are podcast fields of the same types: strings, explicit boolean
++        setKey(media, key, getKey(podcastMetadata, key))
+         hasMediaChanges = true
+       }
+     }
+diff --git a/server/scanner/Scanner.ts b/server/scanner/Scanner.ts
+index 4ff3e692..0a8bbff9 100644
+--- a/server/scanner/Scanner.ts
++++ b/server/scanner/Scanner.ts
+@@ -22,6 +22,8 @@ import type iTunes = require('../providers/iTunes')
+ import type { BookSearchResult, SeriesResult } from '../providers/types'
+ import type { Model } from 'sequelize'
+ import type { RssPodcastEpisode } from '../models/types'
++import dynamicKey = require('./dynamicKey')
++const { getKey } = dynamicKey
+ const { getTitleIgnorePrefix } = utils
+ const { findMatchingEpisodesInFeed, getPodcastFeed } = podcastUtils
+ 
+@@ -189,17 +191,15 @@ class Scanner {
+     }
+ 
+     for (const key in matchDataTransformed) {
+-      // cast(d): dynamic metadata key
+-      if ((matchDataTransformed as Record<string, unknown>)[key]) {
++      if (getKey(matchDataTransformed, key)) {
+         if (key === 'genres') {
+           if (!libraryItem.media.genres.length || options.overrideDetails) {
+             var genresArray: string[] = []
+-            // cast(d): dynamic metadata key (both casts; the second reads the genres list)
+-            if (Array.isArray((matchDataTransformed as Record<string, unknown>)[key])) genresArray = [...(matchDataTransformed as unknown as Record<string, string[]>)[key]]
++            // cast(d): dynamic metadata key (the genres list, checked with Array.isArray just before)
++            if (Array.isArray(getKey(matchDataTransformed, key))) genresArray = [...(matchDataTransformed as unknown as Record<string, string[]>)[key]]
+             else {
+               // Genres should always be passed in as an array but just incase handle a string
+-              // cast(d): dynamic metadata key
+-              Logger.warn(`[Scanner] quickMatch genres is not an array ${(matchDataTransformed as Record<string, unknown>)[key]}`)
++              Logger.warn(`[Scanner] quickMatch genres is not an array ${getKey(matchDataTransformed, key)}`)
+               // cast(d): dynamic metadata key (a genres string)
+               genresArray = (matchDataTransformed as unknown as Record<string, string>)[key]
+                 .split(',')
+@@ -208,10 +208,8 @@ class Scanner {
+             }
+             updatePayload[key] = genresArray
+           }
+-          // cast(d): dynamic metadata key (all 3 casts)
+-        } else if ((libraryItem.media as unknown as Record<string, unknown>)[key] !== (matchDataTransformed as Record<string, unknown>)[key] && (!(libraryItem.media as unknown as Record<string, unknown>)[key] || options.overrideDetails)) {
+-          // cast(d): dynamic metadata key
+-          updatePayload[key] = (matchDataTransformed as Record<string, unknown>)[key]
++        } else if (getKey(libraryItem.media, key) !== getKey(matchDataTransformed, key) && (!getKey(libraryItem.media, key) || options.overrideDetails)) {
++          updatePayload[key] = getKey(matchDataTransformed, key)
+         }
+       }
+     }
+@@ -225,8 +223,7 @@ class Scanner {
+     const updatePayload: Record<string, unknown> = {}
+ 
+     for (const key in matchData) {
+-      // cast(d): dynamic metadata key
+-      if ((matchData as Record<string, unknown>)[key] && detailKeysToUpdate.includes(key)) {
++      if (getKey(matchData, key) && detailKeysToUpdate.includes(key)) {
+         if (key === 'narrator') {
+           if (!libraryItem.media.narrators?.length || options.overrideDetails) {
+             // cast(d): dynamic metadata key (the narrator string)
+@@ -238,12 +235,11 @@ class Scanner {
+         } else if (key === 'genres') {
+           if (!libraryItem.media.genres.length || options.overrideDetails) {
+             let genresArray: string[] = []
+-            // cast(d): dynamic metadata key (both casts; the second reads the genres list)
+-            if (Array.isArray((matchData as Record<string, unknown>)[key])) genresArray = [...(matchData as Record<string, string[]>)[key]]
++            // cast(d): dynamic metadata key (the genres list, checked with Array.isArray just before)
++            if (Array.isArray(getKey(matchData, key))) genresArray = [...(matchData as Record<string, string[]>)[key]]
+             else {
+               // Genres should always be passed in as an array but just incase handle a string
+-              // cast(d): dynamic metadata key
+-              Logger.warn(`[Scanner] quickMatch genres is not an array ${(matchData as Record<string, unknown>)[key]}`)
++              Logger.warn(`[Scanner] quickMatch genres is not an array ${getKey(matchData, key)}`)
+               // cast(d): dynamic metadata key (a genres string)
+               genresArray = (matchData as Record<string, string>)[key]
+                 .split(',')
+@@ -255,8 +251,8 @@ class Scanner {
+         } else if (key === 'tags') {
+           if (!libraryItem.media.tags.length || options.overrideDetails) {
+             let tagsArray: string[] = []
+-            // cast(d): dynamic metadata key (both casts; the second reads the tags list)
+-            if (Array.isArray((matchData as Record<string, unknown>)[key])) tagsArray = [...(matchData as Record<string, string[]>)[key]]
++            // cast(d): dynamic metadata key (the tags list, checked with Array.isArray just before)
++            if (Array.isArray(getKey(matchData, key))) tagsArray = [...(matchData as Record<string, string[]>)[key]]
+             else
+               // cast(d): dynamic metadata key (a tags string)
+               tagsArray = (matchData as Record<string, string>)[key]
+@@ -265,10 +261,8 @@ class Scanner {
+                 .filter((v) => !!v)
+             updatePayload[key] = tagsArray
+           }
+-          // cast(d): dynamic metadata key
+-        } else if (!(libraryItem.media as unknown as Record<string, unknown>)[key] || options.overrideDetails) {
+-          // cast(d): dynamic metadata key
+-          updatePayload[key] = (matchData as Record<string, unknown>)[key]
++        } else if (!getKey(libraryItem.media, key) || options.overrideDetails) {
++          updatePayload[key] = getKey(matchData, key)
+         }
+       }
+     }
+@@ -439,12 +433,9 @@ class Scanner {
+     }
+     const updatePayload: Record<string, unknown> = {}
+     for (const key in matchDataTransformed) {
+-      // cast(d): dynamic metadata key
+-      if ((matchDataTransformed as Record<string, unknown>)[key]) {
+-        // cast(d): dynamic metadata key (all 3 casts)
+-        if ((episode as unknown as Record<string, unknown>)[key] !== (matchDataTransformed as Record<string, unknown>)[key] && (!(episode as unknown as Record<string, unknown>)[key] || options.overrideDetails)) {
+-          // cast(d): dynamic metadata key
+-          updatePayload[key] = (matchDataTransformed as Record<string, unknown>)[key]
++      if (getKey(matchDataTransformed, key)) {
++        if (getKey(episode, key) !== getKey(matchDataTransformed, key) && (!getKey(episode, key) || options.overrideDetails)) {
++          updatePayload[key] = getKey(matchDataTransformed, key)
+         }
+       }
+     }
+diff --git a/server/scanner/dynamicKey.ts b/server/scanner/dynamicKey.ts
+new file mode 100644
+index 00000000..faa92fcb
+--- /dev/null
++++ b/server/scanner/dynamicKey.ts
+@@ -0,0 +1,23 @@
++/**
++ * Typed access to an object property by a key that is only known at runtime (metadata keys in the scanner).
++ * Each function does exactly the property access `obj[key]` (no own-property check, no copy, no conversion).
++ */
++
++/**
++ * Reads `obj[key]`
++ */
++function getKey(obj: object, key: string): unknown {
++  // cast(d): dynamic metadata key; any object can be read by a string key
++  return (obj as Record<string, unknown>)[key]
++}
++
++/**
++ * Writes `obj[key] = value`
++ */
++function setKey(obj: object, key: string, value: unknown): void {
++  // cast(d): dynamic metadata key; any object can be written by a string key
++  const values = obj as Record<string, unknown>
++  values[key] = value
++}
++
++export = { getKey, setKey }
+diff --git a/server/utils/sequelizeStatics.d.ts b/server/utils/sequelizeStatics.d.ts
+new file mode 100644
+index 00000000..831b1828
+--- /dev/null
++++ b/server/utils/sequelizeStatics.d.ts
+@@ -0,0 +1,59 @@
++/**
++ * Statics that node_modules/sequelize/lib/sequelize.js sets on the Sequelize class (and its prototype)
++ * at runtime, but that Sequelize's types (v6.35) only export from the module:
++ * - `Sequelize.Op = Op`
++ * - `Sequelize.prototype.QueryTypes = Sequelize.QueryTypes = QueryTypes`
++ * - `Sequelize.DataTypes = DataTypes`, then `Sequelize[dataType] = DataTypes[dataType]` for every data type
++ * Only the data types that sequelize/types/data-types.d.ts declares as values are listed here.
++ * Type-only module augmentation (emits nothing); referenced from server/utils/types.ts.
++ */
++import type { DataTypes as SequelizeDataTypes, Op as SequelizeOp, QueryTypes as SequelizeQueryTypes } from 'sequelize'
++
++declare module 'sequelize/types/sequelize' {
++  interface Sequelize {
++    QueryTypes: typeof SequelizeQueryTypes
++  }
++
++  namespace Sequelize {
++    export const Op: typeof SequelizeOp
++    export const QueryTypes: typeof SequelizeQueryTypes
++    export const DataTypes: typeof SequelizeDataTypes
++    export const ABSTRACT: typeof SequelizeDataTypes.ABSTRACT
++    export const STRING: typeof SequelizeDataTypes.STRING
++    export const CHAR: typeof SequelizeDataTypes.CHAR
++    export const TEXT: typeof SequelizeDataTypes.TEXT
++    export const NUMBER: typeof SequelizeDataTypes.NUMBER
++    export const TINYINT: typeof SequelizeDataTypes.TINYINT
++    export const SMALLINT: typeof SequelizeDataTypes.SMALLINT
++    export const MEDIUMINT: typeof SequelizeDataTypes.MEDIUMINT
++    export const INTEGER: typeof SequelizeDataTypes.INTEGER
++    export const BIGINT: typeof SequelizeDataTypes.BIGINT
++    export const FLOAT: typeof SequelizeDataTypes.FLOAT
++    export const REAL: typeof SequelizeDataTypes.REAL
++    export const DOUBLE: typeof SequelizeDataTypes.DOUBLE
++    export const DECIMAL: typeof SequelizeDataTypes.DECIMAL
++    export const BOOLEAN: typeof SequelizeDataTypes.BOOLEAN
++    export const TIME: typeof SequelizeDataTypes.TIME
++    export const DATE: typeof SequelizeDataTypes.DATE
++    export const DATEONLY: typeof SequelizeDataTypes.DATEONLY
++    export const HSTORE: typeof SequelizeDataTypes.HSTORE
++    export const JSON: typeof SequelizeDataTypes.JSON
++    export const JSONB: typeof SequelizeDataTypes.JSONB
++    export const NOW: typeof SequelizeDataTypes.NOW
++    export const BLOB: typeof SequelizeDataTypes.BLOB
++    export const RANGE: typeof SequelizeDataTypes.RANGE
++    export const UUID: typeof SequelizeDataTypes.UUID
++    export const UUIDV1: typeof SequelizeDataTypes.UUIDV1
++    export const UUIDV4: typeof SequelizeDataTypes.UUIDV4
++    export const VIRTUAL: typeof SequelizeDataTypes.VIRTUAL
++    export const ENUM: typeof SequelizeDataTypes.ENUM
++    export const ARRAY: typeof SequelizeDataTypes.ARRAY
++    export const GEOMETRY: typeof SequelizeDataTypes.GEOMETRY
++    export const GEOGRAPHY: typeof SequelizeDataTypes.GEOGRAPHY
++    export const CIDR: typeof SequelizeDataTypes.CIDR
++    export const INET: typeof SequelizeDataTypes.INET
++    export const MACADDR: typeof SequelizeDataTypes.MACADDR
++    export const CITEXT: typeof SequelizeDataTypes.CITEXT
++    export const TSVECTOR: typeof SequelizeDataTypes.TSVECTOR
++  }
++}
+diff --git a/server/utils/types.ts b/server/utils/types.ts
+index 6dccf865..66974e59 100644
+--- a/server/utils/types.ts
++++ b/server/utils/types.ts
+@@ -2,6 +2,7 @@
+  * Types shared by the files in server/utils.
+  */
+ /// <reference path="./ssrf-req-filter.d.ts" />
++/// <reference path="./sequelizeStatics.d.ts" />
+ import type * as fsPromises from 'fs/promises'
+ import type * as fsSync from 'fs'
+ type ServerSettingsModel = import('../objects/settings/ServerSettings')

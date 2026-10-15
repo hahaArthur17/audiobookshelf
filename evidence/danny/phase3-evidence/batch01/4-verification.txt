@@ -1,0 +1,56 @@
+== git
+e99cf142 phase3 batch 1: server/utils
+9c4185a0 phase3: extra rules
+59c46d82 phase3: add migration context file
+== changed outside server/utils
+MIGRATION.md
+package-lock.json
+package.json
+== tests touched
+none
+== diff stat
+ 56 files changed, 3684 insertions(+), 2042 deletions(-)
+== any in code lines
+server/utils/parsers/parseOverdriveMediaMarkers.ts:114:  Logger.debug('[parseOverdriveMediaMarkers] Removing any unnecessary chapters')
+server/utils/areEquivalent.ts:15: License: Free to use anywhere by anyone, as-is, no guarantees of any kind.
+server/utils/migrations/dbMigration.ts:730:      Logger.error(`[dbMigration] Author ${oldAuthor.name} was not found in any libraries`)
+server/utils/migrations/dbMigration.ts:777:      Logger.error(`[dbMigration] Series ${oldSeries.name} was not found in any libraries`)
+== ts directives
+0
+== as unknown as
+72
+2026-10-03T19:53:39+13:00 label=batch1-done head=e99cf142 ts=64 js=125 err=0 tests= 356 passing (1s) 
+== files added or modified (not renamed)
+M	MIGRATION.md
+M	package-lock.json
+M	package.json
+D	server/utils/parsers/parseOpfMetadata.js
+A	server/utils/parsers/parseOpfMetadata.ts
+D	server/utils/parsers/parseUserAgent.js
+A	server/utils/parsers/parseUserAgent.ts
+A	server/utils/parsers/types.ts
+D	server/utils/profiler.js
+A	server/utils/profiler.ts
+A	server/utils/queries/types.ts
+A	server/utils/ssrf-req-filter.d.ts
+A	server/utils/types.ts
+== package.json diff
+diff --git a/package.json b/package.json
+index 71afbd82..327c379c 100644
+--- a/package.json
++++ b/package.json
+@@ -62,7 +62,10 @@
+     "xml2js": "^0.5.0"
+   },
+   "devDependencies": {
++    "@types/express": "^4.17.25",
+     "@types/node": "^24.13.6",
++    "@types/uuid": "^8.3.4",
++    "@types/xml2js": "^0.4.14",
+     "chai": "^4.3.10",
+     "eslint": "^10.11.0",
+     "mocha": "^10.2.0",
+== package-lock stat
+ 1 file changed, 134 insertions(+)
+== as unknown as without a comment (per file)
+2 server/utils/queries/userStats.ts

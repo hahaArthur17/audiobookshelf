@@ -1,0 +1,180 @@
+== base against new
+ORDER ONLY lib_pers_none.txt
+=== DIFF lib_pers_once.txt
+--- 
++++ 
+@@ -445,3 +445,4 @@
+      "coverPath": null,
+-     "duration": 2,
++     "duration": 1.07102,
++     "ebookFormat": "epub",
+      "id": "MASK",
+@@ -450,4 +451,4 @@
+       "asin": null,
+-      "authorName": "Author Two",
+-      "authorNameLF": "Two, Author",
++      "authorName": "Author Six",
++      "authorNameLF": "Six, Author",
+       "description": null,
+@@ -463,9 +464,9 @@
+       "subtitle": null,
+-      "title": "Audio Book",
+-      "titleIgnorePrefix": "Audio Book"
++      "title": "Only",
++      "titleIgnorePrefix": "Only"
+      },
+-     "numAudioFiles": 2,
+-     "numChapters": 2,
+-     "numTracks": 2,
+-     "size": 32088,
++     "numAudioFiles": 1,
++     "numChapters": 0,
++     "numTracks": 1,
++     "size": 4536,
+      "tags": []
+@@ -476,5 +477,5 @@
+     "oldLibraryItemId": null,
+-    "path": "ROOT/lib/books/Author Two/Audio Book",
+-    "relPath": "Author Two/Audio Book",
+-    "size": 32088,
++    "path": "ROOT/lib/books/Author Six/Series Book",
++    "relPath": "Author Six/Series Book",
++    "size": 4536,
+     "updatedAt": "MASK"
+=== DIFF lib_pers_twice.txt
+--- 
++++ 
+@@ -445,3 +445,4 @@
+      "coverPath": null,
+-     "duration": 2,
++     "duration": 1.07102,
++     "ebookFormat": "epub",
+      "id": "MASK",
+@@ -450,4 +451,4 @@
+       "asin": null,
+-      "authorName": "Author Two",
+-      "authorNameLF": "Two, Author",
++      "authorName": "Author Six",
++      "authorNameLF": "Six, Author",
+       "description": null,
+@@ -463,9 +464,9 @@
+       "subtitle": null,
+-      "title": "Audio Book",
+-      "titleIgnorePrefix": "Audio Book"
++      "title": "Only",
++      "titleIgnorePrefix": "Only"
+      },
+-     "numAudioFiles": 2,
+-     "numChapters": 2,
+-     "numTracks": 2,
+-     "size": 32088,
++     "numAudioFiles": 1,
++     "numChapters": 0,
++     "numTracks": 1,
++     "size": 4536,
+      "tags": []
+@@ -476,5 +477,5 @@
+     "oldLibraryItemId": null,
+-    "path": "ROOT/lib/books/Author Two/Audio Book",
+-    "relPath": "Author Two/Audio Book",
+-    "size": 32088,
++    "path": "ROOT/lib/books/Author Six/Series Book",
++    "relPath": "Author Six/Series Book",
++    "size": 4536,
+     "updatedAt": "MASK"
+ORDER ONLY lib_stats.txt
+requests 194 identical 190 order-only 2 different 2 | status codes identical
+== control: base against base (second run)
+ORDER ONLY lib_pers_none.txt
+=== DIFF lib_pers_once.txt
+--- 
++++ 
+@@ -385,2 +385,52 @@
+     "ino": "MASK",
++    "isFile": true,
++    "isInvalid": false,
++    "isMissing": false,
++    "libraryId": "MASK",
++    "media": {
++     "coverPath": null,
++     "duration": 0,
++     "ebookFormat": "pdf",
++     "id": "MASK",
++     "metadata": {
++      "abridged": false,
++      "asin": null,
++      "authorName": "",
++      "authorNameLF": "",
++      "description": null,
++      "explicit": false,
++      "genres": [],
++      "isbn": null,
++      "language": null,
++      "narratorName": "",
++      "publishedDate": null,
++      "publishedYear": null,
++      "publisher": null,
++      "seriesName": "",
++      "subtitle": null,
++      "title": "Loose Book",
++      "titleIgnorePrefix": "Loose Book"
++     },
++     "numAudioFiles": 0,
++     "numChapters": 0,
++     "numTracks": 0,
++     "size": 6,
++     "tags": []
++    },
++    "mediaType": "book",
++    "mtimeMs": "MASK",
+=== DIFF lib_pers_twice.txt
+--- 
++++ 
+@@ -385,2 +385,52 @@
+     "ino": "MASK",
++    "isFile": true,
++    "isInvalid": false,
++    "isMissing": false,
++    "libraryId": "MASK",
++    "media": {
++     "coverPath": null,
++     "duration": 0,
++     "ebookFormat": "pdf",
++     "id": "MASK",
++     "metadata": {
++      "abridged": false,
++      "asin": null,
++      "authorName": "",
++      "authorNameLF": "",
++      "description": null,
++      "explicit": false,
++      "genres": [],
++      "isbn": null,
++      "language": null,
++      "narratorName": "",
++      "publishedDate": null,
++      "publishedYear": null,
++      "publisher": null,
++      "seriesName": "",
++      "subtitle": null,
++      "title": "Loose Book",
++      "titleIgnorePrefix": "Loose Book"
++     },
++     "numAudioFiles": 0,
++     "numChapters": 0,
++     "numTracks": 0,
++     "size": 6,
++     "tags": []
++    },
++    "mediaType": "book",
++    "mtimeMs": "MASK",
+ORDER ONLY lib_stats.txt
+requests 194 identical 190 order-only 2 different 2 | status codes identical
+== status codes base against new
+codes identical
+== requests that stopped the server (base, new, control)
+base11c: 14
+new11c: 14
+base11cb: 14
+== ERROR/WARN lines base against new
+28

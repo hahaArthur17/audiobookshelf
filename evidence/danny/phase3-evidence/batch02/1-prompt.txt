@@ -1,0 +1,7 @@
+Read MIGRATION.md first and follow it, including the Log of batch 1 and rule 12. Do batches 2 and 4 together: convert every .js file under server/objects (all subfolders, 18 files), server/auth and server/routers (6 files) to TypeScript, following the rules in MIGRATION.md. The acceptance criteria are the Rules section: npm run build:server reports 0 "error TS", npm test shows 356 passing and 0 failing, no test is edited, skipped or deleted, runtime behaviour is unchanged, and no bugs are fixed (list them instead).
+
+Behaviour must be identical, so do not rewrite conditions or expressions to satisfy the types. If a change is anything more than a type annotation, a cast with a comment, or a rename to a local alias of the same value, list it in the Log with the file and the old and new expression.
+
+Plan the work yourself and implement it end to end without waiting for my approval. Before you start, run git log --oneline -5 and git status. If the Progress table or the Log shows these batches were already started, continue from there instead of starting over.
+
+When done, update the Progress table (rows 2 and 4), the Bugs, Skipped and Log sections in MIGRATION.md, commit as `phase3 batch 2 and 4: server/objects, server/auth, server/routers`, report what you did, and stop. Do not start batch 3.

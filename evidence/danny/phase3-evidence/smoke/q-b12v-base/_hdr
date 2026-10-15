@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+Content-Security-Policy: frame-ancestors 'self'
+Referrer-Policy: no-referrer
+Content-Type: application/json; charset=utf-8
+Content-Length: 146
+ETag: W/"92-oTH9Pro2dWUMa7BrZudNMDHLaJ4"
+Date: Sat, 10 Oct 2026 05:45:09 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+

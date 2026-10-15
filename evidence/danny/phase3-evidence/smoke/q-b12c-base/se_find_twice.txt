@@ -1,0 +1,20 @@
+STATUS 000
+LOCATION 
+{
+ "addedAt": "MASK",
+ "description": null,
+ "id": "MASK",
+ "libraryId": "MASK",
+ "name": "JSON Series",
+ "nameIgnorePrefix": "JSON Series",
+ "progress": {
+  "isFinished": false,
+  "libraryItemIds": [
+   "UUID"
+  ],
+  "libraryItemIdsFinished": []
+ },
+ "rssFeed": null,
+ "updatedAt": "MASK"
+}
+SERVER EXITED (code 1)

@@ -1,0 +1,54 @@
+== head and status
+e31a29ec phase3 batch 3a: models
+1d3c512f phase3: tighten type rules after audit
+c9faa3c1 phase3 batch 2 and 4: server/objects, server/auth, server/routers
+== changed files by type vs 1d3c512f
+     11 A
+     10 D
+     11 M
+     15 R
+== changed files outside server/models
+MIGRATION.md
+package-lock.json
+package.json
+server/auth/OidcAuthStrategy.ts
+server/objects/files/AudioTrack.ts
+server/utils/migrations/absMetadataMigration.ts
+server/utils/migrations/dbMigration.ts
+server/utils/queries/authorFilters.ts
+server/utils/queries/libraryItemsBookFilters.ts
+server/utils/queries/libraryItemsPodcastFilters.ts
+server/utils/queries/seriesFilters.ts
+== package.json diff
+diff --git a/package.json b/package.json
+index 092f1087..8dfc4df7 100644
+--- a/package.json
++++ b/package.json
+@@ -64,6 +64,7 @@
+   "devDependencies": {
+     "@types/express": "^4.17.25",
+     "@types/express-session": "^1.19.0",
++    "@types/jsonwebtoken": "^9.0.10",
+     "@types/node": "^24.13.6",
+     "@types/passport": "^1.0.17",
+     "@types/uuid": "^8.3.4",
+== protected files vs baseline (expect empty)
+== models: files
+26
+== models: non-blank lines
+7016
+== models: as unknown as
+20
+== models: null as unknown as
+0
+== models: as X total matches (casts = this minus as-unknown-as; agent implies 85)
+88
+== models: any
+0
+== ts directives (whole server)
+0
+== NOTE lines added by this batch
+11
+== workaround types still present (expected in 3a)
+14
+2026-10-09T11:43:44+13:00 label=batch3a-done head=e31a29ec ts=116 js=76 err=0 tests= 356 passing (2s) 

@@ -1,0 +1,14 @@
+delete                         116 Podcast-only podcastEpisodes | 119 Book-only authors | 120 Book-only authors | 122 Book-only series | 123 Book-only series
+updateMedia                    205 Podcast-only autoDownloadEpisodes | 207 Podcast-only autoDownloadSchedule | 217 union method (changed/save/updateFromRequest) | 220 Book-only updateSeriesFromRequest | 239 Book-only updateAuthorsFromRequest | 262 item passed as PodcastLibraryItem
+uploadCover                    303 union method (changed/save/updateFromRequest) | 304 union method (changed/save/updateFromRequest)
+updateCover                    337 union method (changed/save/updateFromRequest) | 338 union method (changed/save/updateFromRequest)
+removeCover                    358 union method (changed/save/updateFromRequest) | 359 union method (changed/save/updateFromRequest)
+startEpisodePlaybackSession    432 Podcast-only podcastEpisodes
+updateTracks                   455 Book-only audioFiles | 462 Book-only audioFiles | 474 Book-only audioFiles | 475 union method (changed/save/updateFromRequest) | 476 union method (changed/save/updateFromRequest)
+batchDelete                    546 Podcast-only podcastEpisodes | 549 Book-only series | 550 Book-only series | 552 Book-only authors | 553 Book-only authors
+batchUpdate                    626 union method (changed/save/updateFromRequest) | 629 Book-only updateSeriesFromRequest | 645 Book-only updateAuthorsFromRequest
+getMetadataObject              824 Book-only includedAudioFiles | 829 item passed as BookLibraryItem
+updateMediaChapters            854 Book-only chapters | 855 Book-only chapters | 866 Book-only chapters | 877 union method (changed/save/updateFromRequest) | 878 union method (changed/save/updateFromRequest)
+deleteLibraryFile              947 Book-only audioFiles | 948 Book-only audioFiles | 948 Book-only audioFiles | 949 union method (changed/save/updateFromRequest) | 950 Book-only ebookFile | 951 Book-only ebookFile | 952 union method (changed/save/updateFromRequest) | 957 Podcast-only podcastEpisodes | 958 Podcast-only podcastEpisodes | 975 Podcast-only podcastEpisodes | 975 Podcast-only podcastEpisodes | 979 union method (changed/save/updateFromRequest)
+getEBookFile                   1046 Book-only ebookFile
+updateEbookFileStatus          1107 Book-only ebookFile | 1108 union method (changed/save/updateFromRequest) | 1109 union method (changed/save/updateFromRequest)

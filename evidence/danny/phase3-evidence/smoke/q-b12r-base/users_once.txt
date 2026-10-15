@@ -1,0 +1,33 @@
+STATUS 200
+LOCATION 
+{
+ "users": [
+  {
+   "createdAt": "MASK",
+   "email": null,
+   "hasOpenIDLink": false,
+   "id": "MASK",
+   "isActive": true,
+   "isLocked": false,
+   "itemTagsSelected": [],
+   "lastSeen": null,
+   "latestSession": null,
+   "librariesAccessible": [],
+   "permissions": {
+    "accessAllLibraries": true,
+    "accessAllTags": true,
+    "accessExplicitContent": true,
+    "createEreader": true,
+    "delete": true,
+    "download": true,
+    "selectedTagsNotAccessible": false,
+    "update": true,
+    "upload": true
+   },
+   "seriesHideFromContinueListening": [],
+   "token": "MASK",
+   "type": "root",
+   "username": "root"
+  }
+ ]
+}

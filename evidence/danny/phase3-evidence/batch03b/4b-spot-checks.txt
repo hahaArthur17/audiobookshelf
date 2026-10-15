@@ -1,0 +1,122 @@
+== InitializedDatabase
+server/utils/types.ts:87:export type InitializedDatabase = DatabaseInstance & { sequelize: ModelsSequelize; models: ModelRegistry }
+server/utils/queries/libraryItemsBookFilters.ts:18:import type { InitializedDatabase } from '../types'
+server/utils/queries/libraryItemsBookFilters.ts:23:const Database = DatabaseModule as InitializedDatabase
+server/utils/queries/userStats.ts:9:import type { FsExtra, PlaybackMediaMetadata, InitializedDatabase } from '../types'
+server/utils/queries/userStats.ts:12:const Database = DatabaseModule as InitializedDatabase
+server/utils/queries/adminStats.ts:7:import type { FsExtra, PlaybackMediaMetadata, InitializedDatabase } from '../types'
+server/utils/queries/adminStats.ts:10:const Database = DatabaseModule as InitializedDatabase
+server/utils/queries/seriesFilters.ts:12:import type { InitializedDatabase } from '../types'
+server/utils/queries/seriesFilters.ts:16:const Database = DatabaseModule as InitializedDatabase
+server/utils/queries/libraryItemsPodcastFilters.ts:12:import type { InitializedDatabase } from '../types'
+server/utils/queries/libraryItemsPodcastFilters.ts:17:const Database = DatabaseModule as InitializedDatabase
+server/utils/migrations/dbMigration.ts:9:import type { FsExtra, InitializedDatabase } from '../types'
+server/utils/migrations/dbMigration.ts:1507:async function handleOldLibraryItems(ctx: InitializedDatabase) {
+server/utils/migrations/dbMigration.ts:1571:async function handleOldLibraries(ctx: InitializedDatabase) {
+server/utils/migrations/dbMigration.ts:1610:async function handleOldUsers(ctx: InitializedDatabase) {
+server/utils/migrations/dbMigration.ts:1686:const migrationPatch = async (ctx: InitializedDatabase) => {
+server/utils/migrations/dbMigration.ts:1727:async function migrationPatch2LibraryItems(ctx: InitializedDatabase, offset = 0): Promise<void> {
+server/utils/migrations/dbMigration.ts:1770:async function migrationPatch2Books(ctx: InitializedDatabase, offset = 0): Promise<void> {
+server/utils/migrations/dbMigration.ts:1818:async function migrationPatch2Podcasts(ctx: InitializedDatabase, offset = 0): Promise<void> {
+server/utils/migrations/dbMigration.ts:1854:async function migrationPatch2Series(ctx: InitializedDatabase, offset = 0): Promise<void> {
+server/utils/migrations/dbMigration.ts:1889:async function migrationPatch2Authors(ctx: InitializedDatabase, offset = 0): Promise<void> {
+server/utils/migrations/dbMigration.ts:1926:async function migrationPatch2BookAuthors(ctx: InitializedDatabase, offset = 0): Promise<void> {
+server/utils/migrations/dbMigration.ts:1961:async function migrationPatch2BookSeries(ctx: InitializedDatabase, offset = 0): Promise<void> {
+server/utils/migrations/dbMigration.ts:1996:const migrationPatch2 = async (ctx: InitializedDatabase) => {
+server/routers/ApiRouter.ts:42:import type { FsExtra, InitializedDatabase } from '../utils/types'
+server/routers/ApiRouter.ts:50:const Database = DatabaseModule as InitializedDatabase
+== utils/types.ts diff
+diff --git a/server/utils/types.ts b/server/utils/types.ts
+index 47c1be34..d4877ed0 100644
+--- a/server/utils/types.ts
++++ b/server/utils/types.ts
+@@ -5,7 +5,7 @@
+ import type * as fsPromises from 'fs/promises'
+ import type * as fsSync from 'fs'
+ type ServerSettingsModel = import('../objects/settings/ServerSettings')
+-import type { Model, ModelStatic, Sequelize } from 'sequelize'
++import type { ModelRegistry, ModelsSequelize } from '../models/types'
+ 
+ /**
+  * Methods the vendored fs-extra (server/libs/fsExtra) adds on top of node fs (only the ones used)
+@@ -77,31 +77,14 @@ export interface ZipArchive {
+  */
+ export type ArchiverFactory = (format: 'zip', options: { zlib?: { level: number } }) => ZipArchive
+ 
+-/**
+- * A JS model class (server/models) with the sequelize static query methods.
+- * The JS models override Model.init with a different signature, so TypeScript does not accept them as ModelStatic
+- * and rejects calls to the static query methods (findAll, findByPk, count, ...). This intersection restores them.
+- */
+-export type SequelizeModelClass<C extends abstract new (...args: never) => Model> = C & ModelStatic<InstanceType<C>>
+-
+ type DatabaseInstance = typeof import('../Database')
+ 
+ /**
+- * Keys of the Database model getters (userModel, bookModel, ...)
++ * server/Database after Database.init has run. Database.js (still JS) sets sequelize to null in the constructor
++ * and to the Sequelize instance in init, so it is typed `Sequelize | null`; code that only runs after init
++ * (routes, library queries, migrations called from init) uses this type. `models` is the getter for sequelize.models.
+  */
+-type DatabaseModelKey = { [K in keyof DatabaseInstance & string]: K extends `${string}Model` ? (DatabaseInstance[K] extends abstract new (...args: never) => Model ? K : never) : never }[keyof DatabaseInstance & string]
+-
+-/**
+- * server/Database with its model getters typed as SequelizeModelClass. Files cast the required Database to this type
+- */
+-export type TypedDatabase = Omit<DatabaseInstance, DatabaseModelKey | 'sequelize' | 'libraryFilterData'> & {
+-  readonly [K in DatabaseModelKey]: DatabaseInstance[K] extends abstract new (...args: never) => Model ? SequelizeModelClass<DatabaseInstance[K]> : never
+-} & {
+-  /** Set by Database.init, which runs before any query */
+-  sequelize: Sequelize
+-  /** Cached filter data per library id (see queries/libraryFilters getFilterData) */
+-  libraryFilterData: Record<string, LibraryFilterData>
+-}
++export type InitializedDatabase = DatabaseInstance & { sequelize: ModelsSequelize; models: ModelRegistry }
+ 
+ /**
+  * Filter menu data for a library, cached on Database.libraryFilterData
+== Database.js diff
+diff --git a/server/Database.js b/server/Database.js
+index 65c8d539..f299a379 100644
+--- a/server/Database.js
++++ b/server/Database.js
+@@ -20,6 +20,7 @@ class Database {
+     this.settings = []
+ 
+     // Cached library filter data
++    /** @type {Object<string, import('./utils/types').LibraryFilterData>} */
+     this.libraryFilterData = {}
+ 
+     /** @type {import('./objects/settings/ServerSettings')} */
+@@ -436,6 +437,10 @@ class Database {
+     return this.models.setting.updateSettingObj(settings.toJSON())
+   }
+ 
++  /**
++   * @param {import('sequelize').WhereOptions<import('./models/PlaybackSession')> | null} [where]
++   * @returns {false | ReturnType<typeof import('./models/PlaybackSession').getOldPlaybackSessions>}
++   */
+   getPlaybackSessions(where = null) {
+     if (!this.sequelize) return false
+     return this.models.playbackSession.getOldPlaybackSessions(where)
+== undefined as unknown as
+server/models/LibraryItem.ts:604:    const { libraryItems } = await libraryFilters.getLibraryItemsForAuthor(author, user, undefined as unknown as number, undefined as unknown as number)
+== casts added in 3b
++const Database = DatabaseModule as InitializedDatabase
++    const userSessions = (await Database.getPlaybackSessions({ userId })) as OldPlaybackSession[]
++    const userSessions = (await Database.getPlaybackSessions({ userId, mediaItemId })) as OldPlaybackSession[]
++    await models.podcastEpisode.bulkCreate(bulkUpdateEpisodes as unknown as CreationAttributes<InstanceType<ModelRegistry['podcastEpisode']>>[], {
++    await models.libraryItem.bulkCreate(bulkUpdateItems as unknown as CreationAttributes<InstanceType<ModelRegistry['libraryItem']>>[], {
++    await models.libraryItem.bulkCreate(bulkUpdateItems as unknown as CreationAttributes<InstanceType<ModelRegistry['libraryItem']>>[], {
++    await models.book.bulkCreate(bulkUpdateItems as unknown as CreationAttributes<InstanceType<ModelRegistry['book']>>[], {
++    await models.podcast.bulkCreate(bulkUpdateItems as unknown as CreationAttributes<InstanceType<ModelRegistry['podcast']>>[], {
++    await models.series.bulkCreate(bulkUpdateItems as unknown as CreationAttributes<InstanceType<ModelRegistry['series']>>[], {
++    await models.author.bulkCreate(bulkUpdateItems as unknown as CreationAttributes<InstanceType<ModelRegistry['author']>>[], {
++const Database = DatabaseModule as InitializedDatabase
++const Database = DatabaseModule as InitializedDatabase
++      libraryItem.media = book as Book
++      libraryItem.media = book as Book
++      libraryItem.media = book as Book
++const Database = DatabaseModule as InitializedDatabase
++const Database = DatabaseModule as InitializedDatabase
++const Database = DatabaseModule as InitializedDatabase

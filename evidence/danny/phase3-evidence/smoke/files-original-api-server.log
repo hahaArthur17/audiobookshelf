@@ -1,0 +1,51 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-smoke-vmoR/config, METADATA_PATH=/tmp/abs-smoke-vmoR/metadata, PORT=3333, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-09 21:49:45.165] INFO: === Starting Server ===
+[2026-10-09 21:49:45.165] INFO: [Server] Init v2.37.0
+[2026-10-09 21:49:45.165] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-09 21:49:45.165] INFO: [Server] Platform: linux
+[2026-10-09 21:49:45.166] INFO: [Server] Arch: x64
+[2026-10-09 21:49:45.202] INFO: [BinaryManager] ffmpeg not found or not a valid version
+[2026-10-09 21:49:45.234] INFO: [BinaryManager] ffprobe not found or not a valid version
+[2026-10-09 21:49:45.234] INFO: [BinaryManager] libnusqlite3 not found or not a valid version
+[2026-10-09 21:49:45.235] INFO: [BinaryManager] Installing binaries: ffmpeg, ffprobe, libnusqlite3
+[2026-10-09 21:49:52.380] INFO: [BinaryManager] Binaries installed to /tmp/abs-orig
+[2026-10-09 21:49:52.421] INFO: [BinaryManager] Found valid executable ffmpeg at /tmp/abs-orig/ffmpeg
+[2026-10-09 21:49:52.421] INFO: [BinaryManager] Updating process.env.FFMPEG_PATH
+[2026-10-09 21:49:52.458] INFO: [BinaryManager] Found valid executable ffprobe at /tmp/abs-orig/ffprobe
+[2026-10-09 21:49:52.458] INFO: [BinaryManager] Updating process.env.FFPROBE_PATH
+[2026-10-09 21:49:52.461] INFO: [BinaryManager] Found valid library libnusqlite3 at /tmp/abs-orig/libnusqlite3.so
+[2026-10-09 21:49:52.461] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-09 21:49:52.462] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-smoke-vmoR/config/absdatabase.sqlite
+[2026-10-09 21:49:52.463] INFO: [Database] Initializing db at "/tmp/abs-smoke-vmoR/config/absdatabase.sqlite"
+[2026-10-09 21:49:52.492] INFO: [Database] Loading extension /tmp/abs-orig/libnusqlite3.so
+[2026-10-09 21:49:52.493] INFO: [Database] Successfully loaded extension /tmp/abs-orig/libnusqlite3.so
+[2026-10-09 21:49:52.493] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-09 21:49:52.493] INFO: [Database] Db connection was successful
+[2026-10-09 21:49:52.535] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-09 21:49:52.888] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-09 21:49:52.888] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-09 21:49:52.893] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-09 21:49:52.898] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-09 21:49:52.903] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-09 21:49:52.909] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-09 21:49:52.915] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-09 21:49:52.920] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-09 21:49:52.939] INFO: [Database] running ANALYZE
+[2026-10-09 21:49:52.944] INFO: [Database] ANALYZE completed
+[2026-10-09 21:49:52.944] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-09 21:49:52.945] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-09 21:49:52.951] INFO: [LogManager] Init current daily log filename: 2026-10-09.txt
+[2026-10-09 21:49:52.953] INFO: [BackupManager] 0 Backups Found
+[2026-10-09 21:49:52.953] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-09 21:49:52.960] INFO: Listening on port :3333
+[2026-10-09 21:49:52.994] INFO: Received ping
+[2026-10-09 21:49:53.004] INFO: [Server] Initializing new server
+[2026-10-09 21:49:53.052] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-09 21:49:53.119] INFO: [Watcher] Initializing watcher for "Test".
+[2026-10-09 21:49:53.123] INFO: [Watcher] "Test" Ready
+[2026-10-09 21:49:53.142] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-09 21:49:53.143] INFO: [LibraryScanner] Starting (forced) library scan 98fb1c13-fdd9-48f2-8a0c-8eade00a9914 for Test
+[2026-10-09 21:49:53.311] INFO: [LibraryScanner] Library scan "98fb1c13-fdd9-48f2-8a0c-8eade00a9914" completed in 0:00 | 5 Added | 0 Updated | 0 Missing
+[2026-10-09 21:49:53.388] INFO: [LibraryScan] Scan log saved "/tmp/abs-smoke-vmoR/metadata/logs/scans/2026-10-09_98fb1c13-fdd9-48f2-8a0c-8eade00a9914.txt"
+[2026-10-09 21:49:53.388] INFO: [LibraryController] Scan complete

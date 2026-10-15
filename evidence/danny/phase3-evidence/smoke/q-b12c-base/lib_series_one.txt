@@ -1,0 +1,11 @@
+STATUS 200
+LOCATION 
+{
+ "addedAt": "MASK",
+ "description": null,
+ "id": "MASK",
+ "libraryId": "MASK",
+ "name": "JSON Series",
+ "nameIgnorePrefix": "JSON Series",
+ "updatedAt": "MASK"
+}

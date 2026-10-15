@@ -1,0 +1,334 @@
+diff -ruwB /tmp/abs-base3b/dist-server/server/auth/TokenManager.js dist-server/server/auth/TokenManager.js
+--- /tmp/abs-base3b/dist-server/server/auth/TokenManager.js	2026-10-09 16:24:27.773551713 +1300
++++ dist-server/server/auth/TokenManager.js	2026-10-09 16:24:07.952536954 +1300
+@@ -1,15 +1,13 @@
+ "use strict";
+ const sequelize = require("sequelize");
+ const uuid = require("uuid");
+-const DatabaseModule = require("../Database");
++const Database = require("../Database");
+ const Logger = require("../Logger");
+ const requestIp = require("../libs/requestIp");
+ const jwt = require("../libs/jsonwebtoken");
+ const requestUtils = require("../utils/requestUtils");
+ const { Op } = sequelize;
+ const { isRequestSecure } = requestUtils;
+-// Same object; typed so the sequelize static query methods on the models are accepted
+-const Database = DatabaseModule;
+ class TokenManager {
+     /** JWT secret key */
+     static TokenSecret = null;
+diff -ruwB /tmp/abs-base3b/dist-server/server/Database.js dist-server/server/Database.js
+--- /tmp/abs-base3b/dist-server/server/Database.js	2026-10-09 16:24:27.807545001 +1300
++++ dist-server/server/Database.js	2026-10-09 16:24:07.692942790 +1300
+@@ -15,6 +15,7 @@
+         this.hasRootUser = false; // Used to show initialization page in web ui
+         this.settings = [];
+         // Cached library filter data
++        /** @type {Object<string, import('./utils/types').LibraryFilterData>} */
+         this.libraryFilterData = {};
+         /** @type {import('./objects/settings/ServerSettings')} */
+         this.serverSettings = null;
+@@ -380,6 +381,10 @@
+             return false;
+         return this.models.setting.updateSettingObj(settings.toJSON());
+     }
++    /**
++     * @param {import('sequelize').WhereOptions<import('./models/PlaybackSession')> | null} [where]
++     * @returns {false | ReturnType<typeof import('./models/PlaybackSession').getOldPlaybackSessions>}
++     */
+     getPlaybackSessions(where = null) {
+         if (!this.sequelize)
+             return false;
+diff -ruwB /tmp/abs-base3b/dist-server/server/routers/ApiRouter.js dist-server/server/routers/ApiRouter.js
+--- /tmp/abs-base3b/dist-server/server/routers/ApiRouter.js	2026-10-09 16:24:27.997507495 +1300
++++ dist-server/server/routers/ApiRouter.js	2026-10-09 16:24:10.813200397 +1300
+@@ -35,7 +35,7 @@
+ // Typed views of the untyped vendored fs-extra and date-and-time
+ const fs = fsExtra;
+ const date = dateAndTime;
+-// Same object; typed for the queries here
++// cast(d): Database.js is still JS; sequelize is null until Database.init, which runs before routes are served
+ const Database = DatabaseModule;
+ class ApiRouter {
+     constructor(Server) {
+@@ -475,12 +475,14 @@
+         }
+     }
+     async getUserListeningSessionsHelper(userId) {
+-        const userSessions = await Database.getPlaybackSessions({ userId });
++        // cast(d): getPlaybackSessions returns false only before Database.init, which runs before routes are served
++        const userSessions = (await Database.getPlaybackSessions({ userId }));
+         // Stored sessions always have updatedAt
+         return userSessions.sort((a, b) => b.updatedAt - a.updatedAt);
+     }
+     async getUserItemListeningSessionsHelper(userId, mediaItemId) {
+-        const userSessions = await Database.getPlaybackSessions({ userId, mediaItemId });
++        // cast(d): getPlaybackSessions returns false only before Database.init, which runs before routes are served
++        const userSessions = (await Database.getPlaybackSessions({ userId, mediaItemId }));
+         // Stored sessions always have updatedAt
+         return userSessions.sort((a, b) => b.updatedAt - a.updatedAt);
+     }
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/libraryHelpers.js dist-server/server/utils/libraryHelpers.js
+--- /tmp/abs-base3b/dist-server/server/utils/libraryHelpers.js	2026-10-09 16:24:27.856535328 +1300
++++ dist-server/server/utils/libraryHelpers.js	2026-10-09 16:24:11.095428366 +1300
+@@ -1,11 +1,9 @@
+ "use strict";
+ const fastSort = require("../libs/fastSort");
+-const DatabaseModule = require("../Database");
++const Database = require("../Database");
+ const Logger = require("../Logger");
+ const utils = require("../utils/index");
+ const { createNewSortInstance } = fastSort;
+-// Same object; typed so the model static query methods can be called
+-const Database = DatabaseModule;
+ const { getTitlePrefixAtEnd, isNullOrNaN, getTitleIgnorePrefix } = utils;
+ // The vendored fast-sort has untyped parameters, see SortInstance
+ const naturalSort = createNewSortInstance({
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/migrations/absMetadataMigration.js dist-server/server/utils/migrations/absMetadataMigration.js
+--- /tmp/abs-base3b/dist-server/server/utils/migrations/absMetadataMigration.js	2026-10-09 16:24:27.801546186 +1300
++++ dist-server/server/utils/migrations/absMetadataMigration.js	2026-10-09 16:24:11.099133451 +1300
+@@ -41,9 +41,7 @@
+     // Update library item timestamps and total size
+     const libraryItemDirTimestamps = await fileUtils.getFileTimestampsWithIno(libraryItem.path);
+     if (libraryItemDirTimestamps) {
+-        // The DATE column accepts epoch ms
+         libraryItem.mtime = libraryItemDirTimestamps.mtimeMs;
+-        // The DATE column accepts epoch ms
+         libraryItem.ctime = libraryItemDirTimestamps.ctimeMs;
+         let size = 0;
+         libraryItem.libraryFiles.forEach((lf) => size += (!isNaN(lf.metadata.size) ? Number(lf.metadata.size) : 0));
+@@ -56,7 +54,6 @@
+     });
+ }
+ async function runMigration(Database, offset = 0, totalCreated = 0) {
+-    // The JS model infers the where parameter as null from its default value
+     const libraryItemModel = Database.libraryItemModel;
+     const libraryItems = await libraryItemModel.getLibraryItemsIncrement(offset, 500, { isMissing: false });
+     if (!libraryItems.length)
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/migrations/dbMigration.js dist-server/server/utils/migrations/dbMigration.js
+--- /tmp/abs-base3b/dist-server/server/utils/migrations/dbMigration.js	2026-10-09 16:24:27.655575007 +1300
++++ dist-server/server/utils/migrations/dbMigration.js	2026-10-09 16:24:11.142513168 +1300
+@@ -1482,7 +1482,6 @@
+     if (!bookAuthors.length)
+         return;
+     const bulkUpdateItems = [];
+-    // author is included above
+     for (const bookAuthor of bookAuthors) {
+         if (bookAuthor.author?.createdAt) {
+             const dateString = bookAuthor.author.createdAt.toISOString().replace('T', ' ').replace('Z', '');
+@@ -1515,7 +1514,6 @@
+     if (!allBookSeries.length)
+         return;
+     const bulkUpdateItems = [];
+-    // series is included above
+     for (const bookSeries of allBookSeries) {
+         if (bookSeries.series?.createdAt) {
+             const dateString = bookSeries.series.createdAt.toISOString().replace('T', ' ').replace('Z', '');
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/queries/adminStats.js dist-server/server/utils/queries/adminStats.js
+--- /tmp/abs-base3b/dist-server/server/utils/queries/adminStats.js	2026-10-09 16:24:27.974512035 +1300
++++ dist-server/server/utils/queries/adminStats.js	2026-10-09 16:24:11.227103687 +1300
+@@ -2,7 +2,7 @@
+ const Sequelize = require("sequelize");
+ const DatabaseModule = require("../../Database");
+ const fsExtraModule = require("../../libs/fsExtra");
+-// Same object; typed so the model static query methods can be called
++// cast(d): Database.js is still JS; sequelize is null until Database.init, which runs before any query
+ const Database = DatabaseModule;
+ // The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+ const fsExtra = fsExtraModule;
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/queries/authorFilters.js dist-server/server/utils/queries/authorFilters.js
+--- /tmp/abs-base3b/dist-server/server/utils/queries/authorFilters.js	2026-10-09 16:24:27.687568690 +1300
++++ dist-server/server/utils/queries/authorFilters.js	2026-10-09 16:24:11.230618129 +1300
+@@ -1,8 +1,6 @@
+ "use strict";
+ const Sequelize = require("sequelize");
+-const DatabaseModule = require("../../Database");
+-// Same object; typed so the model static query methods can be called
+-const Database = DatabaseModule;
++const Database = require("../../Database");
+ module.exports = {
+     /**
+      * Get authors total count
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/queries/libraryFilters.js dist-server/server/utils/queries/libraryFilters.js
+--- /tmp/abs-base3b/dist-server/server/utils/queries/libraryFilters.js	2026-10-09 16:24:27.709564347 +1300
++++ dist-server/server/utils/queries/libraryFilters.js	2026-10-09 16:24:11.264095082 +1300
+@@ -1,15 +1,13 @@
+ "use strict";
+ const Sequelize = require("sequelize");
+ const Logger = require("../../Logger");
+-const DatabaseModule = require("../../Database");
++const Database = require("../../Database");
+ const libraryItemsBookFilters = require("./libraryItemsBookFilters");
+ const libraryItemsPodcastFilters = require("./libraryItemsPodcastFilters");
+ const fastSort = require("../../libs/fastSort");
+ const profiler = require("../../utils/profiler");
+ const { createNewSortInstance } = fastSort;
+ const { profile } = profiler;
+-// Same object; typed so the model static query methods can be called
+-const Database = DatabaseModule;
+ // The vendored fast-sort has untyped parameters, see SortInstance
+ const naturalSort = createNewSortInstance({
+     comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+@@ -278,7 +276,6 @@
+                 delete bs.book.libraryItem;
+                 bs.book.authors = []; // Not needed
+                 bs.book.series = []; // Not needed
+-                // The book is the media of its library item
+                 libraryItem.media = bs.book;
+                 const oldLibraryItem = libraryItem.toOldJSONMinified();
+                 return oldLibraryItem;
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/queries/libraryItemFilters.js dist-server/server/utils/queries/libraryItemFilters.js
+--- /tmp/abs-base3b/dist-server/server/utils/queries/libraryItemFilters.js	2026-10-09 16:24:27.857535131 +1300
++++ dist-server/server/utils/queries/libraryItemFilters.js	2026-10-09 16:24:11.273274852 +1300
+@@ -1,10 +1,8 @@
+ "use strict";
+ const Sequelize = require("sequelize");
+-const DatabaseModule = require("../../Database");
++const Database = require("../../Database");
+ const libraryItemsBookFilters = require("./libraryItemsBookFilters");
+ const libraryItemsPodcastFilters = require("./libraryItemsPodcastFilters");
+-// Same object; typed so the model static query methods can be called
+-const Database = DatabaseModule;
+ module.exports = {
+     /**
+      * Get all library items that have tags
+@@ -43,7 +41,6 @@
+         // libraryItem is included above
+         for (const book of booksWithTag) {
+             const libraryItem = book.libraryItem;
+-            // The book is the media of its library item
+             libraryItem.media = book;
+             libraryItems.push(libraryItem);
+         }
+@@ -66,7 +63,6 @@
+         // libraryItem is included above
+         for (const podcast of podcastsWithTag) {
+             const libraryItem = podcast.libraryItem;
+-            // The podcast is the media of its library item
+             libraryItem.media = podcast;
+             libraryItems.push(libraryItem);
+         }
+@@ -105,7 +101,6 @@
+         // libraryItem is included above
+         for (const book of booksWithGenre) {
+             const libraryItem = book.libraryItem;
+-            // The book is the media of its library item
+             libraryItem.media = book;
+             libraryItems.push(libraryItem);
+         }
+@@ -128,7 +123,6 @@
+         // libraryItem is included above
+         for (const podcast of podcastsWithGenre) {
+             const libraryItem = podcast.libraryItem;
+-            // The podcast is the media of its library item
+             libraryItem.media = podcast;
+             libraryItems.push(libraryItem);
+         }
+@@ -168,7 +162,6 @@
+         // libraryItem is included above
+         for (const book of booksWithGenre) {
+             const libraryItem = book.libraryItem;
+-            // The book is the media of its library item
+             libraryItem.media = book;
+             libraryItems.push(libraryItem);
+         }
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/queries/libraryItemsBookFilters.js dist-server/server/utils/queries/libraryItemsBookFilters.js
+--- /tmp/abs-base3b/dist-server/server/utils/queries/libraryItemsBookFilters.js	2026-10-09 16:24:27.761554082 +1300
++++ dist-server/server/utils/queries/libraryItemsBookFilters.js	2026-10-09 16:24:11.320082060 +1300
+@@ -7,7 +7,7 @@
+ const profiler = require("../profiler");
+ const stringifySequelizeQuery = require("../stringifySequelizeQuery");
+ const { profile } = profiler;
+-// Same object; typed so the model static query methods can be called
++// cast(d): Database.js is still JS; sequelize is null until Database.init, which runs before any query
+ const Database = DatabaseModule;
+ const countCache = new Map();
+ module.exports = {
+@@ -691,7 +691,7 @@
+             if (includeMediaItemShare) {
+                 libraryItem.mediaItemShare = ShareManager.findByMediaItemId(libraryItem.mediaId);
+             }
+-            // The book with its series and authors set as the expanded media
++            // cast(d): series and authors were set from bookSeries and bookAuthors above
+             libraryItem.media = book;
+             return libraryItem;
+         });
+@@ -828,7 +828,6 @@
+             if (libraryItem.feeds?.length) {
+                 libraryItem.rssFeed = libraryItem.feeds[0];
+             }
+-            // The book with its series and authors set as the expanded media
+             libraryItem.media = book;
+             return libraryItem;
+         })
+@@ -1002,7 +1001,7 @@
+             delete book.bookSeries;
+             book.authors = book.bookAuthors?.map((ba) => ba.author) || [];
+             delete book.bookAuthors;
+-            // The book with its series and authors set as the expanded media
++            // cast(d): series and authors were set from bookSeries and bookAuthors above
+             libraryItem.media = book;
+             if (libraryItem.feeds?.length) {
+                 libraryItem.rssFeed = libraryItem.feeds[0];
+@@ -1052,7 +1051,6 @@
+             // libraryItem is a required include
+             const libraryItem = book.libraryItem;
+             delete book.libraryItem;
+-            // The book with its series and authors set as the expanded media
+             libraryItem.media = book;
+             return libraryItem;
+         });
+@@ -1140,7 +1138,7 @@
+             // bookAuthors is a separate include, so it is always an array
+             book.authors = book.bookAuthors.map((ba) => ba.author);
+             delete book.bookAuthors;
+-            // The book with its series and authors set as the expanded media
++            // cast(d): series and authors were set from bookSeries and bookAuthors above
+             libraryItem.media = book;
+             itemMatches.push({
+                 libraryItem: libraryItem.toOldJSONExpanded()
+@@ -1233,7 +1231,6 @@
+             const books = series.bookSeries.map((bs) => {
+                 // libraryItem is included above
+                 const libraryItem = bs.book.libraryItem;
+-                // The book is set as the media; authors and series are set below
+                 libraryItem.media = bs.book;
+                 libraryItem.media.authors = [];
+                 libraryItem.media.series = [];
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/queries/libraryItemsPodcastFilters.js dist-server/server/utils/queries/libraryItemsPodcastFilters.js
+--- /tmp/abs-base3b/dist-server/server/utils/queries/libraryItemsPodcastFilters.js	2026-10-09 16:24:27.721561978 +1300
++++ dist-server/server/utils/queries/libraryItemsPodcastFilters.js	2026-10-09 16:24:11.350859260 +1300
+@@ -5,7 +5,7 @@
+ const profiler = require("../../utils/profiler");
+ const stringifySequelizeQuery = require("../stringifySequelizeQuery");
+ const { profile } = profiler;
+-// Same object; typed so the model static query methods can be called
++// cast(d): Database.js is still JS; sequelize is null until Database.init, which runs before any query
+ const Database = DatabaseModule;
+ const countCache = new Map();
+ module.exports = {
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/queries/seriesFilters.js dist-server/server/utils/queries/seriesFilters.js
+--- /tmp/abs-base3b/dist-server/server/utils/queries/seriesFilters.js	2026-10-09 16:24:27.858534934 +1300
++++ dist-server/server/utils/queries/seriesFilters.js	2026-10-09 16:24:11.355073922 +1300
+@@ -3,7 +3,7 @@
+ const Logger = require("../../Logger");
+ const DatabaseModule = require("../../Database");
+ const libraryItemsBookFilters = require("./libraryItemsBookFilters");
+-// Same object; typed so the model static query methods can be called
++// cast(d): Database.js is still JS; sequelize is null until Database.init, which runs before any query
+ const Database = DatabaseModule;
+ module.exports = {
+     decode(text) {
+diff -ruwB /tmp/abs-base3b/dist-server/server/utils/queries/userStats.js dist-server/server/utils/queries/userStats.js
+--- /tmp/abs-base3b/dist-server/server/utils/queries/userStats.js	2026-10-09 16:24:27.930520721 +1300
++++ dist-server/server/utils/queries/userStats.js	2026-10-09 16:24:11.367071131 +1300
+@@ -2,7 +2,7 @@
+ const Sequelize = require("sequelize");
+ const DatabaseModule = require("../../Database");
+ const fsExtraModule = require("../../libs/fsExtra");
+-// Same object; typed so the model static query methods can be called
++// cast(d): Database.js is still JS; sequelize is null until Database.init, which runs before any query
+ const Database = DatabaseModule;
+ // The inferred type of the vendored fs-extra lacks the fs methods it adds at runtime
+ const fsExtra = fsExtraModule;

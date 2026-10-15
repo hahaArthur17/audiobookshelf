@@ -1,0 +1,19 @@
+Batch 3c (replace QueryFindOptions): independent verification, 2026-10-09
+Baseline: 7fe92c59. Commits checked: 634aeaba (notes fix), bef5fe3d (batch 3c).
+
+Measured (commands run by the user, outputs in this folder):
+- git status clean; three commits in the expected order; tsconfig.server.json, eslint.config.mjs and test unchanged.
+- grep QueryFindOptions in server: 0 (agent: 31 before).
+- tsc: 0 errors at the baseline, at 634aeaba alone and at HEAD. npm test: 356 passing.
+- Compiled JS vs baseline: 0 code lines differ after removing comment and blank lines; 5 files differ in comments only (AudioFileScanner, libraryFilters, libraryItemsBookFilters, libraryItemsPodcastFilters, seriesFilters). No smoke test was run because the compiled JS is identical.
+- Casts to the FindOptions family in server now: FindOptions 15, FindAndCountOptions 4, CountOptions 8 (27 casts). 18 of them were changed by the batch: FindOptions 11, FindAndCountOptions 4, CountOptions 3 (matches the agent). The other 9 are older casts the batch did not touch (libraryItemsPodcastFilters 2, libraryFilters 5, ApiRouter 2) and have no cast( tag yet.
+- All 18 changed casts have a cast(b) tag with a reason. 11 option literals are checked with satisfies RuntimeFindOptions (one with & Pick<CountOptions, 'col'>); 3 of the 18 stay as unknown as.
+- as unknown as went from 164 to 149 and non-null ! stayed at 170 (agent: same). Per-file counts of 'as' matches fell by exactly 15 (libraryItemsBookFilters 8, libraryItemsPodcastFilters 4, libraryFilters 2, seriesFilters 1) and no other file changed, so no cast was added. A whole-tree grep showed one extra match; this is most likely an artifact of concatenating the files, the per-file count is the reliable one.
+- RuntimeFindOptions and QueryInclude contain no any or unknown; each relaxed option is a superset of the Sequelize one.
+- MIGRATION.md: Progress row 3, Known deviations, item 1 of the batch 11 checklist, the Log entry for batch 3c and the batch 5 and 6 fix note are updated and agree with the measurements above. FindOptions at 11 is reported as over the rule 17 limit and kept; it is to be named exception 4 of rule 17 in the next prompt.
+
+Progress at this point (measured): 148 .ts files and 41677 lines under server (no libs), 43 .js files and 14269 lines left, plus index.js (56 lines) and prod.js (33 lines). About 74% by files in the Progress table and by lines.
+
+Agent self-reports not verified: that the build is clean without the first `as CountOptions` in libraryFilters getFilterData; that the other as unknown as Includeable / FindOptions casts could use the new types.
+
+Usage (Claude Code /usage): before: session 30%, week 33% (resets Oct 14); after: cost $2.43, API 5m 41s, wall 14m 17s (includes idle), session 37%, week 33%. The percentages include other use.

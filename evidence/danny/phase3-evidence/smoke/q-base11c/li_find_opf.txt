@@ -1,0 +1,183 @@
+STATUS 200
+LOCATION 
+{
+ "addedAt": "MASK",
+ "birthtimeMs": "MASK",
+ "ctimeMs": "MASK",
+ "folderId": "MASK",
+ "id": "MASK",
+ "ino": "MASK",
+ "isFile": false,
+ "isInvalid": false,
+ "isMissing": false,
+ "lastScan": "MASK",
+ "libraryFiles": [
+  {
+   "addedAt": "MASK",
+   "fileType": "ebook",
+   "ino": "MASK",
+   "isSupplementary": false,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".pdf",
+    "filename": "Book One.pdf",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author One/Book One/Book One.pdf",
+    "relPath": "Book One.pdf",
+    "size": 8
+   },
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "fileType": "text",
+   "ino": "MASK",
+   "isSupplementary": null,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".txt",
+    "filename": "desc.txt",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author One/Book One/desc.txt",
+    "relPath": "desc.txt",
+    "size": 26
+   },
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "fileType": "metadata",
+   "ino": "MASK",
+   "isSupplementary": null,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".opf",
+    "filename": "metadata.opf",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author One/Book One/metadata.opf",
+    "relPath": "metadata.opf",
+    "size": 692
+   },
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "fileType": "text",
+   "ino": "MASK",
+   "isSupplementary": null,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".txt",
+    "filename": "reader.txt",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author One/Book One/reader.txt",
+    "relPath": "reader.txt",
+    "size": 11
+   },
+   "updatedAt": "MASK"
+  }
+ ],
+ "libraryId": "MASK",
+ "media": {
+  "audioFiles": [],
+  "chapters": [],
+  "coverPath": null,
+  "duration": 0,
+  "ebookFile": {
+   "addedAt": "MASK",
+   "ebookFormat": "pdf",
+   "fileType": "ebook",
+   "ino": "MASK",
+   "isSupplementary": null,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".pdf",
+    "filename": "Book One.pdf",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author One/Book One/Book One.pdf",
+    "relPath": "Book One.pdf",
+    "size": 8
+   },
+   "updatedAt": "MASK"
+  },
+  "ebookFormat": "pdf",
+  "id": "MASK",
+  "libraryItemId": "MASK",
+  "metadata": {
+   "abridged": false,
+   "asin": null,
+   "authorName": "OPF Author",
+   "authorNameLF": "Author, OPF",
+   "authors": [
+    {
+     "id": "MASK",
+     "name": "OPF Author"
+    }
+   ],
+   "description": "OPF description",
+   "descriptionPlain": "OPF description",
+   "explicit": false,
+   "genres": [
+    "Fantasy"
+   ],
+   "isbn": "9781234567897",
+   "language": "en",
+   "narratorName": "Reader One",
+   "narrators": [
+    "Reader One"
+   ],
+   "publishedDate": null,
+   "publishedYear": "2001",
+   "publisher": "OPF Publisher",
+   "series": [
+    {
+     "id": "MASK",
+     "name": "OPF Series",
+     "sequence": "2"
+    }
+   ],
+   "seriesName": "OPF Series #2",
+   "subtitle": null,
+   "title": "OPF Title",
+   "titleIgnorePrefix": "OPF Title"
+  },
+  "numAudioFiles": 0,
+  "numChapters": 0,
+  "numTracks": 0,
+  "size": 8,
+  "tags": [],
+  "tracks": []
+ },
+ "mediaType": "book",
+ "mtimeMs": "MASK",
+ "numFiles": 4,
+ "oldLibraryItemId": null,
+ "path": "ROOT/lib/books/Author One/Book One",
+ "relPath": "Author One/Book One",
+ "scanVersion": "2.37.0",
+ "size": 737,
+ "updatedAt": "MASK",
+ "userMediaProgress": {
+  "currentTime": 0,
+  "duration": 0,
+  "ebookLocation": "x",
+  "ebookProgress": 0.5,
+  "episodeId": null,
+  "finishedAt": null,
+  "hideFromContinueListening": false,
+  "id": "MASK",
+  "isFinished": false,
+  "lastUpdate": "MASK",
+  "libraryItemId": "MASK",
+  "mediaItemId": "MASK",
+  "mediaItemType": "book",
+  "progress": 0,
+  "startedAt": "MASK",
+  "userId": "MASK"
+ }
+}

@@ -1,0 +1,23 @@
+---isBook-isPodcast
+18
+---ApiRouterApp
+server/routers/ApiRouter.ts:70:type ApiRouterApp = Omit<express.Express, 'get' | 'post' | 'patch' | 'delete'> & {
+server/routers/ApiRouter.ts:112:  declare router: ApiRouterApp
+server/routers/ApiRouter.ts:125:    // Same app; typed so the routes accept the controller handlers (see ApiRouterApp)
+server/routers/ApiRouter.ts:126:    this.router = express() as unknown as ApiRouterApp
+---limit-page
+613:      limit: req.query.limit || 0,
+614:      page: req.query.page || 0,
+751:      limit: req.query.limit || 0,
+752:      page: req.query.page || 0,
+823:      limit: req.query.limit || 0,
+824:      page: req.query.page || 0,
+859:      limit: req.query.limit || 0,
+860:      page: req.query.page || 0
+891:    const limitPerShelf = req.query.limit || 10
+964:    const limit = req.query.limit || 12
+1022:    const isPaginated = req.query.limit && !isNaN(req.query.limit) && !isNaN(req.query.page)
+1027:      limit: isPaginated ? Number(req.query.limit) : 0,
+1028:      page: isPaginated ? Number(req.query.page) : 0,
+1290:      limit: req.query.limit || 0,
+1291:      page: req.query.page || 0

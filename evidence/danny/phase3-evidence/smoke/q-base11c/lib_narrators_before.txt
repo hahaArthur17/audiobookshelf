@@ -1,0 +1,21 @@
+STATUS 200
+LOCATION 
+{
+ "narrators": [
+  {
+   "id": "MASK",
+   "name": "JSON Narrator",
+   "numBooks": 1
+  },
+  {
+   "id": "MASK",
+   "name": "Reader One",
+   "numBooks": 1
+  },
+  {
+   "id": "MASK",
+   "name": "Tag Narrator",
+   "numBooks": 1
+  }
+ ]
+}

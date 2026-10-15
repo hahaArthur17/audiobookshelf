@@ -1,0 +1,83 @@
+# Batch 11d, commit 4: server top-level files, server/controllers, server/finders, server/providers, server/migrations
+@ server/Auth.ts
+R 165 // cast(d): TokenSecret is set by initTokenSecret (Server.init) before passport is initialized
+R 334 // cast(d): req.user is set by passport.authenticate before this runs (see above)
+R 337 // cast(d): req.user is set by passport.authenticate (see above)
+R 392 // cast(d): handleRefreshToken returns the user when there is no error (checked above)
+R 414 // cast(d): the url is set when there is no error (checked above)
+R 505 // cast(d): req.user is set by isAuthenticated (the middleware before this handler)
+R 507 // cast(d): req.user is set by isAuthenticated (see above)
+@ server/Database.ts
+R 186 // cast(d): dbPath is set by init before it calls this
+R 251 // cast(d): dbPath is set by init before it calls this
+@ server/Logger.ts
+R 45 // cast(d): Error() always has a stack in V8
+@ server/Server.ts
+R 237 // cast(d): logManager is set in the constructor
+R 345 // cast(d): set by initTokenSecret in init (before start creates the app)
+R 616 // cast(d): stop runs after start, which creates the server
+@ server/SocketAuthority.ts
+R 49 // cast(d): the clients are filtered on user above
+R 51 // cast(d): the clients are filtered on user above
+R 54 // cast(d): the clients are filtered on user above
+R 56 // cast(d) (2): filtered on user above; Server is set by initialize before any socket connects
+R 78 // cast(d): user is checked just above
+R 141 // cast(d): user is checked just above (the filter runs inside that if)
+R 182 // cast(d): the server is created in Server.start before it calls initialize
+R 192 // cast(d): the server is created in Server.start before it calls initialize
+R 249 // cast(d): Server is set by initialize before any socket connects
+R 376 // cast(d): Server is set by initialize before any socket connects
+R 396 // cast(d): Server is set by initialize before any socket connects
+@ server/Watcher.ts
+R 80 // cast(b): the callers pass libraries loaded with their folders (getAllWithFolders, the library controller); the association is optional in the model
+R 119 // cast(b): loaded with the library (see above); the association is optional in the model
+R 167 // cast(b): the library controller passes the library loaded with its folders; the association is optional in the model
+R 367 // cast(d): pendingTask is set by addFileUpdate before it starts this timeout
+R 369 // cast(d): pendingTask is set by addFileUpdate (as above)
+@ server/controllers/LibraryController.ts
+I 245 // cast(d): each folder path is set in the map above
+R 733 // cast(d) (2): filterByGroup is only set when filterBy is; decode returns null for an invalid id, and findByPk(null) in handleCollapseSubseries then finds no series, as in the JS
+I 1470 // cast(d): the library item is included with a where, so every podcast has one
+@ server/controllers/MiscController.ts
+R 754 // cast(d): logManager is set in the Server constructor, before any route is served
+@ server/controllers/SearchController.ts
+I 104 // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+I 129 // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+I 150 // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+I 169 // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+I 194 // cast(d): catch variable is unknown; the finders and validation helpers throw Error objects
+I 212 // cast(d): typed view from Phase 2, when the model's init() kept it from being a ModelStatic; since batch 3a findAll is typed on the model
+@ server/controllers/SessionController.ts
+R 201 // cast(d): the session was loaded from the db by the middleware, so it has an id
+@ server/finders/AuthorFinder.ts
+I 42 // cast(d): ServerGlobals names MetadataPath, which Server sets at startup (utils/types.ts declares it on global too, so the cast changes no type)
+@ server/finders/BookFinder.ts
+I 87 // cast(d): the same result object, which gets the score fields assigned below
+I 133 // cast(d): authorDistance is set for every result above when author is given (this branch)
+I 173 // cast(c): typed as results without null; entries are null for volumes without volumeInfo (see NOTE above)
+I 198 // cast(d): split always returns at least one element, so pop is not undefined
+I 609 // cast(c): options is passed in the isbn position of search() (see NOTE above)
+@ server/migrations/v2.17.4-use-subfolder-for-oidc-redirect-uris.ts
+R 76 // cast(d): set by the try block (the catch rethrows)
+@ server/migrations/v2.17.7-add-indices.ts
+R 54 // cast(d) (2): catch variable is unknown
+@ server/migrations/v2.19.1-copy-title-to-library-items.ts
+R 82 // cast(d) (2): catch variable is unknown
+@ server/migrations/v2.20.0-improve-author-sort-queries.ts
+R 239 // cast(d) (2): catch variable is unknown
+@ server/providers/Audible.ts
+I 236 // cast(c): items is null when the catalog response has no "products" (see NOTE above); read as in the JS
+@ server/providers/Audnexus.ts
+I 141 // cast(d): with a plain null initialiser TypeScript narrows closestMatch to null, so the assignments in the callback below would not type check
+I 188 // cast(d): catch variable is unknown; axios rejects with an error that may have a response (see RequestError)
+@ server/providers/CustomProviderAdapter.ts
+I 73 // cast(d): typed view from Phase 2, when the model's init() kept it from being a ModelStatic; since batch 3a findByPk is typed on the model
+I 186 // cast(d): for...in only yields keys of payload
+I 187 // cast(d): for...in only yields keys of payload
+@ server/providers/FantLab.ts
+I 216 // cast(d): the list was checked above to have items, so pop is not undefined
+@ server/providers/GoogleBooks.ts
+I 68 // cast(d): imageLinks has keys (checked above), so pop is not undefined
+@ server/providers/iTunes.ts
+I 137 // cast(c): search() returns a plain array when term is empty (see NOTE above)
+I 165 // cast(c): search() returns a plain array when term is empty (see NOTE above)

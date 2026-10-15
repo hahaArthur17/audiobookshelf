@@ -1,0 +1,85 @@
+ORDER ONLY lib_pers_none.txt
+=== DIFF lib_pers_once.txt
+--- 
++++ 
+@@ -397,19 +397,19 @@
+       "asin": null,
+-      "authorName": "NFO Author",
+-      "authorNameLF": "Author, NFO",
+-      "description": null,
++      "authorName": "JSON Author",
++      "authorNameLF": "Author, JSON",
++      "description": "JSON description",
+       "explicit": false,
+       "genres": [
+-       "Mystery"
++       "Science Fiction"
+       ],
+       "isbn": null,
+-      "language": null,
+-      "narratorName": "NFO Narrator",
++      "language": "English",
++      "narratorName": "JSON Narrator",
+       "publishedDate": null,
+-      "publishedYear": null,
+-      "publisher": null,
+-      "seriesName": "",
++      "publishedYear": "1998",
++      "publisher": "JSON Publisher",
++      "seriesName": "JSON Series #1",
+       "subtitle": null,
+-      "title": "NFO Title",
+-      "titleIgnorePrefix": "NFO Title"
++      "title": "JSON Title",
++      "titleIgnorePrefix": "JSON Title"
+      },
+@@ -418,4 +418,6 @@
+      "numTracks": 0,
+-     "size": 8,
+-     "tags": []
++     "size": 10,
++     "tags": [
++      "tag one"
+=== DIFF lib_pers_twice.txt
+--- 
++++ 
+@@ -397,19 +397,19 @@
+       "asin": null,
+-      "authorName": "NFO Author",
+-      "authorNameLF": "Author, NFO",
+-      "description": null,
++      "authorName": "JSON Author",
++      "authorNameLF": "Author, JSON",
++      "description": "JSON description",
+       "explicit": false,
+       "genres": [
+-       "Mystery"
++       "Science Fiction"
+       ],
+       "isbn": null,
+-      "language": null,
+-      "narratorName": "NFO Narrator",
++      "language": "English",
++      "narratorName": "JSON Narrator",
+       "publishedDate": null,
+-      "publishedYear": null,
+-      "publisher": null,
+-      "seriesName": "",
++      "publishedYear": "1998",
++      "publisher": "JSON Publisher",
++      "seriesName": "JSON Series #1",
+       "subtitle": null,
+-      "title": "NFO Title",
+-      "titleIgnorePrefix": "NFO Title"
++      "title": "JSON Title",
++      "titleIgnorePrefix": "JSON Title"
+      },
+@@ -418,4 +418,6 @@
+      "numTracks": 0,
+-     "size": 8,
+-     "tags": []
++     "size": 10,
++     "tags": [
++      "tag one"
+ORDER ONLY lib_stats.txt
+requests 194 identical 190 order-only 2 different 2 | status codes identical

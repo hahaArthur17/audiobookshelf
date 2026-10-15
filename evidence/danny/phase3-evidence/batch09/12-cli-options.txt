@@ -1,0 +1,9 @@
+== /tmp/abs-base-b9
+{"app":"audiobookshelf","serverVersion":"2.37.0","isInit":false,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""},"ConfigPath":"/tmp/abs-cli-GVd3/c","MetadataPath":"/tmp/abs-cli-GVd3/m"}
+Running in production mode.
+Options: CONFIG_PATH=TMP/c, METADATA_PATH=TMP/m, PORT=3398, HOST=undefined, SOURCE=docker, ROUTER_BASE_PATH=/audiobookshelf
+== /home/danny/Code/compx574/audiobookshelf
+{"app":"audiobookshelf","serverVersion":"2.37.0","isInit":false,"language":"en-us","authMethods":["local"],"authFormData":{"authLoginCustomMessage":""},"ConfigPath":"/tmp/abs-cli-GVd3/c","MetadataPath":"/tmp/abs-cli-GVd3/m"}
+bash: kill: (49951) - No such process
+Running in production mode.
+Options: CONFIG_PATH=TMP/c, METADATA_PATH=TMP/m, PORT=3398, HOST=undefined, SOURCE=docker, ROUTER_BASE_PATH=/audiobookshelf

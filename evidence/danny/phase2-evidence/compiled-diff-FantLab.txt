@@ -1,0 +1,106 @@
+--- /tmp/abs-base2/dist-server/server/providers/FantLab.js	2026-10-03 16:15:06.612767488 +1300
++++ dist-server/server/providers/FantLab.js	2026-10-03 15:34:12.946664479 +1300
+@@ -1,6 +1,9 @@
+ "use strict";
+-const axios = require('axios');
+-const Logger = require('../Logger');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const axios_1 = __importDefault(require("axios"));
++const Logger = require("../Logger");
+ class FantLab {
+     #responseTimeout = 10000;
+     // 7 - other
+@@ -24,10 +27,7 @@
+     _baseUrl = 'https://api.fantlab.ru';
+     constructor() { }
+     /**
+-     * @param {string} title
+-     * @param {string} author'
+-     * @param {number} [timeout] response timeout in ms
+-     * @returns {Promise<Object[]>}
++     * @param timeout response timeout in ms
+      **/
+     async search(title, author, timeout = this.#responseTimeout) {
+         if (!timeout || isNaN(timeout))
+@@ -38,7 +38,7 @@
+         }
+         const url = `${this._baseUrl}/search-works?q=${searchString}&page=1&onlymatches=1`;
+         Logger.debug(`[FantLab] Search url: ${url}`);
+-        const items = await axios
++        const items = await axios_1.default
+             .get(url, {
+             timeout
+         })
+@@ -49,12 +49,10 @@
+             Logger.error('[FantLab] search error', error.message);
+             return [];
+         });
+-        return Promise.all(items.map(async (item) => await this.getWork(item, timeout))).then((resArray) => resArray.filter(Boolean));
++        return Promise.all(items.map(async (item) => await this.getWork(item, timeout))).then((resArray) => resArray.filter((res) => Boolean(res)));
+     }
+     /**
+-     * @param {Object} item
+-     * @param {number} [timeout] response timeout in ms
+-     * @returns {Promise<Object>}
++     * @param timeout response timeout in ms
+      **/
+     async getWork(item, timeout = this.#responseTimeout) {
+         if (!timeout || isNaN(timeout))
+@@ -64,7 +62,7 @@
+             return null;
+         }
+         const url = `${this._baseUrl}/work/${work_id}/extended`;
+-        const bookData = await axios
++        const bookData = await axios_1.default
+             .get(url, {
+             timeout
+         })
+@@ -80,12 +78,6 @@
+         }
+         return this.cleanBookData(bookData, timeout);
+     }
+-    /**
+-     *
+-     * @param {Object} bookData
+-     * @param {number} [timeout]
+-     * @returns {Promise<Object>}
+-     */
+     async cleanBookData(bookData, timeout = this.#responseTimeout) {
+         let { authors, work_name_alts, work_id, work_name, work_year, work_description, image, classificatory, editions_blocks } = bookData;
+         const subtitle = Array.isArray(work_name_alts) ? work_name_alts[0] : null;
+@@ -126,12 +118,6 @@
+             return [];
+         return rootGenre.genre.map((g) => g.label).filter((g) => g);
+     }
+-    /**
+-     *
+-     * @param {Object} editions
+-     * @param {number} [timeout]
+-     * @returns {Promise<{imageUrl: string, isbn: string}>
+-     */
+     async tryGetCoverFromEditions(editions, timeout = this.#responseTimeout) {
+         if (!editions) {
+             return null;
+@@ -150,19 +136,13 @@
+             isbn
+         };
+     }
+-    /**
+-     *
+-     * @param {number} editionId
+-     * @param {number} [timeout]
+-     * @returns {Promise<string>}
+-     */
+     async getCoverFromEdition(editionId, timeout = this.#responseTimeout) {
+         if (!editionId)
+             return null;
+         if (!timeout || isNaN(timeout))
+             timeout = this.#responseTimeout;
+         const url = `${this._baseUrl}/edition/${editionId}`;
+-        const editionInfo = await axios
++        const editionInfo = await axios_1.default
+             .get(url, {
+             timeout
+         })

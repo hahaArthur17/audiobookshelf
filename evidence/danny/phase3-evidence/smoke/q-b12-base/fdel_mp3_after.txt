@@ -1,0 +1,86 @@
+STATUS 200
+LOCATION 
+{
+ "addedAt": "MASK",
+ "birthtimeMs": "MASK",
+ "ctimeMs": "MASK",
+ "folderId": "MASK",
+ "id": "MASK",
+ "ino": "MASK",
+ "isFile": false,
+ "isInvalid": false,
+ "isMissing": true,
+ "lastScan": "MASK",
+ "libraryFiles": [
+  {
+   "addedAt": "MASK",
+   "fileType": "ebook",
+   "ino": "MASK",
+   "isSupplementary": true,
+   "metadata": {
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "ext": ".epub",
+    "filename": "Series Book.epub",
+    "mtimeMs": "MASK",
+    "path": "ROOT/lib/books/Author Six/Series Book/Series Book.epub",
+    "relPath": "Series Book.epub",
+    "size": 9
+   },
+   "updatedAt": "MASK"
+  }
+ ],
+ "libraryId": "MASK",
+ "media": {
+  "audioFiles": [],
+  "chapters": [],
+  "coverPath": null,
+  "duration": 1.07102,
+  "ebookFile": null,
+  "id": "MASK",
+  "libraryItemId": "MASK",
+  "metadata": {
+   "abridged": false,
+   "asin": null,
+   "authorName": "Author Six",
+   "authorNameLF": "Six, Author",
+   "authors": [
+    {
+     "id": "MASK",
+     "name": "Author Six"
+    }
+   ],
+   "description": null,
+   "descriptionPlain": null,
+   "explicit": false,
+   "genres": [],
+   "isbn": null,
+   "language": null,
+   "narratorName": "",
+   "narrators": [],
+   "publishedDate": null,
+   "publishedYear": null,
+   "publisher": null,
+   "series": [],
+   "seriesName": "",
+   "subtitle": null,
+   "title": "Only",
+   "titleIgnorePrefix": "Only"
+  },
+  "numAudioFiles": 0,
+  "numChapters": 0,
+  "numTracks": 0,
+  "size": 0,
+  "tags": [],
+  "tracks": []
+ },
+ "mediaType": "book",
+ "mtimeMs": "MASK",
+ "numFiles": 1,
+ "oldLibraryItemId": null,
+ "path": "ROOT/lib/books/Author Six/Series Book",
+ "relPath": "Author Six/Series Book",
+ "scanVersion": "2.37.0",
+ "size": 4536,
+ "updatedAt": "MASK"
+}

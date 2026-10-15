@@ -1,0 +1,39 @@
+ERROR: [parseEpubMetadata] Failed to extract META-INF/container.xml from epub at "WORK/lib/books/Author Six/Series Book/Series Book.epub" Error: Bad archive
+ERROR: [parseEpubMetadata] Failed to close zip Error: Bad archive
+ERROR: [LibraryItem] Library item not found with id "nope"
+WARN: Removed 1 sessions that were 3 seconds or less
+ERROR: [LibraryItemController] startPlaybackSession cannot playback eca47195-ac23-48df-8e5d-594ce3eb4f12
+ERROR: [LibraryItemController] startPlaybackSession episode nope not found for item 94317d00-90e0-4eb3-be93-10d5e45bbbdb
+ERROR: [LibraryItemController] startEpisodePlaybackSession invalid media type ccc56bdb-5952-423b-b348-34dc8ac36f76
+ERROR: [LibraryItemController] getMetadataObject: Invalid library item "OPF Title"
+ERROR: [LibraryItemController] getMetadataObject: Invalid library item "My Show"
+ERROR: [LibraryItemController] Library file "nope" does not exist for library item
+ERROR: [LibraryItemController] Library file "nope" does not exist for library item
+ERROR: [LibraryItemController] Invalid ebook file id "535087"
+ERROR: [LibraryItemController] No ebookFile for library item "My Show"
+ERROR: [LibraryItemController] No ebookFile for library item "Tagged Book Album"
+ERROR: [LibraryItemController] Invalid media type for ebook file status update
+ERROR: [LibraryItemController] Invalid ebook file id "535087"
+ERROR: [LibraryItemController] No ebookFile for library item "OPF Title"
+ERROR: [LibraryItemController] updateTracks invalid media type 94317d00-90e0-4eb3-be93-10d5e45bbbdb
+ERROR: [LibraryItemController] updateTracks invalid orderedFileData ccc56bdb-5952-423b-b348-34dc8ac36f76
+ERROR: [LibraryItemController] updateTracks invalid orderedFileData ccc56bdb-5952-423b-b348-34dc8ac36f76
+ERROR: [LibraryItemController] updateTracks invalid orderedFileData ccc56bdb-5952-423b-b348-34dc8ac36f76
+ERROR: [LibraryItemController] Invalid library item
+ERROR: [LibraryItemController] Invalid payload
+ERROR: [LibraryItemController] Invalid payload
+ERROR: [fileUtils] Failed to download file "WORK/metadata/items/ccc56bdb-5952-423b-b348-34dc8ac36f76/cover" Error: Call to 127.0.0.1 is blocked.
+ERROR: [CoverManager] Download image file failed for "http://127.0.0.1:9/c.jpg" Error: Call to 127.0.0.1 is blocked.
+ERROR: [CoverManager] validate cover path is not a library item file "/nope.jpg"
+ERROR: [LibraryItemController] Invalid auto download schedule cron expression "bad cron" for library item "My Show"
+ERROR: [fileUtils] Failed to download file "WORK/metadata/items/ccc56bdb-5952-423b-b348-34dc8ac36f76/cover" Error: Call to 127.0.0.1 is blocked.
+ERROR: [CoverManager] Download image file failed for "http://127.0.0.1:9/c.jpg" Error: Call to 127.0.0.1 is blocked.
+ERROR: [LibraryItemController] Batch update failed. Invalid payload
+ERROR: [LibraryItemController] Batch update failed. Each update payload must have a unique library item id
+ERROR: [LibraryItemController] Batch update failed. Not all library items found
+WARN: [LibraryItemController] Invalid auto download schedule cron expression "bad" for library item "My Show" - skipping update
+WARN: [LibraryItemController] Re-scanning file library items not yet supported
+ERROR: [LibraryItemController] Re-scanning file library items not yet supported
+ERROR: [LibraryItemController] Library file "nope" does not exist for library item
+ERROR: [LibraryItem] Library item not found with id "nope"
+ERROR: [LibraryItem] Library item not found with id "ab3eeb3b-ea30-4a1f-9ba6-fb00f502e3ce"

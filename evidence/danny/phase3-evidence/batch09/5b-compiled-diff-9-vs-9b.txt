@@ -1,0 +1,14 @@
+Files /tmp/abs-mid-b9/dist-server/server/controllers/CollectionController.js and /tmp/out-new-b9/server/controllers/CollectionController.js differ
+Files /tmp/abs-mid-b9/dist-server/server/controllers/PlaylistController.js and /tmp/out-new-b9/server/controllers/PlaylistController.js differ
+Files /tmp/abs-mid-b9/dist-server/server/controllers/PodcastController.js and /tmp/out-new-b9/server/controllers/PodcastController.js differ
+Files /tmp/abs-mid-b9/dist-server/server/Database.js and /tmp/out-new-b9/server/Database.js differ
+Files /tmp/abs-mid-b9/dist-server/server/managers/ApiCacheManager.js and /tmp/out-new-b9/server/managers/ApiCacheManager.js differ
+Files /tmp/abs-mid-b9/dist-server/server/managers/PodcastManager.js and /tmp/out-new-b9/server/managers/PodcastManager.js differ
+Files /tmp/abs-mid-b9/dist-server/server/managers/ShareManager.js and /tmp/out-new-b9/server/managers/ShareManager.js differ
+Files /tmp/abs-mid-b9/dist-server/server/routers/ApiRouter.js and /tmp/out-new-b9/server/routers/ApiRouter.js differ
+Files /tmp/abs-mid-b9/dist-server/server/Server.js and /tmp/out-new-b9/server/Server.js differ
+Files /tmp/abs-mid-b9/dist-server/server/utils/queries/adminStats.js and /tmp/out-new-b9/server/utils/queries/adminStats.js differ
+Files /tmp/abs-mid-b9/dist-server/server/utils/queries/libraryItemsBookFilters.js and /tmp/out-new-b9/server/utils/queries/libraryItemsBookFilters.js differ
+Files /tmp/abs-mid-b9/dist-server/server/utils/queries/libraryItemsPodcastFilters.js and /tmp/out-new-b9/server/utils/queries/libraryItemsPodcastFilters.js differ
+Files /tmp/abs-mid-b9/dist-server/server/utils/queries/seriesFilters.js and /tmp/out-new-b9/server/utils/queries/seriesFilters.js differ
+Files /tmp/abs-mid-b9/dist-server/server/utils/queries/userStats.js and /tmp/out-new-b9/server/utils/queries/userStats.js differ

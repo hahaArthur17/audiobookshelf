@@ -1,0 +1,12 @@
+Batch 2 and 4 (server/objects, server/auth, server/routers): independent check, 2026-10-03
+Baseline: 7f280c67 (batch 1 fixes). Commit checked: c9faa3c1 (batch 2 and 4).
+
+Measured (commands run by the user, outputs in this folder: 4-verification.txt, 5-compiled-diff-files.txt, 6-compiled-diff.txt):
+- 30 files changed (1711 insertions, 705 deletions). Outside server/objects, server/auth and server/routers only MIGRATION.md, package.json (adds @types/express-session and @types/passport) and package-lock.json. No test touched; tsconfig.server.json unchanged.
+- Build: 0 error TS from a clean dist-server, 356 passing; ts 64 to 90 files, js 125 to 101.
+- No any, no ts directives, 36 "as unknown as" all with a comment within 6 lines above, no bare class field lines in the compiled output.
+- Compiled JS against the baseline: 23 files differ and 2 are new (objects/types.js, auth/types.js; type-only). Differences are only import style changes, local aliases of the same object and added parentheses; the only require removed is express in OidcAuthStrategy (JSDoc only, as the agent stated). No undeclared behaviour change found.
+
+Not verified: the four bugs the agent listed. No smoke test output is saved for this batch. Casts are erased in the compiled JS, so identical JS does not prove the cast counts.
+
+Usage (Claude Code /usage): before: session 26%, week 50% (resets Oct 7); after: cost $9.53, API 18m 59s, wall 1h 26m 48s (includes idle), session 51%, week 53%. The percentages include other use. Batch 4 has no counter of its own; it was done in this session.

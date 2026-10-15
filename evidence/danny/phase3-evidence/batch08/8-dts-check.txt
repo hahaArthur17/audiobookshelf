@@ -1,0 +1,3 @@
+---total-errors
+2
+---migrations-errors

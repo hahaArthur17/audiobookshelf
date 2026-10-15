@@ -1,0 +1,55 @@
+== head and status
+0727f406 phase3 batch 3b: remove model workarounds
+dd875047 phase3: clarify rule 17 after batch 3a
+e31a29ec phase3 batch 3a: models
+== changed files by type vs dd875047
+     16 M
+== shortstat
+ 16 files changed, 123 insertions(+), 157 deletions(-)
+== changed files
+MIGRATION.md
+server/Database.js
+server/auth/TokenManager.ts
+server/routers/ApiRouter.ts
+server/utils/libraryHelpers.ts
+server/utils/migrations/absMetadataMigration.ts
+server/utils/migrations/dbMigration.ts
+server/utils/queries/adminStats.ts
+server/utils/queries/authorFilters.ts
+server/utils/queries/libraryFilters.ts
+server/utils/queries/libraryItemFilters.ts
+server/utils/queries/libraryItemsBookFilters.ts
+server/utils/queries/libraryItemsPodcastFilters.ts
+server/utils/queries/seriesFilters.ts
+server/utils/queries/userStats.ts
+server/utils/types.ts
+== package.json diff (expect empty)
+== protected files vs baseline (expect empty)
+== counts BEFORE (dd875047)
+casts=530 as_unknown_as=135
+TypedDatabase=49
+ApiDatabase=2
+PatchModels=20
+QueryFindOptions=31
+InitializedDatabase=0
+as_unknown_as_LibraryItem_media=12
+undefined_as_unknown_as=1
+null_as_unknown_as=8
+any=0
+ts_directives=0
+== counts AFTER (HEAD)
+casts=502 as_unknown_as=108
+TypedDatabase=0
+ApiDatabase=0
+PatchModels=0
+QueryFindOptions=31
+InitializedDatabase=26
+as_unknown_as_LibraryItem_media=0
+undefined_as_unknown_as=1
+null_as_unknown_as=8
+any=0
+ts_directives=0
+== agent says: casts before 527 after 499; TypedDatabase 49 to 0, ApiDatabase 2 to 0, PatchModels 20 to 0, QueryFindOptions 31 to 31, LibraryItem media casts 12 to 0
+== NOTE lines added (agent says no new bugs, expect 0)
+0
+2026-10-09T16:24:13+13:00 label=batch3b-done head=0727f406 ts=116 js=76 err=0 tests= 356 passing (2s) 

@@ -1,0 +1,16 @@
+== runtime check of the declared names
+declared names: 40
+Op defined: true  QueryTypes defined: true  DataTypes defined: true
+problems: 0
+data types on the class but not declared: NUMERIC, DOUBLE PRECISION, postgres, mysql, mariadb, sqlite, mssql, db2, snowflake, oracle
+== build with the reference line removed (expect errors)
+errors: 22
+server/Database.ts(676,20): error TS2339: Property 'Op' does not exist on type 'typeof Sequelize'.
+server/Database.ts(910,90): error TS2339: Property 'STRING' does not exist on type 'typeof Sequelize'.
+server/Database.ts(911,95): error TS2339: Property 'STRING' does not exist on type 'typeof Sequelize'.
+server/managers/MigrationManager.ts(262,23): error TS2339: Property 'QueryTypes' does not exist on type 'typeof Sequelize'.
+server/managers/MigrationManager.ts(268,23): error TS2339: Property 'QueryTypes' does not exist on type 'typeof Sequelize'.
+== libCheck on (skipLibCheck false), base then new
+      2 ../../home/danny/Code/compx574/audiobookshelf/node_modules/@types/jsonwebtoken/index.d.ts
+--
+      2 ../../home/danny/Code/compx574/audiobookshelf/node_modules/@types/jsonwebtoken/index.d.ts

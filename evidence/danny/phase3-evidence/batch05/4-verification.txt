@@ -1,0 +1,84 @@
+baseline d3617ecd7f6cf67a04608c5d7bcbdad91efa8ae4
+--- git status
+--- log
+7fe92c59 phase3 batch 6: server/scanner
+5405f2f3 phase3 batch 5: server/managers
+d3617ecd phase3: add final cleanup checklist (batch 11)
+9f9a7a27 phase3: clarify rules 14 and 15 after batch 3b
+0727f406 phase3 batch 3b: remove model workarounds
+dd875047 phase3: clarify rule 17 after batch 3a
+e31a29ec phase3 batch 3a: models
+1d3c512f phase3: tighten type rules after audit
+--- tsconfig, eslint, test changes (expect none)
+--- files changed outside managers and scanner
+MIGRATION.md
+package-lock.json
+package.json
+server/SocketAuthority.js
+server/finders/PodcastFinder.ts
+server/libs/fsExtra.d.ts
+server/models/Author.ts
+server/models/Book.ts
+server/models/Feed.ts
+server/models/Library.ts
+server/models/LibraryItem.ts
+server/models/Podcast.ts
+server/models/User.ts
+server/models/types.ts
+server/objects/Task.ts
+server/objects/types.ts
+server/utils/ffmpegHelpers.ts
+server/utils/generators/abmetadataGenerator.ts
+server/utils/prober.ts
+server/utils/queries/libraryItemsBookFilters.ts
+server/utils/types.ts
+--- package.json diff
+diff --git a/package.json b/package.json
+index 8dfc4df7..d9f6264e 100644
+--- a/package.json
++++ b/package.json
+@@ -66,7 +66,9 @@
+     "@types/express-session": "^1.19.0",
+     "@types/jsonwebtoken": "^9.0.10",
+     "@types/node": "^24.13.6",
++    "@types/nodemailer": "^6.4.24",
+     "@types/passport": "^1.0.17",
++    "@types/semver": "^7.8.0",
+     "@types/uuid": "^8.3.4",
+     "@types/xml2js": "^0.4.14",
+     "chai": "^4.3.10",
+--- ts files / js files left (expect 31 / 0)
+33
+0
+--- as matches=295, unknown-as=56, plain casts=183, total casts=239  (agent: 176, 56, 232)
+--- as const (not casts)
+0
+--- tags (agent: a 8, b 13, c 15, d 192, e 4)
+      8 cast(a)
+     13 cast(b)
+     14 cast(c)
+    161 cast(d)
+      4 cast(e)
+--- as Record<string, unknown> (agent 75)
+75
+--- as Error (agent 17)
+17
+--- as string family (agent: string 11, string[] 10)
+     12 as string
+      4 as string |
+     12 as string[]
+--- as number (agent 8)
+9
+--- as InitializedDatabase (agent 4)
+4
+--- approximate non-null ! (agent 151)
+0
+--- tsc baseline (no output = 0 errors)
+--- tsc current (no output = 0 errors)
+35 /home/danny/Code/compx574/a4-context/phase3-evidence/batch05/5-compiled-diff.txt
+638 /home/danny/Code/compx574/a4-context/phase3-evidence/batch05/6-compiled-diff.txt
+--- fsExtra emitted?
+/tmp/b5-cur-out/server/libs/fsExtra/index.js
+--- libs identical?
+LIBS-IDENTICAL
+--- tsc at 5405f2f3 (no output = 0 errors)

@@ -1,0 +1,34 @@
+.
+./Author One
+./Author One/Book One
+./Author One/Book One/Book One.pdf
+./Author One/Book One/desc.txt
+./Author One/Book One/metadata.opf
+./Author One/Book One/reader.txt
+./Author One/Book Three
+./Author One/Book Three/Book Three.pdf
+./Author One/Book Three/metadata.json
+./Author Six
+./Author Two
+./Combo Author
+./Combo Author/Combo Book
+./Combo Author/Combo Book/01.mp3
+./Combo Author/Combo Book/02.mp3
+./Combo Author/Combo Book/03.mp3
+./Combo Author/Combo Book/Combo Book.epub
+./Combo Author/Combo Book/cover.jpg
+./Ebook Author
+./Ebook Author/EPUB Book
+./Ebook Author/EPUB Book/EPUB Book.epub
+./Ebook Author/PDF Book
+./Ebook Author/PDF Book/PDF Book.pdf
+./Loose Book.pdf
+./Real Author
+./Real Author/Real Book
+./Real Author/Real Book/01.mp3
+./Real Author/Real Book/02.mp3
+./Real Author/Real Book/cover.jpg
+./Tag Author
+./Tag Author/Tagged Book
+./Tag Author/Tagged Book/01.mp3
+./Tag Author/Tagged Book/02.mp3

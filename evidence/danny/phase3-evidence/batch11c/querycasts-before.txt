@@ -1,0 +1,22 @@
+server/Auth.ts:273 | local callback | callback as string
+server/auth/OidcAuthStrategy.ts:308 | req.query itself | req.query as OidcQuery
+server/auth/OidcAuthStrategy.ts:347 | req.query itself | req.query as OidcQuery
+server/auth/OidcAuthStrategy.ts:540 | req.query itself | req.query as OidcQuery
+server/auth/OidcAuthStrategy.ts:559 | local code | code as string
+server/controllers/AuthorController.ts:49 | req.query | req.query.include as string | undefined
+server/controllers/AuthorController.ts:417 | local format | format as string | undefined
+server/controllers/AuthorController.ts:419 | local height | height as string
+server/controllers/AuthorController.ts:421 | local width | width as string
+server/controllers/CollectionController.ts:136 | req.query | req.query.include as string | undefined
+server/controllers/FileSystemController.ts:22 | req.query | req.query.path as string | undefined
+server/controllers/MeController.ts:433 | req.query | req.query.limit as unknown as number
+server/controllers/MiscController.ts:120 | req.query | req.query.include as string | undefined
+server/controllers/PodcastController.ts:296 | req.query | req.query.limit as unknown as number
+server/controllers/SeriesController.ts:33 | req.query | req.query.include as string | undefined
+server/controllers/SessionController.ts:49 | req.query | req.query.user as string | undefined
+server/controllers/SessionController.ts:57 | req.query | req.query.sort as string | undefined
+server/controllers/SessionController.ts:84 | local orderKey | (await Database.playbackSessionModel.findAndCountAll({ where, include: [ { model: Database.deviceModel }, { model: Datab
+server/controllers/SessionController.ts:84 | local orderKey | { where, include: [ { model: Database.deviceModel }, { model: Database.userModel, attributes: ['id', 'username'] } ], or
+server/controllers/ShareController.ts:46 | req.query | req.query.t as unknown as number
+server/controllers/ShareController.ts:46 | req.query | req.query.t as string
+server/controllers/UserController.ts:41 | req.query | req.query.include as string | undefined

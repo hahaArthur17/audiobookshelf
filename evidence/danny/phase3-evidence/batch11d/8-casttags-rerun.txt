@@ -1,0 +1,17 @@
+== new: summary against the agent's after-summary (expect no difference)
+same
+== base: summary against the agent's before-summary (expect no difference)
+same
+== new: summary
+files=194 as=649 unknown_as=122 nonnull=281 total=1052
+strict tags: {"d":709,"b":197,"a":43,"c":52,"nonnull":51}
+  a by kind: {"unk":19,"as":24}
+  b by kind: {"unk":49,"as":127,"nn":21}
+  c by kind: {"as":36,"unk":6,"nn":10}
+  d by kind: {"as":462,"nn":199,"unk":48}
+  e by kind: {}
+  nonnull by kind: {"nn":51}
+  none by kind: {}
+strict assumed: 15
+strict untagged: 0 (count missing: 0)
+loose tags (as and as unknown as only, as in 11b/11c): {"d":511,"b":152,"a":43,"c":42,"none":23}

@@ -1,0 +1,66 @@
+48c48
+<   durationSeconds: 0.01
+---
+>   durationSeconds: 0.006
+62c62
+<   durationSeconds: 0.109
+---
+>   durationSeconds: 0.108
+68,69c68,69
+<     at Database.<anonymous> (/home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+<     at /home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+---
+>     at Database.<anonymous> (REPO/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+>     at REPO/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+71,73c71,73
+<     at Query.run (/home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+<     at /home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/sequelize.js:315:28
+<     at async SQLiteQueryInterface.renameTable (/home/danny/Code/compx574/audiobookshelf/node_modules/sequelize/lib/dialects/abstract/query-interface.js:139:12)
+---
+>     at Query.run (REPO/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+>     at REPO/node_modules/sequelize/lib/sequelize.js:315:28
+>     at async SQLiteQueryInterface.renameTable (REPO/node_modules/sequelize/lib/dialects/abstract/query-interface.js:139:12)
+82c82
+<     sql: 'ALTER TABLE `libraryItems_54_backup` RENAME TO `libraryItems`;'
+---
+>     sql: 'ALTER TABLE `libraryItems_30_backup` RENAME TO `libraryItems`;'
+87c87
+<     sql: 'ALTER TABLE `libraryItems_54_backup` RENAME TO `libraryItems`;'
+---
+>     sql: 'ALTER TABLE `libraryItems_30_backup` RENAME TO `libraryItems`;'
+89c89
+<   sql: 'ALTER TABLE `libraryItems_54_backup` RENAME TO `libraryItems`;',
+---
+>   sql: 'ALTER TABLE `libraryItems_30_backup` RENAME TO `libraryItems`;',
+96c96
+<   durationSeconds: 0.006
+---
+>   durationSeconds: 0.01
+108c108
+<   durationSeconds: 0.005
+---
+>   durationSeconds: 0.006
+129c129
+<   durationSeconds: 0.006
+---
+>   durationSeconds: 0.005
+141c141
+<   durationSeconds: 0.009
+---
+>   durationSeconds: 0.012
+167c167
+<   durationSeconds: 0.035
+---
+>   durationSeconds: 0.038
+191c191
+<   durationSeconds: 0.022
+---
+>   durationSeconds: 0.025
+219c219
+<   durationSeconds: 0.038
+---
+>   durationSeconds: 0.046
+240c240
+<   durationSeconds: 0.01
+---
+>   durationSeconds: 0.009

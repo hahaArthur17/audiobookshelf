@@ -1,0 +1,37 @@
+STATUS 200
+LOCATION 
+{
+ "include": "numBooks",
+ "limit": 2,
+ "minified": true,
+ "page": 0,
+ "results": [
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Author, OPF",
+   "libraryId": "MASK",
+   "name": "OPF Author",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  },
+  {
+   "addedAt": "MASK",
+   "asin": null,
+   "description": null,
+   "id": "MASK",
+   "imagePath": null,
+   "lastFirst": "Author, Tag",
+   "libraryId": "MASK",
+   "name": "Tag Author",
+   "numBooks": 1,
+   "updatedAt": "MASK"
+  }
+ ],
+ "sortBy": "name",
+ "sortDesc": true,
+ "total": 6
+}

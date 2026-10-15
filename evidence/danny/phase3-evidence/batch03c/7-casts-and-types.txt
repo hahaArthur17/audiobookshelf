@@ -1,0 +1,223 @@
+--- whole server counts (agent before: as 567, unknown-as 164, ! 170; after: 582, 149, 170). Compare the difference, string noise adds a few matches to both
+base: matches=903 unknown-as=164 plain=575 total=739 nonnull~=170
+cur: matches=889 unknown-as=149 plain=591 total=740 nonnull~=170
+--- casts to the FindOptions family now (agent: FindOptions 11, FindAndCountOptions 4, CountOptions 3)
+      8 as CountOptions
+      4 as FindAndCountOptions
+     15 as FindOptions
+--- satisfies RuntimeFindOptions
+server/utils/queries/libraryItemsBookFilters.ts:409:    } satisfies RuntimeFindOptions as FindOptions)
+server/utils/queries/libraryItemsBookFilters.ts:887:    } satisfies RuntimeFindOptions as unknown as FindAndCountOptions)
+server/utils/queries/libraryItemsBookFilters.ts:970:    } satisfies RuntimeFindOptions as unknown as FindOptions)
+server/utils/queries/libraryItemsBookFilters.ts:1028:    } satisfies RuntimeFindOptions & Pick<CountOptions, 'col'> as CountOptions)
+server/utils/queries/libraryItemsBookFilters.ts:1041:    } satisfies RuntimeFindOptions as FindOptions)
+server/utils/queries/libraryItemsBookFilters.ts:1085:    } satisfies RuntimeFindOptions as FindOptions)
+server/utils/queries/libraryItemsBookFilters.ts:1241:    } satisfies RuntimeFindOptions as FindOptions)
+server/utils/queries/libraryItemsBookFilters.ts:1357:    } satisfies RuntimeFindOptions as unknown as FindOptions)
+server/utils/queries/seriesFilters.ts:201:    } satisfies RuntimeFindOptions as FindAndCountOptions)
+server/utils/queries/libraryFilters.ts:318:    } satisfies RuntimeFindOptions as FindAndCountOptions)
+server/utils/queries/libraryFilters.ts:394:    } satisfies RuntimeFindOptions as FindAndCountOptions)
+--- the FindOptions-family casts with 2 lines before (tag check)
+server/utils/queries/libraryItemsBookFilters.ts-407-      order: [Sequelize.literal('CAST(`books.bookSeries.sequence` AS FLOAT) ASC NULLS LAST')]
+server/utils/queries/libraryItemsBookFilters.ts-408-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindOptions type is stricter; distinct is a count option, which findAll ignores
+server/utils/queries/libraryItemsBookFilters.ts:409:    } satisfies RuntimeFindOptions as FindOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-445-      if (!countCache.has(countCacheKey)) {
+server/utils/queries/libraryItemsBookFilters.ts-446-        // cast(b): RuntimeFindOptions relaxes options to the shapes Sequelize accepts at runtime; its CountOptions type is stricter
+server/utils/queries/libraryItemsBookFilters.ts:447:        const count = await model.count(findOptions as CountOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-454-
+server/utils/queries/libraryItemsBookFilters.ts-455-      // cast(b): RuntimeFindOptions relaxes options to the shapes Sequelize accepts at runtime; its FindOptions type is stricter
+server/utils/queries/libraryItemsBookFilters.ts:456:      const rows = await model.findAll(findOptions as FindOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-465-
+server/utils/queries/libraryItemsBookFilters.ts-466-    // cast(b): RuntimeFindOptions relaxes options to the shapes Sequelize accepts at runtime; its FindOptions type is stricter
+server/utils/queries/libraryItemsBookFilters.ts:467:    return await model.findAndCountAll(findOptions as FindOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-885-      offset
+server/utils/queries/libraryItemsBookFilters.ts-886-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindAndCountOptions type is stricter, and TypeScript does not compare the nested single include objects of the literal with it
+server/utils/queries/libraryItemsBookFilters.ts:887:    } satisfies RuntimeFindOptions as unknown as FindAndCountOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-968-      order: Database.sequelize.random()
+server/utils/queries/libraryItemsBookFilters.ts-969-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindOptions type is stricter, and TypeScript does not compare the nested single include objects of the literal with it
+server/utils/queries/libraryItemsBookFilters.ts:970:    } satisfies RuntimeFindOptions as unknown as FindOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-1026-      subQuery: false
+server/utils/queries/libraryItemsBookFilters.ts-1027-      // cast(b): checked as RuntimeFindOptions with the count option col (the shapes Sequelize accepts at runtime); its CountOptions type is stricter
+server/utils/queries/libraryItemsBookFilters.ts:1028:    } satisfies RuntimeFindOptions & Pick<CountOptions, 'col'> as CountOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-1039-      order: Database.sequelize.random()
+server/utils/queries/libraryItemsBookFilters.ts-1040-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindOptions type is stricter; distinct is a count option, which findAll ignores
+server/utils/queries/libraryItemsBookFilters.ts:1041:    } satisfies RuntimeFindOptions as FindOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-1083-      subQuery: false
+server/utils/queries/libraryItemsBookFilters.ts-1084-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindOptions type is stricter
+server/utils/queries/libraryItemsBookFilters.ts:1085:    } satisfies RuntimeFindOptions as FindOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-1239-      offset
+server/utils/queries/libraryItemsBookFilters.ts-1240-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindOptions type is stricter; distinct is a count option, which findAll ignores
+server/utils/queries/libraryItemsBookFilters.ts:1241:    } satisfies RuntimeFindOptions as FindOptions)
+--
+server/utils/queries/libraryItemsBookFilters.ts-1355-      offset
+server/utils/queries/libraryItemsBookFilters.ts-1356-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindOptions type is stricter, and TypeScript does not compare the nested single include objects of the literal with it; distinct is a count option, which findAll ignores
+server/utils/queries/libraryItemsBookFilters.ts:1357:    } satisfies RuntimeFindOptions as unknown as FindOptions)
+--
+server/utils/queries/seriesFilters.ts-199-      order
+server/utils/queries/seriesFilters.ts-200-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindAndCountOptions type is stricter
+server/utils/queries/seriesFilters.ts:201:    } satisfies RuntimeFindOptions as FindAndCountOptions)
+--
+server/utils/queries/libraryItemsPodcastFilters.ts-139-      if (!countCache.has(countCacheKey)) {
+server/utils/queries/libraryItemsPodcastFilters.ts-140-        // cast(b): RuntimeFindOptions relaxes options to the shapes Sequelize accepts at runtime; its CountOptions type is stricter
+server/utils/queries/libraryItemsPodcastFilters.ts:141:        const count = await model.count(findOptions as CountOptions)
+--
+server/utils/queries/libraryItemsPodcastFilters.ts-147-
+server/utils/queries/libraryItemsPodcastFilters.ts-148-      // cast(b): RuntimeFindOptions relaxes options to the shapes Sequelize accepts at runtime; its FindOptions type is stricter
+server/utils/queries/libraryItemsPodcastFilters.ts:149:      const rows = await model.findAll(findOptions as FindOptions)
+--
+server/utils/queries/libraryItemsPodcastFilters.ts-157-
+server/utils/queries/libraryItemsPodcastFilters.ts-158-    // cast(b): RuntimeFindOptions relaxes options to the shapes Sequelize accepts at runtime; its FindOptions type is stricter
+server/utils/queries/libraryItemsPodcastFilters.ts:159:    return await model.findAndCountAll(findOptions as FindOptions)
+--
+server/utils/queries/libraryItemsPodcastFilters.ts-411-      offset
+server/utils/queries/libraryItemsPodcastFilters.ts-412-      // distinct is not a findAll option (sequelize ignores it); kept as before
+server/utils/queries/libraryItemsPodcastFilters.ts:413:    } as FindOptions)
+--
+server/utils/queries/libraryItemsPodcastFilters.ts-451-      limit
+server/utils/queries/libraryItemsPodcastFilters.ts-452-      // distinct is not a findAll option (sequelize ignores it); kept as before
+server/utils/queries/libraryItemsPodcastFilters.ts:453:    } as FindOptions)
+--
+server/utils/queries/libraryItemsPodcastFilters.ts-554-
+server/utils/queries/libraryItemsPodcastFilters.ts-555-    // cast(b): RuntimeFindOptions relaxes options to the shapes Sequelize accepts at runtime; its FindOptions type is stricter
+server/utils/queries/libraryItemsPodcastFilters.ts:556:    const episodes = await findtAll(findOptions as FindOptions)
+--
+server/utils/queries/libraryFilters.ts-316-      order: [['createdAt', 'DESC']]
+server/utils/queries/libraryFilters.ts-317-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindAndCountOptions type is stricter
+server/utils/queries/libraryFilters.ts:318:    } satisfies RuntimeFindOptions as FindAndCountOptions)
+--
+server/utils/queries/libraryFilters.ts-392-      order: [['createdAt', 'DESC']]
+server/utils/queries/libraryFilters.ts-393-      // cast(b): checked as RuntimeFindOptions (the shapes Sequelize accepts at runtime); its FindAndCountOptions type is stricter
+server/utils/queries/libraryFilters.ts:394:    } satisfies RuntimeFindOptions as FindAndCountOptions)
+--
+server/utils/queries/libraryFilters.ts-509-          }
+server/utils/queries/libraryFilters.ts-510-        }
+server/utils/queries/libraryFilters.ts:511:      } as CountOptions)
+--
+server/utils/queries/libraryFilters.ts-534-        limit: 1
+server/utils/queries/libraryFilters.ts-535-        // limit is not a count option (sequelize ignores it); kept as before
+server/utils/queries/libraryFilters.ts:536:      } as CountOptions)
+--
+server/utils/queries/libraryFilters.ts-621-        limit: 1
+server/utils/queries/libraryFilters.ts-622-        // limit is not a count option (sequelize ignores it); kept as before
+server/utils/queries/libraryFilters.ts:623:      } as CountOptions)
+--
+server/utils/queries/libraryFilters.ts-632-        limit: 1
+server/utils/queries/libraryFilters.ts-633-        // limit is not a count option (sequelize ignores it); kept as before
+server/utils/queries/libraryFilters.ts:634:      } as CountOptions)
+--
+server/utils/queries/libraryFilters.ts-643-        limit: 1
+server/utils/queries/libraryFilters.ts-644-        // limit is not a count option (sequelize ignores it); kept as before
+server/utils/queries/libraryFilters.ts:645:      } as CountOptions)
+--
+server/routers/ApiRouter.ts-496-          transaction
+server/routers/ApiRouter.ts-497-          // Sequelize accepts an array of where conditions at runtime; its types do not
+server/routers/ApiRouter.ts:498:        } as unknown as FindOptions)
+--
+server/routers/ApiRouter.ts-561-          transaction
+server/routers/ApiRouter.ts-562-          // Sequelize accepts an array of where conditions at runtime; its types do not
+server/routers/ApiRouter.ts:563:        } as unknown as FindOptions)
+--- server/utils/queries/types.ts
+/**
+ * Types shared by the library query helpers in server/utils/queries.
+ */
+import type { FindAttributeOptions, FindOptions, Includeable, IncludeOptions, Order, OrderItem, WhereAttributeHash, WhereOptions } from 'sequelize'
+import type Sequelize = require('sequelize')
+import type LibraryItem = require('../../models/LibraryItem')
+import type Feed = require('../../models/Feed')
+
+/**
+ * Named replacements for the raw SQL literals in a query
+ */
+export type QueryReplacements = Record<string, unknown>
+
+/**
+ * Where options and replacements used to restrict items to what a user can access
+ */
+/**
+ * One where condition: an attribute hash or a Sequelize.where(...) condition
+ */
+export type WhereItem = WhereAttributeHash | ReturnType<typeof Sequelize.where>
+
+export interface UserPermissionPodcastWhere {
+  podcastWhere: WhereItem[]
+  replacements: QueryReplacements
+}
+
+export interface UserPermissionBookWhere {
+  bookWhere: WhereItem[]
+  replacements: QueryReplacements
+}
+
+/**
+ * Where options and replacements for a media filter group
+ */
+export interface MediaGroupQuery {
+  mediaWhere: Record<string, unknown>
+  replacements: QueryReplacements
+}
+
+/**
+ * Library item model returned by the filter queries, with the properties the queries attach to it
+ */
+export type FilteredLibraryItem = LibraryItem & {
+  feeds?: Feed[]
+  rssFeed?: Feed
+  numEpisodesIncomplete?: number
+  recentEpisode?: unknown
+  [key: string]: unknown
+}
+
+/**
+ * User permissions JSON column (only the fields read by the queries)
+ */
+export interface UserPermissions {
+  accessAllTags?: boolean
+  itemTagsSelected?: string[]
+  selectedTagsNotAccessible?: boolean
+  accessExplicitContent?: boolean
+}
+
+type Literal = ReturnType<typeof Sequelize.literal>
+
+/**
+ * Order item as the queries build them. Sequelize also accepts an item with only a literal (which holds the direction)
+ */
+export type QueryOrderItem = OrderItem | [Literal]
+
+/**
+ * Include options as the queries build them: Sequelize's IncludeOptions, with the options that Sequelize v6 accepts
+ * at runtime in more shapes than its types allow (see RuntimeFindOptions). Every other option keeps the Sequelize type.
+ */
+export interface QueryInclude extends Omit<IncludeOptions, 'where' | 'attributes' | 'limit' | 'include' | 'order'> {
+  where?: WhereOptions | null
+  attributes?: FindAttributeOptions | null
+  limit?: number | null
+  // A single nested include object is accepted as well as an array
+  include?: Includeable | QueryInclude | (Includeable | QueryInclude)[]
+  order?: Order | QueryOrderItem[]
+}
+
+/**
+ * Find options as the query helpers build them: Sequelize's FindOptions, with the options relaxed to the shapes
+ * Sequelize v6 accepts at runtime but its types reject: where, attributes and limit may be null, a nested include
+ * may be a single object instead of an array, order items may be [literal], and distinct (a count option) is
+ * allowed (findAll ignores it). Every other option keeps the Sequelize type. Each relaxed option is a superset of
+ * the Sequelize one, so these options are cast to FindOptions / CountOptions with a plain `as` where they are passed to a model.
+ */
+export interface RuntimeFindOptions extends Omit<FindOptions, 'where' | 'attributes' | 'limit' | 'include' | 'order'> {
+  where?: WhereOptions | null
+  attributes?: FindAttributeOptions | null
+  limit?: number | null
+  include?: Includeable | QueryInclude | (Includeable | QueryInclude)[]
+  order?: Order | QueryOrderItem[]
+  distinct?: boolean
+}

@@ -1,0 +1,105 @@
+== Session getTrack ==
+259:  async getTrack(this: PublicRouter, req: Request, res: Response) {
+260-    // cast(d): toNumber returns the fallback as is (null here), but its fallback is typed number
+261-    const audioTrackIndex = (toNumber as (val: unknown, fallback: number | null) => number | null)(req.params.index, null)
+262-    if (audioTrackIndex === null) {
+263-      Logger.error(`[SessionController] Invalid audio track index "${req.params.index}"`)
+264-      return res.sendStatus(400)
+265-    }
+266-
+267-    const playbackSession = this.playbackSessionManager.getSession(req.params.id)
+268-    if (!playbackSession) {
+269-      Logger.error(`[SessionController] Unable to find playback session with id=${req.params.id}`)
+270-      return res.sendStatus(404)
+271-    }
+272-
+273-    let audioTrack = playbackSession.audioTracks.find((t) => toNumber(t.index, 1) === audioTrackIndex)
+274-
+275-    // Support clients passing 0 or 1 for podcast episode audio track index (handles old episodes pre-v2.21.0 having null index)
+276-    if (!audioTrack && playbackSession.mediaType === 'podcast' && audioTrackIndex === 0) {
+277-      audioTrack = playbackSession.audioTracks[0]
+278-    }
+279-    if (!audioTrack) {
+280-      Logger.error(`[SessionController] Unable to find audio track with index=${audioTrackIndex}`)
+281-      return res.sendStatus(404)
+282-    }
+283-
+284-    // Redirect transcode requests to the HLS router
+285-    // Handles bug introduced in android v0.10.0-beta where transcode requests are made to this endpoint
+286-    if (playbackSession.playMethod === PlayMethod.TRANSCODE && audioTrack.contentUrl) {
+287-      Logger.debug(`[SessionController] Redirecting transcode request to "${audioTrack.contentUrl}"`)
+288-      return res.redirect(audioTrack.contentUrl)
+289-    }
+290-
+291-    if (!audioTrack.metadata?.path) {
+== Playlist 405-450 ==
+
+    const libraryItems = await Database.libraryItemModel.findAllExpandedWhere({ id: Array.from(libraryItemIds) })
+    if (libraryItems.length !== libraryItemIds.size) {
+      return res.status(400).send('Invalid request body items')
+    }
+
+    req.playlist.playlistMediaItems = await req.playlist.getMediaItemsExpandedWithLibraryItem()
+
+    const mediaItemsToAdd = []
+    const jsonExpanded = req.playlist.toOldJSONExpanded()
+
+    // Setup array of playlistMediaItem records to add
+    let order = req.playlist.playlistMediaItems.length + 1
+    for (const item of req.body.items) {
+      // Non-null: every library item was found (libraryItems.length === libraryItemIds.size is checked above)
+      const libraryItem = libraryItems.find((li) => li.id === item.libraryItemId)!
+
+      const mediaItemId = item.episodeId || libraryItem.media.id
+      if (req.playlist.playlistMediaItems.some((pmi) => pmi.mediaItemId === mediaItemId)) {
+        // Already exists in playlist
+        continue
+      } else {
+        mediaItemsToAdd.push({
+          playlistId: req.playlist.id,
+          mediaItemId,
+          mediaItemType: item.episodeId ? 'podcastEpisode' : 'book',
+          order: order++
+        })
+
+        // Add the new item to to the old json expanded to prevent having to fully reload the playlist media items
+        if (item.episodeId) {
+          // cast(d): with an episodeId the item is a podcast
+          // NOTE: the episodeId is not checked against the podcast's episodes; for an unknown episodeId, episode is undefined and episode.toOldJSONExpanded throws a TypeError (after nothing was saved)
+          // Non-null: see NOTE above
+          const episode = (libraryItem.media as Podcast).podcastEpisodes.find((ep) => ep.id === item.episodeId)!
+          // Non-null: toOldJSONExpanded sets items
+          jsonExpanded.items!.push({
+            episodeId: item.episodeId,
+            episode: episode.toOldJSONExpanded(libraryItem.id),
+            libraryItemId: libraryItem.id,
+            libraryItem: libraryItem.toOldJSONMinified()
+          })
+        } else {
+          // Non-null: toOldJSONExpanded sets items
+          jsonExpanded.items!.push({
+            libraryItemId: libraryItem.id,
+== User join ==
+305:      if (updateItemTagsSelected && updateItemTagsSelected.join(',') !== user.permissions.itemTagsSelected!.join(',')) {
+311:      if (updateLibrariesAccessible && updateLibrariesAccessible.join(',') !== user.permissions.librariesAccessible!.join(',')) {
+== Share pash ==
+server/controllers/ShareController.ts:362:        // NOTE: pash is not set, so the column is null although the MediaItemShare model types it as required (nothing reads it at the moment); expiresAt can be null although the model types it as Date
+server/controllers/ShareController.ts:363:        // cast(c): the creation values have no pash and a nullable expiresAt
+server/models/MediaItemShare.ts:23:  declare pash: string
+server/models/MediaItemShare.ts:101:        pash: DataTypes.STRING,
+server/models/MediaItemShare.ts:166:    pash: string
+== Author NOTE ==
+105:    // NOTE: name can be null here (the check below accepts null); it is then saved as null although Author.name is typed string
+== uploadCover ==
+server/controllers/LibraryItemController.js:293:   * @param {boolean} [updateAndReturnJson=true] - Allows the function to be used for both direct API calls and internally
+server/controllers/LibraryItemController.js:295:  async uploadCover(req, res, updateAndReturnJson = true) {
+server/controllers/LibraryItemController.js:322:    if (updateAndReturnJson) {
+server/routers/ApiRouter.ts:180:    // cast(d): Express passes next as the third argument, which uploadCover takes as updateAndReturnJson; next is a function (truthy), so it behaves as the default true
+== NOTE count ==
+server/controllers/ApiKeyController.ts:1
+server/controllers/AuthorController.ts:1
+server/controllers/PlaylistController.ts:1
+server/controllers/PodcastController.ts:1
+server/controllers/SessionController.ts:1
+server/controllers/ShareController.ts:1
+server/controllers/UserController.ts:3

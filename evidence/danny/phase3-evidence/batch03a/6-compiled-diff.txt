@@ -1,0 +1,4110 @@
+diff -ruwB /tmp/abs-base3a/dist-server/server/auth/OidcAuthStrategy.js dist-server/server/auth/OidcAuthStrategy.js
+--- /tmp/abs-base3a/dist-server/server/auth/OidcAuthStrategy.js	2026-10-09 11:44:35.803410380 +1300
++++ dist-server/server/auth/OidcAuthStrategy.js	2026-10-09 11:43:37.672905515 +1300
+@@ -122,7 +122,8 @@
+                 // If no existing user was matched, auto-register if configured
+                 if (global.ServerSettings.authOpenIDAutoRegister) {
+                     Logger.info(`[User] openid: Auto-registering user with sub "${userinfo.sub}"`, userinfo);
+-                    user = await Database.userModel.createUserFromOpenIdUserInfo(userinfo);
++                    // cast(d): create returns the new user (the null branch of createUserFromOpenIdUserInfo is not reached)
++                    user = (await Database.userModel.createUserFromOpenIdUserInfo(userinfo));
+                     isNewUser = true;
+                 }
+                 else {
+@@ -216,6 +217,7 @@
+         const absPermissions = userinfo[absPermissionsClaim];
+         if (!absPermissions)
+             throw new Error(`Advanced permissions claim ${absPermissionsClaim} not found in userinfo`);
++        // cast(d): the claim holds the permissions JSON object (updatePermissionsFromExternalJSON throws on keys it does not know)
+         if (await user.updatePermissionsFromExternalJSON(absPermissions)) {
+             Logger.info(`[OidcAuth] openid callback: Updating advanced perms for user "${user.username}" using "${JSON.stringify(absPermissions)}"`);
+         }
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/ApiKey.js dist-server/server/models/ApiKey.js
+--- /tmp/abs-base3a/dist-server/server/models/ApiKey.js	2026-10-09 11:44:35.829410619 +1300
++++ dist-server/server/models/ApiKey.js	2026-10-09 11:43:39.896890613 +1300
+@@ -1,22 +1,10 @@
+ "use strict";
+-const { DataTypes, Model, Op } = require('sequelize');
+-const jwt = require('jsonwebtoken');
+-const { LRUCache } = require('lru-cache');
+-const Logger = require('../Logger');
+-/**
+- * @typedef {Object} ApiKeyPermissions
+- * @property {boolean} download
+- * @property {boolean} update
+- * @property {boolean} delete
+- * @property {boolean} upload
+- * @property {boolean} createEreader
+- * @property {boolean} accessAllLibraries
+- * @property {boolean} accessAllTags
+- * @property {boolean} accessExplicitContent
+- * @property {boolean} selectedTagsNotAccessible
+- * @property {string[]} librariesAccessible
+- * @property {string[]} itemTagsSelected
+- */
++const Sequelize = require("sequelize");
++const jwt = require("jsonwebtoken");
++const lruCache = require("lru-cache");
++const Logger = require("../Logger");
++const { LRUCache } = lruCache;
++const { DataTypes, Model, Op } = Sequelize;
+ class ApiKeyCache {
+     constructor() {
+         this.cache = new LRUCache({ max: 100 });
+@@ -39,37 +27,8 @@
+ }
+ const apiKeyCache = new ApiKeyCache();
+ class ApiKey extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.name;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {Date} */
+-        this.expiresAt;
+-        /** @type {Date} */
+-        this.lastUsedAt;
+-        /** @type {boolean} */
+-        this.isActive;
+-        /** @type {ApiKeyPermissions} */
+-        this.permissions;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {UUIDV4} */
+-        this.userId;
+-        /** @type {UUIDV4} */
+-        this.createdByUserId;
+-        // Expanded properties
+-        /** @type {import('./User').User} */
+-        this.user;
+-    }
+     /**
+      * Same properties as User.getDefaultPermissions
+-     * @returns {ApiKeyPermissions}
+      */
+     static getDefaultPermissions() {
+         return {
+@@ -88,8 +47,6 @@
+     }
+     /**
+      * Merge permissions from request with default permissions
+-     * @param {ApiKeyPermissions} reqPermissions
+-     * @returns {ApiKeyPermissions}
+      */
+     static mergePermissionsWithDefault(reqPermissions) {
+         const permissions = this.getDefaultPermissions();
+@@ -97,29 +54,32 @@
+             Logger.warn(`[ApiKey] mergePermissionsWithDefault: Invalid permissions: ${reqPermissions}`);
+             return permissions;
+         }
+-        for (const key in reqPermissions) {
+-            if (reqPermissions[key] === undefined) {
++        // Same objects as reqPermissions and permissions, read and written by key
++        const reqValues = reqPermissions;
++        const permissionValues = permissions;
++        for (const key in reqValues) {
++            if (reqValues[key] === undefined) {
+                 Logger.warn(`[ApiKey] mergePermissionsWithDefault: Invalid permission key: ${key}`);
+                 continue;
+             }
+             if (key === 'librariesAccessible' || key === 'itemTagsSelected') {
+-                if (!Array.isArray(reqPermissions[key]) || reqPermissions[key].some((value) => typeof value !== 'string')) {
+-                    Logger.warn(`[ApiKey] mergePermissionsWithDefault: Invalid ${key} value: ${reqPermissions[key]}`);
++                if (!Array.isArray(reqValues[key]) || reqValues[key].some((value) => typeof value !== 'string')) {
++                    Logger.warn(`[ApiKey] mergePermissionsWithDefault: Invalid ${key} value: ${reqValues[key]}`);
+                     continue;
+                 }
+-                permissions[key] = reqPermissions[key];
++                permissionValues[key] = reqValues[key];
+             }
+-            else if (typeof reqPermissions[key] !== 'boolean') {
++            else if (typeof reqValues[key] !== 'boolean') {
+                 Logger.warn(`[ApiKey] mergePermissionsWithDefault: Invalid permission value for key ${key}. Should be boolean`);
+                 continue;
+             }
+-            permissions[key] = reqPermissions[key];
++            permissionValues[key] = reqValues[key];
+         }
+         return permissions;
+     }
+     /**
+      * Deactivate expired api keys
+-     * @returns {Promise<number>} Number of api keys affected
++     * @returns Number of api keys affected
+      */
+     static async deactivateExpiredApiKeys() {
+         const [affectedCount] = await ApiKey.update({
+@@ -136,11 +96,8 @@
+     }
+     /**
+      * Generate a new api key
+-     * @param {string} tokenSecret
+-     * @param {string} keyId
+-     * @param {string} name
+-     * @param {number} [expiresIn] - Seconds until the api key expires or undefined for no expiration
+-     * @returns {Promise<string>}
++     * @param [expiresIn] - Seconds until the api key expires or undefined for no expiration
++     * @returns the token, or null if signing failed
+      */
+     static async generateApiKey(tokenSecret, keyId, name, expiresIn) {
+         const options = {};
+@@ -165,8 +122,6 @@
+     }
+     /**
+      * Get an api key by id, from cache or database
+-     * @param {string} apiKeyId
+-     * @returns {Promise<ApiKey | null>}
+      */
+     static async getById(apiKeyId) {
+         if (!apiKeyId)
+@@ -180,10 +135,6 @@
+         apiKeyCache.set(apiKey);
+         return apiKey;
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -221,6 +172,7 @@
+     }
+     async update(values, options) {
+         apiKeyCache.maybeInvalidate(this);
++        // cast(b): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+         return await super.update(values, options);
+     }
+     async save(options) {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Author.js dist-server/server/models/Author.js
+--- /tmp/abs-base3a/dist-server/server/models/Author.js	2026-10-09 11:44:35.919411446 +1300
++++ dist-server/server/models/Author.js	2026-10-09 11:43:39.908890726 +1300
+@@ -1,33 +1,8 @@
+ "use strict";
+-const { DataTypes, Model, where, fn, col } = require('sequelize');
+-const parseNameString = require('../utils/parsers/parseNameString');
++const Sequelize = require("sequelize");
++const parseNameString = require("../utils/parsers/parseNameString");
++const { DataTypes, Model, where, fn, col } = Sequelize;
+ class Author extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.name;
+-        /** @type {string} */
+-        this.lastFirst;
+-        /** @type {string} */
+-        this.asin;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {string} */
+-        this.imagePath;
+-        /** @type {UUIDV4} */
+-        this.libraryId;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {Date} */
+-        this.createdAt;
+-    }
+-    /**
+-     *
+-     * @param {string} name
+-     * @returns {string}
+-     */
+     static getLastFirst(name) {
+         if (!name)
+             return null;
+@@ -35,8 +10,6 @@
+     }
+     /**
+      * Check if author exists
+-     * @param {string} authorId
+-     * @returns {Promise<boolean>}
+      */
+     static async checkExistsById(authorId) {
+         return (await this.count({ where: { id: authorId } })) > 0;
+@@ -44,10 +17,6 @@
+     /**
+      * Get author by name and libraryId. name case insensitive
+      * TODO: Look for authors ignoring punctuation
+-     *
+-     * @param {string} authorName
+-     * @param {string} libraryId
+-     * @returns {Promise<Author>}
+      */
+     static async getByNameAndLibrary(authorName, libraryId) {
+         return this.findOne({
+@@ -59,11 +28,6 @@
+             ]
+         });
+     }
+-    /**
+-     *
+-     * @param {string} authorId
+-     * @returns {Promise<import('./LibraryItem')[]>}
+-     */
+     static async getAllLibraryItemsForAuthor(authorId) {
+         const author = await this.findByPk(authorId, {
+             include: [
+@@ -90,22 +54,19 @@
+             ]
+         });
+         const libraryItems = [];
++        // NOTE: author is null when no author has this id, then reading books throws a TypeError
+         if (author.books) {
+             for (const book of author.books) {
+                 const libraryItem = book.libraryItem;
+                 libraryItem.media = book;
+-                delete book.libraryItem;
++                // Same object as book, typed with the association optional so it can be deleted
++                const bookAssociations = book;
++                delete bookAssociations.libraryItem;
+                 libraryItems.push(libraryItem);
+             }
+         }
+         return libraryItems;
+     }
+-    /**
+-     *
+-     * @param {string} name
+-     * @param {string} libraryId
+-     * @returns {Promise<{ author: Author, created: boolean }>}
+-     */
+     static async findOrCreateByNameAndLibrary(name, libraryId) {
+         const author = await this.getByNameAndLibrary(name, libraryId);
+         if (author)
+@@ -117,10 +78,6 @@
+         });
+         return { author: newAuthor, created: true };
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -174,12 +131,8 @@
+             updatedAt: this.updatedAt.valueOf()
+         };
+     }
+-    /**
+-     *
+-     * @param {number} numBooks
+-     * @returns
+-     */
+     toOldJSONExpanded(numBooks = 0) {
++        // Typed with numBooks, which is added below
+         const oldJson = this.toOldJSON();
+         oldJson.numBooks = numBooks;
+         return oldJson;
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/BookAuthor.js dist-server/server/models/BookAuthor.js
+--- /tmp/abs-base3a/dist-server/server/models/BookAuthor.js	2026-10-09 11:44:35.830410628 +1300
++++ dist-server/server/models/BookAuthor.js	2026-10-09 11:43:39.941891036 +1300
+@@ -1,17 +1,7 @@
+ "use strict";
+-const { DataTypes, Model, fn, col } = require('sequelize');
++const Sequelize = require("sequelize");
++const { DataTypes, Model, fn, col } = Sequelize;
+ class BookAuthor extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {UUIDV4} */
+-        this.bookId;
+-        /** @type {UUIDV4} */
+-        this.authorId;
+-        /** @type {Date} */
+-        this.createdAt;
+-    }
+     static removeByIds(authorId = null, bookId = null) {
+         const where = {};
+         if (authorId)
+@@ -24,9 +14,6 @@
+     }
+     /**
+      * Get number of books for author
+-     *
+-     * @param {string} authorId
+-     * @returns {Promise<number>}
+      */
+     static getCountForAuthor(authorId) {
+         return this.count({
+@@ -37,9 +24,6 @@
+     }
+     /**
+      * Get number of books for each author
+-     *
+-     * @param {string[]} authorIds
+-     * @returns {Promise<Record<string, number>>}
+      */
+     static async getCountsForAuthors(authorIds) {
+         if (!authorIds.length)
+@@ -52,17 +36,13 @@
+             group: ['authorId'],
+             raw: true
+         });
+-        /** @type {Record<string, number>} */
+         const counts = {};
++        // cast(b): raw rows are plain objects with the selected attributes; findAll types them as model instances without the count alias
+         for (const row of rows) {
+             counts[row.authorId] = Number(row.count);
+         }
+         return counts;
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Book.js dist-server/server/models/Book.js
+--- /tmp/abs-base3a/dist-server/server/models/Book.js	2026-10-09 11:44:35.846410775 +1300
++++ dist-server/server/models/Book.js	2026-10-09 11:43:39.932463757 +1300
+@@ -1,134 +1,14 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-const Logger = require('../Logger');
+-const { getTitlePrefixAtEnd, getTitleIgnorePrefix } = require('../utils');
+-const parseNameString = require('../utils/parsers/parseNameString');
+-const htmlSanitizer = require('../utils/htmlSanitizer');
+-const libraryItemsBookFilters = require('../utils/queries/libraryItemsBookFilters');
+-const SocketAuthority = require('../SocketAuthority');
+-/**
+- * @typedef EBookFileObject
+- * @property {string} ino
+- * @property {string} ebookFormat
+- * @property {number} addedAt
+- * @property {number} updatedAt
+- * @property {{filename:string, ext:string, path:string, relPath:strFing, size:number, mtimeMs:number, ctimeMs:number, birthtimeMs:number}} metadata
+- */
+-/**
+- * @typedef ChapterObject
+- * @property {number} id
+- * @property {number} start
+- * @property {number} end
+- * @property {string} title
+- */
+-/**
+- * @typedef SeriesExpandedProperties
+- * @property {{sequence:string}} bookSeries
+- *
+- * @typedef {import('./Series') & SeriesExpandedProperties} SeriesExpanded
+- *
+- * @typedef BookExpandedProperties
+- * @property {import('./Author')[]} authors
+- * @property {SeriesExpanded[]} series
+- *
+- * @typedef {Book & BookExpandedProperties} BookExpanded
+- *
+- * Collections use BookExpandedWithLibraryItem
+- * @typedef BookExpandedWithLibraryItemProperties
+- * @property {import('./LibraryItem')} libraryItem
+- *
+- * @typedef {BookExpanded & BookExpandedWithLibraryItemProperties} BookExpandedWithLibraryItem
+- */
+-/**
+- * @typedef AudioFileObject
+- * @property {number} index
+- * @property {string} ino
+- * @property {{filename:string, ext:string, path:string, relPath:string, size:number, mtimeMs:number, ctimeMs:number, birthtimeMs:number}} metadata
+- * @property {number} addedAt
+- * @property {number} updatedAt
+- * @property {number} trackNumFromMeta
+- * @property {number} discNumFromMeta
+- * @property {number} trackNumFromFilename
+- * @property {number} discNumFromFilename
+- * @property {boolean} manuallyVerified
+- * @property {string} format
+- * @property {number} duration
+- * @property {number} bitRate
+- * @property {string} language
+- * @property {string} codec
+- * @property {string} timeBase
+- * @property {number} channels
+- * @property {string} channelLayout
+- * @property {ChapterObject[]} chapters
+- * @property {Object} metaTags
+- * @property {string} mimeType
+- *
+- * @typedef AudioTrackProperties
+- * @property {string} title
+- * @property {string} contentUrl
+- * @property {number} startOffset
+- *
+- * @typedef {AudioFileObject & AudioTrackProperties} AudioTrack
+- */
++const Sequelize = require("sequelize");
++const Logger = require("../Logger");
++const utils = require("../utils");
++const parseNameString = require("../utils/parsers/parseNameString");
++const htmlSanitizer = require("../utils/htmlSanitizer");
++const libraryItemsBookFilters = require("../utils/queries/libraryItemsBookFilters");
++const SocketAuthority = require("../SocketAuthority");
++const { DataTypes, Model } = Sequelize;
++const { getTitlePrefixAtEnd, getTitleIgnorePrefix } = utils;
+ class Book extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {string} */
+-        this.id;
+-        /** @type {string} */
+-        this.title;
+-        /** @type {string} */
+-        this.titleIgnorePrefix;
+-        /** @type {string} */
+-        this.subtitle;
+-        /** @type {string} */
+-        this.publishedYear;
+-        /** @type {string} */
+-        this.publishedDate;
+-        /** @type {string} */
+-        this.publisher;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {string} */
+-        this.isbn;
+-        /** @type {string} */
+-        this.asin;
+-        /** @type {string} */
+-        this.language;
+-        /** @type {boolean} */
+-        this.explicit;
+-        /** @type {boolean} */
+-        this.abridged;
+-        /** @type {string} */
+-        this.coverPath;
+-        /** @type {number} */
+-        this.duration;
+-        /** @type {string[]} */
+-        this.narrators;
+-        /** @type {AudioFileObject[]} */
+-        this.audioFiles;
+-        /** @type {EBookFileObject} */
+-        this.ebookFile;
+-        /** @type {ChapterObject[]} */
+-        this.chapters;
+-        /** @type {string[]} */
+-        this.tags;
+-        /** @type {string[]} */
+-        this.genres;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {Date} */
+-        this.createdAt;
+-        // Expanded properties
+-        /** @type {import('./Author')[]} - optional if expanded */
+-        this.authors;
+-        /** @type {import('./Series')[]} - optional if expanded */
+-        this.series;
+-    }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -192,8 +72,6 @@
+     /**
+      * Comma separated array of author names
+      * Requires authors to be loaded
+-     *
+-     * @returns {string}
+      */
+     get authorName() {
+         if (this.authors === undefined) {
+@@ -205,8 +83,6 @@
+     /**
+      * Comma separated array of author names in Last, First format
+      * Requires authors to be loaded
+-     *
+-     * @returns {string}
+      */
+     get authorNameLF() {
+         if (this.authors === undefined) {
+@@ -221,8 +97,6 @@
+     /**
+      * Comma separated array of series with sequence
+      * Requires series to be loaded
+-     *
+-     * @returns {string}
+      */
+     get seriesName() {
+         if (this.series === undefined) {
+@@ -251,9 +125,6 @@
+     }
+     /**
+      * Supported mime types are sent from the web client and are retrieved using the browser Audio player "canPlayType" function.
+-     *
+-     * @param {string[]} supportedMimeTypes
+-     * @returns {boolean}
+      */
+     checkCanDirectPlay(supportedMimeTypes) {
+         if (!Array.isArray(supportedMimeTypes)) {
+@@ -265,13 +136,11 @@
+     /**
+      * Get the track list to be used in client audio players
+      * AudioTrack is the AudioFile with startOffset, contentUrl and title
+-     *
+-     * @param {string} libraryItemId
+-     * @returns {AudioTrack[]}
+      */
+     getTracklist(libraryItemId) {
+         let startOffset = 0;
+         return this.includedAudioFiles.map((af) => {
++            // cast(d): the clone gets the track properties (title, startOffset, contentUrl) assigned below
+             const track = structuredClone(af);
+             track.title = af.metadata.filename;
+             track.startOffset = startOffset;
+@@ -280,10 +149,6 @@
+             return track;
+         });
+     }
+-    /**
+-     *
+-     * @returns {ChapterObject[]}
+-     */
+     getChapters() {
+         return structuredClone(this.chapters) || [];
+     }
+@@ -298,8 +163,6 @@
+     }
+     /**
+      * Total file size of all audio files and ebook file
+-     *
+-     * @returns {number}
+      */
+     get size() {
+         let total = 0;
+@@ -336,30 +199,31 @@
+         };
+     }
+     /**
+-     *
+-     * @param {Object} payload - old book object
+-     * @returns {Promise<boolean>}
++     * @param payload - old book object
+      */
+     async updateFromRequest(payload) {
+         if (!payload)
+             return false;
+         let hasUpdates = false;
+         if (payload.metadata) {
++            // Same object as payload.metadata, so the check above also holds in the callbacks below
++            const metadata = payload.metadata;
+             const metadataStringKeys = ['title', 'subtitle', 'publishedYear', 'publishedDate', 'publisher', 'description', 'isbn', 'asin', 'language'];
+             metadataStringKeys.forEach((key) => {
+-                if (typeof payload.metadata[key] == 'number') {
+-                    payload.metadata[key] = String(payload.metadata[key]);
++                if (typeof metadata[key] == 'number') {
++                    metadata[key] = String(metadata[key]);
+                 }
+-                if ((typeof payload.metadata[key] === 'string' || payload.metadata[key] === null) && this[key] !== payload.metadata[key]) {
++                if ((typeof metadata[key] === 'string' || metadata[key] === null) && this[key] !== metadata[key]) {
+                     // Sanitize description HTML
+-                    if (key === 'description' && payload.metadata[key]) {
+-                        const sanitizedDescription = htmlSanitizer.sanitize(payload.metadata[key]);
+-                        if (sanitizedDescription !== payload.metadata[key]) {
+-                            Logger.debug(`[Book] "${this.title}" Sanitized description from "${payload.metadata[key]}" to "${sanitizedDescription}"`);
+-                            payload.metadata[key] = sanitizedDescription;
++                    if (key === 'description' && metadata[key]) {
++                        const sanitizedDescription = htmlSanitizer.sanitize(metadata[key]);
++                        if (sanitizedDescription !== metadata[key]) {
++                            Logger.debug(`[Book] "${this.title}" Sanitized description from "${metadata[key]}" to "${sanitizedDescription}"`);
++                            metadata[key] = sanitizedDescription;
+                         }
+                     }
+-                    this[key] = payload.metadata[key] || null;
++                    // cast(d): checked above to be a string or null (a sanitized description is a string)
++                    this[key] = metadata[key] || null;
+                     if (key === 'title') {
+                         this.titleIgnorePrefix = getTitleIgnorePrefix(this.title);
+                     }
+@@ -376,8 +240,8 @@
+             }
+             const arrayOfStringsKeys = ['narrators', 'genres'];
+             arrayOfStringsKeys.forEach((key) => {
+-                if (Array.isArray(payload.metadata[key]) && !payload.metadata[key].some((item) => typeof item !== 'string') && JSON.stringify(this[key]) !== JSON.stringify(payload.metadata[key])) {
+-                    this[key] = payload.metadata[key];
++                if (Array.isArray(metadata[key]) && !metadata[key].some((item) => typeof item !== 'string') && JSON.stringify(this[key]) !== JSON.stringify(metadata[key])) {
++                    this[key] = metadata[key];
+                     this.changed(key, true);
+                     hasUpdates = true;
+                 }
+@@ -397,9 +261,7 @@
+     /**
+      * Creates or removes authors from the book using the author names from the request
+      *
+-     * @param {string[]} authors
+-     * @param {string} libraryId
+-     * @returns {Promise<{authorsRemoved: import('./Author')[], authorsAdded: import('./Author')[]}>}
++     * @returns null if authors is not an array
+      */
+     async updateAuthorsFromRequest(authors, libraryId) {
+         if (!Array.isArray(authors))
+@@ -407,9 +269,7 @@
+         if (!this.authors) {
+             throw new Error(`[Book] Cannot update authors because authors are not loaded for book ${this.id}`);
+         }
+-        /** @type {typeof import('./Author')} */
+         const authorModel = this.sequelize.models.author;
+-        /** @type {typeof import('./BookAuthor')} */
+         const bookAuthorModel = this.sequelize.models.bookAuthor;
+         const authorsCleaned = authors.map((a) => a.toLowerCase()).filter((a) => a);
+         const authorsRemoved = this.authors.filter((au) => !authorsCleaned.includes(au.name.toLowerCase()));
+@@ -447,9 +307,7 @@
+      * Creates or removes series from the book using the series names from the request.
+      * Updates series sequence if it has changed.
+      *
+-     * @param {{ name: string, sequence: string }[]} seriesObjects
+-     * @param {string} libraryId
+-     * @returns {Promise<{seriesRemoved: import('./Series')[], seriesAdded: import('./Series')[], hasUpdates: boolean}>}
++     * @returns null if seriesObjects is not an array of series with names
+      */
+     async updateSeriesFromRequest(seriesObjects, libraryId) {
+         if (!Array.isArray(seriesObjects) || seriesObjects.some((se) => !se.name || typeof se.name !== 'string'))
+@@ -457,9 +315,7 @@
+         if (!this.series) {
+             throw new Error(`[Book] Cannot update series because series are not loaded for book ${this.id}`);
+         }
+-        /** @type {typeof import('./Series')} */
+         const seriesModel = this.sequelize.models.series;
+-        /** @type {typeof import('./BookSeries')} */
+         const bookSeriesModel = this.sequelize.models.bookSeries;
+         const seriesNamesCleaned = seriesObjects.map((se) => se.name.toLowerCase());
+         const seriesRemoved = this.series.filter((se) => !seriesNamesCleaned.includes(se.name.toLowerCase()));
+@@ -543,6 +399,7 @@
+         };
+     }
+     oldMetadataToJSONExpanded() {
++        // Typed with the expanded properties, which are added below
+         const oldMetadataJSON = this.oldMetadataToJSON();
+         oldMetadataJSON.titleIgnorePrefix = getTitlePrefixAtEnd(this.title);
+         oldMetadataJSON.authorName = this.authorName;
+@@ -556,8 +413,6 @@
+      * The old model stored a minified series and authors array with the book object.
+      * Minified series is { id, name, sequence }
+      * Minified author is { id, name }
+-     *
+-     * @param {string} libraryItemId
+      */
+     toOldJSON(libraryItemId) {
+         if (!libraryItemId) {
+@@ -608,8 +463,6 @@
+     /**
+      * Expanded book JSON for item detail and socket events.
+      * Must be a strict superset of `toOldJSONMinified()` — built by spreading minified, then adding expanded-only fields.
+-     *
+-     * @param {string} libraryItemId
+      */
+     toOldJSONExpanded(libraryItemId) {
+         if (!libraryItemId) {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/BookSeries.js dist-server/server/models/BookSeries.js
+--- /tmp/abs-base3a/dist-server/server/models/BookSeries.js	2026-10-09 11:44:35.843410747 +1300
++++ dist-server/server/models/BookSeries.js	2026-10-09 11:43:39.946891083 +1300
+@@ -1,19 +1,7 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
++const Sequelize = require("sequelize");
++const { DataTypes, Model } = Sequelize;
+ class BookSeries extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.sequence;
+-        /** @type {UUIDV4} */
+-        this.bookId;
+-        /** @type {UUIDV4} */
+-        this.seriesId;
+-        /** @type {Date} */
+-        this.createdAt;
+-    }
+     static removeByIds(seriesId = null, bookId = null) {
+         const where = {};
+         if (seriesId)
+@@ -24,10 +12,6 @@
+             where
+         });
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/CollectionBook.js dist-server/server/models/CollectionBook.js
+--- /tmp/abs-base3a/dist-server/server/models/CollectionBook.js	2026-10-09 11:44:35.921411464 +1300
++++ dist-server/server/models/CollectionBook.js	2026-10-09 11:43:39.966617278 +1300
+@@ -1,19 +1,7 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
++const Sequelize = require("sequelize");
++const { DataTypes, Model } = Sequelize;
+ class CollectionBook extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {number} */
+-        this.order;
+-        /** @type {UUIDV4} */
+-        this.bookId;
+-        /** @type {UUIDV4} */
+-        this.collectionId;
+-        /** @type {Date} */
+-        this.createdAt;
+-    }
+     static init(sequelize) {
+         super.init({
+             id: {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Collection.js dist-server/server/models/Collection.js
+--- /tmp/abs-base3a/dist-server/server/models/Collection.js	2026-10-09 11:44:35.869410987 +1300
++++ dist-server/server/models/Collection.js	2026-10-09 11:43:39.961870842 +1300
+@@ -1,31 +1,9 @@
+ "use strict";
+-const { DataTypes, Model, Sequelize } = require('sequelize');
++const sequelizeModule = require("sequelize");
++const { DataTypes, Model, Sequelize } = sequelizeModule;
+ class Collection extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.name;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {UUIDV4} */
+-        this.libraryId;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {Date} */
+-        this.createdAt;
+-        // Expanded properties
+-        /** @type {import('./Book').BookExpandedWithLibraryItem[]} - only set when expanded */
+-        this.books;
+-    }
+     /**
+      * Get all toOldJSONExpanded, items filtered for user permissions
+-     *
+-     * @param {import('./User')} user
+-     * @param {string} [libraryId]
+-     * @param {string[]} [include]
+-     * @async
+      */
+     static async getOldCollectionsJsonExpanded(user, libraryId, include) {
+         let collectionWhere = null;
+@@ -42,6 +20,7 @@
+             });
+         }
+         const collections = await this.findAll({
++            // cast(b): sequelize accepts a null where (no condition), its types do not
+             where: collectionWhere,
+             include: [
+                 {
+@@ -87,7 +66,10 @@
+             if (!books.length && c.books.length) {
+                 return null;
+             }
++            // NOTE: this is the Collection class (static method), not c, so c.toOldJSONExpanded() below uses the unfiltered books
++            // cast(c): the JS sets books on the class; see the NOTE above
+             this.books = books;
++            // Typed with rssFeed, which is added below
+             const collectionExpanded = c.toOldJSONExpanded();
+             // Map feed if found
+             if (c.feeds?.length) {
+@@ -97,11 +79,6 @@
+         })
+             .filter((c) => c);
+     }
+-    /**
+-     *
+-     * @param {string} collectionId
+-     * @returns {Promise<Collection>}
+-     */
+     static async getExpandedById(collectionId) {
+         return this.findByPk(collectionId, {
+             include: [
+@@ -131,8 +108,7 @@
+     }
+     /**
+      * Remove all collections belonging to library
+-     * @param {string} libraryId
+-     * @returns {Promise<number>} number of collections destroyed
++     * @returns number of collections destroyed
+      */
+     static async removeAllForLibrary(libraryId) {
+         if (!libraryId)
+@@ -143,10 +119,6 @@
+             }
+         });
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -166,8 +138,6 @@
+     }
+     /**
+      * Get all books in collection expanded with library item
+-     *
+-     * @returns {Promise<import('./Book').BookExpandedWithLibraryItem[]>}
+      */
+     getBooksExpandedWithLibraryItem() {
+         return this.getBooks({
+@@ -189,14 +159,11 @@
+                 }
+             ],
+             order: [Sequelize.literal('`collectionBook.order` ASC')]
++            // cast(b): the libraryItem is included, which getBooks does not type
+         });
+     }
+     /**
+      * Get toOldJSONExpanded, items filtered for user permissions
+-     *
+-     * @param {import('./User')|null} user
+-     * @param {string[]} [include]
+-     * @async
+      */
+     async getOldJsonExpanded(user, include) {
+         this.books = await this.getBooksExpandedWithLibraryItem();
+@@ -218,6 +185,7 @@
+             }
+             this.books = books;
+         }
++        // Typed with rssFeed, which is added below
+         const collectionExpanded = this.toOldJSONExpanded();
+         if (include?.includes('rssfeed')) {
+             const feeds = await this.getFeeds();
+@@ -228,9 +196,7 @@
+         return collectionExpanded;
+     }
+     /**
+-     *
+-     * @param {string[]} [libraryItemIds=[]]
+-     * @returns
++     * @param [libraryItemIds=[]]
+      */
+     toOldJSON(libraryItemIds = []) {
+         return {
+@@ -247,10 +213,13 @@
+         if (!this.books) {
+             throw new Error('Books are required to expand Collection');
+         }
++        // Typed with expanded books, which replace the library item ids below
+         const json = this.toOldJSON();
+         json.books = this.books.map((book) => {
+             const libraryItem = book.libraryItem;
+-            delete book.libraryItem;
++            // Same object as book, typed with the association optional so it can be deleted
++            const bookAssociations = book;
++            delete bookAssociations.libraryItem;
+             libraryItem.media = book;
+             return libraryItem.toOldJSONExpanded();
+         });
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/CustomMetadataProvider.js dist-server/server/models/CustomMetadataProvider.js
+--- /tmp/abs-base3a/dist-server/server/models/CustomMetadataProvider.js	2026-10-09 11:44:35.924411493 +1300
++++ dist-server/server/models/CustomMetadataProvider.js	2026-10-09 11:43:39.971687170 +1300
+@@ -1,38 +1,10 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-/**
+- * @typedef ClientCustomMetadataProvider
+- * @property {UUIDV4} id
+- * @property {string} name
+- * @property {string} url
+- * @property {string} slug
+- */
++const Sequelize = require("sequelize");
++const { DataTypes, Model } = Sequelize;
+ class CustomMetadataProvider extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.mediaType;
+-        /** @type {string} */
+-        this.name;
+-        /** @type {string} */
+-        this.url;
+-        /** @type {string} */
+-        this.authHeaderValue;
+-        /** @type {Object} */
+-        this.extraData;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-    }
+     /**
+      * Get providers for client by media type
+      * Currently only available for "book" media type
+-     *
+-     * @param {string} mediaType
+-     * @returns {Promise<ClientCustomMetadataProvider[]>}
+      */
+     static async getForClientByMediaType(mediaType) {
+         if (mediaType !== 'book')
+@@ -46,9 +18,6 @@
+     }
+     /**
+      * Check if provider exists by slug
+-     *
+-     * @param {string} providerSlug
+-     * @returns {Promise<boolean>}
+      */
+     static async checkExistsBySlug(providerSlug) {
+         const providerId = providerSlug?.split?.('custom-')[1];
+@@ -56,10 +25,6 @@
+             return false;
+         return (await this.count({ where: { id: providerId } })) > 0;
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -82,7 +47,6 @@
+     }
+     /**
+      * Safe for clients
+-     * @returns {ClientCustomMetadataProvider}
+      */
+     toClientJson() {
+         return {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Device.js dist-server/server/models/Device.js
+--- /tmp/abs-base3a/dist-server/server/models/Device.js	2026-10-09 11:44:35.925411502 +1300
++++ dist-server/server/models/Device.js	2026-10-09 11:43:39.974891347 +1300
+@@ -1,32 +1,8 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-const oldDevice = require('../objects/DeviceInfo');
++const Sequelize = require("sequelize");
++const oldDevice = require("../objects/DeviceInfo");
++const { DataTypes, Model } = Sequelize;
+ class Device extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.deviceId;
+-        /** @type {string} */
+-        this.clientName;
+-        /** @type {string} */
+-        this.clientVersion;
+-        /** @type {string} */
+-        this.ipAddress;
+-        /** @type {string} */
+-        this.deviceName;
+-        /** @type {string} */
+-        this.deviceVersion;
+-        /** @type {object} */
+-        this.extraData;
+-        /** @type {UUIDV4} */
+-        this.userId;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-    }
+     static async getOldDeviceByDeviceId(deviceId) {
+         const device = await this.findOne({
+             where: {
+@@ -78,10 +54,6 @@
+             extraData
+         };
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/FeedEpisode.js dist-server/server/models/FeedEpisode.js
+--- /tmp/abs-base3a/dist-server/server/models/FeedEpisode.js	2026-10-09 11:44:35.867410968 +1300
++++ dist-server/server/models/FeedEpisode.js	2026-10-09 11:43:40.022713599 +1300
+@@ -1,58 +1,16 @@
+ "use strict";
+-const Path = require('path');
+-const { DataTypes, Model } = require('sequelize');
+-const uuidv4 = require('uuid').v4;
+-const Logger = require('../Logger');
+-const date = require('../libs/dateAndTime');
+-const { secondsToTimestamp } = require('../utils');
++const Path = require("path");
++const Sequelize = require("sequelize");
++const uuid = require("uuid");
++const Logger = require("../Logger");
++const dateAndTime = require("../libs/dateAndTime");
++const utils = require("../utils");
++const uuidv4 = uuid.v4;
++// cast(a): the vendored date-and-time is a minified UMD bundle that TypeScript cannot type
++const date = dateAndTime;
++const { DataTypes, Model } = Sequelize;
++const { secondsToTimestamp } = utils;
+ class FeedEpisode extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.title;
+-        /** @type {string} */
+-        this.author;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {string} */
+-        this.siteURL;
+-        /** @type {string} */
+-        this.enclosureURL;
+-        /** @type {string} */
+-        this.enclosureType;
+-        /** @type {BigInt} */
+-        this.enclosureSize;
+-        /** @type {string} */
+-        this.pubDate;
+-        /** @type {string} */
+-        this.season;
+-        /** @type {string} */
+-        this.episode;
+-        /** @type {string} */
+-        this.episodeType;
+-        /** @type {number} */
+-        this.duration;
+-        /** @type {string} */
+-        this.filePath;
+-        /** @type {boolean} */
+-        this.explicit;
+-        /** @type {UUIDV4} */
+-        this.feedId;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-    }
+-    /**
+-     *
+-     * @param {import('./LibraryItem').LibraryItemExpanded} libraryItemExpanded
+-     * @param {import('./Feed')} feed
+-     * @param {string} slug
+-     * @param {import('./PodcastEpisode')} episode
+-     * @param {string} [existingEpisodeId]
+-     */
+     static getFeedEpisodeObjFromPodcastEpisode(libraryItemExpanded, feed, slug, episode, existingEpisodeId = null) {
+         const episodeId = existingEpisodeId || uuidv4();
+         return {
+@@ -74,21 +32,15 @@
+             feedId: feed.id
+         };
+     }
+-    /**
+-     *
+-     * @param {import('./LibraryItem').LibraryItemExpanded} libraryItemExpanded
+-     * @param {import('./Feed')} feed
+-     * @param {string} slug
+-     * @param {import('sequelize').Transaction} transaction
+-     * @returns {Promise<FeedEpisode[]>}
+-     */
+     static async createFromPodcastEpisodes(libraryItemExpanded, feed, slug, transaction) {
+         const feedEpisodeObjs = [];
+         // Sort podcastEpisodes by pubDate. episodic is newest to oldest. serial is oldest to newest.
+         if (feed.podcastType === 'episodic') {
++            // cast(d): subtracting Dates subtracts their timestamps, as in the JS
+             libraryItemExpanded.media.podcastEpisodes.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+         }
+         else {
++            // cast(d): subtracting Dates subtracts their timestamps, as in the JS
+             libraryItemExpanded.media.podcastEpisodes.sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
+         }
+         let numExisting = 0;
+@@ -105,10 +57,6 @@
+     }
+     /**
+      * If chapters for an audiobook match the audio tracks then use chapter titles instead of audio file names
+-     *
+-     * @param {import('./Book').AudioTrack[]} trackList
+-     * @param {import('./Book')} book
+-     * @returns {boolean}
+      */
+     static checkUseChapterTitlesForEpisodes(trackList, book) {
+         const chapters = book.chapters || [];
+@@ -122,15 +70,7 @@
+         return true;
+     }
+     /**
+-     *
+-     * @param {import('./Book')} book
+-     * @param {Date} pubDateStart
+-     * @param {import('./Feed')} feed
+-     * @param {string} slug
+-     * @param {import('./Book').AudioFileObject} audioTrack
+-     * @param {boolean} useChapterTitles
+-     * @param {number} offsetIndex
+-     * @param {string} [existingEpisodeId]
++     * @param [existingEpisodeId]
+      */
+     static getFeedEpisodeObjFromAudiobookTrack(book, pubDateStart, feed, slug, audioTrack, useChapterTitles, offsetIndex, existingEpisodeId = null) {
+         // Example: <pubDate>Fri, 04 Feb 2015 00:00:00 GMT</pubDate>
+@@ -169,14 +109,6 @@
+             feedId: feed.id
+         };
+     }
+-    /**
+-     *
+-     * @param {import('./LibraryItem').LibraryItemExpanded} libraryItemExpanded
+-     * @param {import('./Feed')} feed
+-     * @param {string} slug
+-     * @param {import('sequelize').Transaction} transaction
+-     * @returns {Promise<FeedEpisode[]>}
+-     */
+     static async createFromAudiobookTracks(libraryItemExpanded, feed, slug, transaction) {
+         const trackList = libraryItemExpanded.getTrackList();
+         const useChapterTitles = this.checkUseChapterTitlesForEpisodes(trackList, libraryItemExpanded.media);
+@@ -195,12 +127,7 @@
+         return this.bulkCreate(feedEpisodeObjs, { transaction, updateOnDuplicate: ['title', 'author', 'description', 'siteURL', 'enclosureURL', 'enclosureType', 'enclosureSize', 'pubDate', 'season', 'episode', 'episodeType', 'duration', 'filePath', 'explicit'] });
+     }
+     /**
+-     *
+-     * @param {import('./Book').BookExpandedWithLibraryItem[]} books
+-     * @param {import('./Feed')} feed
+-     * @param {string} slug
+-     * @param {import('sequelize').Transaction} transaction
+-     * @returns {Promise<FeedEpisode[]>}
++     * @param books books expanded with their libraryItem
+      */
+     static async createFromBooks(books, feed, slug, transaction) {
+         // This is never null unless the books array is empty, as this method is not invoked when no books. Reduce needs an initial item
+@@ -221,16 +148,13 @@
+                     return episode.filePath === track.metadata.path;
+                 });
+                 numExisting = existingEpisode ? numExisting + 1 : numExisting;
++                // earliestLibraryItemCreatedAt is set: this loop only runs when books is not empty
+                 feedEpisodeObjs.push(this.getFeedEpisodeObjFromAudiobookTrack(book, earliestLibraryItemCreatedAt, feed, slug, track, useChapterTitles, offsetIndex++, existingEpisode?.id));
+             }
+         }
+         Logger.info(`[FeedEpisode] Upserting ${feedEpisodeObjs.length} episodes for feed ${feed.id} (${numExisting} existing)`);
+         return this.bulkCreate(feedEpisodeObjs, { transaction, updateOnDuplicate: ['title', 'author', 'description', 'siteURL', 'enclosureURL', 'enclosureType', 'enclosureSize', 'pubDate', 'season', 'episode', 'episodeType', 'duration', 'filePath', 'explicit'] });
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -284,10 +208,6 @@
+             fullPath: this.filePath
+         };
+     }
+-    /**
+-     *
+-     * @param {string} hostPrefix
+-     */
+     getRSSData(hostPrefix) {
+         const customElements = [
+             { 'itunes:author': this.author || null },
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Feed.js dist-server/server/models/Feed.js
+--- /tmp/abs-base3a/dist-server/server/models/Feed.js	2026-10-09 11:44:35.872411014 +1300
++++ dist-server/server/models/Feed.js	2026-10-09 11:43:40.007891657 +1300
+@@ -1,74 +1,12 @@
+ "use strict";
+-const Path = require('path');
+-const { DataTypes, Model } = require('sequelize');
+-const Logger = require('../Logger');
+-const RSS = require('../libs/rss');
+-/**
+- * @typedef FeedOptions
+- * @property {boolean} preventIndexing
+- * @property {string} ownerName
+- * @property {string} ownerEmail
+- */
+-/**
+- * @typedef FeedExpandedProperties
+- * @property {import('./FeedEpisode')} feedEpisodes
+- *
+- * @typedef {Feed & FeedExpandedProperties} FeedExpanded
+- */
++const Path = require("path");
++const Sequelize = require("sequelize");
++const Logger = require("../Logger");
++const RSS = require("../libs/rss");
++const { DataTypes, Model } = Sequelize;
+ class Feed extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.slug;
+-        /** @type {string} */
+-        this.entityType;
+-        /** @type {UUIDV4} */
+-        this.entityId;
+-        /** @type {Date} */
+-        this.entityUpdatedAt;
+-        /** @type {string} */
+-        this.serverAddress;
+-        /** @type {string} */
+-        this.feedURL;
+-        /** @type {string} */
+-        this.imageURL;
+-        /** @type {string} */
+-        this.siteURL;
+-        /** @type {string} */
+-        this.title;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {string} */
+-        this.author;
+-        /** @type {string} */
+-        this.podcastType;
+-        /** @type {string} */
+-        this.language;
+-        /** @type {string} */
+-        this.ownerName;
+-        /** @type {string} */
+-        this.ownerEmail;
+-        /** @type {boolean} */
+-        this.explicit;
+-        /** @type {boolean} */
+-        this.preventIndexing;
+-        /** @type {string} */
+-        this.coverPath;
+-        /** @type {UUIDV4} */
+-        this.userId;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        // Expanded properties
+-        /** @type {import('./FeedEpisode')[]} - only set if expanded */
+-        this.feedEpisodes;
+-    }
+     /**
+-     * @param {string} feedId
+-     * @returns {Promise<boolean>} - true if feed was removed
++     * @returns true if feed was removed
+      */
+     static async removeById(feedId) {
+         return ((await this.destroy({
+@@ -78,14 +16,7 @@
+         })) > 0);
+     }
+     /**
+-     *
+-     * @param {string} userId
+-     * @param {import('./LibraryItem').LibraryItemExpanded} libraryItem
+-     * @param {string} slug
+-     * @param {string} serverAddress
+-     * @param {FeedOptions} [feedOptions=null]
+-     *
+-     * @returns {Feed}
++     * @param [feedOptions=null]
+      */
+     static getFeedObjForLibraryItem(userId, libraryItem, slug, serverAddress, feedOptions = null) {
+         const media = libraryItem.media;
+@@ -111,7 +42,9 @@
+             siteURL: `/item/${libraryItem.id}`,
+             title: media.title,
+             description: media.description,
++            // cast(d): media is a Podcast when mediaType is "podcast" and a Book otherwise
+             author: libraryItem.mediaType === 'podcast' ? media.author : media.authorName,
++            // cast(d): media is a Podcast when mediaType is "podcast"
+             podcastType: libraryItem.mediaType === 'podcast' ? media.podcastType : 'serial',
+             language: media.language,
+             explicit: media.explicit,
+@@ -125,19 +58,8 @@
+         }
+         return feedObj;
+     }
+-    /**
+-     *
+-     * @param {string} userId
+-     * @param {import('./LibraryItem').LibraryItemExpanded} libraryItem
+-     * @param {string} slug
+-     * @param {string} serverAddress
+-     * @param {FeedOptions} feedOptions
+-     *
+-     * @returns {Promise<FeedExpanded>}
+-     */
+     static async createFeedForLibraryItem(userId, libraryItem, slug, serverAddress, feedOptions) {
+         const feedObj = this.getFeedObjForLibraryItem(userId, libraryItem, slug, serverAddress, feedOptions);
+-        /** @type {typeof import('./FeedEpisode')} */
+         const feedEpisodeModel = this.sequelize.models.feedEpisode;
+         const transaction = await this.sequelize.transaction();
+         try {
+@@ -158,14 +80,8 @@
+         }
+     }
+     /**
+-     *
+-     * @param {string} userId
+-     * @param {import('./Collection')} collectionExpanded
+-     * @param {string} slug
+-     * @param {string} serverAddress
+-     * @param {FeedOptions} [feedOptions=null]
+-     *
+-     * @returns {{ feedObj: Feed, booksWithTracks: import('./Book').BookExpandedWithLibraryItem[] }}
++     * @param collectionExpanded collection with its books expanded (with their libraryItem)
++     * @param [feedOptions=null]
+      */
+     static getFeedObjForCollection(userId, collectionExpanded, slug, serverAddress, feedOptions = null) {
+         const booksWithTracks = collectionExpanded.books.filter((book) => book.includedAudioFiles.length);
+@@ -210,18 +126,10 @@
+         };
+     }
+     /**
+-     *
+-     * @param {string} userId
+-     * @param {import('./Collection')} collectionExpanded
+-     * @param {string} slug
+-     * @param {string} serverAddress
+-     * @param {FeedOptions} feedOptions
+-     *
+-     * @returns {Promise<FeedExpanded>}
++     * @param collectionExpanded collection with its books expanded (with their libraryItem)
+      */
+     static async createFeedForCollection(userId, collectionExpanded, slug, serverAddress, feedOptions) {
+         const { feedObj, booksWithTracks } = this.getFeedObjForCollection(userId, collectionExpanded, slug, serverAddress, feedOptions);
+-        /** @type {typeof import('./FeedEpisode')} */
+         const feedEpisodeModel = this.sequelize.models.feedEpisode;
+         const transaction = await this.sequelize.transaction();
+         try {
+@@ -237,14 +145,8 @@
+         }
+     }
+     /**
+-     *
+-     * @param {string} userId
+-     * @param {import('./Series')} seriesExpanded
+-     * @param {string} slug
+-     * @param {string} serverAddress
+-     * @param {FeedOptions} [feedOptions=null]
+-     *
+-     * @returns {{ feedObj: Feed, booksWithTracks: import('./Book').BookExpandedWithLibraryItem[] }}
++     * @param seriesExpanded series with its books expanded (with their libraryItem)
++     * @param [feedOptions=null]
+      */
+     static getFeedObjForSeries(userId, seriesExpanded, slug, serverAddress, feedOptions = null) {
+         const booksWithTracks = seriesExpanded.books.filter((book) => book.includedAudioFiles.length);
+@@ -289,18 +191,10 @@
+         };
+     }
+     /**
+-     *
+-     * @param {string} userId
+-     * @param {import('./Series')} seriesExpanded
+-     * @param {string} slug
+-     * @param {string} serverAddress
+-     * @param {FeedOptions} feedOptions
+-     *
+-     * @returns {Promise<FeedExpanded>}
++     * @param seriesExpanded series with its books expanded (with their libraryItem)
+      */
+     static async createFeedForSeries(userId, seriesExpanded, slug, serverAddress, feedOptions) {
+         const { feedObj, booksWithTracks } = this.getFeedObjForSeries(userId, seriesExpanded, slug, serverAddress, feedOptions);
+-        /** @type {typeof import('./FeedEpisode')} */
+         const feedEpisodeModel = this.sequelize.models.feedEpisode;
+         const transaction = await this.sequelize.transaction();
+         try {
+@@ -315,14 +209,6 @@
+             return null;
+         }
+     }
+-    /**
+-     * Initialize model
+-     *
+-     * Polymorphic association: Feeds can be created from LibraryItem, Collection, Playlist or Series
+-     * @see https://sequelize.org/docs/v6/advanced-association-concepts/polymorphic-associations/
+-     *
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -393,48 +279,45 @@
+             if (!Array.isArray(findResult))
+                 findResult = [findResult];
+             for (const instance of findResult) {
++                // Same object as instance.dataValues, typed with the included rows
++                const dataValues = instance.dataValues;
+                 if (instance.entityType === 'libraryItem' && instance.libraryItem !== undefined) {
+                     instance.entity = instance.libraryItem;
+-                    instance.dataValues.entity = instance.dataValues.libraryItem;
++                    dataValues.entity = dataValues.libraryItem;
+                 }
+                 else if (instance.entityType === 'collection' && instance.collection !== undefined) {
+                     instance.entity = instance.collection;
+-                    instance.dataValues.entity = instance.dataValues.collection;
++                    dataValues.entity = dataValues.collection;
+                 }
+                 else if (instance.entityType === 'series' && instance.series !== undefined) {
+                     instance.entity = instance.series;
+-                    instance.dataValues.entity = instance.dataValues.series;
++                    dataValues.entity = dataValues.series;
+                 }
+                 else if (instance.entityType === 'playlist' && instance.playlist !== undefined) {
+                     instance.entity = instance.playlist;
+-                    instance.dataValues.entity = instance.dataValues.playlist;
++                    dataValues.entity = dataValues.playlist;
+                 }
+                 // To prevent mistakes:
+                 delete instance.libraryItem;
+-                delete instance.dataValues.libraryItem;
++                delete dataValues.libraryItem;
+                 delete instance.collection;
+-                delete instance.dataValues.collection;
++                delete dataValues.collection;
+                 delete instance.series;
+-                delete instance.dataValues.series;
++                delete dataValues.series;
+                 delete instance.playlist;
+-                delete instance.dataValues.playlist;
++                delete dataValues.playlist;
+             }
+         });
+     }
+-    /**
+-     *
+-     * @returns {Promise<FeedExpanded>}
+-     */
+     async updateFeedForEntity() {
+-        /** @type {typeof import('./FeedEpisode')} */
+         const feedEpisodeModel = this.sequelize.models.feedEpisode;
+         let feedObj = null;
+         let feedEpisodeCreateFunc = null;
+         let feedEpisodeCreateFuncEntity = null;
+         if (this.entityType === 'libraryItem') {
+-            /** @type {typeof import('./LibraryItem')} */
+             const libraryItemModel = this.sequelize.models.libraryItem;
+             const itemExpanded = await libraryItemModel.getExpandedById(this.entityId);
++            // NOTE: itemExpanded is null when the library item no longer exists (or has no media), then getFeedObjForLibraryItem throws a TypeError outside the try below
+             feedObj = Feed.getFeedObjForLibraryItem(this.userId, itemExpanded, this.slug, this.serverAddress);
+             feedEpisodeCreateFuncEntity = itemExpanded;
+             if (itemExpanded.mediaType === 'podcast') {
+@@ -445,18 +328,18 @@
+             }
+         }
+         else if (this.entityType === 'collection') {
+-            /** @type {typeof import('./Collection')} */
+             const collectionModel = this.sequelize.models.collection;
+             const collectionExpanded = await collectionModel.getExpandedById(this.entityId);
++            // NOTE: collectionExpanded is null when the collection no longer exists, then getFeedObjForCollection throws a TypeError outside the try below
+             const feedObjData = Feed.getFeedObjForCollection(this.userId, collectionExpanded, this.slug, this.serverAddress);
+             feedObj = feedObjData.feedObj;
+             feedEpisodeCreateFuncEntity = feedObjData.booksWithTracks;
+             feedEpisodeCreateFunc = feedEpisodeModel.createFromBooks.bind(feedEpisodeModel);
+         }
+         else if (this.entityType === 'series') {
+-            /** @type {typeof import('./Series')} */
+             const seriesModel = this.sequelize.models.series;
+             const seriesExpanded = await seriesModel.getExpandedById(this.entityId);
++            // NOTE: seriesExpanded is null when the series no longer exists, then getFeedObjForSeries throws a TypeError outside the try below
+             const feedObjData = Feed.getFeedObjForSeries(this.userId, seriesExpanded, this.slug, this.serverAddress);
+             feedObj = feedObjData.feedObj;
+             feedEpisodeCreateFuncEntity = feedObjData.booksWithTracks;
+@@ -471,6 +354,8 @@
+             const updatedFeed = await this.update(feedObj, { transaction });
+             const existingFeedEpisodeIds = this.feedEpisodes.map((ep) => ep.id);
+             // Create new feed episodes
++            // cast(d): each branch above pairs the create function with the entity it takes (a podcast or book library item, or books)
++            // The entity is only null in the library item case noted above, which has already thrown
+             updatedFeed.feedEpisodes = await feedEpisodeCreateFunc(feedEpisodeCreateFuncEntity, updatedFeed, this.slug, transaction);
+             const newFeedEpisodeIds = updatedFeed.feedEpisodes.map((ep) => ep.id);
+             const feedEpisodeIdsToRemove = existingFeedEpisodeIds.filter((epid) => !newFeedEpisodeIds.includes(epid));
+@@ -496,12 +381,9 @@
+         if (!this.entityType)
+             return Promise.resolve(null);
+         const mixinMethodName = `get${this.sequelize.uppercaseFirst(this.entityType)}`;
++        // cast(d): entityType is "libraryItem", "collection", "series" or "playlist", so the name is one of the association getters
+         return this[mixinMethodName](options);
+     }
+-    /**
+-     *
+-     * @param {string} hostPrefix
+-     */
+     buildXml(hostPrefix) {
+         const customElements = [
+             { language: this.language || 'en' },
+@@ -555,11 +437,6 @@
+         });
+         return rssfeed.xml();
+     }
+-    /**
+-     *
+-     * @param {string} id
+-     * @returns {string}
+-     */
+     getEpisodePath(id) {
+         const episode = this.feedEpisodes.find((ep) => ep.id === id);
+         if (!episode)
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/LibraryFolder.js dist-server/server/models/LibraryFolder.js
+--- /tmp/abs-base3a/dist-server/server/models/LibraryFolder.js	2026-10-09 11:44:35.829410619 +1300
++++ dist-server/server/models/LibraryFolder.js	2026-10-09 11:43:40.031986161 +1300
+@@ -1,23 +1,7 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
++const Sequelize = require("sequelize");
++const { DataTypes, Model } = Sequelize;
+ class LibraryFolder extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.path;
+-        /** @type {UUIDV4} */
+-        this.libraryId;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-    }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/LibraryItem.js dist-server/server/models/LibraryItem.js
+--- /tmp/abs-base3a/dist-server/server/models/LibraryItem.js	2026-10-09 11:44:35.919411446 +1300
++++ dist-server/server/models/LibraryItem.js	2026-10-09 11:43:40.231767667 +1300
+@@ -1,94 +1,27 @@
+ "use strict";
+-const Path = require('path');
+-const { DataTypes, Model } = require('sequelize');
+-const fsExtra = require('../libs/fsExtra');
+-const Logger = require('../Logger');
+-const libraryFilters = require('../utils/queries/libraryFilters');
+-const { filePathToPOSIX, getFileTimestampsWithIno } = require('../utils/fileUtils');
+-const LibraryFile = require('../objects/files/LibraryFile');
+-const Book = require('./Book');
+-const Podcast = require('./Podcast');
+-/**
+- * @typedef LibraryFileObject
+- * @property {string} ino
+- * @property {boolean} isSupplementary
+- * @property {number} addedAt
+- * @property {number} updatedAt
+- * @property {{filename:string, ext:string, path:string, relPath:string, size:number, mtimeMs:number, ctimeMs:number, birthtimeMs:number}} metadata
+- */
+-/**
+- * @typedef LibraryItemExpandedProperties
+- * @property {Book.BookExpanded|Podcast.PodcastExpanded} media
+- *
+- * @typedef {LibraryItem & LibraryItemExpandedProperties} LibraryItemExpanded
+- */
++const Path = require("path");
++const Sequelize = require("sequelize");
++const fsExtraModule = require("../libs/fsExtra");
++const Logger = require("../Logger");
++const libraryFilters = require("../utils/queries/libraryFilters");
++const fileUtils = require("../utils/fileUtils");
++const LibraryFile = require("../objects/files/LibraryFile");
++// Required at load as in the JS (only their types are used here)
++require("./Book");
++require("./Podcast");
++const { DataTypes, Model } = Sequelize;
++// cast(a): the vendored fs-extra builds its fs API at runtime, so its inferred type lacks most fs methods
++const fsExtra = fsExtraModule;
++const { filePathToPOSIX, getFileTimestampsWithIno } = fileUtils;
+ class LibraryItem extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {string} */
+-        this.id;
+-        /** @type {string} */
+-        this.ino;
+-        /** @type {string} */
+-        this.path;
+-        /** @type {string} */
+-        this.relPath;
+-        /** @type {string} */
+-        this.mediaId;
+-        /** @type {string} */
+-        this.mediaType;
+-        /** @type {boolean} */
+-        this.isFile;
+-        /** @type {boolean} */
+-        this.isMissing;
+-        /** @type {boolean} */
+-        this.isInvalid;
+-        /** @type {Date} */
+-        this.mtime;
+-        /** @type {Date} */
+-        this.ctime;
+-        /** @type {Date} */
+-        this.birthtime;
+-        /** @type {BigInt} */
+-        this.size;
+-        /** @type {Date} */
+-        this.lastScan;
+-        /** @type {string} */
+-        this.lastScanVersion;
+-        /** @type {LibraryFileObject[]} */
+-        this.libraryFiles;
+-        /** @type {Object} */
+-        this.extraData;
+-        /** @type {string} */
+-        this.libraryId;
+-        /** @type {string} */
+-        this.libraryFolderId;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {Book.BookExpanded|Podcast.PodcastExpanded} - only set when expanded */
+-        this.media;
+-        /** @type {string} */
+-        this.title; // Only used for sorting
+-        /** @type {string} */
+-        this.titleIgnorePrefix; // Only used for sorting
+-        /** @type {string} */
+-        this.authorNamesFirstLast; // Only used for sorting
+-        /** @type {string} */
+-        this.authorNamesLastFirst; // Only used for sorting
+-    }
+     /**
+      * Gets library items partially expanded, not including podcast episodes
+      * @todo temporary solution
+-     *
+-     * @param {number} offset
+-     * @param {number} limit
+-     * @returns {Promise<LibraryItem[]>} LibraryItem
+      */
+     static getLibraryItemsIncrement(offset, limit, where = null) {
+         return this.findAll({
+-            where,
++            // cast(b): sequelize accepts a null where (no condition), its types do not
++            where: where,
+             include: [
+                 {
+                     model: this.sequelize.models.book,
+@@ -124,8 +57,7 @@
+     /**
+      * Remove library item by id
+      *
+-     * @param {string} libraryItemId
+-     * @returns {Promise<number>} The number of destroyed rows
++     * @returns The number of destroyed rows
+      */
+     static removeById(libraryItemId) {
+         return this.destroy({
+@@ -135,14 +67,10 @@
+             individualHooks: true
+         });
+     }
+-    /**
+-     *
+-     * @param {import('sequelize').WhereOptions} where
+-     * @returns {Promise<LibraryItemExpanded[]>}
+-     */
+     static async findAllExpandedWhere(where = null) {
+         return this.findAll({
+-            where,
++            // cast(b): sequelize accepts a null where (no condition), its types do not
++            where: where,
+             include: [
+                 {
+                     model: this.sequelize.models.book,
+@@ -167,19 +95,16 @@
+                         model: this.sequelize.models.podcastEpisode
+                     }
+                 }
++                // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+             ],
+             order: [
+                 // Ensure author & series stay in the same order
+                 [this.sequelize.models.book, this.sequelize.models.author, this.sequelize.models.bookAuthor, 'createdAt', 'ASC'],
+                 [this.sequelize.models.book, this.sequelize.models.series, 'bookSeries', 'createdAt', 'ASC']
+             ]
++            // cast(b): the books and podcasts are included, so the afterFind hook sets each media for its mediaType
+         });
+     }
+-    /**
+-     *
+-     * @param {string} libraryItemId
+-     * @returns {Promise<LibraryItemExpanded>}
+-     */
+     static async getExpandedById(libraryItemId) {
+         if (!libraryItemId)
+             return null;
+@@ -189,16 +114,17 @@
+             return null;
+         }
+         if (libraryItem.mediaType === 'podcast') {
+-            libraryItem.media = await libraryItem.getMedia({
++            libraryItem.media = (await libraryItem.getMedia({
+                 include: [
+                     {
+                         model: this.sequelize.models.podcastEpisode
+                     }
+                 ]
+-            });
++                // cast(d): a null media is checked below, and then the library item is not returned
++            }));
+         }
+         else {
+-            libraryItem.media = await libraryItem.getMedia({
++            libraryItem.media = (await libraryItem.getMedia({
+                 include: [
+                     {
+                         model: this.sequelize.models.author,
+@@ -217,39 +143,41 @@
+                     [this.sequelize.models.author, this.sequelize.models.bookAuthor, 'createdAt', 'ASC'],
+                     [this.sequelize.models.series, 'bookSeries', 'createdAt', 'ASC']
+                 ]
+-            });
++                // cast(d): a null media is checked below, and then the library item is not returned
++            }));
+         }
+         if (!libraryItem.media)
+             return null;
++        // cast(d): media was loaded above for the mediaType (book or podcast)
+         return libraryItem;
+     }
+     /**
+-     *
+-     * @param {import('sequelize').WhereOptions} where
+-     * @param {import('sequelize').BindOrReplacements} [replacements]
+-     * @param {import('sequelize').IncludeOptions} [include]
+-     * @returns {Promise<LibraryItemExpanded>}
++     * @param [replacements]
++     * @param [include]
+      */
+     static async findOneExpanded(where, replacements = null, include = null) {
+         const libraryItem = await this.findOne({
+             where,
+-            replacements,
+-            include
++            // cast(b): sequelize accepts null replacements and include (none), its types do not
++            replacements: replacements,
++            // cast(b): sequelize accepts null replacements and include (none), its types do not
++            include: include
+         });
+         if (!libraryItem) {
+             return null;
+         }
+         if (libraryItem.mediaType === 'podcast') {
+-            libraryItem.media = await libraryItem.getMedia({
++            libraryItem.media = (await libraryItem.getMedia({
+                 include: [
+                     {
+                         model: this.sequelize.models.podcastEpisode
+                     }
+                 ]
+-            });
++                // cast(d): a null media is checked below, and then the library item is not returned
++            }));
+         }
+         else {
+-            libraryItem.media = await libraryItem.getMedia({
++            libraryItem.media = (await libraryItem.getMedia({
+                 include: [
+                     {
+                         model: this.sequelize.models.author,
+@@ -268,18 +196,16 @@
+                     [this.sequelize.models.author, this.sequelize.models.bookAuthor, 'createdAt', 'ASC'],
+                     [this.sequelize.models.series, 'bookSeries', 'createdAt', 'ASC']
+                 ]
+-            });
++                // cast(d): a null media is checked below, and then the library item is not returned
++            }));
+         }
+         if (!libraryItem.media)
+             return null;
++        // cast(d): media was loaded above for the mediaType (book or podcast)
+         return libraryItem;
+     }
+     /**
+      * Get library items using filter and sort
+-     * @param {import('./Library')} library
+-     * @param {import('./User')} user
+-     * @param {object} options
+-     * @returns {{ libraryItems:Object[], count:number }}
+      */
+     static async getByFilterAndSort(library, user, options) {
+         let start = Date.now();
+@@ -287,6 +213,7 @@
+         Logger.debug(`Loaded ${libraryItems.length} of ${count} items for libary page in ${((Date.now() - start) / 1000).toFixed(2)}s`);
+         return {
+             libraryItems: libraryItems.map((li) => {
++                // Typed with the properties added below
+                 const oldLibraryItem = li.toOldJSONMinified();
+                 if (li.collapsedSeries) {
+                     oldLibraryItem.collapsedSeries = li.collapsedSeries;
+@@ -297,8 +224,10 @@
+                 if (li.rssFeed) {
+                     oldLibraryItem.rssFeed = li.rssFeed.toOldJSONMinified();
+                 }
+-                if (li.media.numEpisodes) {
+-                    oldLibraryItem.media.numEpisodes = li.media.numEpisodes;
++                // Same object as li.media; only podcasts have numEpisodes
++                const media = li.media;
++                if (media.numEpisodes) {
++                    oldLibraryItem.media.numEpisodes = media.numEpisodes;
+                 }
+                 if (li.size && !oldLibraryItem.media.size) {
+                     oldLibraryItem.media.size = li.size;
+@@ -316,11 +245,6 @@
+     }
+     /**
+      * Get home page data personalized shelves
+-     * @param {import('./Library')} library
+-     * @param {import('./User')} user
+-     * @param {string[]} include
+-     * @param {number} limit
+-     * @returns {object[]} array of shelf objects
+      */
+     static async getPersonalizedShelves(library, user, include, limit) {
+         const fullStart = Date.now(); // Used for testing load times
+@@ -334,7 +258,8 @@
+             };
+         };
+         // "Continue Listening" shelf
+-        const itemsInProgressPayload = await libraryFilters.getMediaItemsInProgress(library, user, include, limit, false);
++        // The JS passed a fifth argument (false), which getMediaItemsInProgress does not take (it was ignored)
++        const itemsInProgressPayload = await libraryFilters.getMediaItemsInProgress(library, user, include, limit);
+         if (itemsInProgressPayload.items.length) {
+             const ebookOnlyItemsInProgress = itemsInProgressPayload.items.filter((li) => li.media.ebookFormat && !li.media.numTracks);
+             const audioItemsInProgress = itemsInProgressPayload.items.filter((li) => li.media.numTracks || li.mediaType === 'podcast');
+@@ -526,27 +451,18 @@
+     }
+     /**
+      * Get book library items for author, optional use user permissions
+-     * @param {import('./Author')} author
+-     * @param {import('./User')} user
+-     * @returns {Promise<LibraryItemExpanded[]>}
+      */
+     static async getForAuthor(author, user = null) {
++        // cast(d): libraryFilters types limit and offset as numbers; undefined (no limit, no offset) is passed on to the query, as in the JS
+         const { libraryItems } = await libraryFilters.getLibraryItemsForAuthor(author, user, undefined, undefined);
+         return libraryItems;
+     }
+     /**
+      * Check if library item exists
+-     * @param {string} libraryItemId
+-     * @returns {Promise<boolean>}
+      */
+     static async checkExistsById(libraryItemId) {
+         return (await this.count({ where: { id: libraryItemId } })) > 0;
+     }
+-    /**
+-     *
+-     * @param {string} libraryItemId
+-     * @returns {Promise<string>}
+-     */
+     static async getCoverPath(libraryItemId) {
+         const libraryItem = await this.findByPk(libraryItemId, {
+             attributes: ['id', 'mediaType', 'mediaId', 'libraryId'],
+@@ -567,10 +483,6 @@
+         }
+         return libraryItem.media.coverPath;
+     }
+-    /**
+-     *
+-     * @returns {Promise}
+-     */
+     async saveMetadataFile() {
+         let metadataPath = Path.join(global.MetadataPath, 'items', this.id);
+         let storeMetadataWithItem = global.ServerSettings.storeMetadataWithItem;
+@@ -587,48 +499,54 @@
+         const mediaExpanded = this.media || (await this.getMediaExpanded());
+         let jsonObject = {};
+         if (this.mediaType === 'book') {
++            // cast(d): media is a Book when mediaType is "book" (null media throws below, as in the JS)
++            const book = mediaExpanded;
+             jsonObject = {
+-                tags: mediaExpanded.tags || [],
+-                chapters: mediaExpanded.chapters?.map((c) => ({ ...c })) || [],
+-                title: mediaExpanded.title,
+-                subtitle: mediaExpanded.subtitle,
+-                authors: mediaExpanded.authors.map((a) => a.name),
+-                narrators: mediaExpanded.narrators,
+-                series: mediaExpanded.series.map((se) => {
++                tags: book.tags || [],
++                chapters: book.chapters?.map((c) => ({ ...c })) || [],
++                title: book.title,
++                subtitle: book.subtitle,
++                authors: book.authors.map((a) => a.name),
++                narrators: book.narrators,
++                series: book.series.map((se) => {
+                     const sequence = se.bookSeries?.sequence || '';
+                     if (!sequence)
+                         return se.name;
+                     return `${se.name} #${sequence}`;
+                 }),
+-                genres: mediaExpanded.genres || [],
+-                publishedYear: mediaExpanded.publishedYear,
+-                publishedDate: mediaExpanded.publishedDate,
+-                publisher: mediaExpanded.publisher,
+-                description: mediaExpanded.description,
+-                isbn: mediaExpanded.isbn,
+-                asin: mediaExpanded.asin,
+-                language: mediaExpanded.language,
+-                explicit: !!mediaExpanded.explicit,
+-                abridged: !!mediaExpanded.abridged
++                genres: book.genres || [],
++                publishedYear: book.publishedYear,
++                publishedDate: book.publishedDate,
++                publisher: book.publisher,
++                description: book.description,
++                isbn: book.isbn,
++                asin: book.asin,
++                language: book.language,
++                explicit: !!book.explicit,
++                abridged: !!book.abridged
+             };
+         }
+         else {
++            // cast(d): media is a Podcast when mediaType is not "book" (null media throws below, as in the JS)
++            const podcast = mediaExpanded;
+             jsonObject = {
+-                tags: mediaExpanded.tags || [],
+-                title: mediaExpanded.title,
+-                author: mediaExpanded.author,
+-                description: mediaExpanded.description,
+-                releaseDate: mediaExpanded.releaseDate,
+-                genres: mediaExpanded.genres || [],
+-                feedURL: mediaExpanded.feedURL,
+-                imageURL: mediaExpanded.imageURL,
+-                itunesPageURL: mediaExpanded.itunesPageURL,
+-                itunesId: mediaExpanded.itunesId,
+-                itunesArtistId: mediaExpanded.itunesArtistId,
+-                asin: mediaExpanded.asin,
+-                language: mediaExpanded.language,
+-                explicit: !!mediaExpanded.explicit,
+-                podcastType: mediaExpanded.podcastType
++                tags: podcast.tags || [],
++                title: podcast.title,
++                author: podcast.author,
++                description: podcast.description,
++                releaseDate: podcast.releaseDate,
++                genres: podcast.genres || [],
++                feedURL: podcast.feedURL,
++                imageURL: podcast.imageURL,
++                itunesPageURL: podcast.itunesPageURL,
++                itunesId: podcast.itunesId,
++                itunesArtistId: podcast.itunesArtistId,
++                // NOTE: Podcast has no asin, so this is always undefined (and left out of the JSON)
++                // cast(c): the JS reads asin on the podcast; see the NOTE above
++                asin: podcast.asin,
++                language: podcast.language,
++                explicit: !!podcast.explicit,
++                podcastType: podcast.podcastType
+             };
+         }
+         return fsExtra
+@@ -670,10 +588,6 @@
+             return null;
+         });
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -770,19 +684,21 @@
+             if (!Array.isArray(findResult))
+                 findResult = [findResult];
+             for (const instance of findResult) {
++                // Same object as instance.dataValues, typed with the included rows
++                const dataValues = instance.dataValues;
+                 if (instance.mediaType === 'book' && instance.book !== undefined) {
+                     instance.media = instance.book;
+-                    instance.dataValues.media = instance.dataValues.book;
++                    dataValues.media = dataValues.book;
+                 }
+                 else if (instance.mediaType === 'podcast' && instance.podcast !== undefined) {
+                     instance.media = instance.podcast;
+-                    instance.dataValues.media = instance.dataValues.podcast;
++                    dataValues.media = dataValues.podcast;
+                 }
+                 // To prevent mistakes:
+                 delete instance.book;
+-                delete instance.dataValues.book;
++                delete dataValues.book;
+                 delete instance.podcast;
+-                delete instance.dataValues.podcast;
++                delete dataValues.podcast;
+             }
+         });
+         LibraryItem.addHook('afterDestroy', async (instance) => {
+@@ -803,8 +719,6 @@
+     /**
+      * Check if book or podcast library item has audio tracks.
+      * Requires expanded library item (media loaded).
+-     *
+-     * @returns {boolean}
+      */
+     get hasAudioTracks() {
+         if (!this.media) {
+@@ -813,21 +727,13 @@
+         }
+         return this.media.hasAudioTracks;
+     }
+-    /**
+-     *
+-     * @param {import('sequelize').FindOptions} options
+-     * @returns {Promise<Book|Podcast>}
+-     */
+     getMedia(options) {
+         if (!this.mediaType)
+             return Promise.resolve(null);
+         const mixinMethodName = `get${this.sequelize.uppercaseFirst(this.mediaType)}`;
++        // cast(d): mediaType is "book" or "podcast", so the name is one of the association getters
+         return this[mixinMethodName](options);
+     }
+-    /**
+-     *
+-     * @returns {Promise<Book|Podcast>}
+-     */
+     getMediaExpanded() {
+         if (this.mediaType === 'podcast') {
+             return this.getMedia({
+@@ -861,20 +767,17 @@
+             });
+         }
+     }
+-    /**
+-     *
+-     * @param {string} ino
+-     * @returns {import('./Book').AudioFileObject}
+-     */
+     getAudioFileWithIno(ino) {
+         if (!this.media) {
+             Logger.error(`[LibraryItem] getAudioFileWithIno: Library item "${this.id}" does not have media`);
+             return null;
+         }
+         if (this.isBook) {
++            // cast(d): media is a Book when isBook
+             return this.media.audioFiles.find((af) => af.ino === ino);
+         }
+         else {
++            // cast(d): media is a Podcast when not isBook
+             return this.media.podcastEpisodes.find((pe) => pe.audioFile?.ino === ino)?.audioFile;
+         }
+     }
+@@ -883,21 +786,16 @@
+      * AudioTrack is the AudioFile with startOffset and contentUrl
+      * Podcasts must have an episodeId to get the track list
+      *
+-     * @param {string} [episodeId]
+-     * @returns {import('./Book').AudioTrack[]}
++     * @param [episodeId]
+      */
+     getTrackList(episodeId) {
+         if (!this.media) {
+             Logger.error(`[LibraryItem] getTrackList: Library item "${this.id}" does not have media`);
+             return [];
+         }
++        // cast(d): book media ignores the episode id; podcasts must have one (see above)
+         return this.media.getTracklist(this.id, episodeId);
+     }
+-    /**
+-     *
+-     * @param {string} ino
+-     * @returns {LibraryFile}
+-     */
+     getLibraryFileWithIno(ino) {
+         const libraryFile = this.libraryFiles.find((lf) => lf.ino === ino);
+         if (!libraryFile)
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Library.js dist-server/server/models/Library.js
+--- /tmp/abs-base3a/dist-server/server/models/Library.js	2026-10-09 11:44:35.830410628 +1300
++++ dist-server/server/models/Library.js	2026-10-09 11:43:40.029694535 +1300
+@@ -1,55 +1,8 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-const Logger = require('../Logger');
+-/**
+- * @typedef LibrarySettingsObject
+- * @property {number} coverAspectRatio BookCoverAspectRatio
+- * @property {boolean} disableWatcher
+- * @property {boolean} skipMatchingMediaWithAsin
+- * @property {boolean} skipMatchingMediaWithIsbn
+- * @property {string} autoScanCronExpression
+- * @property {boolean} audiobooksOnly
+- * @property {boolean} hideSingleBookSeries Do not show series that only have 1 book
+- * @property {boolean} onlyShowLaterBooksInContinueSeries Skip showing books that are earlier than the max sequence read
+- * @property {string[]} metadataPrecedence
+- * @property {number} markAsFinishedTimeRemaining Time remaining in seconds to mark as finished. (defaults to 10s)
+- * @property {number} markAsFinishedPercentComplete Percent complete to mark as finished (0-100). If this is set it will be used over markAsFinishedTimeRemaining.
+- */
++const Sequelize = require("sequelize");
++const Logger = require("../Logger");
++const { DataTypes, Model } = Sequelize;
+ class Library extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.name;
+-        /** @type {number} */
+-        this.displayOrder;
+-        /** @type {string} */
+-        this.icon;
+-        /** @type {string} */
+-        this.mediaType;
+-        /** @type {string} */
+-        this.provider;
+-        /** @type {Date} */
+-        this.lastScan;
+-        /** @type {string} */
+-        this.lastScanVersion;
+-        /** @type {LibrarySettingsObject} */
+-        this.settings;
+-        /** @type {Object} */
+-        this.extraData;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {import('./LibraryFolder')[]|undefined} */
+-        this.libraryFolders;
+-    }
+-    /**
+-     *
+-     * @param {string} mediaType
+-     * @returns
+-     */
+     static getDefaultLibrarySettingsForMediaType(mediaType) {
+         if (mediaType === 'podcast') {
+             return {
+@@ -81,21 +34,12 @@
+     static get defaultMetadataPrecedence() {
+         return ['folderStructure', 'audioMetatags', 'nfoFile', 'txtFiles', 'opfFile', 'absMetadata'];
+     }
+-    /**
+-     *
+-     * @returns {Promise<Library[]>}
+-     */
+     static getAllWithFolders() {
+         return this.findAll({
+             include: this.sequelize.models.libraryFolder,
+             order: [['displayOrder', 'ASC']]
+         });
+     }
+-    /**
+-     *
+-     * @param {string} libraryId
+-     * @returns {Promise<Library>}
+-     */
+     static findByIdWithFolders(libraryId) {
+         return this.findByPk(libraryId, {
+             include: this.sequelize.models.libraryFolder
+@@ -103,7 +47,7 @@
+     }
+     /**
+      * Get all library ids
+-     * @returns {Promise<string[]>} array of library ids
++     * @returns array of library ids
+      */
+     static async getAllLibraryIds() {
+         const libraries = await this.findAll({
+@@ -115,9 +59,9 @@
+     /**
+      * Get the largest value in the displayOrder column
+      * Used for setting a new libraries display order
+-     * @returns {Promise<number>}
+      */
+     static getMaxDisplayOrder() {
++        // NOTE: `|| 0` applies to the promise (always truthy), not to the result, so an empty table resolves to null instead of 0
+         return this.max('displayOrder') || 0;
+     }
+     /**
+@@ -138,10 +82,6 @@
+             }
+         }
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -169,15 +109,9 @@
+     get isBook() {
+         return this.mediaType === 'book';
+     }
+-    /**
+-     * @returns {string[]}
+-     */
+     get lastScanMetadataPrecedence() {
+         return this.extraData?.lastScanMetadataPrecedence || [];
+     }
+-    /**
+-     * @returns {LibrarySettingsObject}
+-     */
+     get librarySettings() {
+         return this.settings || Library.getDefaultLibrarySettingsForMediaType(this.mediaType);
+     }
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/MediaItemShare.js dist-server/server/models/MediaItemShare.js
+--- /tmp/abs-base3a/dist-server/server/models/MediaItemShare.js	2026-10-09 11:44:35.883411115 +1300
++++ dist-server/server/models/MediaItemShare.js	2026-10-09 11:43:40.240893848 +1300
+@@ -1,61 +1,7 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-/**
+- * @typedef MediaItemShareObject
+- * @property {UUIDV4} id
+- * @property {UUIDV4} mediaItemId
+- * @property {string} mediaItemType
+- * @property {string} slug
+- * @property {string} pash
+- * @property {UUIDV4} userId
+- * @property {Date} expiresAt
+- * @property {Object} extraData
+- * @property {Date} createdAt
+- * @property {Date} updatedAt
+- * @property {boolean} isDownloadable
+- *
+- * @typedef {MediaItemShareObject & MediaItemShare} MediaItemShareModel
+- */
+-/**
+- * @typedef MediaItemShareForClient
+- * @property {UUIDV4} id
+- * @property {UUIDV4} mediaItemId
+- * @property {string} mediaItemType
+- * @property {string} slug
+- * @property {Date} expiresAt
+- * @property {Date} createdAt
+- * @property {Date} updatedAt
+- * @property {boolean} isDownloadable
+- */
++const Sequelize = require("sequelize");
++const { DataTypes, Model } = Sequelize;
+ class MediaItemShare extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {UUIDV4} */
+-        this.mediaItemId;
+-        /** @type {string} */
+-        this.mediaItemType;
+-        /** @type {string} */
+-        this.slug;
+-        /** @type {string} */
+-        this.pash;
+-        /** @type {UUIDV4} */
+-        this.userId;
+-        /** @type {Date} */
+-        this.expiresAt;
+-        /** @type {Object} */
+-        this.extraData;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {boolean} */
+-        this.isDownloadable;
+-        // Expanded properties
+-        /** @type {import('./Book')|import('./PodcastEpisode')} */
+-        this.mediaItem;
+-    }
+     toJSONForClient() {
+         return {
+             id: this.id,
+@@ -70,13 +16,8 @@
+     }
+     /**
+      * Expanded book that includes library settings
+-     *
+-     * @param {string} mediaItemId
+-     * @param {string} mediaItemType
+-     * @returns {Promise<import('./LibraryItem').LibraryItemExpanded>}
+      */
+     static async getMediaItemsLibraryItem(mediaItemId, mediaItemType) {
+-        /** @type {typeof import('./LibraryItem')} */
+         const libraryItemModel = this.sequelize.models.libraryItem;
+         if (mediaItemType === 'book') {
+             const libraryItem = await libraryItemModel.findOneExpanded({ mediaId: mediaItemId }, null, {
+@@ -87,22 +28,13 @@
+         }
+         return null;
+     }
+-    /**
+-     *
+-     * @param {import('sequelize').FindOptions} options
+-     * @returns {Promise<import('./Book')|import('./PodcastEpisode')>}
+-     */
+     getMediaItem(options) {
+         if (!this.mediaItemType)
+             return Promise.resolve(null);
+         const mixinMethodName = `get${this.sequelize.uppercaseFirst(this.mediaItemType)}`;
++        // cast(d): mediaItemType is "book" or "podcastEpisode", so the name is one of the association getters
+         return this[mixinMethodName](options);
+     }
+-    /**
+-     * Initialize model
+-     *
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -146,19 +78,21 @@
+             if (!Array.isArray(findResult))
+                 findResult = [findResult];
+             for (const instance of findResult) {
++                // Same object as instance.dataValues, typed with the included rows
++                const dataValues = instance.dataValues;
+                 if (instance.mediaItemType === 'book' && instance.book !== undefined) {
+                     instance.mediaItem = instance.book;
+-                    instance.dataValues.mediaItem = instance.dataValues.book;
++                    dataValues.mediaItem = dataValues.book;
+                 }
+                 else if (instance.mediaItemType === 'podcastEpisode' && instance.podcastEpisode !== undefined) {
+                     instance.mediaItem = instance.podcastEpisode;
+-                    instance.dataValues.mediaItem = instance.dataValues.podcastEpisode;
++                    dataValues.mediaItem = dataValues.podcastEpisode;
+                 }
+                 // To prevent mistakes:
+                 delete instance.book;
+-                delete instance.dataValues.book;
++                delete dataValues.book;
+                 delete instance.podcastEpisode;
+-                delete instance.dataValues.podcastEpisode;
++                delete dataValues.podcastEpisode;
+             }
+         });
+     }
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/MediaProgress.js dist-server/server/models/MediaProgress.js
+--- /tmp/abs-base3a/dist-server/server/models/MediaProgress.js	2026-10-09 11:44:35.921411464 +1300
++++ dist-server/server/models/MediaProgress.js	2026-10-09 11:43:40.251893951 +1300
+@@ -1,41 +1,10 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-const Logger = require('../Logger');
+-const { isNullOrNaN } = require('../utils');
++const Sequelize = require("sequelize");
++const Logger = require("../Logger");
++const utils = require("../utils");
++const { DataTypes, Model } = Sequelize;
++const { isNullOrNaN } = utils;
+ class MediaProgress extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {UUIDV4} */
+-        this.mediaItemId;
+-        /** @type {string} */
+-        this.mediaItemType;
+-        /** @type {number} */
+-        this.duration;
+-        /** @type {number} */
+-        this.currentTime;
+-        /** @type {boolean} */
+-        this.isFinished;
+-        /** @type {boolean} */
+-        this.hideFromContinueListening;
+-        /** @type {string} */
+-        this.ebookLocation;
+-        /** @type {number} */
+-        this.ebookProgress;
+-        /** @type {Date} */
+-        this.finishedAt;
+-        /** @type {Object} */
+-        this.extraData;
+-        /** @type {UUIDV4} */
+-        this.userId;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {UUIDV4} */
+-        this.podcastId;
+-    }
+     static removeById(mediaProgressId) {
+         return this.destroy({
+             where: {
+@@ -43,14 +12,6 @@
+             }
+         });
+     }
+-    /**
+-     * Initialize model
+-     *
+-     * Polymorphic association: Book has many MediaProgress. PodcastEpisode has many MediaProgress.
+-     * @see https://sequelize.org/docs/v6/advanced-association-concepts/polymorphic-associations/
+-     *
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -105,19 +66,21 @@
+             if (!Array.isArray(findResult))
+                 findResult = [findResult];
+             for (const instance of findResult) {
++                // Same object as instance.dataValues, typed with the included rows
++                const dataValues = instance.dataValues;
+                 if (instance.mediaItemType === 'book' && instance.book !== undefined) {
+                     instance.mediaItem = instance.book;
+-                    instance.dataValues.mediaItem = instance.dataValues.book;
++                    dataValues.mediaItem = dataValues.book;
+                 }
+                 else if (instance.mediaItemType === 'podcastEpisode' && instance.podcastEpisode !== undefined) {
+                     instance.mediaItem = instance.podcastEpisode;
+-                    instance.dataValues.mediaItem = instance.dataValues.podcastEpisode;
++                    dataValues.mediaItem = dataValues.podcastEpisode;
+                 }
+                 // To prevent mistakes:
+                 delete instance.book;
+-                delete instance.dataValues.book;
++                delete dataValues.book;
+                 delete instance.podcastEpisode;
+-                delete instance.dataValues.podcastEpisode;
++                delete dataValues.podcastEpisode;
+             }
+         });
+         // make sure to call the afterDestroy hook for each instance
+@@ -137,6 +100,7 @@
+         if (!this.mediaItemType)
+             return Promise.resolve(null);
+         const mixinMethodName = `get${this.sequelize.uppercaseFirst(this.mediaItemType)}`;
++        // cast(d): mediaItemType is "book" or "podcastEpisode", so the name is one of the association getters
+         return this[mixinMethodName](options);
+     }
+     getOldMediaProgress() {
+@@ -168,9 +132,6 @@
+     }
+     /**
+      * Apply update to media progress
+-     *
+-     * @param {import('./User').ProgressUpdatePayload} progressPayload
+-     * @returns {Promise<MediaProgress>}
+      */
+     async applyProgressUpdate(progressPayload) {
+         if (!this.extraData)
+@@ -190,12 +151,15 @@
+                 delete progressPayload.finishedAt;
+                 delete progressPayload.currentTime;
+             }
++            // cast(d): isNaN coerces undefined to NaN, as in the JS
+         }
+         else if (!isNaN(progressPayload.progress) && progressPayload.progress !== this.progress) {
+             // Old model stored progress on object
++            // cast(d): progress is a number here (the isNaN check above)
+             this.extraData.progress = Math.min(1, Math.max(0, progressPayload.progress));
+             this.changed('extraData', true);
+         }
++        // cast(b): the payload has the attribute keys plus keys set ignores; finishedAt may be a date string, which the DATE column converts
+         this.set(progressPayload);
+         // Reset hideFromContinueListening if the progress has changed
+         if (this.changed('currentTime') && !progressPayload.hideFromContinueListening) {
+@@ -206,6 +170,7 @@
+         //   - If markAsFinishedPercentComplete is provided, use that otherwise use markAsFinishedTimeRemaining (default 10 seconds)
+         let shouldMarkAsFinished = false;
+         if (this.duration) {
++            // cast(d): isNullOrNaN is false, so markAsFinishedPercentComplete is a number
+             if (!isNullOrNaN(progressPayload.markAsFinishedPercentComplete) && progressPayload.markAsFinishedPercentComplete > 0) {
+                 const markAsFinishedPercentComplete = Number(progressPayload.markAsFinishedPercentComplete) / 100;
+                 shouldMarkAsFinished = markAsFinishedPercentComplete < this.progress;
+@@ -234,6 +199,7 @@
+         await this.save();
+         // For local sync
+         if (progressPayload.lastUpdate) {
++            // cast(d): isNaN coerces the Date to its timestamp, as in the JS
+             if (isNaN(new Date(progressPayload.lastUpdate))) {
+                 Logger.warn(`[MediaProgress] Invalid date provided for lastUpdate: ${progressPayload.lastUpdate} (media item ${this.mediaItemId})`);
+             }
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/PlaybackSession.js dist-server/server/models/PlaybackSession.js
+--- /tmp/abs-base3a/dist-server/server/models/PlaybackSession.js	2026-10-09 11:44:35.924411493 +1300
++++ dist-server/server/models/PlaybackSession.js	2026-10-09 11:43:40.337894760 +1300
+@@ -1,57 +1,12 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-const oldPlaybackSession = require('../objects/PlaybackSession');
++const Sequelize = require("sequelize");
++const oldPlaybackSession = require("../objects/PlaybackSession");
++const { DataTypes, Model } = Sequelize;
+ class PlaybackSession extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {UUIDV4} */
+-        this.mediaItemId;
+-        /** @type {string} */
+-        this.mediaItemType;
+-        /** @type {string} */
+-        this.displayTitle;
+-        /** @type {string} */
+-        this.displayAuthor;
+-        /** @type {number} */
+-        this.duration;
+-        /** @type {number} */
+-        this.playMethod;
+-        /** @type {string} */
+-        this.mediaPlayer;
+-        /** @type {number} */
+-        this.startTime;
+-        /** @type {number} */
+-        this.currentTime;
+-        /** @type {string} */
+-        this.serverVersion;
+-        /** @type {string} */
+-        this.coverPath;
+-        /** @type {number} */
+-        this.timeListening;
+-        /** @type {Object} */
+-        this.mediaMetadata;
+-        /** @type {string} */
+-        this.date;
+-        /** @type {string} */
+-        this.dayOfWeek;
+-        /** @type {Object} */
+-        this.extraData;
+-        /** @type {UUIDV4} */
+-        this.userId;
+-        /** @type {UUIDV4} */
+-        this.deviceId;
+-        /** @type {UUIDV4} */
+-        this.libraryId;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {Date} */
+-        this.createdAt;
+-    }
+     static async getOldPlaybackSessions(where = null) {
+         const playbackSessions = await this.findAll({
+-            where,
++            // cast(b): sequelize accepts a null where (no condition), its types do not
++            where: where,
+             include: [
+                 {
+                     model: this.sequelize.models.device
+@@ -112,10 +67,12 @@
+         const playbackSession = this.getFromOld(oldPlaybackSession);
+         return this.upsert(playbackSession, {
+             silent: true
++            // cast(b): the JS passes silent, which UpsertOptions does not declare
+         });
+     }
+     static updateFromOld(oldPlaybackSession) {
+         const playbackSession = this.getFromOld(oldPlaybackSession);
++        // cast(b): the old session timestamps are epoch ms, which the DATE columns accept; update types the values with the Date attributes
+         return this.update(playbackSession, {
+             where: {
+                 id: playbackSession.id
+@@ -155,12 +112,9 @@
+         if (!this.mediaItemType)
+             return Promise.resolve(null);
+         const mixinMethodName = `get${this.sequelize.uppercaseFirst(this.mediaItemType)}`;
++        // cast(d): mediaItemType is "book" or "podcastEpisode", so the name is one of the association getters
+         return this[mixinMethodName](options);
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -217,19 +171,21 @@
+             if (!Array.isArray(findResult))
+                 findResult = [findResult];
+             for (const instance of findResult) {
++                // Same object as instance.dataValues, typed with the included rows
++                const dataValues = instance.dataValues;
+                 if (instance.mediaItemType === 'book' && instance.book !== undefined) {
+                     instance.mediaItem = instance.book;
+-                    instance.dataValues.mediaItem = instance.dataValues.book;
++                    dataValues.mediaItem = dataValues.book;
+                 }
+                 else if (instance.mediaItemType === 'podcastEpisode' && instance.podcastEpisode !== undefined) {
+                     instance.mediaItem = instance.podcastEpisode;
+-                    instance.dataValues.mediaItem = instance.dataValues.podcastEpisode;
++                    dataValues.mediaItem = dataValues.podcastEpisode;
+                 }
+                 // To prevent mistakes:
+                 delete instance.book;
+-                delete instance.dataValues.book;
++                delete dataValues.book;
+                 delete instance.podcastEpisode;
+-                delete instance.dataValues.podcastEpisode;
++                delete dataValues.podcastEpisode;
+             }
+         });
+     }
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Playlist.js dist-server/server/models/Playlist.js
+--- /tmp/abs-base3a/dist-server/server/models/Playlist.js	2026-10-09 11:44:35.923411483 +1300
++++ dist-server/server/models/Playlist.js	2026-10-09 11:43:40.352894901 +1300
+@@ -1,34 +1,11 @@
+ "use strict";
+-const { DataTypes, Model, Op } = require('sequelize');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
++const Sequelize = require("sequelize");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const { DataTypes, Model, Op } = Sequelize;
+ class Playlist extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.name;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {UUIDV4} */
+-        this.libraryId;
+-        /** @type {UUIDV4} */
+-        this.userId;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        // Expanded properties
+-        /** @type {import('./PlaylistMediaItem')[]} - only set when expanded */
+-        this.playlistMediaItems;
+-    }
+     /**
+      * Get old playlists for user and library
+-     *
+-     * @param {string} userId
+-     * @param {string} libraryId
+-     * @async
+      */
+     static async getOldPlaylistsForUserAndLibrary(userId, libraryId) {
+         if (!userId && !libraryId)
+@@ -73,6 +50,7 @@
+                         }
+                     }
+                 ]
++                // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+             },
+             order: [['playlistMediaItems', 'order', 'ASC']]
+         });
+@@ -82,9 +60,6 @@
+     }
+     /**
+      * Get number of playlists for a user and library
+-     * @param {string} userId
+-     * @param {string} libraryId
+-     * @returns
+      */
+     static async getNumPlaylistsForUserAndLibrary(userId, libraryId) {
+         return this.count({
+@@ -96,8 +71,6 @@
+     }
+     /**
+      * Get all playlists for mediaItemIds
+-     * @param {string[]} mediaItemIds
+-     * @returns {Promise<Playlist[]>}
+      */
+     static async getPlaylistsForMediaItemIds(mediaItemIds) {
+         if (!mediaItemIds?.length)
+@@ -128,6 +101,7 @@
+                         ]
+                     }
+                 }
++                // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+             ],
+             order: [['playlist', 'playlistMediaItems', 'order', 'ASC']]
+         });
+@@ -137,18 +111,20 @@
+             if (playlists.some((p) => p.id === playlist.id))
+                 continue;
+             playlist.playlistMediaItems = playlist.playlistMediaItems.map((pmi) => {
++                // Same object as pmi.dataValues, typed with the included rows
++                const dataValues = pmi.dataValues;
+                 if (pmi.mediaItemType === 'book' && pmi.book !== undefined) {
+                     pmi.mediaItem = pmi.book;
+-                    pmi.dataValues.mediaItem = pmi.dataValues.book;
++                    dataValues.mediaItem = dataValues.book;
+                 }
+                 else if (pmi.mediaItemType === 'podcastEpisode' && pmi.podcastEpisode !== undefined) {
+                     pmi.mediaItem = pmi.podcastEpisode;
+-                    pmi.dataValues.mediaItem = pmi.dataValues.podcastEpisode;
++                    dataValues.mediaItem = dataValues.podcastEpisode;
+                 }
+                 delete pmi.book;
+-                delete pmi.dataValues.book;
++                delete dataValues.book;
+                 delete pmi.podcastEpisode;
+-                delete pmi.dataValues.podcastEpisode;
++                delete dataValues.podcastEpisode;
+                 return pmi;
+             });
+             playlists.push(playlist);
+@@ -157,8 +133,6 @@
+     }
+     /**
+      * Removes media items and re-orders playlists
+-     *
+-     * @param {string[]} mediaItemIds
+      */
+     static async removeMediaItemsFromPlaylists(mediaItemIds) {
+         if (!mediaItemIds?.length)
+@@ -196,10 +170,6 @@
+             }
+         }
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -228,19 +198,21 @@
+             for (const instance of findResult) {
+                 if (instance.playlistMediaItems?.length) {
+                     instance.playlistMediaItems = instance.playlistMediaItems.map((pmi) => {
++                        // Same object as pmi.dataValues, typed with the included rows
++                        const dataValues = pmi.dataValues;
+                         if (pmi.mediaItemType === 'book' && pmi.book !== undefined) {
+                             pmi.mediaItem = pmi.book;
+-                            pmi.dataValues.mediaItem = pmi.dataValues.book;
++                            dataValues.mediaItem = dataValues.book;
+                         }
+                         else if (pmi.mediaItemType === 'podcastEpisode' && pmi.podcastEpisode !== undefined) {
+                             pmi.mediaItem = pmi.podcastEpisode;
+-                            pmi.dataValues.mediaItem = pmi.dataValues.podcastEpisode;
++                            dataValues.mediaItem = dataValues.podcastEpisode;
+                         }
+                         // To prevent mistakes:
+                         delete pmi.book;
+-                        delete pmi.dataValues.book;
++                        delete dataValues.book;
+                         delete pmi.podcastEpisode;
+-                        delete pmi.dataValues.podcastEpisode;
++                        delete dataValues.podcastEpisode;
+                         return pmi;
+                     });
+                 }
+@@ -249,8 +221,6 @@
+     }
+     /**
+      * Get all media items in playlist expanded with library item
+-     *
+-     * @returns {Promise<import('./PlaylistMediaItem')[]>}
+      */
+     getMediaItemsExpandedWithLibraryItem() {
+         return this.getPlaylistMediaItems({
+@@ -284,14 +254,13 @@
+                         }
+                     ]
+                 }
++                // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+             ],
+             order: [['order', 'ASC']]
+         });
+     }
+     /**
+      * Get playlists toOldJSONExpanded
+-     *
+-     * @async
+      */
+     async getOldJsonExpanded() {
+         this.playlistMediaItems = await this.getMediaItemsExpandedWithLibraryItem();
+@@ -300,8 +269,7 @@
+     /**
+      * Old model used libraryItemId instead of bookId
+      *
+-     * @param {string} libraryItemId
+-     * @param {string} [episodeId]
++     * @param [episodeId]
+      */
+     checkHasMediaItem(libraryItemId, episodeId) {
+         if (!this.playlistMediaItems) {
+@@ -310,6 +278,8 @@
+         if (episodeId) {
+             return this.playlistMediaItems.some((pmi) => pmi.mediaItemId === episodeId);
+         }
++        // NOTE: a podcast episode media item has no libraryItem (it is on episode.podcast), so this throws a TypeError for playlists with episodes
++        // cast(c): the JS reads libraryItem on every media item; see the NOTE above
+         return this.playlistMediaItems.some((pmi) => pmi.mediaItem.libraryItem.id === libraryItemId);
+     }
+     toOldJSON() {
+@@ -327,23 +297,32 @@
+         if (!this.playlistMediaItems) {
+             throw new Error('playlistMediaItems are required to expand Playlist');
+         }
++        // Typed with items, which is added below
+         const json = this.toOldJSON();
+         json.items = this.playlistMediaItems.map((pmi) => {
+             if (pmi.mediaItemType === 'book') {
+-                const libraryItem = pmi.mediaItem.libraryItem;
+-                delete pmi.mediaItem.libraryItem;
+-                libraryItem.media = pmi.mediaItem;
++                // cast(d): mediaItem is a Book (with its libraryItem) when mediaItemType is "book"
++                const book = pmi.mediaItem;
++                const libraryItem = book.libraryItem;
++                // Same object as the book, typed with the association optional so it can be deleted
++                const bookAssociations = book;
++                delete bookAssociations.libraryItem;
++                libraryItem.media = book;
+                 return {
+                     libraryItemId: libraryItem.id,
+                     libraryItem: libraryItem.toOldJSONExpanded()
+                 };
+             }
+-            const libraryItem = pmi.mediaItem.podcast.libraryItem;
+-            delete pmi.mediaItem.podcast.libraryItem;
+-            libraryItem.media = pmi.mediaItem.podcast;
++            // cast(d): mediaItem is a PodcastEpisode (with its podcast and its libraryItem) when mediaItemType is "podcastEpisode"
++            const episode = pmi.mediaItem;
++            const libraryItem = episode.podcast.libraryItem;
++            // Same object as the podcast, typed with the association optional so it can be deleted
++            const podcastAssociations = episode.podcast;
++            delete podcastAssociations.libraryItem;
++            libraryItem.media = episode.podcast;
+             return {
+                 episodeId: pmi.mediaItemId,
+-                episode: pmi.mediaItem.toOldJSONExpanded(libraryItem.id),
++                episode: episode.toOldJSONExpanded(libraryItem.id),
+                 libraryItemId: libraryItem.id,
+                 libraryItem: libraryItem.toOldJSONMinified()
+             };
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/PlaylistMediaItem.js dist-server/server/models/PlaylistMediaItem.js
+--- /tmp/abs-base3a/dist-server/server/models/PlaylistMediaItem.js	2026-10-09 11:44:35.921411464 +1300
++++ dist-server/server/models/PlaylistMediaItem.js	2026-10-09 11:43:40.358894958 +1300
+@@ -1,34 +1,14 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
++const Sequelize = require("sequelize");
++const { DataTypes, Model } = Sequelize;
+ class PlaylistMediaItem extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {UUIDV4} */
+-        this.mediaItemId;
+-        /** @type {string} */
+-        this.mediaItemType;
+-        /** @type {number} */
+-        this.order;
+-        /** @type {UUIDV4} */
+-        this.playlistId;
+-        /** @type {Date} */
+-        this.createdAt;
+-        // Expanded properties
+-        /** @type {import('./Book')|import('./PodcastEpisode')} - only set when expanded */
+-        this.mediaItem;
+-    }
+     getMediaItem(options) {
+         if (!this.mediaItemType)
+             return Promise.resolve(null);
+         const mixinMethodName = `get${this.sequelize.uppercaseFirst(this.mediaItemType)}`;
++        // cast(d): mediaItemType is "book" or "podcastEpisode", so the name is one of the association getters
+         return this[mixinMethodName](options);
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -68,19 +48,21 @@
+             if (!Array.isArray(findResult))
+                 findResult = [findResult];
+             for (const instance of findResult) {
++                // Same object as instance.dataValues, typed with the included rows
++                const dataValues = instance.dataValues;
+                 if (instance.mediaItemType === 'book' && instance.book !== undefined) {
+                     instance.mediaItem = instance.book;
+-                    instance.dataValues.mediaItem = instance.dataValues.book;
++                    dataValues.mediaItem = dataValues.book;
+                 }
+                 else if (instance.mediaItemType === 'podcastEpisode' && instance.podcastEpisode !== undefined) {
+                     instance.mediaItem = instance.podcastEpisode;
+-                    instance.dataValues.mediaItem = instance.dataValues.podcastEpisode;
++                    dataValues.mediaItem = dataValues.podcastEpisode;
+                 }
+                 // To prevent mistakes:
+                 delete instance.book;
+-                delete instance.dataValues.book;
++                delete dataValues.book;
+                 delete instance.podcastEpisode;
+-                delete instance.dataValues.podcastEpisode;
++                delete dataValues.podcastEpisode;
+             }
+         });
+         playlist.hasMany(PlaylistMediaItem, {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/PodcastEpisode.js dist-server/server/models/PodcastEpisode.js
+--- /tmp/abs-base3a/dist-server/server/models/PodcastEpisode.js	2026-10-09 11:44:35.882411106 +1300
++++ dist-server/server/models/PodcastEpisode.js	2026-10-09 11:43:40.372895089 +1300
+@@ -1,61 +1,8 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-const libraryItemsPodcastFilters = require('../utils/queries/libraryItemsPodcastFilters');
+-/**
+- * @typedef ChapterObject
+- * @property {number} id
+- * @property {number} start
+- * @property {number} end
+- * @property {string} title
+- */
++const Sequelize = require("sequelize");
++const libraryItemsPodcastFilters = require("../utils/queries/libraryItemsPodcastFilters");
++const { DataTypes, Model } = Sequelize;
+ class PodcastEpisode extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {string} */
+-        this.id;
+-        /** @type {number} */
+-        this.index;
+-        /** @type {string} */
+-        this.season;
+-        /** @type {string} */
+-        this.episode;
+-        /** @type {string} */
+-        this.episodeType;
+-        /** @type {string} */
+-        this.title;
+-        /** @type {string} */
+-        this.subtitle;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {string} */
+-        this.pubDate;
+-        /** @type {string} */
+-        this.enclosureURL;
+-        /** @type {BigInt} */
+-        this.enclosureSize;
+-        /** @type {string} */
+-        this.enclosureType;
+-        /** @type {Date} */
+-        this.publishedAt;
+-        /** @type {import('./Book').AudioFileObject} */
+-        this.audioFile;
+-        /** @type {ChapterObject[]} */
+-        this.chapters;
+-        /** @type {Object} */
+-        this.extraData;
+-        /** @type {string} */
+-        this.podcastId;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-    }
+-    /**
+-     *
+-     * @param {import('../utils/podcastUtils').RssPodcastEpisode} rssPodcastEpisode
+-     * @param {string} podcastId
+-     * @param {import('../objects/files/AudioFile')} audioFile
+-     */
+     static async createFromRssPodcastEpisode(rssPodcastEpisode, podcastId, audioFile) {
+         const podcastEpisode = {
+             index: null,
+@@ -71,6 +18,7 @@
+             enclosureType: rssPodcastEpisode.enclosure?.type || null,
+             publishedAt: rssPodcastEpisode.publishedAt,
+             podcastId,
++            // cast(d): the audio file was probed, so the fields that AudioFile types as nullable before construct are set
+             audioFile: audioFile.toJSON(),
+             chapters: [],
+             extraData: {}
+@@ -82,14 +30,12 @@
+             podcastEpisode.chapters = audioFile.chapters.map((ch) => ({ ...ch }));
+         }
+         else if (rssPodcastEpisode.chapters?.length) {
++            // NOTE: RSS chapters can have end null (the last chapter when no end time is given), which is stored as is in chapters
++            // cast(c): the JS stores the RSS chapters in a chapters column typed with a numeric end; see the NOTE above
+             podcastEpisode.chapters = rssPodcastEpisode.chapters.map((ch) => ({ ...ch }));
+         }
+         return this.create(podcastEpisode);
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -146,10 +92,6 @@
+     }
+     /**
+      * Used for matching the episode with an episode in the RSS feed
+-     *
+-     * @param {string} guid
+-     * @param {string} enclosureURL
+-     * @returns {boolean}
+      */
+     checkMatchesGuidOrEnclosureUrl(guid, enclosureURL) {
+         if (this.extraData?.guid && this.extraData.guid === guid) {
+@@ -162,11 +104,9 @@
+     }
+     /**
+      * Used in client players
+-     *
+-     * @param {string} libraryItemId
+-     * @returns {import('./Book').AudioTrack}
+      */
+     getAudioTrack(libraryItemId) {
++        // cast(d): the clone gets the track properties (startOffset, title, contentUrl) assigned below
+         const track = structuredClone(this.audioFile);
+         track.startOffset = 0;
+         track.title = this.audioFile.metadata.filename;
+@@ -209,6 +149,7 @@
+         };
+     }
+     toOldJSONExpanded(libraryItemId) {
++        // Typed with the expanded properties, which are added below
+         const json = this.toOldJSON(libraryItemId);
+         json.audioTrack = this.getAudioTrack(libraryItemId);
+         json.size = this.size;
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Podcast.js dist-server/server/models/Podcast.js
+--- /tmp/abs-base3a/dist-server/server/models/Podcast.js	2026-10-09 11:44:35.862410922 +1300
++++ dist-server/server/models/Podcast.js	2026-10-09 11:43:40.366895032 +1300
+@@ -1,76 +1,14 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-const { getTitlePrefixAtEnd, getTitleIgnorePrefix } = require('../utils');
+-const Logger = require('../Logger');
+-const libraryItemsPodcastFilters = require('../utils/queries/libraryItemsPodcastFilters');
+-const htmlSanitizer = require('../utils/htmlSanitizer');
+-/**
+- * @typedef PodcastExpandedProperties
+- * @property {import('./PodcastEpisode')[]} podcastEpisodes
+- *
+- * @typedef {Podcast & PodcastExpandedProperties} PodcastExpanded
+- */
++const Sequelize = require("sequelize");
++const utils = require("../utils");
++const Logger = require("../Logger");
++const libraryItemsPodcastFilters = require("../utils/queries/libraryItemsPodcastFilters");
++const htmlSanitizer = require("../utils/htmlSanitizer");
++const { DataTypes, Model } = Sequelize;
++const { getTitlePrefixAtEnd, getTitleIgnorePrefix } = utils;
+ class Podcast extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {string} */
+-        this.id;
+-        /** @type {string} */
+-        this.title;
+-        /** @type {string} */
+-        this.titleIgnorePrefix;
+-        /** @type {string} */
+-        this.author;
+-        /** @type {string} */
+-        this.releaseDate;
+-        /** @type {string} */
+-        this.feedURL;
+-        /** @type {string} */
+-        this.imageURL;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {string} */
+-        this.itunesPageURL;
+-        /** @type {string} */
+-        this.itunesId;
+-        /** @type {string} */
+-        this.itunesArtistId;
+-        /** @type {string} */
+-        this.language;
+-        /** @type {string} */
+-        this.podcastType;
+-        /** @type {boolean} */
+-        this.explicit;
+-        /** @type {boolean} */
+-        this.autoDownloadEpisodes;
+-        /** @type {string} */
+-        this.autoDownloadSchedule;
+-        /** @type {Date} */
+-        this.lastEpisodeCheck;
+-        /** @type {number} */
+-        this.maxEpisodesToKeep;
+-        /** @type {number} */
+-        this.maxNewEpisodesToDownload;
+-        /** @type {string} */
+-        this.coverPath;
+-        /** @type {string[]} */
+-        this.tags;
+-        /** @type {string[]} */
+-        this.genres;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {number} */
+-        this.numEpisodes;
+-        /** @type {import('./PodcastEpisode')[]} */
+-        this.podcastEpisodes;
+-    }
+     /**
+      * Payload from the /api/podcasts POST endpoint
+-     *
+-     * @param {Object} payload
+-     * @param {import('sequelize').Transaction} transaction
+      */
+     static async createFromRequest(payload, transaction) {
+         const title = typeof payload.metadata.title === 'string' ? payload.metadata.title : null;
+@@ -79,9 +17,11 @@
+         const genres = Array.isArray(payload.metadata.genres) && payload.metadata.genres.every((g) => typeof g === 'string' && g.length) ? payload.metadata.genres : [];
+         const tags = Array.isArray(payload.tags) && payload.tags.every((t) => typeof t === 'string' && t.length) ? payload.tags : [];
+         const stringKeys = ['title', 'author', 'releaseDate', 'feedUrl', 'imageUrl', 'description', 'itunesPageUrl', 'itunesId', 'itunesArtistId', 'language', 'type'];
++        // Same object as payload.metadata, read and written by key
++        const metadataValues = payload.metadata;
+         stringKeys.forEach((key) => {
+-            if (typeof payload.metadata[key] === 'number') {
+-                payload.metadata[key] = String(payload.metadata[key]);
++            if (typeof metadataValues[key] === 'number') {
++                metadataValues[key] = String(metadataValues[key]);
+             }
+         });
+         const rawDescription = typeof payload.metadata.description === 'string' ? payload.metadata.description : null;
+@@ -109,10 +49,6 @@
+             genres
+         }, { transaction });
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -183,9 +119,7 @@
+         };
+     }
+     /**
+-     *
+-     * @param {Object} payload - Old podcast object
+-     * @returns {Promise<boolean>}
++     * @param payload - Old podcast object
+      */
+     async updateFromRequest(payload) {
+         if (!payload)
+@@ -193,10 +127,14 @@
+         let hasUpdates = false;
+         if (payload.metadata) {
+             const stringKeys = ['title', 'author', 'releaseDate', 'feedUrl', 'imageUrl', 'description', 'itunesPageUrl', 'itunesId', 'itunesArtistId', 'language', 'type'];
++            // Same objects as payload.metadata and this, read and written by key (the setters of this still run)
++            const metadataValues = payload.metadata;
++            // cast(d): a model instance has no index signature; newKey below is always a string attribute of the podcast
++            const self = this;
+             stringKeys.forEach((key) => {
+                 // Convert numbers to strings
+-                if (typeof payload.metadata[key] === 'number') {
+-                    payload.metadata[key] = String(payload.metadata[key]);
++                if (typeof metadataValues[key] === 'number') {
++                    metadataValues[key] = String(metadataValues[key]);
+                 }
+                 let newKey = key;
+                 if (key === 'type') {
+@@ -211,16 +149,16 @@
+                 else if (key === 'itunesPageUrl') {
+                     newKey = 'itunesPageURL';
+                 }
+-                if ((typeof payload.metadata[key] === 'string' || payload.metadata[key] === null) && payload.metadata[key] !== this[newKey]) {
++                if ((typeof metadataValues[key] === 'string' || metadataValues[key] === null) && metadataValues[key] !== self[newKey]) {
+                     // Sanitize description HTML
+-                    if (key === 'description' && payload.metadata[key]) {
+-                        const sanitizedDescription = htmlSanitizer.sanitize(payload.metadata[key]);
+-                        if (sanitizedDescription !== payload.metadata[key]) {
+-                            Logger.debug(`[Podcast] "${this.title}" Sanitized description from "${payload.metadata[key]}" to "${sanitizedDescription}"`);
+-                            payload.metadata[key] = sanitizedDescription;
++                    if (key === 'description' && metadataValues[key]) {
++                        const sanitizedDescription = htmlSanitizer.sanitize(metadataValues[key]);
++                        if (sanitizedDescription !== metadataValues[key]) {
++                            Logger.debug(`[Podcast] "${this.title}" Sanitized description from "${metadataValues[key]}" to "${sanitizedDescription}"`);
++                            metadataValues[key] = sanitizedDescription;
+                         }
+                     }
+-                    this[newKey] = payload.metadata[key] || null;
++                    self[newKey] = metadataValues[key] || null;
+                     if (key === 'title') {
+                         this.titleIgnorePrefix = getTitleIgnorePrefix(this.title);
+                     }
+@@ -284,10 +222,6 @@
+      * Get the track list to be used in client audio players
+      * AudioTrack is the AudioFile with startOffset and contentUrl
+      * Podcast episodes only have one track
+-     *
+-     * @param {string} libraryItemId
+-     * @param {string} episodeId
+-     * @returns {import('./Book').AudioTrack[]}
+      */
+     getTracklist(libraryItemId, episodeId) {
+         const episode = this.podcastEpisodes.find((ep) => ep.id === episodeId);
+@@ -298,11 +232,6 @@
+         const audioTrack = episode.getAudioTrack(libraryItemId);
+         return [audioTrack];
+     }
+-    /**
+-     *
+-     * @param {string} episodeId
+-     * @returns {import('./PodcastEpisode').ChapterObject[]}
+-     */
+     getChapters(episodeId) {
+         const episode = this.podcastEpisodes.find((ep) => ep.id === episodeId);
+         if (!episode) {
+@@ -331,12 +260,13 @@
+         return episode.duration;
+     }
+     /**
+-     *
+-     * @returns {number} - Unix timestamp
++     * @returns Unix timestamp
+      */
+     getLatestEpisodePublishedAt() {
+         return this.podcastEpisodes.reduce((latest, episode) => {
++            // cast(d): undefined > latest is false, as in the JS
+             if (episode.publishedAt?.valueOf() > latest) {
++                // publishedAt is set (the comparison above is false for null)
+                 return episode.publishedAt.valueOf();
+             }
+             return latest;
+@@ -345,8 +275,7 @@
+     /**
+      * Used for checking if an rss feed episode is already in the podcast
+      *
+-     * @param {import('../utils/podcastUtils').RssPodcastEpisode} feedEpisode - object from rss feed
+-     * @returns {boolean}
++     * @param feedEpisode - object from rss feed
+      */
+     checkHasEpisodeByFeedEpisode(feedEpisode) {
+         const guid = feedEpisode.guid;
+@@ -374,14 +303,13 @@
+         };
+     }
+     oldMetadataToJSONExpanded() {
++        // Typed with titleIgnorePrefix, which is added below
+         const oldMetadataJSON = this.oldMetadataToJSON();
+         oldMetadataJSON.titleIgnorePrefix = getTitlePrefixAtEnd(this.title);
+         return oldMetadataJSON;
+     }
+     /**
+      * The old model stored episodes with the podcast object
+-     *
+-     * @param {string} libraryItemId
+      */
+     toOldJSON(libraryItemId) {
+         if (!libraryItemId) {
+@@ -428,8 +356,6 @@
+     /**
+      * Expanded podcast JSON for item detail and socket events.
+      * Must be a strict superset of `toOldJSONMinified()` — built by spreading minified, then adding expanded-only fields.
+-     *
+-     * @param {string} libraryItemId
+      */
+     toOldJSONExpanded(libraryItemId) {
+         if (!libraryItemId) {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Series.js dist-server/server/models/Series.js
+--- /tmp/abs-base3a/dist-server/server/models/Series.js	2026-10-09 11:44:35.843410747 +1300
++++ dist-server/server/models/Series.js	2026-10-09 11:43:40.380895164 +1300
+@@ -1,41 +1,17 @@
+ "use strict";
+-const { DataTypes, Model, where, fn, col, literal } = require('sequelize');
+-const { getTitlePrefixAtEnd, getTitleIgnorePrefix } = require('../utils/index');
++const Sequelize = require("sequelize");
++const utils = require("../utils/index");
++const { DataTypes, Model, where, fn, col, literal } = Sequelize;
++const { getTitlePrefixAtEnd, getTitleIgnorePrefix } = utils;
+ class Series extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.name;
+-        /** @type {string} */
+-        this.nameIgnorePrefix;
+-        /** @type {string} */
+-        this.description;
+-        /** @type {UUIDV4} */
+-        this.libraryId;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        // Expanded properties
+-        /** @type {import('./Book').BookExpandedWithLibraryItem[]} - only set when expanded */
+-        this.books;
+-    }
+     /**
+      * Check if series exists
+-     * @param {string} seriesId
+-     * @returns {Promise<boolean>}
+      */
+     static async checkExistsById(seriesId) {
+         return (await this.count({ where: { id: seriesId } })) > 0;
+     }
+     /**
+      * Get series by name and libraryId. name case insensitive
+-     *
+-     * @param {string} seriesName
+-     * @param {string} libraryId
+-     * @returns {Promise<Series>}
+      */
+     static async getByNameAndLibrary(seriesName, libraryId) {
+         return this.findOne({
+@@ -47,11 +23,6 @@
+             ]
+         });
+     }
+-    /**
+-     *
+-     * @param {string} seriesId
+-     * @returns {Promise<Series>}
+-     */
+     static async getExpandedById(seriesId) {
+         const series = await this.findByPk(seriesId);
+         if (!series)
+@@ -59,12 +30,6 @@
+         series.books = await series.getBooksExpandedWithLibraryItem();
+         return series;
+     }
+-    /**
+-     *
+-     * @param {string} seriesName
+-     * @param {string} libraryId
+-     * @returns {Promise<Series>}
+-     */
+     static async findOrCreateByNameAndLibrary(seriesName, libraryId) {
+         const series = await this.getByNameAndLibrary(seriesName, libraryId);
+         if (series)
+@@ -75,10 +40,6 @@
+             libraryId
+         });
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -126,8 +87,6 @@
+     }
+     /**
+      * Get all books in collection expanded with library item
+-     *
+-     * @returns {Promise<import('./Book').BookExpandedWithLibraryItem[]>}
+      */
+     getBooksExpandedWithLibraryItem() {
+         return this.getBooks({
+@@ -149,7 +108,9 @@
+                     }
+                 }
+             ],
++            // cast(b): sequelize accepts an order item with only a literal (which holds the direction), its types do not
+             order: [[literal('CAST(`bookSeries.sequence` AS FLOAT) ASC NULLS LAST')]]
++            // cast(b): the libraryItem is included, which getBooks does not type
+         });
+     }
+     toOldJSON() {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Session.js dist-server/server/models/Session.js
+--- /tmp/abs-base3a/dist-server/server/models/Session.js	2026-10-09 11:44:35.782410187 +1300
++++ dist-server/server/models/Session.js	2026-10-09 11:43:40.383895192 +1300
+@@ -1,37 +1,14 @@
+ "use strict";
+-const { DataTypes, Model, Op } = require('sequelize');
++const Sequelize = require("sequelize");
++const { DataTypes, Model, Op } = Sequelize;
+ class Session extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.ipAddress;
+-        /** @type {string} */
+-        this.userAgent;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {UUIDV4} */
+-        this.userId;
+-        /** @type {Date} */
+-        this.expiresAt;
+-        /** @type {string} */
+-        this.lastRefreshToken;
+-        /** @type {Date} */
+-        this.lastRefreshTokenExpiresAt;
+-        // Expanded properties
+-        /** @type {import('./User').User} */
+-        this.user;
+-    }
+     static async createSession(userId, ipAddress, userAgent, refreshToken, expiresAt) {
+         const session = await Session.create({ userId, ipAddress, userAgent, refreshToken, expiresAt });
+         return session;
+     }
+     /**
+      * Clean up expired sessions from the database
+-     * @returns {Promise<number>} Number of sessions deleted
++     * @returns Number of sessions deleted
+      */
+     static async cleanupExpiredSessions() {
+         const deletedCount = await Session.destroy({
+@@ -43,10 +20,6 @@
+         });
+         return deletedCount;
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/Setting.js dist-server/server/models/Setting.js
+--- /tmp/abs-base3a/dist-server/server/models/Setting.js	2026-10-09 11:44:35.925411502 +1300
++++ dist-server/server/models/Setting.js	2026-10-09 11:43:40.387895230 +1300
+@@ -1,20 +1,10 @@
+ "use strict";
+-const { DataTypes, Model } = require('sequelize');
+-const oldEmailSettings = require('../objects/settings/EmailSettings');
+-const oldServerSettings = require('../objects/settings/ServerSettings');
+-const oldNotificationSettings = require('../objects/settings/NotificationSettings');
++const Sequelize = require("sequelize");
++const oldEmailSettings = require("../objects/settings/EmailSettings");
++const oldServerSettings = require("../objects/settings/ServerSettings");
++const oldNotificationSettings = require("../objects/settings/NotificationSettings");
++const { DataTypes, Model } = Sequelize;
+ class Setting extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {string} */
+-        this.key;
+-        /** @type {Object} */
+-        this.value;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-    }
+     static async getOldSettings() {
+         const settings = (await this.findAll()).map((se) => se.value);
+         const emailSettingsJson = settings.find((se) => se.id === 'email-settings');
+@@ -27,16 +17,15 @@
+             notificationSettings: new oldNotificationSettings(notificationSettingsJson)
+         };
+     }
++    /**
++     * The settings object is stored as is; the JSON column serializes it with its toJSON
++     */
+     static updateSettingObj(setting) {
+         return this.upsert({
+             key: setting.id,
+             value: setting
+         });
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             key: {
+Only in dist-server/server/models: types.js
+diff -ruwB /tmp/abs-base3a/dist-server/server/models/User.js dist-server/server/models/User.js
+--- /tmp/abs-base3a/dist-server/server/models/User.js	2026-10-09 11:44:35.957411796 +1300
++++ dist-server/server/models/User.js	2026-10-09 11:43:40.425489915 +1300
+@@ -1,11 +1,14 @@
+ "use strict";
+-const uuidv4 = require('uuid').v4;
+-const sequelize = require('sequelize');
+-const { LRUCache } = require('lru-cache');
+-const Logger = require('../Logger');
+-const SocketAuthority = require('../SocketAuthority');
+-const { isNullOrNaN } = require('../utils');
+-const TokenManager = require('../auth/TokenManager');
++const uuid = require("uuid");
++const sequelize = require("sequelize");
++const lruCache = require("lru-cache");
++const Logger = require("../Logger");
++const SocketAuthority = require("../SocketAuthority");
++const utils = require("../utils");
++const TokenManager = require("../auth/TokenManager");
++const uuidv4 = uuid.v4;
++const { LRUCache } = lruCache;
++const { isNullOrNaN } = utils;
+ class UserCache {
+     constructor() {
+         this.cache = new LRUCache({ max: 100 });
+@@ -44,63 +47,7 @@
+ }
+ const userCache = new UserCache();
+ const { DataTypes, Model } = sequelize;
+-/**
+- * @typedef AudioBookmarkObject
+- * @property {string} libraryItemId
+- * @property {string} title
+- * @property {number} time
+- * @property {number} createdAt
+- */
+-/**
+- * @typedef ProgressUpdatePayload
+- * @property {string} libraryItemId
+- * @property {string} [episodeId]
+- * @property {number} [duration]
+- * @property {number} [progress]
+- * @property {number} [currentTime]
+- * @property {boolean} [isFinished]
+- * @property {boolean} [hideFromContinueListening]
+- * @property {string} [ebookLocation]
+- * @property {number} [ebookProgress]
+- * @property {string} [finishedAt]
+- * @property {number} [lastUpdate]
+- * @property {number} [markAsFinishedTimeRemaining]
+- * @property {number} [markAsFinishedPercentComplete]
+- */
+ class User extends Model {
+-    constructor(values, options) {
+-        super(values, options);
+-        /** @type {UUIDV4} */
+-        this.id;
+-        /** @type {string} */
+-        this.username;
+-        /** @type {string} */
+-        this.email;
+-        /** @type {string} */
+-        this.pash;
+-        /** @type {string} */
+-        this.type;
+-        /** @type {string} */
+-        this.token;
+-        /** @type {boolean} */
+-        this.isActive;
+-        /** @type {boolean} */
+-        this.isLocked;
+-        /** @type {Date} */
+-        this.lastSeen;
+-        /** @type {Object} */
+-        this.permissions;
+-        /** @type {AudioBookmarkObject[]} */
+-        this.bookmarks;
+-        /** @type {Object} */
+-        this.extraData;
+-        /** @type {Date} */
+-        this.createdAt;
+-        /** @type {Date} */
+-        this.updatedAt;
+-        /** @type {import('./MediaProgress')[]?} - Only included when extended */
+-        this.mediaProgresses;
+-    }
+     // Excludes "root" since their can only be 1 root user
+     static accountTypes = ['admin', 'user', 'guest'];
+     /**
+@@ -125,7 +72,7 @@
+      * Get a sample to show how a JSON for updatePermissionsFromExternalJSON should look like
+      * Only used for OpenID
+      *
+-     * @returns {string} JSON string
++     * @returns JSON string
+      */
+     static getSampleAbsPermissions() {
+         // Start with a template object where all permissions are false for simplicity
+@@ -144,11 +91,6 @@
+         }, {});
+         return JSON.stringify(samplePermissions, null, 2); // Pretty print the JSON
+     }
+-    /**
+-     *
+-     * @param {string} type
+-     * @returns
+-     */
+     static getDefaultPermissionsForUserType(type) {
+         return {
+             download: true,
+@@ -166,10 +108,6 @@
+     }
+     /**
+      * Create root user
+-     * @param {string} username
+-     * @param {string} pash
+-     * @param {import('../Auth')} auth
+-     * @returns {Promise<User>}
+      */
+     static async createRootUser(username, pash, auth) {
+         const userId = uuidv4();
+@@ -192,9 +130,6 @@
+     /**
+      * Finds an existing user by OpenID subject identifier, or by email/username based on server settings
+      * Returns null if no user is found
+-     *
+-     * @param {Object} userinfo
+-     * @returns {Promise<User|{error: string}>}
+      */
+     static async findUserFromOpenIdUserInfo(userinfo) {
+         let user = await this.getUserByOpenIDSub(userinfo.sub);
+@@ -278,8 +213,6 @@
+     }
+     /**
+      * Create user from openid userinfo
+-     * @param {Object} userinfo
+-     * @returns {Promise<User>}
+      */
+     static async createUserFromOpenIdUserInfo(userinfo) {
+         const userId = uuidv4();
+@@ -311,8 +244,6 @@
+     }
+     /**
+      * Get user by username case insensitive
+-     * @param {string} username
+-     * @returns {Promise<User>}
+      */
+     static async getUserByUsername(username) {
+         if (!username)
+@@ -330,8 +261,6 @@
+     }
+     /**
+      * Get user by email case insensitive
+-     * @param {string} email
+-     * @returns {Promise<User>}
+      */
+     static async getUserByEmail(email) {
+         if (!email)
+@@ -349,8 +278,6 @@
+     }
+     /**
+      * Get user by id
+-     * @param {string} userId
+-     * @returns {Promise<User>}
+      */
+     static async getUserById(userId) {
+         if (!userId)
+@@ -368,9 +295,6 @@
+     /**
+      * Get user by id or old id
+      * JWT tokens generated before 2.3.0 used old user ids
+-     *
+-     * @param {string} userId
+-     * @returns {Promise<User>}
+      */
+     static async getUserByIdOrOldId(userId) {
+         if (!userId)
+@@ -390,8 +314,6 @@
+     }
+     /**
+      * Get user by openid sub
+-     * @param {string} sub
+-     * @returns {Promise<User>}
+      */
+     static async getUserByOpenIDSub(sub) {
+         if (!sub)
+@@ -409,7 +331,7 @@
+     }
+     /**
+      * Get array of user id and username
+-     * @returns {object[]} { id, username }
++     * @returns { id, username }
+      */
+     static async getMinifiedUserObjects() {
+         const users = await this.findAll({
+@@ -424,7 +346,6 @@
+     }
+     /**
+      * Return true if root user exists
+-     * @returns {boolean}
+      */
+     static async getHasRootUser() {
+         const count = await this.count({
+@@ -436,8 +357,6 @@
+     }
+     /**
+      * Check if user exists with username
+-     * @param {string} username
+-     * @returns {boolean}
+      */
+     static async checkUserExistsWithUsername(username) {
+         const count = await this.count({
+@@ -454,10 +373,6 @@
+             cachedUser.mediaProgresses = cachedUser.mediaProgresses.filter((mp) => mp.id !== mediaProgress.id);
+         }
+     }
+-    /**
+-     * Initialize model
+-     * @param {import('../Database').sequelize} sequelize
+-     */
+     static init(sequelize) {
+         super.init({
+             id: {
+@@ -487,6 +402,7 @@
+             modelName: 'user',
+             hooks: {
+                 beforeDestroy(user) {
++                    // cast(b): the hook receives the User instance; init types the hook instances as Model
+                     if (user.type === 'root') {
+                         throw new Error('Root user cannot be deleted');
+                     }
+@@ -521,16 +437,12 @@
+     get canUpload() {
+         return !!this.permissions?.upload && this.isActive;
+     }
+-    /** @type {string|null} */
+     get authOpenIDSub() {
+         return this.extraData?.authOpenIDSub || null;
+     }
+     /**
+      * User data for clients
+      * Emitted on socket events user_online, user_offline and user_stream_update
+-     *
+-     * @param {import('../objects/PlaybackSession')[]} sessions
+-     * @returns
+      */
+     toJSONForPublic(sessions) {
+         const session = sessions?.find((s) => s.userId === this.id)?.toJSONForClient() || null;
+@@ -546,9 +458,8 @@
+     /**
+      * User data for browser using old model
+      *
+-     * @param {boolean} [hideRootToken=false]
+-     * @param {boolean} [minimal=false]
+-     * @returns
++     * @param [hideRootToken=false]
++     * @param [minimal=false]
+      */
+     toOldJSONForBrowser(hideRootToken = false, minimal = false) {
+         const seriesHideFromContinueListening = this.extraData?.seriesHideFromContinueListening || [];
+@@ -587,9 +498,6 @@
+     }
+     /**
+      * Check user has access to library
+-     *
+-     * @param {string} libraryId
+-     * @returns {boolean}
+      */
+     checkCanAccessLibrary(libraryId) {
+         if (this.permissions?.accessAllLibraries)
+@@ -600,9 +508,6 @@
+     }
+     /**
+      * Check user has access to library item with tags
+-     *
+-     * @param {string[]} tags
+-     * @returns {boolean}
+      */
+     checkCanAccessLibraryItemWithTags(tags) {
+         if (this.permissions.accessAllTags)
+@@ -619,13 +524,12 @@
+     }
+     /**
+      * Check user can access library item
+-     *
+-     * @param {import('./LibraryItem')} libraryItem
+-     * @returns {boolean}
+      */
+     checkCanAccessLibraryItem(libraryItem) {
+         if (!this.checkCanAccessLibrary(libraryItem.libraryId))
+             return false;
++        // NOTE: neither Book nor Podcast has a metadata property (the old models had one), so the second check is always false
++        // cast(c): the JS reads media.metadata; see the NOTE above
+         const libraryItemExplicit = !!libraryItem.media.explicit || !!libraryItem.media.metadata?.explicit;
+         if (libraryItemExplicit && !this.canAccessExplicitContent)
+             return false;
+@@ -634,8 +538,7 @@
+     /**
+      * Get first available library id for user
+      *
+-     * @param {string[]} libraryIds
+-     * @returns {string|null}
++     * @param libraryIds
+      */
+     getDefaultLibraryId(libraryIds) {
+         // Libraries should already be in ascending display order, find first accessible
+@@ -643,10 +546,6 @@
+     }
+     /**
+      * Get media progress by media item id
+-     *
+-     * @param {string} libraryItemId
+-     * @param {string|null} [episodeId]
+-     * @returns {import('./MediaProgress')|null}
+      */
+     getMediaProgress(mediaItemId) {
+         if (!this.mediaProgresses?.length)
+@@ -657,9 +556,7 @@
+      * Get old media progress
+      * TODO: Update to new model
+      *
+-     * @param {string} libraryItemId
+-     * @param {string} [episodeId]
+-     * @returns
++     * @param [episodeId]
+      */
+     getOldMediaProgress(libraryItemId, episodeId = null) {
+         const mediaProgress = this.mediaProgresses?.find((mp) => {
+@@ -671,12 +568,8 @@
+     }
+     /**
+      * TODO: Uses old model and should account for the different between ebook/audiobook progress
+-     *
+-     * @param {ProgressUpdatePayload} progressPayload
+-     * @returns {Promise<{ mediaProgress: import('./MediaProgress'), error: [string], statusCode: [number] }>}
+      */
+     async createUpdateMediaProgressFromPayload(progressPayload) {
+-        /** @type {import('./MediaProgress')|null} */
+         let mediaProgress = null;
+         let mediaItemId = null;
+         let podcastId = null;
+@@ -697,6 +590,7 @@
+                             attributes: ['id']
+                         }
+                     }
++                    // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+                 ]
+             });
+             if (!podcastEpisode) {
+@@ -722,6 +616,7 @@
+                         where: { userId: this.id },
+                         required: false
+                     }
++                    // cast(b): sequelize accepts a single model or include object as a nested include, its types only allow an array
+                 }
+             });
+             if (!libraryItem) {
+@@ -739,11 +634,14 @@
+                 };
+             }
+             mediaItemId = libraryItem.media.id;
++            // cast(d): media is the included Book (mediaType is "book", checked above)
+             mediaProgress = libraryItem.media.mediaProgresses?.[0];
+         }
+         if (mediaProgress) {
+             mediaProgress = await mediaProgress.applyProgressUpdate(progressPayload);
+-            this.mediaProgresses = this.mediaProgresses.map((mp) => (mp.id === mediaProgress.id ? mediaProgress : mp));
++            // Same value as mediaProgress, which the callback below reads
++            const updatedMediaProgress = mediaProgress;
++            this.mediaProgresses = this.mediaProgresses.map((mp) => (mp.id === updatedMediaProgress.id ? updatedMediaProgress : mp));
+         }
+         else {
+             const newMediaProgressPayload = {
+@@ -782,21 +680,12 @@
+     /**
+      * Find bookmark
+      * TODO: Bookmarks should use mediaItemId instead of libraryItemId to support podcast episodes
+-     *
+-     * @param {string} libraryItemId
+-     * @param {number} time
+-     * @returns {AudioBookmarkObject|null}
+      */
+     findBookmark(libraryItemId, time) {
+         return this.bookmarks.find((bm) => bm.libraryItemId === libraryItemId && bm.time == time);
+     }
+     /**
+      * Create bookmark
+-     *
+-     * @param {string} libraryItemId
+-     * @param {number} time
+-     * @param {string} title
+-     * @returns {Promise<AudioBookmarkObject>}
+      */
+     async createBookmark(libraryItemId, time, title) {
+         const existingBookmark = this.findBookmark(libraryItemId, time);
+@@ -822,11 +711,6 @@
+     }
+     /**
+      * Update bookmark
+-     *
+-     * @param {string} libraryItemId
+-     * @param {number} time
+-     * @param {string} title
+-     * @returns {Promise<AudioBookmarkObject>}
+      */
+     async updateBookmark(libraryItemId, time, title) {
+         const bookmark = this.findBookmark(libraryItemId, time);
+@@ -842,9 +726,7 @@
+     /**
+      * Remove bookmark
+      *
+-     * @param {string} libraryItemId
+-     * @param {number} time
+-     * @returns {Promise<boolean>} - true if bookmark was removed
++     * @returns true if bookmark was removed
+      */
+     async removeBookmark(libraryItemId, time) {
+         if (!this.findBookmark(libraryItemId, time)) {
+@@ -856,11 +738,6 @@
+         await this.save();
+         return true;
+     }
+-    /**
+-     *
+-     * @param {string} seriesId
+-     * @returns {Promise<boolean>}
+-     */
+     async addSeriesToHideFromContinueListening(seriesId) {
+         if (!this.extraData)
+             this.extraData = {};
+@@ -873,11 +750,6 @@
+         await this.save();
+         return true;
+     }
+-    /**
+-     *
+-     * @param {string} seriesId
+-     * @returns {Promise<boolean>}
+-     */
+     async removeSeriesFromHideFromContinueListening(seriesId) {
+         if (!this.extraData)
+             this.extraData = {};
+@@ -893,13 +765,15 @@
+     /**
+      * Update user permissions from external JSON
+      *
+-     * @param {Object} absPermissions JSON containing user permissions
+-     * @returns {Promise<boolean>} true if updates were made
++     * @param absPermissions JSON containing user permissions
++     * @returns true if updates were made
+      */
+     async updatePermissionsFromExternalJSON(absPermissions) {
+         if (!this.permissions)
+             this.permissions = {};
+         let hasUpdates = false;
++        // Same object as this.permissions, read and written by key
++        const permissionValues = this.permissions;
+         // Map the boolean permissions from absPermissions
+         Object.keys(absPermissions).forEach((absKey) => {
+             const userPermKey = User.permissionMapping[absKey];
+@@ -907,8 +781,8 @@
+                 throw new Error(`Unexpected permission property: ${absKey}`);
+             }
+             if (!['librariesAccessible', 'itemTagsSelected'].includes(userPermKey)) {
+-                if (this.permissions[userPermKey] !== !!absPermissions[absKey]) {
+-                    this.permissions[userPermKey] = !!absPermissions[absKey];
++                if (permissionValues[userPermKey] !== !!absPermissions[absKey]) {
++                    permissionValues[userPermKey] = !!absPermissions[absKey];
+                     hasUpdates = true;
+                 }
+             }
+@@ -951,6 +825,7 @@
+     }
+     async update(values, options) {
+         userCache.maybeInvalidate(this);
++        // cast(b): the two arguments are forwarded as they came (a third update(key, value, options) argument is dropped, as in the JS); the overloads above type the callers
+         return await super.update(values, options);
+     }
+     async save(options) {
+diff -ruwB /tmp/abs-base3a/dist-server/server/utils/migrations/absMetadataMigration.js dist-server/server/utils/migrations/absMetadataMigration.js
+--- /tmp/abs-base3a/dist-server/server/utils/migrations/absMetadataMigration.js	2026-10-09 11:44:35.926411511 +1300
++++ dist-server/server/utils/migrations/absMetadataMigration.js	2026-10-09 11:43:40.837899461 +1300
+@@ -47,7 +47,6 @@
+         libraryItem.ctime = libraryItemDirTimestamps.ctimeMs;
+         let size = 0;
+         libraryItem.libraryFiles.forEach((lf) => size += (!isNaN(lf.metadata.size) ? Number(lf.metadata.size) : 0));
+-        // The BIGINT column is a number in sqlite (the model JSDoc says BigInt)
+         libraryItem.size = size;
+     }
+     libraryItem.changed('libraryFiles', true);
+diff -ruwB /tmp/abs-base3a/dist-server/server/utils/migrations/dbMigration.js dist-server/server/utils/migrations/dbMigration.js
+--- /tmp/abs-base3a/dist-server/server/utils/migrations/dbMigration.js	2026-10-09 11:44:35.766410040 +1300
++++ dist-server/server/utils/migrations/dbMigration.js	2026-10-09 11:43:40.881899875 +1300
+@@ -1130,11 +1130,13 @@
+         }
+     }
+     if (bulkUpdateEpisodes.length) {
++        // cast(b): bulkCreate with updateOnDuplicate only writes the listed columns of existing rows; its types expect complete new rows
+         await models.podcastEpisode.bulkCreate(bulkUpdateEpisodes, {
+             updateOnDuplicate: ['extraData']
+         });
+     }
+     if (bulkUpdateItems.length) {
++        // cast(b): bulkCreate with updateOnDuplicate only writes the listed columns of existing rows; its types expect complete new rows
+         await models.libraryItem.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['extraData']
+         });
+@@ -1311,6 +1313,7 @@
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} library items`);
++        // cast(b): bulkCreate with updateOnDuplicate only writes the listed columns of existing rows; its types expect complete new rows
+         await models.libraryItem.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['size']
+         });
+@@ -1346,12 +1349,14 @@
+         }
+         bulkUpdateItems.push({
+             id: book.id,
++            // cast(d): getTitleIgnorePrefix returns a null title as is (its title?.trim() check), as in the JS
+             titleIgnorePrefix: getTitleIgnorePrefix(book.title),
+             duration
+         });
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} books`);
++        // cast(b): bulkCreate with updateOnDuplicate only writes the listed columns of existing rows; its types expect complete new rows
+         await models.book.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['duration', 'titleIgnorePrefix']
+         });
+@@ -1378,11 +1383,13 @@
+     for (const podcast of podcasts) {
+         bulkUpdateItems.push({
+             id: podcast.id,
++            // cast(d): getTitleIgnorePrefix returns a null title as is (its title?.trim() check), as in the JS
+             titleIgnorePrefix: getTitleIgnorePrefix(podcast.title)
+         });
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} podcasts`);
++        // cast(b): bulkCreate with updateOnDuplicate only writes the listed columns of existing rows; its types expect complete new rows
+         await models.podcast.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['titleIgnorePrefix']
+         });
+@@ -1414,6 +1421,7 @@
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} series`);
++        // cast(b): bulkCreate with updateOnDuplicate only writes the listed columns of existing rows; its types expect complete new rows
+         await models.series.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['nameIgnorePrefix']
+         });
+@@ -1447,6 +1455,7 @@
+     }
+     if (bulkUpdateItems.length) {
+         Logger.info(`[dbMigration] Migration patch 2.3.3+ - patching ${bulkUpdateItems.length} authors`);
++        // cast(b): bulkCreate with updateOnDuplicate only writes the listed columns of existing rows; its types expect complete new rows
+         await models.author.bulkCreate(bulkUpdateItems, {
+             updateOnDuplicate: ['lastFirst']
+         });
+diff -ruwB /tmp/abs-base3a/dist-server/server/utils/queries/authorFilters.js dist-server/server/utils/queries/authorFilters.js
+--- /tmp/abs-base3a/dist-server/server/utils/queries/authorFilters.js	2026-10-09 11:44:35.831410637 +1300
++++ dist-server/server/utils/queries/authorFilters.js	2026-10-09 11:43:40.954900561 +1300
+@@ -66,6 +66,7 @@
+         });
+         const authorMatches = [];
+         for (const author of authors) {
++            // cast(b): numBooks is the attribute the query adds, which dataValues does not type
+             const oldAuthor = author.toOldJSONExpanded(author.dataValues.numBooks);
+             authorMatches.push(oldAuthor);
+         }
+diff -ruwB /tmp/abs-base3a/dist-server/server/utils/queries/libraryItemsBookFilters.js dist-server/server/utils/queries/libraryItemsBookFilters.js
+--- /tmp/abs-base3a/dist-server/server/utils/queries/libraryItemsBookFilters.js	2026-10-09 11:44:35.908411345 +1300
++++ dist-server/server/utils/queries/libraryItemsBookFilters.js	2026-10-09 11:43:41.037901341 +1300
+@@ -807,6 +807,7 @@
+             // if the library setting is toggled, only show later entries in series, otherwise skip
+             if (library.settings.onlyShowLaterBooksInContinueSeries) {
+                 bookIndex = s.bookSeries.findIndex(function (b) {
++                    // cast(d): parseFloat(null) is NaN, as in the JS
+                     return parseFloat(b.dataValues.sequence) > s.dataValues.maxSequence;
+                 });
+                 if (bookIndex === -1) {

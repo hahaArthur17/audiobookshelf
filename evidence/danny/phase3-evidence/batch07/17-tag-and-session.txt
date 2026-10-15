@@ -1,0 +1,74 @@
+== ApiKey tags ==
+87:    // cast(d): the ApiKey model does not declare getUser (see ApiKeyWithUser)
+90:      // cast(c): the creation values have no permissions
+118:    // cast(d): the ApiKey model does not declare getUser (see ApiKeyWithUser)
+== ApiKey 86-100 ==
+
+    // cast(d): the ApiKey model does not declare getUser (see ApiKeyWithUser)
+    const apiKeyInstance = (await Database.apiKeyModel.create(
+      // NOTE: permissions is not set, so the column is null although the ApiKey model types it as required (nothing reads it at the moment)
+      // cast(c): the creation values have no permissions
+      {
+        id: keyId,
+        name: req.body.name,
+        expiresAt,
+        userId: req.body.userId,
+        isActive: !!req.body.isActive,
+        createdByUserId: req.user.id
+      } as CreationAttributes<ApiKey>
+    )) as ApiKeyWithUser
+    apiKeyInstance.dataValues.user = await apiKeyInstance.getUser({
+== Podcast tags ==
+118:    // cast(c): read as in the JS (see NOTE above)
+125:    // cast(e): remove when Database.js is converted (sequelize is set by Database.init, which runs before routes are served)
+130:      // cast(d): the library item is created with mediaType 'podcast'
+162:    // cast(d): the media of this podcast library item, created above, so not null
+193:          // cast(d): the cover file has no isSupplementary (it reads as false), as in the JS (same as PodcastManager createPodcastsFromFeedUrls)
+297:    // cast(d): isNaN coerces its argument (the query value is a string)
+363:    // cast(d): isAutoDownload is left undefined (falsy), as in the JS, but the parameter is typed boolean
+416:        // cast(d): supportedStringKeys.includes(key) is checked above
+437:      // cast(b): Sequelize's set() takes the attribute (getter) types, publishedAt is Date | null there; the DATE column accepts epoch ms
+== Podcast 125-154 ==
+    // cast(e): remove when Database.js is converted (sequelize is set by Database.init, which runs before routes are served)
+    const transaction = await (Database as InitializedDatabase).sequelize.transaction()
+    try {
+      const podcast = await Database.podcastModel.createFromRequest(payload.media, transaction)
+
+      // cast(d): the library item is created with mediaType 'podcast'
+      newLibraryItem = (await Database.libraryItemModel.create(
+        {
+          ino: libraryItemFolderStats.ino,
+          path: podcastPath,
+          relPath,
+          mediaId: podcast.id,
+          mediaType: 'podcast',
+          isFile: false,
+          isMissing: false,
+          isInvalid: false,
+          mtime: libraryItemFolderStats.mtimeMs || 0,
+          ctime: libraryItemFolderStats.ctimeMs || 0,
+          birthtime: libraryItemFolderStats.birthtimeMs || 0,
+          size: 0,
+          libraryFiles: [],
+          extraData: {},
+          libraryId: library.id,
+          libraryFolderId: folder.id,
+          title: podcast.title,
+          titleIgnorePrefix: podcast.titleIgnorePrefix
+        },
+        { transaction }
+      )) as LibraryItem.PodcastLibraryItem
+
+== Session 291-302 ==
+    if (!audioTrack.metadata?.path) {
+      Logger.error(`[SessionController] Invalid audio track "${audioTrack.index}" for session "${req.params.id}"`)
+      return res.sendStatus(500)
+    }
+
+    // Non-null: open sessions belong to a user
+    const user = await Database.userModel.getUserById(playbackSession.userId!)
+    // NOTE: getUserById returns null when the user was deleted while the session is open; user.username then throws a TypeError
+    // Non-null: see NOTE above
+    Logger.debug(`[SessionController] Serving audio track ${audioTrack.index} for session "${req.params.id}" belonging to user "${user!.username}"`)
+
+    if (global.XAccel) {

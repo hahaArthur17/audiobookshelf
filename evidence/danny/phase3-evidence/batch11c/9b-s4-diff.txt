@@ -1,0 +1,68 @@
+diff -r -x server.log smoke/s4-base11c/scan1-expanded-BOOKLIB.json smoke/s4-new11c/scan1-expanded-BOOKLIB.json
+574c574
+<       "contentUrl": "/api/items/UUID/file/538135",
+---
+>       "contentUrl": "/api/items/UUID/file/538229",
+801c801
+<       "contentUrl": "/api/items/UUID/file/538127",
+---
+>       "contentUrl": "/api/items/UUID/file/538221",
+839c839
+<       "contentUrl": "/api/items/UUID/file/538128",
+---
+>       "contentUrl": "/api/items/UUID/file/538222",
+1182c1182
+<       "contentUrl": "/api/items/UUID/file/538133",
+---
+>       "contentUrl": "/api/items/UUID/file/538227",
+1232c1232
+<       "contentUrl": "/api/items/UUID/file/538134",
+---
+>       "contentUrl": "/api/items/UUID/file/538228",
+diff -r -x server.log smoke/s4-base11c/scan1-expanded-PODLIB.json smoke/s4-new11c/scan1-expanded-PODLIB.json
+109c109
+<        "contentUrl": "/api/items/UUID/file/538140",
+---
+>        "contentUrl": "/api/items/UUID/file/538234",
+219c219
+<        "contentUrl": "/api/items/UUID/file/538141",
+---
+>        "contentUrl": "/api/items/UUID/file/538235",
+396c396
+<        "contentUrl": "/api/items/UUID/file/538142",
+---
+>        "contentUrl": "/api/items/UUID/file/538236",
+diff -r -x server.log smoke/s4-base11c/scan2-expanded-BOOKLIB.json smoke/s4-new11c/scan2-expanded-BOOKLIB.json
+591c591
+<       "contentUrl": "/api/items/UUID/file/538135",
+---
+>       "contentUrl": "/api/items/UUID/file/538229",
+818c818
+<       "contentUrl": "/api/items/UUID/file/538127",
+---
+>       "contentUrl": "/api/items/UUID/file/538221",
+856c856
+<       "contentUrl": "/api/items/UUID/file/538128",
+---
+>       "contentUrl": "/api/items/UUID/file/538222",
+1199c1199
+<       "contentUrl": "/api/items/UUID/file/538133",
+---
+>       "contentUrl": "/api/items/UUID/file/538227",
+1249c1249
+<       "contentUrl": "/api/items/UUID/file/538134",
+---
+>       "contentUrl": "/api/items/UUID/file/538228",
+diff -r -x server.log smoke/s4-base11c/scan2-expanded-PODLIB.json smoke/s4-new11c/scan2-expanded-PODLIB.json
+109c109
+<        "contentUrl": "/api/items/UUID/file/538140",
+---
+>        "contentUrl": "/api/items/UUID/file/538234",
+219c219
+<        "contentUrl": "/api/items/UUID/file/538141",
+---
+>        "contentUrl": "/api/items/UUID/file/538235",
+396c396
+<        "contentUrl": "/api/items/UUID/file/538142",
+---
+>        "contentUrl": "/api/items/UUID/file/538236",

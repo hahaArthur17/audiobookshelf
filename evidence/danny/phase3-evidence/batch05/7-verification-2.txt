@@ -1,0 +1,168 @@
+--- corrected non-null ! count (agent 151, approximate, log strings with ! add noise)
+148
+--- every word after 'as'
+     82 as Record
+     56 as unknown
+     17 as Error
+     16 as string
+     12 as string[]
+      9 as number
+      7 as Podcast
+      7 as LibraryItem.PodcastLibraryItem
+      6 as Book
+      4 as Model
+      4 as InitializedDatabase
+      4 as Includeable
+      3 as LibraryItem.BookLibraryItem
+      3 as Exclude
+      3 as EBookFileObject
+      3 as CreationAttributes
+      3 as AudioFileObject[]
+      2 as unknown[]
+      2 as typeof
+      2 as OldDeviceInfo
+      2 as new
+      2 as missing
+      2 as MetadataSourceName
+      2 as MediaProbeData
+      2 as Mail.Options
+      2 as DateAndTime
+      2 as boolean
+      2 as AudioFileObject
+      2 as {
+      1 as version
+      1 as UmzugModule
+      1 as sqlite3.Database
+      1 as SMTPTransport.Options
+      1 as SeriesResult[]
+      1 as Response
+      1 as ProbeStreamInfo
+      1 as PlaybackSession
+      1 as Parameters
+      1 as NOT
+      1 as MergeTask
+      1 as MediaMetadataFromScan
+      1 as maxVersion
+      1 as LibraryItem.LibraryItemExpanded
+      1 as LibraryItem.BookLibraryItem[]
+      1 as LibraryItem
+      1 as LibraryFileObject
+      1 as InternalModuleStatic
+      1 as InternalModule
+      1 as Feed
+      1 as EventData
+      1 as EmbedTask
+      1 as Date
+      1 as count
+      1 as ConstructorParameters
+      1 as Collection
+      1 as ChapterObject[]
+      1 as BookMetadataObject
+      1 as AudioFile[]
+      1 as AudioChapter[]
+      1 as ArchiverFactory
+      1 as absdatabase.failed.sqlite.
+managers/NotificationManager.ts:217:      .post(Database.notificationSettings.appriseApiUrl as string, payload, { timeout: 6000 })
+managers/BackupManager.ts:112:      var cronSchedule = this.backupSchedule as string
+managers/BackupManager.ts:143:    const tempPath = Path.join(this.backupPath, fileUtils.sanitizeFilename(backupFile.name) as string)
+managers/BinaryManager.ts:180:    const assetUrl = assets?.bin?.[this.platformSuffix as string]?.[assetName]
+managers/BinaryManager.ts:280:      const whichPath = which.sync(this.fileName, { nothrow: true }) as string | null
+managers/PlaybackSessionManager.ts:258:      if (isNaN(jsDate as unknown as number)) {
+managers/PlaybackSessionManager.ts:278:      if (userProgressForItem.updatedAt.valueOf() > (session.updatedAt as number)) {
+managers/PlaybackSessionManager.ts:348:    const shouldDirectPlay = options.forceDirectPlay || (!options.forceTranscode && libraryItem.media.checkCanDirectPlay(options.supportedMimeTypes as string[], episodeId))
+managers/PlaybackSessionManager.ts:360:        userStartTime = Number.parseFloat(userProgress.currentTime as unknown as string) || 0
+managers/PlaybackSessionManager.ts:375:      const stream = new Stream(newPlaybackSession.id!, this.StreamsPath, user, libraryItem, episodeId as string | null, userStartTime)
+managers/PodcastManager.ts:203:    await libraryFile.setDataFromPath(this.currentDownload!.targetPath, this.currentDownload!.targetRelPath as string)
+managers/PodcastManager.ts:400:    let newEpisodes = feed.episodes.filter((ep) => (ep.publishedAt as number) > dateToCheckForEpisodesAfter && !podcastLibraryItem.media.checkHasEpisodeByFeedEpisode(ep))
+managers/PodcastManager.ts:545:      const feedTitle = feed.metadata.title as string
+managers/PodcastManager.ts:633:            relPath: podcastFilename as string,
+scanner/AudioFileScanner.ts:185:    if (publishedYear) partbasename = (partbasename as string & { replace(searchValue: string): string }).replace(publishedYear)
+scanner/AudioFileScanner.ts:192:      if (!isNaN(discMatch[2] as unknown as number)) {
+scanner/AudioFileScanner.ts:341:          bookMetadata.narrators = (parseNameString.parse(value)?.names || []) as string[]
+scanner/AudioFileScanner.ts:344:          bookMetadata.authors = (parseNameString.parse(value)?.names || []) as string[]
+scanner/AudioFileScanner.ts:517:          if (pubJsDate && !isNaN(pubJsDate as unknown as number)) {
+scanner/PodcastScanner.ts:118:            libraryScan.addLog(LogLevel.INFO, `Podcast episode "${podcastEpisode.title}" keys changed [${(podcastEpisode.changed() as string[] | undefined)?.join(', ')}]`)
+scanner/MediaProbeData.ts:94:    this.channelLayout = this.audioStream.channel_layout as string | null
+scanner/MediaProbeData.ts:96:    this.channels = this.audioStream.channels as number | null
+scanner/LibraryItemScanData.ts:92:    this.libraryFiles.forEach((lf) => size += (!isNaN(lf.metadata.size as number) ? Number(lf.metadata.size) : 0))
+scanner/LibraryItemScanData.ts:307:      libraryScan.addLog(LogLevel.DEBUG, `Library item "${existingLibraryItem.relPath}" changed: [${(existingLibraryItem.changed() as string[] | undefined)?.join(',') || ''}]`)
+scanner/LibraryItemScanData.ts:398:      bookMetadata.authors = this.mediaMetadata.authors as string[]
+scanner/LibraryItemScanData.ts:402:      bookMetadata.narrators = this.mediaMetadata.narrators as string[]
+scanner/Scanner.ts:75:      const results = await BookFinder.search(libraryItem, provider, searchTitle as string, searchAuthor, searchISBN, searchASIN, { maxFuzzySearches: 2 })
+scanner/Scanner.ts:312:        const authorsRemoved = libraryItem.media.authors.filter((a) => !(matchData.author as string[]).find((ma) => ma.toLowerCase() === a.name.toLowerCase()))
+scanner/Scanner.ts:340:            existingSeries.bookSeries.sequence = seriesMatchItem.sequence as string | null
+scanner/LibraryScanner.ts:355:        fileObjs = await scanUtils.buildLibraryFile(libraryItemData.path, libraryItemGrouping[libraryItemPath] as string[])
+scanner/LibraryScanner.ts:520:      const itemDirNestedFiles = (fileUpdateGroup[itemDir] as string[]).filter((b) => b.includes('/'))
+scanner/LibraryScanner.ts:674:  return isSingleMediaFile(fileUpdateGroup, itemDir) ? scanUtils.checkFilepathIsAudioFile(fileUpdateGroup[itemDir] as string) : (fileUpdateGroup[itemDir] as string[]).some(scanUtils.checkFilepathIsAudioFile)
+scanner/BookScanner.ts:433:      const coverPath = await this.searchForCover(existingLibraryItem.id, libraryItemDir, media.title as string, authorName, libraryScan)
+scanner/BookScanner.ts:522:    scannedAudioFiles.forEach((af) => (duration += !isNaN(af.duration as number) ? Number(af.duration) : 0))
+scanner/BookScanner.ts:671:    const decade = publishedYear ? `${Math.floor((publishedYear as unknown as number) / 10) * 10}` : null
+scanner/BookScanner.ts:857:          this.bookMetadata.narrators = (parseNameString.parse(narrator)?.names || []) as string[]
+managers/ApiCacheManager.ts:140:       }) as Response['send']
+managers/RssFeedManager.ts:113:       })) as LibraryItem
+managers/RssFeedManager.ts:158:         } as unknown as Includeable
+managers/RssFeedManager.ts:159:       })) as Collection | Series
+managers/EmailManager.ts:42:     } as Mail.Options).then((result) => {
+managers/EmailManager.ts:76:     } as Mail.Options).then((result) => {
+managers/MigrationManager.ts:181:         Logger.info('[MigrationManager] Saved the failed database as absdatabase.failed.sqlite.')
+managers/MigrationManager.ts:261:     const [{ version }] = await this.sequelize.query<{ version: string }>("SELECT value as version FROM :migrationsMeta WHERE key = 'version'", {
+managers/MigrationManager.ts:267:     const [{ maxVersion }] = await this.sequelize.query<{ maxVersion: string }>("SELECT value as maxVersion FROM :migrationsMeta WHERE key = 'maxVersion'", {
+managers/MigrationManager.ts:280:       const [{ count }] = await this.sequelize.query<{ count: number }>("SELECT COUNT(*) as count FROM :migrationsMeta WHERE key IN ('version', 'maxVersion')", {
+scanner/AudioFileScanner.ts:176:     const { filename, path } = audioLibraryFile.metadata as { filename: string; path: string }
+scanner/AudioFileScanner.ts:218:     const probeData = (await prober.probe(libraryFile.metadata.path!)) as MediaProbeData
+scanner/PodcastScanner.ts:49:     })) as Podcast
+scanner/PodcastScanner.ts:354:       } as unknown as Includeable
+scanner/PodcastScanner.ts:365:     })) as Podcast
+scanner/LibraryScanner.ts:602:             Logger.info(`[LibraryScanner] Scanning file update group and library item was deleted "${existingLibraryItem.media.title}" - marking as missing`)
+scanner/BookScanner.ts:118:     })) as Book
+scanner/BookScanner.ts:455:         libraryScan.addLog(LogLevel.INFO, `Book "${bookMetadata.title}" has no audio files and no ebook file. Setting library item as missing`)
+scanner/BookScanner.ts:460:       libraryScan.addLog(LogLevel.INFO, `Book "${bookMetadata.title}" was missing but now has media files. Setting library item as NOT missing`)
+scanner/BookScanner.ts:632:           } as unknown as Includeable,
+scanner/BookScanner.ts:639:           } as unknown as Includeable
+scanner/BookScanner.ts:695:     })) as Book
+--- CronManager executePodcastCron
+178:          // The JS also passed libraryItemIds, which executePodcastCron does not take (it reads them from the cron)
+179:          this.executePodcastCron(expression)
+192:  async executePodcastCron(expression: string) {
+--- PlaybackSessionManager mediaMetadata context
+225-      session.deviceInfo = deviceInfo
+226-
+227-      if (session.mediaMetadata == null) {
+228-        session.mediaMetadata = {}
+229-      }
+230-      // cast(d): the media metadata object (set just above when missing) indexed by key
+231:      const mediaMetadata = session.mediaMetadata as Record<string, unknown>
+232-
+233-      // Populate mediaMetadata with the current library items metadata for any keys not set by client
+234-      const libraryItemMediaMetadata: Record<string, unknown> = libraryItem.media.oldMetadataToJSON()
+235-      for (const key in libraryItemMediaMetadata) {
+236-        if (mediaMetadata[key] === undefined) {
+237-          mediaMetadata[key] = libraryItemMediaMetadata[key]
+--- LibraryScanner top-level statements
+24:const { LogLevel, ScanResult } = constants
+36:class LibraryScanner {
+652:export = new LibraryScanner()
+663:function ItemToFileInoMatch(libraryItem1: InoMatchItem, libraryItem2: InoMatchItem) {
+667:function ItemToItemInoMatch(libraryItem1: InoMatchItem, libraryItem2: InoMatchItem) {
+671:function hasAudioFiles(fileUpdateGroup: FileUpdateGroup, itemDir: string) {
+677:function isSingleMediaFile(fileUpdateGroup: FileUpdateGroup, itemDir: string) {
+681:async function findLibraryItemByItemToItemInoMatch(libraryId: string, fullPath: string) {
+692:async function findLibraryItemByItemToFileInoMatch(libraryId: string, fullPath: string, isSingleMedia: boolean) {
+717:async function findLibraryItemByFileToItemInoMatch(libraryId: string, fullPath: string, isSingleMedia: boolean, itemFiles: string | string[]) {
+--- axios interop
+esModule undefined default===axios true
+    ✔ getRequestProtocol returns https or http
+    ✔ getRequestOrigin builds origin from protocol and host
+
+  scanUtils
+    ✔ should properly group files into potential book library items
+
+  stringifySequelizeQuery
+    ✔ should stringify a sequelize query containing an op
+    ✔ should stringify a sequelize query containing a literal
+    ✔ should stringify a sequelize query containing a class
+    ✔ should ignore non-class functions
+
+
+  356 passing (2s)
+

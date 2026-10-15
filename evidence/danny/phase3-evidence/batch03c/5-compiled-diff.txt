@@ -1,0 +1,5 @@
+Files BASE/server/scanner/AudioFileScanner.js and CUR/server/scanner/AudioFileScanner.js differ
+Files BASE/server/utils/queries/libraryFilters.js and CUR/server/utils/queries/libraryFilters.js differ
+Files BASE/server/utils/queries/libraryItemsBookFilters.js and CUR/server/utils/queries/libraryItemsBookFilters.js differ
+Files BASE/server/utils/queries/libraryItemsPodcastFilters.js and CUR/server/utils/queries/libraryItemsPodcastFilters.js differ
+Files BASE/server/utils/queries/seriesFilters.js and CUR/server/utils/queries/seriesFilters.js differ

@@ -1,0 +1,50 @@
+--- authorsWithCount (any file type)
+server/controllers/LibraryController.js-987-      const longestBooks = await libraryItemsBookFilters.getLongestBooks(req.library.id, 10)
+server/controllers/LibraryController.js-988-
+server/controllers/LibraryController.js-989-      stats.totalAuthors = await authorFilters.getAuthorsTotalCount(req.library.id)
+server/controllers/LibraryController.js:990:      stats.authorsWithCount = authors
+server/controllers/LibraryController.js-991-      stats.totalGenres = genres.length
+server/controllers/LibraryController.js-992-      stats.genresWithCount = genres
+server/controllers/LibraryController.js-993-      stats.totalItems = bookStats.totalItems
+server/controllers/LibraryController.js-994-      stats.longestItems = longestBooks
+server/controllers/LibraryController.js-995-      stats.totalSize = bookStats.totalSize
+server/controllers/LibraryController.js-996-      stats.totalDuration = bookStats.totalDuration
+server/controllers/LibraryController.js-997-      stats.numAudioTracks = bookStats.numAudioFiles
+server/controllers/LibraryController.js-998-    } else {
+server/controllers/LibraryController.js-999-      const genres = await libraryItemsPodcastFilters.getGenresWithCount(req.library.id)
+server/controllers/LibraryController.js-1000-      const podcastStats = await libraryItemsPodcastFilters.getPodcastLibraryStats(req.library.id)
+--- global.configPath uses (lowercase c)
+server/managers/MigrationManager.ts:72:  // NOTE: the default reads global.configPath, which is never set (the global is ConfigPath); Database passes the config path, so the default is not used
+--- global.ConfigPath assignment
+server/Server.js:67:    global.ConfigPath = fileUtils.filePathToPOSIX(Path.normalize(CONFIG_PATH))
+--- onTest anywhere
+server/utils/notifications.ts:97:      name: 'onTest',
+server/routers/ApiRouter.ts:335:    this.router.get('/notifications/:id/test', NotificationController.middleware.bind(this), NotificationController.sendNotificationTest.bind(this))
+server/managers/NotificationManager.ts:134:  onTest() {
+server/managers/NotificationManager.ts:135:    this.triggerNotification('onTest')
+server/managers/NotificationManager.ts:139:   * @param eventData - not passed by onTest
+server/managers/NotificationManager.ts:151:      // NOTE: onTest triggers without event data; getApprisePayload then reads template variables from undefined and throws
+server/controllers/NotificationController.js:68:    await NotificationManager.triggerNotification('onTest', { version: `v${version}` }, req.query.fail === '1')
+server/controllers/NotificationController.js:122:  async sendNotificationTest(req, res) {
+--- MediaMetadataFromScan type
+server/scanner/AudioFileScanner.ts:61:type MediaMetadataFromScan = LibraryItemScanData['mediaMetadata']
+server/scanner/AudioFileScanner.ts-62-
+server/scanner/AudioFileScanner.ts-63-/**
+server/scanner/AudioFileScanner.ts-64- * Podcast episode whose metadata is set from its audio file meta tags (the model, or the plain episode object of a new podcast)
+server/scanner/AudioFileScanner.ts-65- */
+server/scanner/AudioFileScanner.ts-66-interface PodcastEpisodeWithAudioFile {
+server/scanner/AudioFileScanner.ts-67-  title: string | null
+server/scanner/AudioFileScanner.ts-68-  subtitle: string | null
+server/scanner/AudioFileScanner.ts-69-  description: string | null
+server/scanner/AudioFileScanner.ts-70-  pubDate: string | null
+server/scanner/AudioFileScanner.ts-71-  season: string | null
+server/scanner/AudioFileScanner.ts-72-  episode: string | null
+server/scanner/AudioFileScanner.ts-73-  episodeType: string | null
+server/scanner/AudioFileScanner.ts-74-  publishedAt: Date | number | null
+server/scanner/AudioFileScanner.ts-75-  audioFile: ScannedOrStoredAudioFile
+--- Scanner PodcastFinder.search use
+106:      const results = await PodcastFinder.search(searchTitle)
+107-      // NOTE: search returns null for a podcast without a title; results.length then throws a TypeError
+108-      if (!results!.length) {
+109-        return {
+110-          warning: `No ${provider} match found`

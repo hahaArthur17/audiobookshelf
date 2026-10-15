@@ -1,0 +1,78 @@
+== MigrationManager ==
+1:import umzugModule = require('../libs/umzug')
+2:import sequelizeModule = require('sequelize')
+3:import semver = require('semver')
+4:import path = require('path')
+5:import Module = require('module')
+6:import fs = require('../libs/fsExtra')
+7:import Logger = require('../Logger')
+9:const { Sequelize, DataTypes } = sequelizeModule as typeof sequelizeModule & { Sequelize: { QueryTypes: typeof sequelizeModule.QueryTypes } }
+41:interface UmzugModule {
+43:  SequelizeStorage: new (options: { sequelize: sequelizeModule.Sequelize }) => unknown
+47:const { Umzug, SequelizeStorage } = umzugModule as unknown as UmzugModule
+52:type InternalModule = Module & { _compile(content: string, filename: string): void }
+53:type InternalModuleStatic = typeof Module & { _nodeModulePaths(from: string): string[] }
+58:  declare sequelize: sequelizeModule.Sequelize
+74:  constructor(sequelize: sequelizeModule.Sequelize, isDatabaseNew: boolean, configPath = (global as typeof globalThis & { configPath?: string }).configPath) {
+75:    if (!sequelize || !(sequelize instanceof Sequelize)) throw new Error('Sequelize instance is required for MigrationManager.')
+78:    if (!configPath) throw new Error('Config path is required for MigrationManager.')
+90:   * Init version vars and copy migration files to config dir if necessary
+105:    if (!this.serverVersion) throw new Error(`Invalid server version: ${serverVersion}. Expected a version tag like v1.2.3.`)
+108:    if (!this.maxVersion || !this.databaseVersion) throw new Error('Failed to fetch versions from the database.')
+109:    Logger.debug(`[MigrationManager] Database version: ${this.databaseVersion}, Max version: ${this.maxVersion}, Server version: ${this.serverVersion}`)
+113:        await this.copyMigrationsToConfigDir()
+115:        throw new Error('Failed to copy migrations to the config directory.', { cause: error })
+121:        throw new Error('Failed to update max version in the database.', { cause: error })
+137:    const versionCompare = semver.compare(this.serverVersion!, this.databaseVersion!)
+138:    if (versionCompare == 0) {
+149:    const migrationDirection = versionCompare == 1 ? 'up' : 'down'
+159:        Logger.info(`[MigrationManager] Migrating database ${migrationDirection} to version ${this.serverVersion}`)
+161:        // Create a backup copy of the SQLite database before starting migrations
+162:        await fs.copy(originalDbPath, backupDbPath)
+199:    const files = (await fs.readdir(this.migrationsDir!))
+201:        // Only include .js files and exclude dot files
+202:        return !file.startsWith('.') && path.extname(file).toLowerCase() === '.js'
+212:        throw new Error(`Invalid migration file: "${migrationName}". Unable to extract version from filename.`)
+225:          // cast(d): Node's internal module API (_compile) is not in the node types
+226:          const module = new Module(fakePath) as InternalModule
+228:          // cast(d): Node's internal module API (_nodeModulePaths) is not in the node types
+229:          module.paths = (Module as InternalModuleStatic)._nodeModulePaths(this.migrationsSourceDir)
+230:          module._compile(contents, fakePath)
+245:    // Sort migrations by version
+250:          const versionA = this.extractVersionFromTag(a.name)
+251:          const versionB = this.extractVersionFromTag(b.name)
+252:          // Migration names were validated above (each has a version)
+253:          return semver.compare(versionA!, versionB!)
+261:    const [{ version }] = await this.sequelize.query<{ version: string }>("SELECT value as version FROM :migrationsMeta WHERE key = 'version'", {
+265:    this.databaseVersion = version
+278:    // If the table exists, check that the `version` and `maxVersion` rows exist
+280:      const [{ count }] = await this.sequelize.query<{ count: number }>("SELECT COUNT(*) as count FROM :migrationsMeta WHERE key IN ('version', 'maxVersion')", {
+285:        Logger.warn(`[MigrationManager] migrationsMeta table exists but is missing 'version' or 'maxVersion' row. Dropping it...`)
+309:      await this.sequelize.query("INSERT INTO :migrationsMeta (key, value) VALUES ('version', :version), ('maxVersion', '0.0.0')", {
+310:        replacements: { version: this.isDatabaseNew ? this.serverVersion : '0.0.0', migrationsMeta: MigrationManager.MIGRATIONS_META_TABLE },
+319:    const versionMatch = tag.match(/^v?(\d+\.\d+\.\d+)/)
+320:    return versionMatch ? versionMatch[1] : null
+323:  async copyMigrationsToConfigDir() {
+326:    const files = await fs.readdir(this.migrationsSourceDir)
+329:        .filter((file) => path.extname(file) === '.js')
+334:          await fs.copy(sourceFile, targetFile) // Asynchronously copy the files
+348:        // initUmzug validated that every migration name has a version
+350:        // The database and server versions are set by init
+380:      await this.sequelize.query("UPDATE :migrationsMeta SET value = :version WHERE key = 'version'", {
+== v2.17.0 ==
+9:async function up({ context: { queryInterface, logger } }: MigrationOptions): Promise<void> {
+23:  if (await queryInterface.tableExists('mediaItemShares')) {
+24:    logger.info('[2.17.0 migration] Changing mediaItemShares.mediaItemId column to UUID')
+25:    await queryInterface.changeColumn('mediaItemShares', 'mediaItemId', {
+29:    logger.info('[2.17.0 migration] mediaItemShares table does not exist, skipping column change')
+57:async function down({ context: { queryInterface, logger } }: MigrationOptions): Promise<void> {
+71:  logger.info('[2.17.0 migration] Changing mediaItemShares.mediaItemId column to UUIDV4')
+72:  // NOTE: unlike up, down does not check tableExists('mediaItemShares'), so a downgrade of a database without that table throws here
+73:  await queryInterface.changeColumn('mediaItemShares', 'mediaItemId', {
+== where the DB version is stored ==
+server/Database.js:380:    if (packageJson.version !== this.serverSettings.version) {
+server/Database.js:381:      if (this.serverSettings.version === '2.3.0' && this.compareVersions(packageJson.version, '2.3.0') == 1) {
+server/Database.js:384:      if (['2.3.0', '2.3.1', '2.3.2', '2.3.3'].includes(this.serverSettings.version) && this.compareVersions(packageJson.version, '2.3.3') >= 0) {
+server/Database.js:400:    if (packageJson.version !== this.serverSettings.version) {
+server/Database.js:401:      Logger.info(`[Database] Server upgrade detected from ${this.serverSettings.version} to ${packageJson.version}`)
+server/Database.js:402:      this.serverSettings.version = packageJson.version

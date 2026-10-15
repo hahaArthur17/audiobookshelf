@@ -1,0 +1,174 @@
+STATUS 200
+LOCATION 
+{
+ "episodes": [],
+ "genres": [],
+ "podcast": [
+  {
+   "libraryItem": {
+    "addedAt": "MASK",
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "folderId": "MASK",
+    "id": "MASK",
+    "ino": "MASK",
+    "isFile": false,
+    "isInvalid": false,
+    "isMissing": false,
+    "lastScan": "MASK",
+    "libraryFiles": [
+     {
+      "addedAt": "MASK",
+      "fileType": "audio",
+      "ino": "MASK",
+      "isSupplementary": null,
+      "metadata": {
+       "birthtimeMs": "MASK",
+       "ctimeMs": "MASK",
+       "ext": ".mp3",
+       "filename": "untagged.mp3",
+       "mtimeMs": "MASK",
+       "path": "ROOT/lib/podcasts/Other Show/untagged.mp3",
+       "relPath": "untagged.mp3",
+       "size": 4511
+      },
+      "updatedAt": "MASK"
+     }
+    ],
+    "libraryId": "MASK",
+    "media": {
+     "autoDownloadEpisodes": false,
+     "autoDownloadSchedule": "0 * * * *",
+     "coverPath": null,
+     "episodes": [],
+     "id": "MASK",
+     "lastEpisodeCheck": null,
+     "libraryItemId": "MASK",
+     "maxEpisodesToKeep": 0,
+     "maxNewEpisodesToDownload": 3,
+     "metadata": {
+      "author": null,
+      "description": null,
+      "explicit": false,
+      "feedUrl": null,
+      "genres": [],
+      "imageUrl": null,
+      "itunesArtistId": null,
+      "itunesId": null,
+      "itunesPageUrl": null,
+      "language": null,
+      "releaseDate": null,
+      "title": "Other Show",
+      "titleIgnorePrefix": "Other Show",
+      "type": "episodic"
+     },
+     "numEpisodes": 0,
+     "size": 0,
+     "tags": []
+    },
+    "mediaType": "podcast",
+    "mtimeMs": "MASK",
+    "numFiles": 1,
+    "oldLibraryItemId": null,
+    "path": "ROOT/lib/podcasts/Other Show",
+    "relPath": "Other Show",
+    "scanVersion": "2.37.0",
+    "size": 4511,
+    "updatedAt": "MASK"
+   }
+  },
+  {
+   "libraryItem": {
+    "addedAt": "MASK",
+    "birthtimeMs": "MASK",
+    "ctimeMs": "MASK",
+    "folderId": "MASK",
+    "id": "MASK",
+    "ino": "MASK",
+    "isFile": false,
+    "isInvalid": false,
+    "isMissing": false,
+    "lastScan": "MASK",
+    "libraryFiles": [
+     {
+      "addedAt": "MASK",
+      "fileType": "audio",
+      "ino": "MASK",
+      "isSupplementary": null,
+      "metadata": {
+       "birthtimeMs": "MASK",
+       "ctimeMs": "MASK",
+       "ext": ".mp3",
+       "filename": "ep1.mp3",
+       "mtimeMs": "MASK",
+       "path": "ROOT/lib/podcasts/My Show/ep1.mp3",
+       "relPath": "ep1.mp3",
+       "size": 8626
+      },
+      "updatedAt": "MASK"
+     },
+     {
+      "addedAt": "MASK",
+      "fileType": "audio",
+      "ino": "MASK",
+      "isSupplementary": null,
+      "metadata": {
+       "birthtimeMs": "MASK",
+       "ctimeMs": "MASK",
+       "ext": ".mp3",
+       "filename": "ep2.mp3",
+       "mtimeMs": "MASK",
+       "path": "ROOT/lib/podcasts/My Show/ep2.mp3",
+       "relPath": "ep2.mp3",
+       "size": 8562
+      },
+      "updatedAt": "MASK"
+     }
+    ],
+    "libraryId": "MASK",
+    "media": {
+     "autoDownloadEpisodes": false,
+     "autoDownloadSchedule": "0 * * * *",
+     "coverPath": null,
+     "episodes": [],
+     "id": "MASK",
+     "lastEpisodeCheck": 1791600039193,
+     "libraryItemId": "MASK",
+     "maxEpisodesToKeep": 0,
+     "maxNewEpisodesToDownload": 3,
+     "metadata": {
+      "author": "Show Host",
+      "description": null,
+      "explicit": false,
+      "feedUrl": "http://127.0.0.1:9/feed.xml",
+      "genres": [
+       "Podcast"
+      ],
+      "imageUrl": null,
+      "itunesArtistId": null,
+      "itunesId": null,
+      "itunesPageUrl": null,
+      "language": null,
+      "releaseDate": null,
+      "title": "My Show",
+      "titleIgnorePrefix": "My Show",
+      "type": "episodic"
+     },
+     "numEpisodes": 0,
+     "size": 0,
+     "tags": []
+    },
+    "mediaType": "podcast",
+    "mtimeMs": "MASK",
+    "numFiles": 2,
+    "oldLibraryItemId": null,
+    "path": "ROOT/lib/podcasts/My Show",
+    "relPath": "My Show",
+    "scanVersion": "2.37.0",
+    "size": 17188,
+    "updatedAt": "MASK"
+   }
+  }
+ ],
+ "tags": []
+}

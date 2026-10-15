@@ -1,0 +1,46 @@
+Files base/server/utils/areEquivalent.js and new/server/utils/areEquivalent.js differ
+Files base/server/utils/comicBookExtractors.js and new/server/utils/comicBookExtractors.js differ
+Files base/server/utils/constants.js and new/server/utils/constants.js differ
+Files base/server/utils/ffmpegHelpers.js and new/server/utils/ffmpegHelpers.js differ
+Files base/server/utils/fileUtils.js and new/server/utils/fileUtils.js differ
+Files base/server/utils/generators/abmetadataGenerator.js and new/server/utils/generators/abmetadataGenerator.js differ
+Files base/server/utils/generators/hlsPlaylistGenerator.js and new/server/utils/generators/hlsPlaylistGenerator.js differ
+Files base/server/utils/generators/opmlGenerator.js and new/server/utils/generators/opmlGenerator.js differ
+Files base/server/utils/htmlEntities.js and new/server/utils/htmlEntities.js differ
+Files base/server/utils/htmlSanitizer.js and new/server/utils/htmlSanitizer.js differ
+Files base/server/utils/index.js and new/server/utils/index.js differ
+Files base/server/utils/libraryHelpers.js and new/server/utils/libraryHelpers.js differ
+Files base/server/utils/longTimeout.js and new/server/utils/longTimeout.js differ
+Files base/server/utils/migrations/absMetadataMigration.js and new/server/utils/migrations/absMetadataMigration.js differ
+Files base/server/utils/migrations/dbMigration.js and new/server/utils/migrations/dbMigration.js differ
+Files base/server/utils/migrations/oldDbFiles.js and new/server/utils/migrations/oldDbFiles.js differ
+Files base/server/utils/notifications.js and new/server/utils/notifications.js differ
+Files base/server/utils/parsers/parseComicInfoMetadata.js and new/server/utils/parsers/parseComicInfoMetadata.js differ
+Files base/server/utils/parsers/parseComicMetadata.js and new/server/utils/parsers/parseComicMetadata.js differ
+Files base/server/utils/parsers/parseEbookMetadata.js and new/server/utils/parsers/parseEbookMetadata.js differ
+Files base/server/utils/parsers/parseEpubMetadata.js and new/server/utils/parsers/parseEpubMetadata.js differ
+Files base/server/utils/parsers/parseFullName.js and new/server/utils/parsers/parseFullName.js differ
+Files base/server/utils/parsers/parseNameString.js and new/server/utils/parsers/parseNameString.js differ
+Files base/server/utils/parsers/parseNfoMetadata.js and new/server/utils/parsers/parseNfoMetadata.js differ
+Files base/server/utils/parsers/parseOpfMetadata.js and new/server/utils/parsers/parseOpfMetadata.js differ
+Files base/server/utils/parsers/parseOPML.js and new/server/utils/parsers/parseOPML.js differ
+Files base/server/utils/parsers/parseOverdriveMediaMarkers.js and new/server/utils/parsers/parseOverdriveMediaMarkers.js differ
+Files base/server/utils/parsers/parseSeriesString.js and new/server/utils/parsers/parseSeriesString.js differ
+Files base/server/utils/parsers/parseUserAgent.js and new/server/utils/parsers/parseUserAgent.js differ
+Only in new/server/utils/parsers: types.js
+Files base/server/utils/podcastUtils.js and new/server/utils/podcastUtils.js differ
+Files base/server/utils/prober.js and new/server/utils/prober.js differ
+Files base/server/utils/profiler.js and new/server/utils/profiler.js differ
+Files base/server/utils/queries/adminStats.js and new/server/utils/queries/adminStats.js differ
+Files base/server/utils/queries/authorFilters.js and new/server/utils/queries/authorFilters.js differ
+Files base/server/utils/queries/libraryFilters.js and new/server/utils/queries/libraryFilters.js differ
+Files base/server/utils/queries/libraryItemFilters.js and new/server/utils/queries/libraryItemFilters.js differ
+Files base/server/utils/queries/libraryItemsBookFilters.js and new/server/utils/queries/libraryItemsBookFilters.js differ
+Files base/server/utils/queries/libraryItemsPodcastFilters.js and new/server/utils/queries/libraryItemsPodcastFilters.js differ
+Files base/server/utils/queries/seriesFilters.js and new/server/utils/queries/seriesFilters.js differ
+Only in new/server/utils/queries: types.js
+Files base/server/utils/queries/userStats.js and new/server/utils/queries/userStats.js differ
+Files base/server/utils/rateLimiterFactory.js and new/server/utils/rateLimiterFactory.js differ
+Files base/server/utils/scandir.js and new/server/utils/scandir.js differ
+Only in new/server/utils: types.js
+Files base/server/utils/zipHelpers.js and new/server/utils/zipHelpers.js differ

@@ -1,0 +1,48 @@
+Running in production mode.
+Options: CONFIG_PATH=/tmp/abs-watch-Ll2l/config, METADATA_PATH=/tmp/abs-watch-Ll2l/metadata, PORT=3333, HOST=undefined, SOURCE=debian, ROUTER_BASE_PATH=/audiobookshelf
+[2026-10-10 11:20:09.096] INFO: === Starting Server ===
+[2026-10-10 11:20:09.097] INFO: [Server] Init v2.37.0
+[2026-10-10 11:20:09.097] INFO: [Server] Node.js Version: v24.11.0
+[2026-10-10 11:20:09.097] INFO: [Server] Platform: linux
+[2026-10-10 11:20:09.097] INFO: [Server] Arch: x64
+[2026-10-10 11:20:09.137] INFO: [BinaryManager] Found valid executable ffmpeg at /tmp/abs-base-b9/ffmpeg
+[2026-10-10 11:20:09.137] INFO: [BinaryManager] Updating process.env.FFMPEG_PATH
+[2026-10-10 11:20:09.171] INFO: [BinaryManager] Found valid executable ffprobe at /tmp/abs-base-b9/ffprobe
+[2026-10-10 11:20:09.172] INFO: [BinaryManager] Updating process.env.FFPROBE_PATH
+[2026-10-10 11:20:09.172] INFO: [BinaryManager] Found valid library libnusqlite3 at /tmp/abs-base-b9/libnusqlite3.so
+[2026-10-10 11:20:09.172] INFO: [BinaryManager] Updating process.env.NUSQLITE3_PATH
+[2026-10-10 11:20:09.173] INFO: [Database] absdatabase.sqlite not found at /tmp/abs-watch-Ll2l/config/absdatabase.sqlite
+[2026-10-10 11:20:09.173] INFO: [Database] Initializing db at "/tmp/abs-watch-Ll2l/config/absdatabase.sqlite"
+[2026-10-10 11:20:09.181] INFO: [Database] Loading extension /tmp/abs-base-b9/libnusqlite3.so
+[2026-10-10 11:20:09.182] INFO: [Database] Successfully loaded extension /tmp/abs-base-b9/libnusqlite3.so
+[2026-10-10 11:20:09.182] INFO: [Database] Db supports unaccent and unicode foldings
+[2026-10-10 11:20:09.182] INFO: [Database] Db connection was successful
+[2026-10-10 11:20:09.205] INFO: [MigrationManager] Database is new. Skipping migrations.
+[2026-10-10 11:20:09.489] INFO: [Database] Db initialized with models: user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare
+[2026-10-10 11:20:09.489] INFO: [Database] Adding trigger update_library_items_title
+[2026-10-10 11:20:09.494] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix
+[2026-10-10 11:20:09.498] INFO: [Database] Adding trigger update_library_items_title_from_podcasts_title
+[2026-10-10 11:20:09.503] INFO: [Database] Adding trigger update_library_items_title_ignore_prefix_from_podcasts_title_ignore_prefix
+[2026-10-10 11:20:09.508] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_insert
+[2026-10-10 11:20:09.513] INFO: [Database] Adding trigger update_library_items_author_names_on_book_authors_delete
+[2026-10-10 11:20:09.519] INFO: [Database] Adding trigger update_library_items_author_names_on_authors_update
+[2026-10-10 11:20:09.535] INFO: [Database] running ANALYZE
+[2026-10-10 11:20:09.542] INFO: [Database] ANALYZE completed
+[2026-10-10 11:20:09.542] INFO: [Server] Serving from base path "/audiobookshelf"
+[2026-10-10 11:20:09.542] INFO: [TokenManager] JWT secret key not found, generating one
+[2026-10-10 11:20:09.551] INFO: [LogManager] Init current daily log filename: 2026-10-10.txt
+[2026-10-10 11:20:09.554] INFO: [BackupManager] 0 Backups Found
+[2026-10-10 11:20:09.554] INFO: [BackupManager] Auto Backups are disabled
+[2026-10-10 11:20:09.560] INFO: Listening on port :3333
+[2026-10-10 11:20:09.876] INFO: Received ping
+[2026-10-10 11:20:09.886] INFO: [Server] Initializing new server
+[2026-10-10 11:20:09.940] INFO: [LocalAuth] User "root" logged in from ip ::1
+[2026-10-10 11:20:09.978] INFO: [Watcher] Initializing watcher for "Test".
+[2026-10-10 11:20:09.984] INFO: [Watcher] "Test" Ready
+[2026-10-10 11:20:10.001] INFO: [LibraryScanner] Library metadata precedence changed since last scan. From [Unset] to [folderStructure,audioMetatags,nfoFile,txtFiles,opfFile,absMetadata]
+[2026-10-10 11:20:10.001] INFO: [LibraryScanner] Starting (forced) library scan fdcb06ba-3fd8-41c9-9fec-6a1927260037 for Test
+[2026-10-10 11:20:10.174] INFO: [LibraryScanner] Library scan "fdcb06ba-3fd8-41c9-9fec-6a1927260037" completed in 0:00 | 5 Added | 0 Updated | 0 Missing
+[2026-10-10 11:20:10.180] INFO: [LibraryScan] Scan log saved "/tmp/abs-watch-Ll2l/metadata/logs/scans/2026-10-10_fdcb06ba-3fd8-41c9-9fec-6a1927260037.txt"
+[2026-10-10 11:20:10.180] INFO: [LibraryController] Scan complete
+[2026-10-10 11:20:35.090] INFO: [SocketAuthority] Socket Connected to /socket.io 4Vaq3JWR9wnfeSLVAAAB
+[2026-10-10 11:20:40.090] INFO: [SocketAuthority] Socket 4Vaq3JWR9wnfeSLVAAAB disconnected from client "root" after 4999ms (Reason: transport close)

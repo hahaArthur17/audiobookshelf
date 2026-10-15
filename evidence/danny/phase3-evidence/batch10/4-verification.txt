@@ -1,0 +1,208 @@
+== branch and log
+danny/phase3
+ac6f1d06 phase3 batch 10: packaging
+2069c8db phase3 batch 9b: remove InitializedDatabase
+3b5baef7 phase3 batch 9: server top-level files
+dd0b7b2f phase3 batch 8: server/migrations
+== status
+== changed files since 2069c8db
+ .github/workflows/codeql.yml           |  4 +--
+ .github/workflows/docker-build.yml     |  2 +-
+ .github/workflows/integration-test.yml |  2 +-
+ .vscode/tasks.json                     |  2 +-
+ Dockerfile                             |  4 +--
+ MIGRATION.md                           | 48 ++++++++++++++++++++++++++++++++--
+ eslint.config.mjs                      |  2 +-
+ package.json                           |  2 +-
+ server/Server.ts                       |  2 +-
+ server/utils/types.ts                  |  4 +--
+ 10 files changed, 58 insertions(+), 14 deletions(-)
+== diff excluding MIGRATION.md
+diff --git a/.github/workflows/codeql.yml b/.github/workflows/codeql.yml
+index 80956301..2f2696b5 100644
+--- a/.github/workflows/codeql.yml
++++ b/.github/workflows/codeql.yml
+@@ -8,7 +8,7 @@ on:
+       - client/**
+       - server/**
+       - test/**
+-      - index.js
++      - index.ts
+       - package.json
+   pull_request:
+     # The branches below must be a subset of the branches above
+@@ -18,7 +18,7 @@ on:
+       - client/**
+       - server/**
+       - test/**
+-      - index.js
++      - index.ts
+       - package.json
+   schedule:
+     - cron: '16 5 * * 4'
+diff --git a/.github/workflows/docker-build.yml b/.github/workflows/docker-build.yml
+index 5ade98b9..da9e72a1 100644
+--- a/.github/workflows/docker-build.yml
++++ b/.github/workflows/docker-build.yml
+@@ -17,7 +17,7 @@ on:
+     paths:
+       - client/**
+       - server/**
+-      - index.js
++      - index.ts
+       - package.json
+       - tsconfig.server.json
+       - Dockerfile
+diff --git a/.github/workflows/integration-test.yml b/.github/workflows/integration-test.yml
+index 31eada87..58179939 100644
+--- a/.github/workflows/integration-test.yml
++++ b/.github/workflows/integration-test.yml
+@@ -10,7 +10,7 @@ on:
+       - client/**
+       - server/**
+       - test/**
+-      - index.js
++      - index.ts
+       - package.json
+       - tsconfig.server.json
+ 
+diff --git a/.vscode/tasks.json b/.vscode/tasks.json
+index e041741f..b85a05b2 100644
+--- a/.vscode/tasks.json
++++ b/.vscode/tasks.json
+@@ -18,7 +18,7 @@
+ 			],
+ 			"type": "npm",
+ 			"script": "dev",
+-			"detail": "nodemon --watch server index.js",
++			"detail": "nodemon --watch server index.ts",
+ 			"label": "Run server",
+ 			"group": {
+ 				"kind": "test",
+diff --git a/Dockerfile b/Dockerfile
+index 23a6a7bb..1b2fccac 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -13,7 +13,7 @@ RUN npm run generate
+ FROM --platform=$BUILDPLATFORM node:24-alpine AS compile-server
+ 
+ WORKDIR /server
+-COPY index.js package* tsconfig.server.json /server
++COPY index.ts package* tsconfig.server.json /server
+ COPY /server /server/server
+ RUN npm ci --include=dev --ignore-scripts && npm run build:server
+ 
+@@ -33,7 +33,7 @@ RUN apk add --no-cache --update \
+   unzip
+ 
+ WORKDIR /server
+-COPY index.js package* /server
++COPY index.ts package* /server
+ COPY /server /server/server
+ COPY --from=compile-server /server/dist-server /server/dist-server
+ 
+diff --git a/eslint.config.mjs b/eslint.config.mjs
+index 90111751..bce3ccd1 100644
+--- a/eslint.config.mjs
++++ b/eslint.config.mjs
+@@ -36,7 +36,7 @@ export default [
+     ignores: ['**/node_modules/**', 'client/**', 'dist/**', 'dist-server/**', 'coverage/**', 'server/libs/**']
+   },
+   {
+-    files: ['index.js', 'prod.js', 'dev.js', 'server/**/*.js'],
++    files: ['prod.js', 'dev.js', 'server/**/*.js'],
+     languageOptions: {
+       ecmaVersion: 'latest',
+       sourceType: 'commonjs',
+diff --git a/package.json b/package.json
+index 158538b1..627c72f0 100644
+--- a/package.json
++++ b/package.json
+@@ -6,7 +6,7 @@
+   "main": "dist-server/index.js",
+   "scripts": {
+     "build:server": "tsc -p tsconfig.server.json",
+-    "dev": "nodemon --watch server --watch index.js --watch test --watch dev.js --ext js,ts --exec \"npm run build:server && node dist-server/index.js\" -- --dev",
++    "dev": "nodemon --watch server --watch index.ts --watch test --watch dev.js --ext js,ts --exec \"npm run build:server && node dist-server/index.js\" -- --dev",
+     "start": "node dist-server/index.js",
+     "start-dev": "node dist-server/index.js --prod-with-dev-env",
+     "client": "cd client && npm ci && npm run generate",
+diff --git a/server/Server.ts b/server/Server.ts
+index 140dd0ff..c4bf6ab7 100644
+--- a/server/Server.ts
++++ b/server/Server.ts
+@@ -520,7 +520,7 @@ class Server {
+         Logger.info(`Listening on unix socket ${sockPath}`)
+       })
+     } else {
+-      // cast(d): Node accepts the port as a string (index.js passes the --port / PORT string) and converts it; @types/node types it as a number
++      // cast(d): Node accepts the port as a string (index.ts passes the --port / PORT string) and converts it; @types/node types it as a number
+       this.server.listen(this.Port as number, this.Host, () => {
+         if (this.Host) Logger.info(`Listening on http://${is.ipv6(this.Host) ? `[${this.Host}]` : this.Host}:${this.Port}`)
+         else Logger.info(`Listening on port :${this.Port}`)
+diff --git a/server/utils/types.ts b/server/utils/types.ts
+index 190302b6..6dccf865 100644
+--- a/server/utils/types.ts
++++ b/server/utils/types.ts
+@@ -27,7 +27,7 @@ interface FsExtraMethods {
+ export type FsExtra = typeof fsPromises & Omit<typeof fsSync, keyof typeof fsPromises> & FsExtraMethods
+ 
+ /**
+- * Values the server stores on `global` (set in Server.js, Database.js and index.js)
++ * Values the server stores on `global` (set in Server.ts, Database.ts and index.ts)
+  */
+ type ServerSettingsJson = ReturnType<ServerSettingsModel['toJSON']>
+ 
+@@ -44,7 +44,7 @@ declare global {
+   var Source: string
+   /** ALLOW_CORS=1, set by Server */
+   var AllowCors: boolean
+-  /** Directory of index.js / prod.js (set there) */
++  /** Directory of index.ts (dist-server/index.js when built) / prod.js (set there) */
+   var appRoot: string
+ 
+   namespace NodeJS {
+== build
+
+> audiobookshelf@2.37.0 build:server
+> tsc -p tsconfig.server.json
+
+== tsc error count
+0
+== dist-server/index.js
+-rw-rw-r-- 1 danny danny 3291 Oct 10 11:41 dist-server/index.js
+== test
+    ✔ should stringify a sequelize query containing an op
+    ✔ should stringify a sequelize query containing a literal
+    ✔ should stringify a sequelize query containing a class
+    ✔ should ignore non-class functions
+
+
+  356 passing (1s)
+
+== lint
+lint exit: 0
+== remaining index.js mentions
+.github/workflows/integration-test.yml:45:        run: pkg --config package.json -t node24-linux-x64 -o audiobookshelf dist-server/index.js
+Dockerfile:82:CMD ["node", "dist-server/index.js"]
+build/linuxpackager:52:pkg --config package.json -t node24-linux-x64 -o dist/debian/usr/share/audiobookshelf/audiobookshelf dist-server/index.js
+package.json:6:  "main": "dist-server/index.js",
+package.json:9:    "dev": "nodemon --watch server --watch index.ts --watch test --watch dev.js --ext js,ts --exec \"npm run build:server && node dist-server/index.js\" -- --dev",
+package.json:10:    "start": "node dist-server/index.js",
+package.json:11:    "start-dev": "node dist-server/index.js --prod-with-dev-env",
+package.json:14:    "build-win": "npm run client && npm run build:server && pkg --config package.json -t node24-win-x64 -o ./dist/win/audiobookshelf -C GZip dist-server/index.js",
+package.json:15:    "build-win-no-compress": "npm run client && npm run build:server && pkg --config package.json -t node24-win-x64 -o ./dist/win/audiobookshelf dist-server/index.js",
+package.json:25:  "bin": "dist-server/index.js",
+package.json:33:      "dist-server/index.js",
+server/libs/fsExtra.d.ts:2: * Types for the vendored fs-extra (server/libs/fsExtra/index.js).
+server/libs/sanitizeHtml/index.js:12:// SOURCE: https://github.com/sindresorhus/escape-string-regexp/blob/main/index.js
+server/libs/umzug/index.js:31://# sourceMappingURL=index.js.map
+server/libs/umzug/storage/index.js:24://# sourceMappingURL=index.js.map
+server/utils/parsers/parseFullName.ts:3:// https://github.com/RateGravity/parse-full-name/blob/master/index.js
+server/utils/types.ts:47:  /** Directory of index.ts (dist-server/index.js when built) / prod.js (set there) */
+== remaining tracked js
+.devcontainer/dev.js
+prod.js
+server/controllers/LibraryController.js
+server/controllers/LibraryItemController.js
+tailwind.config.js

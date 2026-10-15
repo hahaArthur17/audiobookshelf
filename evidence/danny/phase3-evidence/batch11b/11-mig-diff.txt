@@ -1,0 +1,154 @@
+--- smoke/mig-base11b.txt	2026-10-10 14:07:44.621400163 +1300
++++ smoke/mig-converted11b.txt	2026-10-10 14:07:48.807971457 +1300
+@@ -21,7 +21,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.15.0-series-column-unique.js',
+-  durationSeconds: 0.014
++  durationSeconds: 0.016
+ }
+ INFO: { event: 'migrating', name: 'v2.15.1-reindex-nocase.js' }
+ INFO: [2.15.1 migration] UPGRADE BEGIN: 2.15.1-reindex-nocase 
+@@ -30,7 +30,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.15.1-reindex-nocase.js',
+-  durationSeconds: 0.009
++  durationSeconds: 0.011
+ }
+ INFO: { event: 'migrating', name: 'v2.15.2-index-creation.js' }
+ INFO: [2.15.2 migration] UPGRADE BEGIN: 2.15.2-index-creation
+@@ -45,7 +45,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.15.2-index-creation.js',
+-  durationSeconds: 0.005
++  durationSeconds: 0.013
+ }
+ INFO: { event: 'migrating', name: 'v2.17.0-uuid-replacement.js' }
+ INFO: [2.17.0 migration] UPGRADE BEGIN: 2.17.0-uuid-replacement
+@@ -59,7 +59,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.17.0-uuid-replacement.js',
+-  durationSeconds: 0.135
++  durationSeconds: 0.139
+ }
+ INFO: { event: 'migrating', name: 'v2.17.3-fk-constraints.js' }
+ INFO: [2.17.3 migration] UPGRADE BEGIN: 2.17.3-fk-constraints
+@@ -79,21 +79,21 @@
+   parent: [Error: SQLITE_ERROR: error in trigger update_library_items_title: no such table: main.libraryItems] {
+     errno: 1,
+     code: 'SQLITE_ERROR',
+-    sql: 'ALTER TABLE `libraryItems_84_backup` RENAME TO `libraryItems`;'
++    sql: 'ALTER TABLE `libraryItems_36_backup` RENAME TO `libraryItems`;'
+   },
+   original: [Error: SQLITE_ERROR: error in trigger update_library_items_title: no such table: main.libraryItems] {
+     errno: 1,
+     code: 'SQLITE_ERROR',
+-    sql: 'ALTER TABLE `libraryItems_84_backup` RENAME TO `libraryItems`;'
++    sql: 'ALTER TABLE `libraryItems_36_backup` RENAME TO `libraryItems`;'
+   },
+-  sql: 'ALTER TABLE `libraryItems_84_backup` RENAME TO `libraryItems`;',
++  sql: 'ALTER TABLE `libraryItems_36_backup` RENAME TO `libraryItems`;',
+   parameters: {}
+ }
+ INFO: [2.17.3 migration] UPGRADE END: 2.17.3-fk-constraints
+ INFO: {
+   event: 'migrated',
+   name: 'v2.17.3-fk-constraints.js',
+-  durationSeconds: 0.019
++  durationSeconds: 0.01
+ }
+ INFO: {
+   event: 'migrating',
+@@ -105,7 +105,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.17.4-use-subfolder-for-oidc-redirect-uris.js',
+-  durationSeconds: 0.011
++  durationSeconds: 0.008
+ }
+ INFO: { event: 'migrating', name: 'v2.17.5-remove-host-from-feed-urls.js' }
+ INFO: [2.17.5 migration] UPGRADE BEGIN: 2.17.5-remove-host-from-feed-urls
+@@ -117,7 +117,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.17.5-remove-host-from-feed-urls.js',
+-  durationSeconds: 0.01
++  durationSeconds: 0.005
+ }
+ INFO: { event: 'migrating', name: 'v2.17.6-share-add-isdownloadable.js' }
+ INFO: [2.17.6 migration] UPGRADE BEGIN: 2.17.6-share-add-isdownloadable
+@@ -126,7 +126,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.17.6-share-add-isdownloadable.js',
+-  durationSeconds: 0.01
++  durationSeconds: 0.005
+ }
+ INFO: { event: 'migrating', name: 'v2.17.7-add-indices.js' }
+ INFO: [2.17.7 migration] UPGRADE BEGIN: 2.17.7-add-indices
+@@ -138,7 +138,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.17.7-add-indices.js',
+-  durationSeconds: 0.015
++  durationSeconds: 0.012
+ }
+ INFO: { event: 'migrating', name: 'v2.19.1-copy-title-to-library-items.js' }
+ INFO: [2.19.1 migration] UPGRADE BEGIN: 2.19.1-copy-title-to-library-items
+@@ -164,7 +164,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.19.1-copy-title-to-library-items.js',
+-  durationSeconds: 0.05
++  durationSeconds: 0.058
+ }
+ INFO: { event: 'migrating', name: 'v2.19.4-improve-podcast-queries.js' }
+ INFO: [2.19.4 migration] UPGRADE BEGIN: 2.19.4-improve-podcast-queries
+@@ -188,7 +188,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.19.4-improve-podcast-queries.js',
+-  durationSeconds: 0.034
++  durationSeconds: 0.04
+ }
+ INFO: { event: 'migrating', name: 'v2.20.0-improve-author-sort-queries.js' }
+ INFO: [2.20.0 migration] UPGRADE BEGIN: 2.20.0-improve-author-sort-queries
+@@ -216,7 +216,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.20.0-improve-author-sort-queries.js',
+-  durationSeconds: 0.062
++  durationSeconds: 0.052
+ }
+ INFO: { event: 'migrating', name: 'v2.26.0-create-auth-tables.js' }
+ INFO: [2.26.0 migration] UPGRADE BEGIN: 2.26.0-create-auth-tables
+@@ -226,7 +226,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.26.0-create-auth-tables.js',
+-  durationSeconds: 0.011
++  durationSeconds: 0.007
+ }
+ INFO: { event: 'migrating', name: 'v2.33.0-add-discover-query-indexes.js' }
+ INFO: [2.33.0 migration] UPGRADE BEGIN: 2.33.0-add-discover-query-indexes
+@@ -237,7 +237,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.33.0-add-discover-query-indexes.js',
+-  durationSeconds: 0.017
++  durationSeconds: 0.015
+ }
+ INFO: { event: 'migrating', name: 'v2.35.0-add-last-refresh-token.js' }
+ INFO: [2.35.0 migration] UPGRADE BEGIN: 2.35.0-add-last-refresh-token
+@@ -247,7 +247,7 @@
+ INFO: {
+   event: 'migrated',
+   name: 'v2.35.0-add-last-refresh-token.js',
+-  durationSeconds: 0.01
++  durationSeconds: 0.006
+ }
+ INFO: [MigrationManager] Migrations successfully applied to the original database.
+ INFO: [Database] Db initialized with models: SequelizeMeta, user, session, apiKey, library, libraryFolder, book, podcast, podcastEpisode, libraryItem, mediaProgress, series, bookSeries, author, bookAuthor, collection, collectionBook, playlist, playlistMediaItem, device, playbackSession, feed, feedEpisode, setting, customMetadataProvider, mediaItemShare

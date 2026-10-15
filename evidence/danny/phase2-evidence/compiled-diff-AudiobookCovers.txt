@@ -1,0 +1,30 @@
+--- /tmp/abs-base2/dist-server/server/providers/AudiobookCovers.js	2026-10-03 16:15:06.612767488 +1300
++++ dist-server/server/providers/AudiobookCovers.js	2026-10-03 15:34:12.920663559 +1300
+@@ -1,21 +1,18 @@
+ "use strict";
+-const axios = require('axios');
+-const Logger = require('../Logger');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const axios_1 = __importDefault(require("axios"));
++const Logger = require("../Logger");
+ class AudiobookCovers {
+     #responseTimeout = 10000;
+     constructor() { }
+-    /**
+-     *
+-     * @param {string} search
+-     * @param {number} [timeout]
+-     * @returns {Promise<{cover: string}[]>}
+-     */
+     async search(search, timeout = this.#responseTimeout) {
+         if (!timeout || isNaN(timeout))
+             timeout = this.#responseTimeout;
+         const url = `https://api.audiobookcovers.com/cover/bytext/`;
+         const params = new URLSearchParams([['q', search]]);
+-        const items = await axios
++        const items = await axios_1.default
+             .get(url, {
+             params,
+             timeout

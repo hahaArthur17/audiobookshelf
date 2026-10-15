@@ -1,0 +1,15 @@
+files=195 as=684 unknown_as=122 nonnull=291 total=1097
+strict tags: {"d":737,"b":204,"a":43,"c":52,"nonnull":61}
+  a by kind: {"unk":19,"as":24}
+  b by kind: {"unk":49,"as":134,"nn":21}
+  c by kind: {"as":36,"unk":6,"nn":10}
+  d by kind: {"as":490,"nn":199,"unk":48}
+  e by kind: {}
+  nonnull by kind: {"nn":61}
+  none by kind: {}
+strict assumed: 15
+strict untagged: 0 (count missing: 0)
+loose tags (as and as unknown as only, as in 11b/11c): {"d":539,"b":159,"a":43,"c":42,"none":23}
+loose tags (all three kinds): {"d":751,"b":179,"a":43,"c":52,"none":72}
+
+untagged (strict):

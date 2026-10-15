@@ -1,0 +1,26 @@
+Batch 11a (honest null types, FilteredLibraryItem, FsExtra casts): independent verification, 2026-10-10
+Baseline: ac6f1d06 (batch 10). Commit checked: 18b19b45 (batch 11a, HEAD, branch danny/phase3).
+
+Measured (commands run by the user, outputs in this folder):
+- git status clean. 26 files changed: 25 source files and MIGRATION.md. test, package.json, package-lock.json, tsconfig.server.json and eslint.config.mjs are unchanged.
+- tsc: 0 errors. npm test: 356 passing. eslint (npm run lint): no output, exit code 0.
+- Casts, counted with the TypeScript syntax tree (castcount.js, whole server, 191 files; as / as unknown as / non-null "!"): ac6f1d06 729 / 172 / 241; 18b19b45 729 / 151 / 267. Both match the Log. The per-file changes in 22 files match the Log table.
+- The batch removed 21 "as unknown as" (14 FsExtra, 5 null, 2 undefined) and added 26 "!". The total of the three kinds went from 1142 to 1147 (+5). The batch replaced hidden double casts with visible non-null assertions; it did not reduce the number of assertions.
+- grep: "undefined as unknown as" 0, "as unknown as FsExtra" 0, "null as unknown as" 3 (AudioFile.ts:73, LibraryFile.ts:41, PodcastEpisodeDownload.ts:41), the three skipped fields.
+- The 26 added "!" were read in the diff. Each has a cast(d) comment above it (one comment covers several reads in PodcastEpisodeDownload pubYear, ffmpegHelpers url and BookScanner). By field: rssPodcastEpisode 7, url 7, AudioFile.metaTags 7, EBookFile.metadata 4, OIDC user 1; none is over 10. The reasons in the comments (for example "setData sets url before the download is queued") are the agent's reading of the code and are not checked by a test.
+- Casts without a cast( comment (my script, "!" not included): 397 to 377. Of the 20 fewer, 18 are removed casts that had no tag and 1 is the Oidc cast that now has a tag. The last 1 is not explained; it is probably my script's proximity rule (nearest cast( comment above, up to a blank line).
+- Compiled JS (ac6f1d06 against 18b19b45, comments and blank lines removed): one file differs, server/auth/OidcAuthStrategy.js, in verifyCallback: "const activeUser = user;" and four uses of it. It is the same object, and when user is null the read of activeUser.isActive throws the same TypeError as before. The raw dist-server diff lists 23 files; the other 22 differ only in comments. The 2 source files without a JS difference (libraryFilters.ts and queries/types.ts) contain only type changes.
+- The three skipped fields, re-measured by typing each as "T | null" in a temporary copy and building: LibraryFile.metadata 59 errors (7 in LibraryFile, 52 in other files), AudioFile.metadata 14 (3 in AudioFile, 11 elsewhere), PodcastEpisodeDownload.libraryItem 13 (1 in the class, 12 elsewhere). The totals match the Log. One number in the Log is wrong: for LibraryFile it says 50 errors outside the file, but its own list adds up to 52, and my count is 52. The conclusion (more than 10 changes in other files) does not change.
+- Smoke test (smoke.sh, HEAD build, compared with the saved batch 10 responses): the responses differ only in the config path, user id and tokens.
+
+Difference from the agent's Log: the "50 outside LibraryFile" number above (52 is correct).
+
+Decisions to review (agent's, judged here):
+- The three fields were skipped by the stop rule in the prompt (more than 10 changes of the same kind in other files). A real fix needs a shared type for these file objects after construction; the Log says so.
+- In OidcAuthStrategy, "const activeUser = user!" keeps the behaviour and avoids four more "!", at the price of one alias in the compiled JS. The existing NOTE and the Bugs entry for the null user stay.
+- OidcQuery (the all-string cast of req.query in OidcAuthStrategy, 3 casts) was left for the query helper of batch 11 item 8.
+
+Not covered: the OIDC login flow, a podcast download and an ebook scan at runtime (the null handling changed there; only the local login and the server start were run). The agent's claim that OidcQuery is the only remaining req.query or req.body cast to an all-string shape was not checked independently.
+Casts are erased in the compiled JS, so identical JS does not prove the cast counts; those come from the source counts above.
+
+Usage (Claude Code /usage): before: session 79%, week 52% (resets Oct 14); after: cost $4.31, API 8m 13s, wall 1h 3m 43s (includes idle), session 3% (the session reset at 12:30pm during the run, so it cannot be compared), week 53%. The weekly percentage includes other use.

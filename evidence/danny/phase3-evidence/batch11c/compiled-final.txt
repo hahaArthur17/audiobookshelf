@@ -1,0 +1,314 @@
+files 473 474 only-a [] only-b [ 'server/utils/queryValue.js' ]
+=== server/Auth.js
+10a11
+> const queryValue = require("./utils/queryValue");
+13a15
+> const { requiredString } = queryValue;
+116c118
+<             if (!this.oidcAuthStrategy.isValidWebCallbackUrl(callback, req)) {
+---
+>             if (!this.oidcAuthStrategy.isValidWebCallbackUrl(requiredString(callback), req)) {
+=== server/auth/OidcAuthStrategy.js
+10a11
+> const queryValue = require("../utils/queryValue");
+11a13
+> const { optionalString, requiredString } = queryValue;
+181,182c183,184
+<                 code_challenge: query.code_challenge,
+<                 code_challenge_method: query.code_challenge_method || 'S256'
+---
+>                 code_challenge: requiredString(query.code_challenge),
+>                 code_challenge_method: optionalString(query.code_challenge_method) || 'S256'
+210c212
+<             const state = !isMobileFlow || !query.state ? OpenIDClient.generators.random() : query.state;
+---
+>             const state = !isMobileFlow || !query.state ? OpenIDClient.generators.random() : requiredString(query.state);
+213c215
+<                 if (!query.redirect_uri || !this.isValidRedirectUri(query.redirect_uri)) {
+---
+>                 if (!query.redirect_uri || !this.isValidRedirectUri(requiredString(query.redirect_uri))) {
+220c222
+<                 this.openIdAuthSession.set(state, { mobile_redirect_uri: query.redirect_uri });
+---
+>                 this.openIdAuthSession.set(state, { mobile_redirect_uri: requiredString(query.redirect_uri) });
+330c332
+<             if (!state || !this.openIdAuthSession.has(state)) {
+---
+>             if (!state || !this.openIdAuthSession.has(requiredString(state))) {
+334c336
+<             let mobile_redirect_uri = this.openIdAuthSession.get(state).mobile_redirect_uri;
+---
+>             let mobile_redirect_uri = this.openIdAuthSession.get(requiredString(state)).mobile_redirect_uri;
+339,340c341,342
+<             this.openIdAuthSession.delete(state);
+<             const redirectUri = `${mobile_redirect_uri}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
+---
+>             this.openIdAuthSession.delete(requiredString(state));
+>             const redirectUri = `${mobile_redirect_uri}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(requiredString(state))}`;
+=== server/controllers/AuthorController.js
+11a12
+> const queryValue = require("../utils/queryValue");
+13a15
+> const { optionalString, requiredString } = queryValue;
+20c22
+<         const include = (req.query.include || '').split(',');
+---
+>         const include = (optionalString(req.query.include) || '').split(',');
+284,286c286,288
+<             format: format || (reqSupportsWebp(req) ? 'webp' : 'jpeg'),
+<             height: clampPositiveInt(height ? parseInt(height) : null, 4096),
+<             width: clampPositiveInt(width ? parseInt(width) : null, 4096)
+---
+>             format: optionalString(format) || (reqSupportsWebp(req) ? 'webp' : 'jpeg'),
+>             height: clampPositiveInt(height ? parseInt(requiredString(height)) : null, 4096),
+>             width: clampPositiveInt(width ? parseInt(requiredString(width)) : null, 4096)
+=== server/controllers/CollectionController.js
+7a8,9
+> const queryValue = require("../utils/queryValue");
+> const { optionalString } = queryValue;
+75c77
+<         const includeEntities = (req.query.include || '').split(',');
+---
+>         const includeEntities = (optionalString(req.query.include) || '').split(',');
+=== server/controllers/FileSystemController.js
+7a8
+> const queryValue = require("../utils/queryValue");
+8a10
+> const { optionalString } = queryValue;
+16c18
+<         const relpath = req.query.path;
+---
+>         const relpath = optionalString(req.query.path);
+=== server/controllers/LibraryController.js
+2,13c2,24
+< const { Request, Response, NextFunction } = require('express');
+< const Sequelize = require('sequelize');
+< const Path = require('path');
+< const fs = require('../libs/fsExtra');
+< const Logger = require('../Logger');
+< const SocketAuthority = require('../SocketAuthority');
+< const libraryHelpers = require('../utils/libraryHelpers');
+< const libraryItemsBookFilters = require('../utils/queries/libraryItemsBookFilters');
+< const libraryItemFilters = require('../utils/queries/libraryItemFilters');
+< const seriesFilters = require('../utils/queries/seriesFilters');
+< const fileUtils = require('../utils/fileUtils');
+< const { createNewSortInstance } = require('../libs/fastSort');
+---
+> const Sequelize = require("sequelize");
+> const Path = require("path");
+> const fs = require("../libs/fsExtra");
+> const Logger = require("../Logger");
+> const SocketAuthority = require("../SocketAuthority");
+> const libraryHelpers = require("../utils/libraryHelpers");
+> const libraryItemsBookFilters = require("../utils/queries/libraryItemsBookFilters");
+> const libraryItemFilters = require("../utils/queries/libraryItemFilters");
+> const seriesFilters = require("../utils/queries/seriesFilters");
+> const fileUtils = require("../utils/fileUtils");
+> const fastSort = require("../libs/fastSort");
+> const LibraryScanner = require("../scanner/LibraryScanner");
+> const Scanner = require("../scanner/Scanner");
+> const Database = require("../Database");
+> const Watcher = require("../Watcher");
+> const RssFeedManager = require("../managers/RssFeedManager");
+> const libraryFilters = require("../utils/queries/libraryFilters");
+> const libraryItemsPodcastFilters = require("../utils/queries/libraryItemsPodcastFilters");
+> const authorFilters = require("../utils/queries/authorFilters");
+> const zipHelpers = require("../utils/zipHelpers");
+> const queryValue = require("../utils/queryValue");
+> const { createNewSortInstance } = fastSort;
+> const { optionalString, isNaNArgument } = queryValue;
+17,25d27
+< const LibraryScanner = require('../scanner/LibraryScanner');
+< const Scanner = require('../scanner/Scanner');
+< const Database = require('../Database');
+< const Watcher = require('../Watcher');
+< const RssFeedManager = require('../managers/RssFeedManager');
+< const libraryFilters = require('../utils/queries/libraryFilters');
+< const libraryItemsPodcastFilters = require('../utils/queries/libraryItemsPodcastFilters');
+< const authorFilters = require('../utils/queries/authorFilters');
+< const zipHelpers = require('../utils/zipHelpers');
+118c120
+<         let currentLargestDisplayOrder = await Database.libraryModel.getMaxDisplayOrder();
+---
+>         let currentLargestDisplayOrder = (await Database.libraryModel.getMaxDisplayOrder());
+146,147c148,149
+<         libraries = libraries.map((lib) => lib.toOldJSON());
+<         const includeArray = (req.query.include || '').split(',');
+---
+>         const librariesJson = libraries.map((lib) => lib.toOldJSON());
+>         const includeArray = (optionalString(req.query.include) || '').split(',');
+149c151
+<             for (const library of libraries) {
+---
+>             for (const library of librariesJson) {
+159c161
+<             libraries
+---
+>             libraries: librariesJson
+163c165
+<         const includeArray = (req.query.include || '').split(',');
+---
+>         const includeArray = (optionalString(req.query.include) || '').split(',');
+371a374
+>                             const book = libraryItem.media;
+373,374c376,377
+<                             if (libraryItem.media.bookAuthors.length) {
+<                                 authorIds.push(...libraryItem.media.bookAuthors.map((ba) => ba.authorId));
+---
+>                             if (book.bookAuthors.length) {
+>                                 authorIds.push(...book.bookAuthors.map((ba) => ba.authorId));
+376,377c379,380
+<                             if (libraryItem.media.bookSeries.length) {
+<                                 seriesIds.push(...libraryItem.media.bookSeries.map((bs) => bs.seriesId));
+---
+>                             if (book.bookSeries.length) {
+>                                 seriesIds.push(...book.bookSeries.map((bs) => bs.seriesId));
+476c479
+<         const include = (req.query.include || '')
+---
+>         const include = (optionalString(req.query.include) || '')
+485c488
+<             sortBy: req.query.sort,
+---
+>             sortBy: optionalString(req.query.sort),
+487c490
+<             filterBy: req.query.filter,
+---
+>             filterBy: optionalString(req.query.filter),
+562a566
+>                 const book = libraryItem.media;
+564,565c568,569
+<                 if (libraryItem.media.bookAuthors.length) {
+<                     authorIds.push(...libraryItem.media.bookAuthors.map((ba) => ba.authorId));
+---
+>                 if (book.bookAuthors.length) {
+>                     authorIds.push(...book.bookAuthors.map((ba) => ba.authorId));
+567,568c571,572
+<                 if (libraryItem.media.bookSeries.length) {
+<                     seriesIds.push(...libraryItem.media.bookSeries.map((bs) => bs.seriesId));
+---
+>                 if (book.bookSeries.length) {
+>                     seriesIds.push(...book.bookSeries.map((bs) => bs.seriesId));
+586c590
+<         const include = (req.query.include || '')
+---
+>         const include = (optionalString(req.query.include) || '')
+595c599
+<             sortBy: req.query.sort,
+---
+>             sortBy: optionalString(req.query.sort),
+597c601
+<             filterBy: req.query.filter,
+---
+>             filterBy: optionalString(req.query.filter),
+608c612
+<         const include = (req.query.include || '')
+---
+>         const include = (optionalString(req.query.include) || '')
+632c636
+<         const include = (req.query.include || '')
+---
+>         const include = (optionalString(req.query.include) || '')
+677c681
+<         const include = (req.query.include || '')
+---
+>         const include = (optionalString(req.query.include) || '')
+888,890c892,895
+<             libraryItem.media.narrators = libraryItem.media.narrators.filter((n) => n !== narratorName);
+<             if (!libraryItem.media.narrators.includes(updatedName)) {
+<                 libraryItem.media.narrators.push(updatedName);
+---
+>             const book = libraryItem.media;
+>             book.narrators = book.narrators.filter((n) => n !== narratorName);
+>             if (!book.narrators.includes(updatedName)) {
+>                 book.narrators.push(updatedName);
+892,893c897,898
+<             await libraryItem.media.update({
+<                 narrators: libraryItem.media.narrators
+---
+>             await book.update({
+>                 narrators: book.narrators
+914,916c919,922
+<             libraryItem.media.narrators = libraryItem.media.narrators.filter((n) => n !== narratorName);
+<             await libraryItem.media.update({
+<                 narrators: libraryItem.media.narrators
+---
+>             const book = libraryItem.media;
+>             book.narrators = book.narrators.filter((n) => n !== narratorName);
+>             await book.update({
+>                 narrators: book.narrators
+1090a1097
+>         const paginationQuery = req.query;
+1093,1094c1100,1101
+<                 req.query[queryKey] = !isNaN(req.query[queryKey]) ? Number(req.query[queryKey]) : 0;
+<                 if (!Number.isInteger(req.query[queryKey]) || req.query[queryKey] < 0) {
+---
+>                 paginationQuery[queryKey] = !isNaN(isNaNArgument(req.query[queryKey])) ? Number(req.query[queryKey]) : 0;
+>                 if (!Number.isInteger(paginationQuery[queryKey]) || paginationQuery[queryKey] < 0) {
+=== server/controllers/MeController.js
+9a10
+> const queryValue = require("../utils/queryValue");
+12a14
+> const { isNaNArgument } = queryValue;
+289c291
+<         const limit = !isNaN(req.query.limit) ? Number(req.query.limit) || 25 : 25;
+---
+>         const limit = !isNaN(isNaNArgument(req.query.limit)) ? Number(req.query.limit) || 25 : 25;
+=== server/controllers/MiscController.js
+16a17
+> const queryValue = require("../utils/queryValue");
+19a21
+> const { optionalString } = queryValue;
+80c82
+<         const includeArray = (req.query.include || '').split(',');
+---
+>         const includeArray = (optionalString(req.query.include) || '').split(',');
+=== server/controllers/PodcastController.js
+13a14
+> const queryValue = require("../utils/queryValue");
+16a18
+> const { isNaNArgument } = queryValue;
+203c205
+<         const maxEpisodesToDownload = !isNaN(req.query.limit) ? Number(req.query.limit) : 3;
+---
+>         const maxEpisodesToDownload = !isNaN(isNaNArgument(req.query.limit)) ? Number(req.query.limit) : 3;
+=== server/controllers/SeriesController.js
+6a7,8
+> const queryValue = require("../utils/queryValue");
+> const { optionalString } = queryValue;
+10c12
+<         const include = (req.query.include || '')
+---
+>         const include = (optionalString(req.query.include) || '')
+=== server/controllers/SessionController.js
+8a9
+> const queryValue = require("../utils/queryValue");
+11a13
+> const { optionalString } = queryValue;
+19c21
+<         let userId = req.query.user;
+---
+>         let userId = optionalString(req.query.user);
+25c27
+<         let orderKey = req.query.sort || 'updatedAt';
+---
+>         let orderKey = optionalString(req.query.sort) || 'updatedAt';
+=== server/controllers/ShareController.js
+11a12
+> const queryValue = require("../utils/queryValue");
+14a16
+> const { requiredString, isNaNArgument } = queryValue;
+19c21
+<         let startTime = req.query.t && !isNaN(req.query.t) ? Math.max(0, parseInt(req.query.t)) : 0;
+---
+>         let startTime = req.query.t && !isNaN(isNaNArgument(req.query.t)) ? Math.max(0, parseInt(requiredString(req.query.t))) : 0;
+=== server/controllers/UserController.js
+6a7
+> const queryValue = require("../utils/queryValue");
+8a10
+> const { optionalString } = queryValue;
+15c17
+<         const includes = (req.query.include || '').split(',').map((i) => i.trim());
+---
+>         const includes = (optionalString(req.query.include) || '').split(',').map((i) => i.trim());
+DIFFERING FILES 13

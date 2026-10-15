@@ -1,0 +1,74 @@
+== InitializedDatabase and cast(e) left (expected 0 and 0)
+0
+0
+== prod.js and dev.js tracked by git?
+prod.js
+== added lines that look like rule 15 or any violations (dd0b7b2f to HEAD)
+== tsconfig diff
+diff --git a/tsconfig.server.json b/tsconfig.server.json
+index a3c6ce5c..2fa79add 100644
+--- a/tsconfig.server.json
++++ b/tsconfig.server.json
+@@ -15,6 +15,6 @@
+     "tsBuildInfoFile": "dist-server/.tsbuildinfo",
+     "forceConsistentCasingInFileNames": true
+   },
+-  "include": ["index.js", "dev.js", "server/**/*.js", "server/**/*.ts", "test/**/*.js", "test/**/*.ts"],
++  "include": ["index.ts", "dev.js", "server/**/*.js", "server/**/*.ts", "test/**/*.js", "test/**/*.ts"],
+   "exclude": ["node_modules", "dist-server", "client", "**/*.d.ts"]
+ }
+== package.json diff
+diff --git a/package.json b/package.json
+index d9f6264e..158538b1 100644
+--- a/package.json
++++ b/package.json
+@@ -62,12 +62,14 @@
+     "xml2js": "^0.5.0"
+   },
+   "devDependencies": {
++    "@types/cookie-parser": "^1.4.10",
+     "@types/express": "^4.17.25",
+     "@types/express-session": "^1.19.0",
+     "@types/jsonwebtoken": "^9.0.10",
+     "@types/node": "^24.13.6",
+     "@types/nodemailer": "^6.4.24",
+     "@types/passport": "^1.0.17",
++    "@types/passport-jwt": "^4.0.1",
+     "@types/semver": "^7.8.0",
+     "@types/uuid": "^8.3.4",
+     "@types/xml2js": "^0.4.14",
+== package-lock summary
+ package-lock.json | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+== tests and eslint config untouched (expected empty)
+== all files changed from dd0b7b2f to HEAD
+ MIGRATION.md                                       | 100 +++++-
+ index.js => index.ts                               |  46 ++-
+ package-lock.json                                  |  35 +++
+ package.json                                       |   2 +
+ server/{Auth.js => Auth.ts}                        | 196 +++++++-----
+ server/{Database.js => Database.ts}                | 347 +++++++++++----------
+ server/{Logger.js => Logger.ts}                    |  84 +++--
+ server/{Server.js => Server.ts}                    | 205 ++++++++----
+ server/{SocketAuthority.js => SocketAuthority.ts}  | 167 ++++++----
+ server/{Watcher.js => Watcher.ts}                  | 176 ++++++-----
+ server/controllers/CollectionController.ts         |   4 +-
+ server/controllers/MiscController.ts               |   3 +-
+ server/controllers/PlaylistController.ts           |   7 +-
+ server/controllers/PodcastController.ts            |   4 +-
+ server/controllers/SessionController.ts            |   3 +-
+ server/managers/ApiCacheManager.ts                 |   4 +-
+ server/managers/PodcastManager.ts                  |   4 +-
+ server/managers/ShareManager.ts                    |   7 +-
+ server/models/Setting.ts                           |   4 +-
+ server/objects/settings/ServerSettings.ts          |   3 +-
+ server/routers/ApiRouter.ts                        |   6 +-
+ server/utils/migrations/dbMigration.ts             |  27 +-
+ server/utils/queries/adminStats.ts                 |   6 +-
+ server/utils/queries/libraryItemsBookFilters.ts    |   5 +-
+ server/utils/queries/libraryItemsPodcastFilters.ts |   5 +-
+ server/utils/queries/seriesFilters.ts              |   5 +-
+ server/utils/queries/userStats.ts                  |   6 +-
+ server/utils/types.ts                              |  12 +-
+ tsconfig.server.json                               |   2 +-
+ 29 files changed, 922 insertions(+), 553 deletions(-)

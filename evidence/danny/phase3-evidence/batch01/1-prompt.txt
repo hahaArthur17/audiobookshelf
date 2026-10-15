@@ -1,0 +1,5 @@
+Read MIGRATION.md first and follow it. Do batch 1 only: convert every .js file under server/utils (all subfolders, 46 files) to TypeScript, following the rules in MIGRATION.md. The acceptance criteria are the Rules section of MIGRATION.md: npm run build:server reports 0 "error TS", npm test shows 356 passing and 0 failing, no test is edited, skipped or deleted, runtime behaviour is unchanged, and no bugs are fixed (list them instead).
+
+Plan the work yourself and implement it end to end without waiting for my approval. Before you start, run git log --oneline -5 and git status. If the Progress table or the log shows this batch was already started, continue from there instead of starting over.
+
+When the batch is done, update the Progress table, the Bugs section, the Skipped section and the Log in MIGRATION.md, commit with the message `phase3 batch 1: server/utils`, report what you did, and stop. Do not start batch 2.

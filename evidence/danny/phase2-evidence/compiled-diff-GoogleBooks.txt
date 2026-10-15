@@ -1,0 +1,35 @@
+--- /tmp/abs-base2/dist-server/server/providers/GoogleBooks.js	2026-10-03 16:15:06.608767450 +1300
++++ dist-server/server/providers/GoogleBooks.js	2026-10-03 15:34:12.950664620 +1300
+@@ -1,6 +1,9 @@
+ "use strict";
+-const axios = require('axios');
+-const Logger = require('../Logger');
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
++const axios_1 = __importDefault(require("axios"));
++const Logger = require("../Logger");
+ class GoogleBooks {
+     #responseTimeout = 10000;
+     constructor() { }
+@@ -38,10 +41,7 @@
+     }
+     /**
+      * Search for a book by title and author
+-     * @param {string} title
+-     * @param {string} author
+-     * @param {number} [timeout] response timeout in ms
+-     * @returns {Promise<Object[]>}
++     * @param timeout response timeout in ms
+      **/
+     async search(title, author, timeout = this.#responseTimeout) {
+         if (!timeout || isNaN(timeout))
+@@ -54,7 +54,7 @@
+         }
+         const url = `https://www.googleapis.com/books/v1/volumes?${queryString}`;
+         Logger.debug(`[GoogleBooks] Search url: ${url}`);
+-        const items = await axios
++        const items = await axios_1.default
+             .get(url, {
+             timeout
+         })
