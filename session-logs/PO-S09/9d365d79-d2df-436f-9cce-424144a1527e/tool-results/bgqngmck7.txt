@@ -1,0 +1,712 @@
+diff --git a/server/controllers/LibraryController.js b/server/controllers/LibraryController.ts
+similarity index 74%
+rename from server/controllers/LibraryController.js
+rename to server/controllers/LibraryController.ts
+index 6bf36a7b..4f3c9d98 100644
+--- a/server/controllers/LibraryController.js
++++ b/server/controllers/LibraryController.ts
+@@ -1,29 +1,104 @@
+-const { Request, Response, NextFunction } = require('express')
+-const Sequelize = require('sequelize')
+-const Path = require('path')
+-const fs = require('../libs/fsExtra')
+-const Logger = require('../Logger')
+-const SocketAuthority = require('../SocketAuthority')
+-const libraryHelpers = require('../utils/libraryHelpers')
+-const libraryItemsBookFilters = require('../utils/queries/libraryItemsBookFilters')
+-const libraryItemFilters = require('../utils/queries/libraryItemFilters')
+-const seriesFilters = require('../utils/queries/seriesFilters')
+-const fileUtils = require('../utils/fileUtils')
+-const { createNewSortInstance } = require('../libs/fastSort')
++/// <reference path="../types/libraryItemModel.d.ts" />
++import type { NextFunction, Request, Response } from 'express'
++import Sequelize = require('sequelize')
++import type { BindOrReplacements, Order, WhereOptions } from 'sequelize'
++import Path = require('path')
++import fs = require('../libs/fsExtra')
++import Logger = require('../Logger')
++import SocketAuthority = require('../SocketAuthority')
++import libraryHelpers = require('../utils/libraryHelpers')
++import libraryItemsBookFilters = require('../utils/queries/libraryItemsBookFilters')
++import libraryItemFilters = require('../utils/queries/libraryItemFilters')
++import seriesFilters = require('../utils/queries/seriesFilters')
++import fileUtils = require('../utils/fileUtils')
++import fastSort = require('../libs/fastSort')
++const { createNewSortInstance }: {
++  // libs/fastSort is vendored and untyped (its sorter takes and returns any): only the call shape used in this file
++  createNewSortInstance(opts: { comparer: (a: string, b: string) => number }): <T>(ctx: T[]) => { asc(sortBy: (item: T) => unknown): T[] }
++} = fastSort
+ const naturalSort = createNewSortInstance({
+   comparer: new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare
+ })
+ 
+-const LibraryScanner = require('../scanner/LibraryScanner')
+-const Scanner = require('../scanner/Scanner')
+-const Database = require('../Database')
+-const Watcher = require('../Watcher')
+-const RssFeedManager = require('../managers/RssFeedManager')
+-
+-const libraryFilters = require('../utils/queries/libraryFilters')
+-const libraryItemsPodcastFilters = require('../utils/queries/libraryItemsPodcastFilters')
+-const authorFilters = require('../utils/queries/authorFilters')
+-const zipHelpers = require('../utils/zipHelpers')
++import LibraryScanner = require('../scanner/LibraryScanner')
++import Scanner = require('../scanner/Scanner')
++import Database = require('../Database')
++import Watcher = require('../Watcher')
++import RssFeedManager = require('../managers/RssFeedManager')
++
++import libraryFilters = require('../utils/queries/libraryFilters')
++import libraryItemsPodcastFilters = require('../utils/queries/libraryItemsPodcastFilters')
++import authorFilters = require('../utils/queries/authorFilters')
++import zipHelpers = require('../utils/zipHelpers')
++
++type User = import('../models/User')
++type Library = import('../models/Library')
++type LibraryItem = import('../models/LibraryItem')
++type Series = import('../models/Series')
++type Feed = import('../models/Feed')
++type Author = import('../models/Author')
++type Playlist = import('../models/Playlist')
++type PodcastEpisode = import('../models/PodcastEpisode')
++type BookAuthor = import('../models/BookAuthor')
++type BookSeries = import('../models/BookSeries')
++type BookExpanded = import('../models/Book').BookExpanded
++type ApiRouter = import('../routers/ApiRouter')
++
++// lib.d.ts types isNaN(number), but the built-in coerces every value and the handlers pass body and query values. Widens the type for this file only; emits no code.
++declare function isNaN(value: unknown): boolean
++
++// Query values are assumed to be strings (the code calls .split and .trim on them), except limit and page: middleware() replaces them with numbers before any handler of a /libraries/:id route runs
++type LibraryQuery = { include?: string; limit?: number; page?: number; sort?: string; desc?: string; filter?: string; minified?: string; collapseseries?: string; q?: string; force?: string; ext?: string; ids?: string }
++type LibraryMiddlewareQuery = { [key: string]: string | number | undefined } // index signature: middleware() reads and replaces limit and page by a dynamic key
++type LibraryParams = { id: string; seriesId: string; narratorId: string }
++// Body fields have the types the handlers assume after their own checks
++type LibraryFolderBody = { id?: string; fullPath?: string; path: string }
++type SettingsByKey = { [key: string]: unknown } // index signature: create() and update() read and assign library settings by a dynamic key
++type LibraryBody = { name?: string; folders?: LibraryFolderBody[]; mediaType?: string; icon?: string; provider?: string; displayOrder?: number; settings?: SettingsByKey; [key: string]: unknown } // index signature: create() and update() read req.body by a dynamic key
++
++type RequestUserObject = { user: User }
++type RequestWithUser = Request<LibraryParams, unknown, LibraryBody, LibraryQuery> & RequestUserObject
++type RequestEntityObject = { library: Library }
++type LibraryControllerRequest = RequestWithUser & RequestEntityObject
++type LibraryReorderObj = { id: string; newOrder: number }
++type LibraryReorderRequest = Request<{}, {}, LibraryReorderObj[], {}> & RequestUserObject
++
++/** What create() builds for Library.create(): libraryFolders and displayOrder are added after the object is built */
++type NewLibraryPayload = { name: string; provider: string; mediaType: string; icon: string; settings: SettingsByKey; libraryFolders?: LibraryFolderBody[]; displayOrder?: number }
++/** toOldJSON() of a library plus the stats that findAll() adds to the same object */
++type LibraryStats = Awaited<ReturnType<typeof libraryItemsBookFilters.getBookLibraryStats>> | Awaited<ReturnType<typeof libraryItemsPodcastFilters.getPodcastLibraryStats>>
++type OldLibraryWithStats = ReturnType<Library['toOldJSON']> & { stats?: LibraryStats }
++/** The filter data of a library as far as this file reads it: libraryFilters.js (JS) documents it only as object */
++type LibraryFilterData = { numIssues?: number }
++/** A book library item: LibraryItem.js (JS) types media as a book or a podcast */
++type BookLibraryItem = LibraryItem & { media: BookExpanded }
++/** A library item as the removal queries of update(), delete() and removeLibraryItemsWithIssues() load it: media carries ids only. The code reads podcastEpisodes in a podcast library and bookAuthors and bookSeries in a book library */
++type LibraryItemToRemove = LibraryItem & { media: { podcastEpisodes: PodcastEpisode[]; bookAuthors: BookAuthor[]; bookSeries: BookSeries[] } }
++/** The payload of a paginated list handler: built with empty results and filled afterwards */
++type ListPayload<T> = { results: T[]; total: number; limit: number; page: number }
++type FilteredListPayload<T> = ListPayload<T> & { sortBy: string | undefined; sortDesc: boolean; filterBy: string | undefined; minified: boolean; include: string | undefined }
++/** The payload of getLibraryItems(): total stays undefined when sub-series are collapsed, and offset is added after the object is built */
++type LibraryItemsPayload = Omit<FilteredListPayload<object>, 'total'> & { total: number | undefined; mediaType: string; collapseseries: boolean; offset?: number }
++/** toOldJSON() of a series plus the keys that getSeriesForLibrary() adds to the same object */
++type SeriesJsonWithIncludes = ReturnType<Series['toOldJSON']> & {
++  progress?: { libraryItemIds: string[]; libraryItemIdsFinished: string[]; isFinished: boolean }
++  rssFeed?: ReturnType<Feed['toOldJSONMinified']> | null
++}
++/** The payload of stats(): built with largestItems, the other keys are added per media type */
++type LibraryStatsPayload = {
++  largestItems: Awaited<ReturnType<typeof libraryItemFilters.getLargestItems>>
++  totalAuthors?: number
++  authorsWithCount?: Awaited<ReturnType<typeof authorFilters.getAuthorsWithCount>>
++  totalGenres?: number
++  genresWithCount?: Awaited<ReturnType<typeof libraryItemsBookFilters.getGenresWithCount>> | Awaited<ReturnType<typeof libraryItemsPodcastFilters.getGenresWithCount>>
++  totalItems?: number
++  longestItems?: Awaited<ReturnType<typeof libraryItemsBookFilters.getLongestBooks>> | Awaited<ReturnType<typeof libraryItemsPodcastFilters.getLongestPodcasts>>
++  totalSize?: number
++  totalDuration?: number
++  numAudioTracks?: number
++}
++/** toOldJSONExpanded() of an author plus lastFirst, which getAuthors() adds to the same object */
++type AuthorJsonWithLastFirst = ReturnType<Author['toOldJSONExpanded']> & { lastFirst?: string }
+ 
+ /**
+  * @typedef RequestUserObject
+@@ -47,7 +122,7 @@ class LibraryController {
+    * @param {RequestWithUser} req
+    * @param {Response} res
+    */
+-  async create(req, res) {
++  async create(req: RequestWithUser, res: Response) {
+     if (!req.user.isAdminOrUp) {
+       Logger.error(`[LibraryController] Non-admin user "${req.user.username}" attempted to create library`)
+       return res.sendStatus(403)
+@@ -78,7 +153,7 @@ class LibraryController {
+     }
+ 
+     const mediaType = req.body.mediaType || 'book'
+-    const newLibraryPayload = {
++    const newLibraryPayload: NewLibraryPayload = {
+       name: req.body.name,
+       provider: req.body.provider || 'google',
+       mediaType,
+@@ -165,7 +240,7 @@ class LibraryController {
+     library.libraryFolders = await library.getLibraryFolders()
+ 
+     // Only emit to users with access to library
+-    const userFilter = (user) => {
++    const userFilter = (user: User) => {
+       return user.checkCanAccessLibrary?.(library.id)
+     }
+     SocketAuthority.emitter('library_added', library.toOldJSON(), userFilter)
+@@ -185,8 +260,8 @@ class LibraryController {
+    * @param {RequestWithUser} req
+    * @param {Response} res
+    */
+-  async findAll(req, res) {
+-    let libraries = await Database.libraryModel.getAllWithFolders()
++  async findAll(req: RequestWithUser, res: Response) {
++    let libraries: Library[] | OldLibraryWithStats[] = await Database.libraryModel.getAllWithFolders()
+ 
+     const librariesAccessible = req.user.permissions?.librariesAccessible || []
+     if (librariesAccessible.length) {
+@@ -217,10 +292,10 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async findOne(req, res) {
++  async findOne(req: LibraryControllerRequest, res: Response) {
+     const includeArray = (req.query.include || '').split(',')
+     if (includeArray.includes('filterdata')) {
+-      const filterdata = await libraryFilters.getFilterData(req.library.mediaType, req.library.id)
++      const filterdata: LibraryFilterData = await libraryFilters.getFilterData(req.library.mediaType, req.library.id)
+ 
+       return res.json({
+         filterdata,
+@@ -239,8 +314,9 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getEpisodeDownloadQueue(req, res) {
+-    const libraryDownloadQueueDetails = this.podcastManager.getDownloadQueueDetails(req.library.id)
++  async getEpisodeDownloadQueue(this: ApiRouter, req: LibraryControllerRequest, res: Response) {
++    // boundary: PodcastManager.js (JS) declares getDownloadQueueDetails(libraryId = null), so its parameter is typed as null (TS2345); the cast of the callee is erased and keeps this
++    const libraryDownloadQueueDetails = (this.podcastManager.getDownloadQueueDetails as (libraryId?: string | null) => ReturnType<ApiRouter['podcastManager']['getDownloadQueueDetails']>)(req.library.id)
+     res.json(libraryDownloadQueueDetails)
+   }
+ 
+@@ -252,14 +328,14 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async update(req, res) {
++  async update(this: ApiRouter, req: LibraryControllerRequest, res: Response) {
+     if (!req.user.isAdminOrUp) {
+       Logger.error(`[LibraryController] Non-admin user "${req.user.username}" attempted to update library`)
+       return res.sendStatus(403)
+     }
+ 
+     // Validation
+-    const updatePayload = {}
++    const updatePayload: { displayOrder?: number; settings?: SettingsByKey; [key: string]: unknown } = {} // index signature: filled by a dynamic key
+     const keysToCheck = ['name', 'provider', 'mediaType', 'icon']
+     for (const key of keysToCheck) {
+       if (!req.body[key]) continue
+@@ -286,8 +362,8 @@ class LibraryController {
+     }
+ 
+     // Validate settings
+-    const defaultLibrarySettings = Database.libraryModel.getDefaultLibrarySettingsForMediaType(req.library.mediaType)
+-    const updatedSettings = {
++    const defaultLibrarySettings: SettingsByKey = Database.libraryModel.getDefaultLibrarySettingsForMediaType(req.library.mediaType)
++    const updatedSettings: SettingsByKey = {
+       ...(req.library.settings || defaultLibrarySettings)
+     }
+     // In case new settings are added in the future, ensure all settings are present
+@@ -378,7 +454,7 @@ class LibraryController {
+     // Validate new folder paths exist or can be created & resolve rel paths
+     //   returns 400 if a new folder fails to access
+     if (Array.isArray(req.body.folders)) {
+-      const newFolderPaths = []
++      const newFolderPaths: string[] = []
+       req.body.folders = req.body.folders.map((f) => {
+         if (!f.id) {
+           const path = f.fullPath || f.path
+@@ -393,7 +469,7 @@ class LibraryController {
+           const success = await fs
+             .ensureDir(path)
+             .then(() => true)
+-            .catch((error) => {
++            .catch((error: unknown) => {
+               Logger.error(`[LibraryController] Failed to ensure folder dir "${path}"`, error)
+               return false
+             })
+@@ -412,10 +488,10 @@ class LibraryController {
+       }
+ 
+       // Handle removing folders
+-      for (const folder of req.library.libraryFolders) {
++      for (const folder of req.library.libraryFolders!) { // libraryFolders is set by the include of findByIdWithFolders() in middleware()
+         if (!req.body.folders.some((f) => f.id === folder.id)) {
+           // Remove library items in folder
+-          const libraryItemsInFolder = await Database.libraryItemModel.findAll({
++          const libraryItemsInFolder = await (Database.libraryItemModel as LibraryItemModelStatic).findAll({ // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
+             where: {
+               libraryFolderId: folder.id
+             },
+@@ -444,7 +520,7 @@ class LibraryController {
+                 ]
+               }
+             ]
+-          })
++          }) as LibraryItemToRemove[] // boundary: LibraryItem.js (JS) types media as a book or a podcast; this query loads only the ids named in LibraryItemToRemove
+           Logger.info(`[LibraryController] Removed folder "${folder.path}" from library "${req.library.name}" with ${libraryItemsInFolder.length} library items`)
+           const seriesIds = []
+           const authorIds = []
+@@ -505,7 +581,7 @@ class LibraryController {
+ 
+     if (hasUpdates) {
+       // Only emit to users with access to library
+-      const userFilter = (user) => {
++      const userFilter = (user: User) => {
+         return user.checkCanAccessLibrary?.(req.library.id)
+       }
+       SocketAuthority.emitter('library_updated', req.library.toOldJSON(), userFilter)
+@@ -522,7 +598,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async delete(req, res) {
++  async delete(this: ApiRouter, req: LibraryControllerRequest, res: Response) {
+     if (!req.user.isAdminOrUp) {
+       Logger.error(`[LibraryController] Non-admin user "${req.user.username}" attempted to delete library`)
+       return res.sendStatus(403)
+@@ -538,7 +614,7 @@ class LibraryController {
+     }
+ 
+     // Remove items in this library
+-    const libraryItemsInLibrary = await Database.libraryItemModel.findAll({
++    const libraryItemsInLibrary = await (Database.libraryItemModel as LibraryItemModelStatic).findAll({ // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
+       where: {
+         libraryId: req.library.id
+       },
+@@ -553,7 +629,7 @@ class LibraryController {
+           }
+         }
+       ]
+-    })
++    }) as LibraryItemToRemove[] // boundary: LibraryItem.js (JS) types media as a book or a podcast; this query loads only the podcast episode ids
+     Logger.info(`[LibraryController] Removing ${libraryItemsInLibrary.length} library items in library "${req.library.name}"`)
+     for (const libraryItem of libraryItemsInLibrary) {
+       let mediaItemIds = []
+@@ -588,8 +664,8 @@ class LibraryController {
+     SocketAuthority.emitter('library_removed', libraryJson)
+ 
+     // Remove library filter data
+-    if (Database.libraryFilterData[req.library.id]) {
+-      delete Database.libraryFilterData[req.library.id]
++    if ((Database.libraryFilterData as { [libraryId: string]: LibraryFilterData })[req.library.id]) { // boundary: Database.js (JS) starts libraryFilterData as {} and gives it no type; it is filled by library id
++      delete (Database.libraryFilterData as { [libraryId: string]: LibraryFilterData })[req.library.id] // boundary: see the line above
+     }
+ 
+     return res.json(libraryJson)
+@@ -601,13 +677,13 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getLibraryItems(req, res) {
++  async getLibraryItems(req: LibraryControllerRequest, res: Response) {
+     const include = (req.query.include || '')
+       .split(',')
+       .map((v) => v.trim().toLowerCase())
+       .filter((v) => !!v)
+ 
+-    const payload = {
++    const payload: LibraryItemsPayload = {
+       results: [],
+       total: undefined,
+       limit: req.query.limit || 0,
+@@ -625,10 +701,10 @@ class LibraryController {
+ 
+     // TODO: Temporary way of handling collapse sub-series. Either remove feature or handle through sql queries
+     const filterByGroup = payload.filterBy?.split('.').shift()
+-    const filterByValue = filterByGroup ? libraryFilters.decode(payload.filterBy.replace(`${filterByGroup}.`, '')) : null
++    const filterByValue = filterByGroup ? libraryFilters.decode(payload.filterBy!.replace(`${filterByGroup}.`, '')) : null // filterBy is set here: filterByGroup, tested first, is taken from it
+     if (filterByGroup === 'series' && filterByValue !== 'no-series' && payload.collapseseries) {
+-      const seriesId = libraryFilters.decode(payload.filterBy.split('.')[1])
+-      payload.results = await libraryHelpers.handleCollapseSubseries(payload, seriesId, req.user, req.library)
++      const seriesId = libraryFilters.decode(payload.filterBy!.split('.')[1]) // filterBy is set here: filterByGroup is 'series'
++      payload.results = await libraryHelpers.handleCollapseSubseries(payload, seriesId as Parameters<typeof libraryHelpers.handleCollapseSubseries>[1], req.user, req.library) // boundary: the JSDoc of libraryHelpers.js (JS) types seriesId as string, but decode() returns null when it fails (TS2345); see the bug log
+     } else {
+       const { libraryItems, count } = await Database.libraryItemModel.getByFilterAndSort(req.library, req.user, payload)
+       payload.results = libraryItems
+@@ -647,13 +723,13 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async removeLibraryItemsWithIssues(req, res) {
++  async removeLibraryItemsWithIssues(this: ApiRouter, req: LibraryControllerRequest, res: Response) {
+     if (!req.user.isAdminOrUp) {
+       Logger.error(`[LibraryController] Non-admin user "${req.user.username}" attempted to delete library items missing or invalid`)
+       return res.sendStatus(403)
+     }
+ 
+-    const libraryItemsWithIssues = await Database.libraryItemModel.findAll({
++    const libraryItemsWithIssues = await (Database.libraryItemModel as LibraryItemModelStatic).findAll({ // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
+       where: {
+         libraryId: req.library.id,
+         [Sequelize.Op.or]: [
+@@ -690,7 +766,7 @@ class LibraryController {
+           ]
+         }
+       ]
+-    })
++    }) as LibraryItemToRemove[] // boundary: LibraryItem.js (JS) types media as a book or a podcast; this query loads only the ids named in LibraryItemToRemove
+ 
+     if (!libraryItemsWithIssues.length) {
+       Logger.warn(`[LibraryController] No library items have issues`)
+@@ -725,8 +801,8 @@ class LibraryController {
+     }
+ 
+     // Set numIssues to 0 for library filter data
+-    if (Database.libraryFilterData[req.library.id]) {
+-      Database.libraryFilterData[req.library.id].numIssues = 0
++    if ((Database.libraryFilterData as { [libraryId: string]: LibraryFilterData })[req.library.id]) { // boundary: Database.js (JS) starts libraryFilterData as {} and gives it no type; it is filled by library id
++      (Database.libraryFilterData as { [libraryId: string]: LibraryFilterData })[req.library.id].numIssues = 0 // boundary: see the line above
+     }
+ 
+     res.sendStatus(200)
+@@ -739,13 +815,13 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getAllSeriesForLibrary(req, res) {
++  async getAllSeriesForLibrary(req: LibraryControllerRequest, res: Response) {
+     const include = (req.query.include || '')
+       .split(',')
+       .map((v) => v.trim().toLowerCase())
+       .filter((v) => !!v)
+ 
+-    const payload = {
++    const payload: FilteredListPayload<object> = {
+       results: [],
+       total: 0,
+       limit: req.query.limit || 0,
+@@ -758,7 +834,8 @@ class LibraryController {
+     }
+ 
+     const offset = payload.page * payload.limit
+-    const { series, count } = await seriesFilters.getFilteredSeries(req.library, req.user, payload.filterBy, payload.sortBy, payload.sortDesc, include, payload.limit, offset)
++    // boundary (both casts): the JSDoc of seriesFilters.js (JS) types filterBy and sortBy as string, but the query may leave them out, which getFilteredSeries() handles (TS2345)
++    const { series, count } = await seriesFilters.getFilteredSeries(req.library, req.user, payload.filterBy as Parameters<typeof seriesFilters.getFilteredSeries>[2], payload.sortBy as Parameters<typeof seriesFilters.getFilteredSeries>[3], payload.sortDesc, include, payload.limit, offset)
+ 
+     payload.total = count
+     payload.results = series
+@@ -775,7 +852,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res - Series
+    */
+-  async getSeriesForLibrary(req, res) {
++  async getSeriesForLibrary(req: LibraryControllerRequest, res: Response) {
+     const include = (req.query.include || '')
+       .split(',')
+       .map((v) => v.trim().toLowerCase())
+@@ -786,7 +863,7 @@ class LibraryController {
+ 
+     const libraryItemsInSeries = await libraryItemsBookFilters.getLibraryItemsForSeries(series, req.user)
+ 
+-    const seriesJson = series.toOldJSON()
++    const seriesJson: SeriesJsonWithIncludes = series.toOldJSON()
+     if (include.includes('progress')) {
+       const libraryItemsFinished = libraryItemsInSeries.filter((li) => !!req.user.getMediaProgress(li.media.id)?.isFinished)
+       seriesJson.progress = {
+@@ -811,13 +888,13 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getCollectionsForLibrary(req, res) {
++  async getCollectionsForLibrary(req: LibraryControllerRequest, res: Response) {
+     const include = (req.query.include || '')
+       .split(',')
+       .map((v) => v.trim().toLowerCase())
+       .filter((v) => !!v)
+ 
+-    const payload = {
++    const payload: FilteredListPayload<Awaited<ReturnType<typeof Database.collectionModel.getOldCollectionsJsonExpanded>>[number]> = {
+       results: [],
+       total: 0,
+       limit: req.query.limit || 0,
+@@ -850,10 +927,10 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getUserPlaylistsForLibrary(req, res) {
++  async getUserPlaylistsForLibrary(req: LibraryControllerRequest, res: Response) {
+     let playlistsForUser = await Database.playlistModel.getOldPlaylistsForUserAndLibrary(req.user.id, req.library.id)
+ 
+-    const payload = {
++    const payload: ListPayload<ReturnType<Playlist['toOldJSONExpanded']>> = {
+       results: [],
+       total: playlistsForUser.length,
+       limit: req.query.limit || 0,
+@@ -875,7 +952,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getLibraryFilterData(req, res) {
++  async getLibraryFilterData(req: LibraryControllerRequest, res: Response) {
+     const filterData = await libraryFilters.getFilterData(req.library.mediaType, req.library.id)
+     res.json(filterData)
+   }
+@@ -887,7 +964,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getUserPersonalizedShelves(req, res) {
++  async getUserPersonalizedShelves(req: LibraryControllerRequest, res: Response) {
+     const limitPerShelf = req.query.limit || 10
+     const include = (req.query.include || '')
+       .split(',')
+@@ -910,7 +987,7 @@ class LibraryController {
+    * @param {LibraryReorderRequest} req
+    * @param {Response} res
+    */
+-  async reorder(req, res) {
++  async reorder(req: LibraryReorderRequest, res: Response) {
+     if (!req.user.isAdminOrUp) {
+       Logger.error(`[LibraryController] Non-admin user "${req.user}" attempted to reorder libraries`)
+       return res.sendStatus(403)
+@@ -956,7 +1033,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async search(req, res) {
++  async search(req: LibraryControllerRequest, res: Response) {
+     if (!req.query.q || typeof req.query.q !== 'string') {
+       return res.status(400).send('Invalid request. Query param "q" must be a string')
+     }
+@@ -975,8 +1052,8 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async stats(req, res) {
+-    const stats = {
++  async stats(req: LibraryControllerRequest, res: Response) {
++    const stats: LibraryStatsPayload = {
+       largestItems: await libraryItemFilters.getLargestItems(req.library.id, 10)
+     }
+ 
+@@ -1018,10 +1095,10 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getAuthors(req, res) {
++  async getAuthors(req: LibraryControllerRequest, res: Response) {
+     const isPaginated = req.query.limit && !isNaN(req.query.limit) && !isNaN(req.query.page)
+ 
+-    const payload = {
++    const payload: FilteredListPayload<AuthorJsonWithLastFirst> = {
+       results: [],
+       total: 0,
+       limit: isPaginated ? Number(req.query.limit) : 0,
+@@ -1036,7 +1113,7 @@ class LibraryController {
+     // create order, limit and offset for pagination
+     let offset = isPaginated ? payload.page * payload.limit : undefined
+     let limit = isPaginated ? payload.limit : undefined
+-    let order = undefined
++    let order: Order | undefined = undefined
+     const direction = payload.sortDesc ? 'DESC' : 'ASC'
+     if (payload.sortBy === 'name') {
+       order = [[Sequelize.literal('name COLLATE NOCASE'), direction]]
+@@ -1051,7 +1128,7 @@ class LibraryController {
+       limit = undefined
+     }
+ 
+-    const { bookWhere, replacements } = libraryItemsBookFilters.getUserPermissionBookWhereQuery(req.user)
++    const { bookWhere, replacements } = libraryItemsBookFilters.getUserPermissionBookWhereQuery(req.user) as { bookWhere: WhereOptions; replacements: BindOrReplacements } // boundary: the JSDoc of libraryItemsBookFilters.js (JS) types replacements as object, which Sequelize does not accept (TS2322)
+     const { rows: authors, count } = await Database.authorModel.findAndCountAll({
+       where: {
+         libraryId: req.library.id
+@@ -1075,14 +1152,14 @@ class LibraryController {
+     let oldAuthors = []
+ 
+     for (const author of authors) {
+-      const oldAuthor = author.toOldJSONExpanded(author.books.length)
++      const oldAuthor: AuthorJsonWithLastFirst = author.toOldJSONExpanded(author.books!.length) // books is set by the include of the query above
+       oldAuthor.lastFirst = author.lastFirst
+       oldAuthors.push(oldAuthor)
+     }
+ 
+     // numBooks sort is handled post-query
+     if (payload.sortBy === 'numBooks') {
+-      oldAuthors.sort((a, b) => (payload.sortDesc ? b.numBooks - a.numBooks : a.numBooks - b.numBooks))
++      oldAuthors.sort((a, b) => (payload.sortDesc ? b.numBooks! - a.numBooks! : a.numBooks! - b.numBooks!)) // numBooks is optional in the type of toOldJSONExpanded() and is always set by it (four assertions)
+       if (isPaginated) {
+         const startIndex = payload.page * payload.limit
+         const endIndex = startIndex + payload.limit
+@@ -1107,7 +1184,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getNarrators(req, res) {
++  async getNarrators(req: LibraryControllerRequest, res: Response) {
+     // Get all books with narrators
+     const booksWithNarrators = await Database.bookModel.findAll({
+       where: Sequelize.where(Sequelize.fn('json_array_length', Sequelize.col('narrators')), {
+@@ -1123,7 +1200,7 @@ class LibraryController {
+       attributes: ['id', 'narrators']
+     })
+ 
+-    const narrators = {}
++    const narrators: { [name: string]: { id: string; name: string; numBooks: number } } = {} // index signature: filled by a dynamic key (the narrator name)
+     for (const book of booksWithNarrators) {
+       book.narrators.forEach((n) => {
+         if (typeof n !== 'string') {
+@@ -1154,7 +1231,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async updateNarrator(req, res) {
++  async updateNarrator(req: LibraryControllerRequest, res: Response) {
+     if (!req.user.canUpdate) {
+       Logger.error(`[LibraryController] Unauthorized user "${req.user.username}" attempted to update narrator`)
+       return res.sendStatus(403)
+@@ -1171,7 +1248,8 @@ class LibraryController {
+ 
+     const itemsUpdated = []
+ 
+-    const itemsWithNarrator = await libraryItemFilters.getAllLibraryItemsWithNarrators([narratorName], req.library.id)
++    // boundary (both casts): the JSDoc of libraryItemFilters.js (JS) types narrators as string[], but decode() returns null when it fails (TS2322, see the bug log); and LibraryItem.js (JS) types media as a book or a podcast, while this query returns book items
++    const itemsWithNarrator = await libraryItemFilters.getAllLibraryItemsWithNarrators([narratorName] as Parameters<typeof libraryItemFilters.getAllLibraryItemsWithNarrators>[0], req.library.id) as BookLibraryItem[]
+ 
+     for (const libraryItem of itemsWithNarrator) {
+       libraryItem.media.narrators = libraryItem.media.narrators.filter((n) => n !== narratorName)
+@@ -1202,7 +1280,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async removeNarrator(req, res) {
++  async removeNarrator(req: LibraryControllerRequest, res: Response) {
+     if (!req.user.canUpdate) {
+       Logger.error(`[LibraryController] Unauthorized user "${req.user.username}" attempted to remove narrator`)
+       return res.sendStatus(403)
+@@ -1215,7 +1293,8 @@ class LibraryController {
+ 
+     const itemsUpdated = []
+ 
+-    const itemsWithNarrator = await libraryItemFilters.getAllLibraryItemsWithNarrators([narratorName], req.library.id)
++    // boundary (both casts): the JSDoc of libraryItemFilters.js (JS) types narrators as string[], but decode() returns null when it fails (TS2322, see the bug log); and LibraryItem.js (JS) types media as a book or a podcast, while this query returns book items
++    const itemsWithNarrator = await libraryItemFilters.getAllLibraryItemsWithNarrators([narratorName] as Parameters<typeof libraryItemFilters.getAllLibraryItemsWithNarrators>[0], req.library.id) as BookLibraryItem[]
+ 
+     for (const libraryItem of itemsWithNarrator) {
+       libraryItem.media.narrators = libraryItem.media.narrators.filter((n) => n !== narratorName)
+@@ -1242,7 +1321,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async matchAll(req, res) {
++  async matchAll(this: ApiRouter, req: LibraryControllerRequest, res: Response) {
+     if (!req.user.isAdminOrUp) {
+       Logger.error(`[LibraryController] Non-root user "${req.user.username}" attempted to match library items`)
+       return res.sendStatus(403)
+@@ -1259,7 +1338,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async scan(req, res) {
++  async scan(req: LibraryControllerRequest, res: Response) {
+     if (!req.user.isAdminOrUp) {
+       Logger.error(`[LibraryController] Non-admin user "${req.user.username}" attempted to scan library`)
+       return res.sendStatus(403)
+@@ -1280,12 +1359,12 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getRecentEpisodes(req, res) {
++  async getRecentEpisodes(req: LibraryControllerRequest, res: Response) {
+     if (req.library.mediaType !== 'podcast') {
+       return res.sendStatus(404)
+     }
+ 
+-    const payload = {
++    const payload: { episodes: object[]; limit: number; page: number } = {
+       episodes: [],
+       limit: req.query.limit || 0,
+       page: req.query.page || 0
+@@ -1303,12 +1382,12 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getOPMLFile(req, res) {
++  async getOPMLFile(this: ApiRouter, req: LibraryControllerRequest, res: Response) {
+     const userPermissionPodcastWhere = libraryItemsPodcastFilters.getUserPermissionPodcastWhereQuery(req.user)
+     const podcasts = await Database.podcastModel.findAll({
+       attributes: ['id', 'feedURL', 'title', 'description', 'itunesPageURL', 'language'],
+       where: userPermissionPodcastWhere.podcastWhere,
+-      replacements: userPermissionPodcastWhere.replacements,
++      replacements: userPermissionPodcastWhere.replacements as BindOrReplacements, // boundary: the JSDoc of libraryItemsPodcastFilters.js (JS) types replacements as object, which Sequelize does not accept (TS2322)
+       include: {
+         model: Database.libraryItemModel,
+         attributes: ['id', 'libraryId'],
+@@ -1330,7 +1409,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async removeAllMetadataFiles(req, res) {
++  async removeAllMetadataFiles(req: LibraryControllerRequest, res: Response) {
+     if (!req.user.isAdminOrUp) {
+       Logger.error(`[LibraryController] Non-admin user "${req.user.username}" attempted to remove all metadata files`)
+       return res.sendStatus(403)
+@@ -1338,7 +1417,7 @@ class LibraryController {
+ 
+     const fileExt = req.query.ext === 'abs' ? 'abs' : 'json'
+     const metadataFilename = `metadata.${fileExt}`
+-    const libraryItemsWithMetadata = await Database.libraryItemModel.findAll({
++    const libraryItemsWithMetadata = await (Database.libraryItemModel as LibraryItemModelStatic).findAll({ // boundary: LibraryItem.js (JS) is not a Sequelize ModelStatic, see types/libraryItemModel.d.ts
+       attributes: ['id', 'libraryFiles'],
+       where: [
+         {
+@@ -1383,7 +1462,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async getPodcastTitles(req, res) {
++  async getPodcastTitles(req: LibraryControllerRequest, res: Response) {
+     if (!req.user.isAdminOrUp) {
+       Logger.error(`[LibraryController] Non-admin user "${req.user.username}" attempted to get podcast titles`)
+       return res.sendStatus(403)
+@@ -1405,8 +1484,8 @@ class LibraryController {
+         return {
+           title: p.title,
+           itunesId: p.itunesId,
+-          libraryItemId: p.libraryItem.id,
+-          libraryId: p.libraryItem.libraryId
++          libraryItemId: p.libraryItem!.id, // libraryItem is set by the include of the query above
++          libraryId: p.libraryItem!.libraryId // libraryItem is set by the include of the query above
+         }
+       })
+     })
+@@ -1419,7 +1498,7 @@ class LibraryController {
+    * @param {LibraryControllerRequest} req
+    * @param {Response} res
+    */
+-  async downloadMultiple(req, res) {
++  async downloadMultiple(req: LibraryControllerRequest, res: Response) {
+     if (!req.user.canDownload) {
+       Logger.warn(`User "${req.user.username}" attempted to download without permission`)
+       return res.sendStatus(403)
+@@ -1472,7 +1551,7 @@ class LibraryController {
+    * @param {Response} res
+    * @param {NextFunction} next
+    */
+-  async middleware(req, res, next) {
++  async middleware(req: Request<LibraryParams, unknown, LibraryBody, LibraryMiddlewareQuery> & RequestUserObject & Partial<RequestEntityObject>, res: Response, next: NextFunction) {
+     if (!req.user.checkCanAccessLibrary(req.params.id)) {
+       Logger.warn(`[LibraryController] Library ${req.params.id} not accessible to user ${req.user.username}`)
+       return res.sendStatus(403)
+@@ -1497,4 +1576,4 @@ class LibraryController {
+     next()
+   }
+ }
+-module.exports = new LibraryController()
++export = new LibraryController()

@@ -1,0 +1,381 @@
+
+================ set1 ================
+
+--- server/managers/PodcastManager.js  lines=744  probeErrors=90
+    codes: TS2339x43 TS7053x11 TS7006x9 TS2345x9 TS2322x6 TS7017x2 TS2551x2 TS2365x2 TS18047x2 TS7034x1 TS7005x1 TS2769x1 TS2684x1
+    requires: server/Logger.js [js-not-in-run], server/SocketAuthority.js [js-not-in-run], server/Database.js [js-not-in-run], server/Watcher.js [js-not-in-run], server/libs/fsExtra/index.js [libs], server/utils/podcastUtils.js [set5], server/utils/fileUtils.js [set5], server/utils/index.js [set5], server/utils/parsers/parseOPML.ts [ts], server/utils/generators/opmlGenerator.js [set6], server/utils/prober.js [set5], server/utils/ffmpegHelpers.js [set5], server/managers/TaskManager.ts [ts], server/managers/CoverManager.js [set2], server/managers/NotificationManager.js [set1], server/objects/files/LibraryFile.js [set4], server/objects/PodcastEpisodeDownload.js [set4], server/objects/files/AudioFile.js [set4]
+    required by (1): server/Server.js
+    other JSDoc import() refs: server/managers/CronManager.js, server/routers/ApiRouter.js
+
+--- server/managers/PlaybackSessionManager.js  lines=500  probeErrors=33
+    codes: TS2339x8 TS7006x6 TS2345x5 TS7053x4 TS2322x3 TS2694x2 TS18049x2 TS2497x1 TS7017x1 TS18046x1
+    requires: package.json [json], server/Logger.js [js-not-in-run], server/SocketAuthority.js [js-not-in-run], server/Database.js [js-not-in-run], server/libs/dateAndTime/index.js [libs], server/libs/fsExtra/index.js [libs], server/libs/uaParser/index.js [libs], server/libs/requestIp/index.js [libs], server/utils/constants.ts [ts], server/objects/PlaybackSession.js [set4], server/objects/DeviceInfo.ts [ts], server/objects/Stream.js [set4]
+    required by (1): server/Server.js
+    other JSDoc import() refs: server/controllers/ShareController.ts, server/managers/CronManager.js, server/routers/ApiRouter.js, server/routers/HlsRouter.ts, server/routers/PublicRouter.ts
+
+--- server/managers/RssFeedManager.js  lines=408  probeErrors=23
+    codes: TS2322x7 TS2339x7 TS7006x5 TS18042x2 TS18047x1 TS2345x1
+    requires: server/Logger.js [js-not-in-run], server/utils/fileUtils.js [set5], server/SocketAuthority.js [js-not-in-run], server/Database.js [js-not-in-run], server/libs/fsExtra/index.js [libs]
+    required by (8): server/controllers/CollectionController.ts, server/controllers/LibraryController.ts, server/controllers/LibraryItemController.ts, server/controllers/RSSFeedController.ts, server/controllers/SeriesController.ts, server/routers/ApiRouter.js, server/scanner/BookScanner.js, server/Server.js
+
+--- server/managers/NotificationManager.js  lines=237  probeErrors=10
+    codes: TS7006x5 TS2497x1 TS7008x1 TS2551x1 TS2554x1 TS2339x1
+    requires: server/Logger.js [js-not-in-run], server/SocketAuthority.js [js-not-in-run], server/Database.js [js-not-in-run], server/utils/notifications.ts [ts]
+    required by (3): server/controllers/NotificationController.ts, server/managers/BackupManager.js, server/managers/PodcastManager.js
+
+--- server/managers/CronManager.js  lines=257  probeErrors=24
+    codes: TS7006x9 TS2339x5 TS7053x4 TS7008x3 TS2345x1 TS18048x1 TS2554x1
+    requires: server/libs/nodeCron/index.js [libs], server/Logger.js [js-not-in-run], server/Database.js [js-not-in-run], server/scanner/LibraryScanner.js [set3], server/managers/ShareManager.ts [ts]
+    required by (1): server/Server.js
+    other JSDoc import() refs: server/managers/PodcastManager.js, server/routers/ApiRouter.js
+
+set1 TOTAL: files=5 lines=2146 probeErrors=180
+suggested order (fewest errors first): NotificationManager.js(10e/237l) > RssFeedManager.js(23e/408l) > CronManager.js(24e/257l) > PlaybackSessionManager.js(33e/500l) > PodcastManager.js(90e/744l)
+
+================ set2 ================
+
+--- server/managers/BackupManager.js  lines=506  probeErrors=38
+    codes: TS7006x10 TS7017x9 TS2532x5 TS2339x4 TS2531x2 TS2345x2 TS7008x1 TS18046x1 TS2554x1 TS2769x1 TS2348x1 TS7031x1
+    requires: server/Logger.js [js-not-in-run], server/SocketAuthority.js [js-not-in-run], server/Database.js [js-not-in-run], server/libs/nodeCron/index.js [libs], server/libs/fsExtra/index.js [libs], server/libs/archiver/index.js [libs], server/libs/nodeStreamZip/index.js [libs], server/utils/fileUtils.js [set5], server/objects/Backup.js [set4], server/managers/CacheManager.js [set2], server/managers/NotificationManager.js [set1]
+    required by (1): server/Server.js
+    other JSDoc import() refs: server/routers/ApiRouter.js
+
+--- server/managers/BinaryManager.js  lines=438  probeErrors=62
+    codes: TS7006x45 TS2339x6 TS7053x3 TS7017x2 TS2349x1 TS2810x1 TS18046x1 TS2538x1 TS2416x1 TS2322x1
+    requires: server/libs/which/index.js [libs], server/libs/fsExtra/index.js [libs], server/Logger.js [js-not-in-run], server/utils/fileUtils.js [set5], server/libs/nodeStreamZip/index.js [libs]
+    required by (2): server/Server.js, test/server/managers/BinaryManager.test.js
+    TESTS: test/server/managers/BinaryManager.test.js
+
+--- server/managers/CoverManager.js  lines=348  probeErrors=35
+    codes: TS2339x11 TS7006x8 TS7017x8 TS2322x7 TS2532x1
+    requires: server/libs/fsExtra/index.js [libs], server/Logger.js [js-not-in-run], server/libs/readChunk/index.js [libs], server/libs/imageType/index.js [libs], server/utils/globals.ts [ts], server/utils/fileUtils.js [set5], server/utils/ffmpegHelpers.js [set5], server/utils/parsers/parseEbookMetadata.js [set6], server/managers/CacheManager.js [set2]
+    required by (7): server/controllers/AuthorController.ts, server/controllers/LibraryItemController.ts, server/controllers/PodcastController.ts, server/managers/PodcastManager.js, server/scanner/BookScanner.js, server/scanner/PodcastScanner.js, server/scanner/Scanner.js
+
+--- server/managers/MigrationManager.js  lines=326  probeErrors=30
+    codes: TS2339x13 TS7006x9 TS2305x2 TS2345x2 TS7016x1 TS7017x1 TS18046x1 TS2551x1
+    requires: server/libs/umzug/index.js [libs], server/libs/fsExtra/index.js [libs], server/Logger.js [js-not-in-run]
+    required by (2): server/Database.js, test/server/managers/MigrationManager.test.js
+    TESTS: test/server/managers/MigrationManager.test.js
+
+--- server/managers/CoverSearchManager.js  lines=255  probeErrors=30
+    codes: TS7006x16 TS18046x7 TS7005x4 TS7034x3
+    requires: server/Logger.js [js-not-in-run], server/finders/BookFinder.ts [ts], server/finders/PodcastFinder.ts [ts]
+    required by (1): server/SocketAuthority.js
+
+--- server/managers/CacheManager.js  lines=193  probeErrors=31
+    codes: TS7006x12 TS2339x9 TS7017x5 TS2345x2 TS2532x2 TS18046x1
+    requires: server/libs/fsExtra/index.js [libs], server/Logger.js [js-not-in-run], server/utils/ffmpegHelpers.js [set5], server/utils/fileUtils.js [set5], server/utils/index.js [set5], server/Database.js [js-not-in-run]
+    required by (7): server/controllers/AuthorController.ts, server/controllers/CacheController.ts, server/controllers/LibraryItemController.ts, server/managers/BackupManager.js, server/managers/CoverManager.js, server/routers/ApiRouter.js, server/Server.js
+
+--- server/managers/AbMergeManager.js  lines=302  probeErrors=89
+    codes: TS18047x48 TS18046x11 TS2345x10 TS7006x5 TS2339x4 TS2532x4 TS7009x2 TS7017x1 TS2322x1 TS2739x1 TS2551x1 TS2353x1
+    requires: server/libs/fsExtra/index.js [libs], server/Logger.js [js-not-in-run], server/managers/TaskManager.ts [ts], server/objects/Task.ts [ts], server/utils/ffmpegHelpers.js [set5], server/libs/fluentFfmpeg/index.js [libs], server/SocketAuthority.js [js-not-in-run], server/utils/fileUtils.js [set5], server/objects/TrackProgressMonitor.ts [ts]
+    required by (1): server/Server.js
+    typedefs/callbacks defined here: AbMergeEncodeOptions
+    JSDoc typedef IMPORTERS (become any silently): server/utils/ffmpegHelpers.js -> .AbMergeEncodeOptions
+    other JSDoc import() refs: server/routers/ApiRouter.js
+
+--- server/managers/AudioMetadataManager.js  lines=290  probeErrors=53
+    codes: TS18047x23 TS18046x12 TS2345x6 TS7006x5 TS7008x2 TS2339x2 TS7017x1 TS2314x1 TS2551x1
+    requires: server/SocketAuthority.js [js-not-in-run], server/Logger.js [js-not-in-run], server/libs/fsExtra/index.js [libs], server/utils/ffmpegHelpers.js [set5], server/managers/TaskManager.ts [ts], server/objects/Task.ts [ts], server/utils/fileUtils.js [set5]
+    required by (1): server/Server.js
+    typedefs/callbacks defined here: UpdateMetadataOptions
+    other JSDoc import() refs: server/routers/ApiRouter.js
+
+set2 TOTAL: files=8 lines=2658 probeErrors=368
+suggested order (fewest errors first): CoverSearchManager.js(30e/255l) > MigrationManager.js(30e/326l) > CacheManager.js(31e/193l) > CoverManager.js(35e/348l) > BackupManager.js(38e/506l) > AudioMetadataManager.js(53e/290l) > BinaryManager.js(62e/438l) > AbMergeManager.js(89e/302l)
+
+================ set3 ================
+
+--- server/scanner/BookScanner.js  lines=1046  probeErrors=120
+    codes: TS2339x42 TS2345x18 TS2322x16 TS7053x14 TS18047x8 TS7017x5 TS2314x4 TS7006x4 TS2551x3 TS18048x2 TS18046x2 TS2497x1 TS2684x1
+    requires: server/utils/constants.ts [ts], server/utils/index.js [set5], server/utils/parsers/parseNameString.js [set6], server/utils/parsers/parseEbookMetadata.js [set6], server/utils/globals.ts [ts], server/utils/fileUtils.js [set5], server/utils/htmlSanitizer.ts [ts], server/scanner/AudioFileScanner.js [set3], server/Database.js [js-not-in-run], server/SocketAuthority.js [js-not-in-run], server/finders/BookFinder.ts [ts], server/libs/fsExtra/index.js [libs], server/objects/files/EBookFile.ts [ts], server/objects/files/AudioFile.js [set4], server/objects/files/LibraryFile.js [set4], server/managers/RssFeedManager.js [set1], server/managers/CoverManager.js [set2], server/scanner/LibraryScan.js [set4], server/scanner/OpfFileScanner.js [set4], server/scanner/NfoFileScanner.js [set4], server/scanner/AbsMetadataFileScanner.js [set4]
+    required by (1): server/scanner/LibraryItemScanner.js
+    typedefs/callbacks defined here: BookMetadataObject
+    JSDoc typedef IMPORTERS (become any silently): server/utils/parsers/parseComicInfoMetadata.ts -> .BookMetadataObject, server/utils/parsers/parseEbookMetadata.js -> .BookMetadataObject
+
+--- server/scanner/LibraryScanner.js  lines=708  probeErrors=68
+    codes: TS7006x19 TS7053x12 TS2339x10 TS18048x4 TS2322x4 TS18047x4 TS2769x4 TS2345x3 TS2740x2 TS2497x1 TS2684x1 TS1064x1 TS2367x1 TS2556x1 TS2488x1
+    requires: package.json [json], server/Logger.js [js-not-in-run], server/SocketAuthority.js [js-not-in-run], server/Database.js [js-not-in-run], server/libs/fsExtra/index.js [libs], server/utils/fileUtils.js [set5], server/utils/scandir.js [set5], server/utils/constants.ts [ts], server/utils/queries/libraryFilters.js [js-not-in-run], server/managers/TaskManager.ts [ts], server/scanner/LibraryItemScanner.js [set4], server/scanner/LibraryScan.js [set4], server/scanner/LibraryItemScanData.js [set4], server/objects/Task.ts [ts]
+    required by (4): server/controllers/LibraryController.ts, server/managers/CronManager.js, server/scanner/Scanner.js, server/Server.js
+
+--- server/scanner/AudioFileScanner.js  lines=598  probeErrors=66
+    codes: TS2339x16 TS7053x11 TS7005x10 TS2322x8 TS7006x7 TS7034x5 TS2345x5 TS2497x1 TS2554x1 TS8024x1 TS2769x1
+    requires: server/Logger.js [js-not-in-run], server/utils/prober.js [set5], server/utils/constants.ts [ts], server/utils/parsers/parseOverdriveMediaMarkers.js [set6], server/utils/parsers/parseNameString.js [set6], server/utils/parsers/parseSeriesString.ts [ts], server/models/LibraryItem.js [js-not-in-run], server/objects/files/AudioFile.js [set4]
+    required by (3): server/controllers/LibraryItemController.ts, server/scanner/BookScanner.js, server/scanner/PodcastScanner.js
+
+set3 TOTAL: files=3 lines=2352 probeErrors=254
+suggested order (fewest errors first): AudioFileScanner.js(66e/598l) > LibraryScanner.js(68e/708l) > BookScanner.js(120e/1046l)
+
+================ set4 ================
+
+--- server/scanner/Scanner.js  lines=547  probeErrors=72
+    codes: TS7053x19 TS7006x19 TS2339x13 TS18046x8 TS2345x4 TS18047x3 TS2353x2 TS2554x2 TS2740x2
+    requires: server/Logger.js [js-not-in-run], server/SocketAuthority.js [js-not-in-run], server/Database.js [js-not-in-run], server/utils/index.js [set5], server/utils/podcastUtils.js [set5], server/finders/BookFinder.ts [ts], server/finders/PodcastFinder.ts [ts], server/scanner/LibraryScan.js [set4], server/scanner/LibraryScanner.js [set3], server/managers/CoverManager.js [set2], server/managers/TaskManager.ts [ts]
+    required by (3): server/controllers/LibraryController.ts, server/controllers/LibraryItemController.ts, server/controllers/PodcastController.ts
+    typedefs/callbacks defined here: QuickMatchOptions
+
+--- server/scanner/PodcastScanner.js  lines=499  probeErrors=58
+    codes: TS2339x20 TS2322x11 TS2345x6 TS7053x6 TS7017x5 TS2551x3 TS7005x2 TS2497x1 TS7034x1 TS2684x1 TS2314x1 TS7006x1
+    requires: server/utils/constants.ts [ts], server/utils/index.js [set5], server/scanner/AudioFileScanner.js [set3], server/Database.js [js-not-in-run], server/utils/fileUtils.js [set5], server/objects/files/AudioFile.js [set4], server/managers/CoverManager.js [set2], server/objects/files/LibraryFile.js [set4], server/libs/fsExtra/index.js [libs], server/models/PodcastEpisode.ts [ts], server/scanner/AbsMetadataFileScanner.js [set4], server/utils/htmlSanitizer.ts [ts]
+    required by (1): server/scanner/LibraryItemScanner.js
+    typedefs/callbacks defined here: PodcastMetadataObject
+
+--- server/scanner/LibraryItemScanData.js  lines=377  probeErrors=58
+    codes: TS18047x20 TS2322x16 TS7053x12 TS2339x4 TS2345x2 TS2497x1 TS7006x1 TS1064x1 TS2365x1
+    requires: package.json [json], server/utils/constants.ts [ts], server/models/LibraryItem.js [js-not-in-run], server/utils/globals.ts [ts]
+    required by (2): server/scanner/LibraryItemScanner.js, server/scanner/LibraryScanner.js
+    typedefs/callbacks defined here: LibraryFileModifiedObject
+    other JSDoc import() refs: server/scanner/AbsMetadataFileScanner.js, server/scanner/AudioFileScanner.js, server/scanner/BookScanner.js, server/scanner/PodcastScanner.js
+
+--- server/scanner/LibraryItemScanner.js  lines=226  probeErrors=20
+    codes: TS2339x10 TS2345x3 TS2322x2 TS2497x1 TS1064x1 TS2684x1 TS18048x1 TS2314x1
+    requires: server/utils/constants.ts [ts], server/utils/fileUtils.js [set5], server/utils/scandir.js [set5], server/utils/queries/libraryFilters.js [js-not-in-run], server/Logger.js [js-not-in-run], server/Database.js [js-not-in-run], server/Watcher.js [js-not-in-run], server/scanner/LibraryScan.js [set4], server/scanner/LibraryItemScanData.js [set4], server/scanner/BookScanner.js [set3], server/scanner/PodcastScanner.js [set4], server/scanner/ScanLogger.ts [ts], server/models/LibraryItem.js [js-not-in-run], server/objects/files/LibraryFile.js [set4], server/SocketAuthority.js [js-not-in-run]
+    required by (2): server/controllers/LibraryItemController.ts, server/scanner/LibraryScanner.js
+
+--- server/scanner/LibraryScan.js  lines=145  probeErrors=11
+    codes: TS2531x3 TS2339x2 TS2322x1 TS7008x1 TS7006x1 TS7019x1 TS7017x1 TS2551x1
+    requires: server/libs/fsExtra/index.js [libs], server/libs/dateAndTime/index.js [libs], server/Logger.js [js-not-in-run], server/utils/index.js [set5]
+    required by (4): server/scanner/BookScanner.js, server/scanner/LibraryItemScanner.js, server/scanner/LibraryScanner.js, server/scanner/Scanner.js
+    other JSDoc import() refs: server/scanner/AbsMetadataFileScanner.js, server/scanner/AudioFileScanner.js, server/scanner/BookScanner.js, server/scanner/LibraryItemScanData.js, server/scanner/LibraryScanner.js, server/scanner/PodcastScanner.js
+
+--- server/scanner/AbsMetadataFileScanner.js  lines=86  probeErrors=18
+    codes: TS7053x8 TS2339x5 TS2322x2 TS7017x2 TS2497x1
+    requires: server/libs/fsExtra/index.js [libs], server/utils/fileUtils.js [set5], server/utils/constants.ts [ts], server/utils/generators/abmetadataGenerator.js [set6]
+    required by (2): server/scanner/BookScanner.js, server/scanner/PodcastScanner.js
+
+--- server/scanner/MediaProbeData.js  lines=68  probeErrors=6
+    codes: TS7006x3 TS7053x2 TS7008x1
+    requires: server/objects/metadata/AudioMetaTags.ts [ts]
+    required by (1): server/utils/prober.js
+    other JSDoc import() refs: server/utils/prober.js
+
+--- server/scanner/NfoFileScanner.js  lines=53  probeErrors=11
+    codes: TS2339x5 TS7053x3 TS18048x2 TS2497x1
+    requires: server/utils/parsers/parseNfoMetadata.ts [ts], server/utils/fileUtils.js [set5]
+    required by (1): server/scanner/BookScanner.js
+
+--- server/scanner/OpfFileScanner.js  lines=48  probeErrors=8
+    codes: TS2339x5 TS7053x3
+    requires: server/utils/parsers/parseOpfMetadata.js [set6], server/utils/fileUtils.js [set5]
+    required by (1): server/scanner/BookScanner.js
+
+--- server/objects/Stream.js  lines=427  probeErrors=42
+    codes: TS7006x12 TS2345x7 TS7005x6 TS2339x5 TS2769x5 TS2322x4 TS2497x1 TS7034x1 TS2532x1
+    requires: server/Logger.js [js-not-in-run], server/SocketAuthority.js [js-not-in-run], server/libs/fsExtra/index.js [libs], server/libs/fluentFfmpeg/index.js [libs], server/utils/index.js [set5], server/utils/ffmpegHelpers.js [set5], server/utils/constants.ts [ts], server/utils/generators/hlsPlaylistGenerator.ts [ts], server/objects/files/AudioTrack.ts [ts]
+    required by (1): server/managers/PlaybackSessionManager.js
+
+--- server/objects/PlaybackSession.js  lines=252  probeErrors=13
+    codes: TS2339x6 TS7006x5 TS7008x2
+    requires: server/libs/dateAndTime/index.js [libs], package.json [json], server/objects/DeviceInfo.ts [ts]
+    required by (3): server/controllers/ShareController.ts, server/managers/PlaybackSessionManager.js, server/models/PlaybackSession.ts
+    other JSDoc import() refs: server/managers/ShareManager.ts, server/models/User.ts
+
+--- server/objects/PodcastEpisodeDownload.js  lines=134  probeErrors=5
+    codes: TS2322x2 TS7008x1 TS2531x1 TS7006x1
+    requires: server/utils/fileUtils.js [set5], server/utils/globals.ts [ts]
+    required by (1): server/managers/PodcastManager.js
+    other JSDoc import() refs: server/controllers/LibraryItemController.ts, server/utils/ffmpegHelpers.js
+
+--- server/objects/Backup.js  lines=81  probeErrors=6
+    codes: TS2339x3 TS7006x2 TS7008x1
+    requires: server/libs/dateAndTime/index.js [libs], package.json [json]
+    required by (1): server/managers/BackupManager.js
+    other JSDoc import() refs: server/controllers/BackupController.ts, server/managers/NotificationManager.js
+
+--- server/objects/files/AudioFile.js  lines=199  probeErrors=18
+    codes: TS7006x7 TS7053x6 TS2322x2 TS2497x1 TS7008x1 TS2345x1
+    requires: server/utils/constants.ts [ts], server/objects/metadata/AudioMetaTags.ts [ts], server/objects/metadata/FileMetadata.ts [ts]
+    required by (4): server/managers/PodcastManager.js, server/scanner/AudioFileScanner.js, server/scanner/BookScanner.js, server/scanner/PodcastScanner.js
+    other JSDoc import() refs: server/models/PodcastEpisode.ts, server/objects/files/AudioTrack.ts
+
+--- server/objects/files/LibraryFile.js  lines=78  probeErrors=13
+    codes: TS2531x7 TS7006x4 TS2345x1 TS2339x1
+    requires: server/utils/fileUtils.js [set5], server/utils/globals.ts [ts], server/objects/metadata/FileMetadata.ts [ts]
+    required by (7): server/managers/PodcastManager.js, server/models/LibraryItem.js, server/scanner/BookScanner.js, server/scanner/LibraryItemScanner.js, server/scanner/PodcastScanner.js, server/utils/migrations/absMetadataMigration.js, server/utils/scandir.js
+    other JSDoc import() refs: server/controllers/LibraryItemController.ts, server/objects/files/EBookFile.ts, server/scanner/LibraryItemScanData.js, server/utils/scandir.js
+
+set4 TOTAL: files=15 lines=3220 probeErrors=359
+suggested order (fewest errors first): PodcastEpisodeDownload.js(5e/134l) > MediaProbeData.js(6e/68l) > Backup.js(6e/81l) > OpfFileScanner.js(8e/48l) > NfoFileScanner.js(11e/53l) > LibraryScan.js(11e/145l) > LibraryFile.js(13e/78l) > PlaybackSession.js(13e/252l) > AbsMetadataFileScanner.js(18e/86l) > AudioFile.js(18e/199l) > LibraryItemScanner.js(20e/226l) > Stream.js(42e/427l) > LibraryItemScanData.js(58e/377l) > PodcastScanner.js(58e/499l) > Scanner.js(72e/547l)
+
+================ set5 ================
+
+--- server/utils/fileUtils.js  lines=579  probeErrors=55
+    codes: TS7006x23 TS2339x11 TS7017x4 TS1064x3 TS2322x3 TS7005x2 TS2314x2 TS7053x2 TS7016x1 TS2497x1 TS7034x1 TS2349x1 TS2532x1
+    requires: server/libs/fsExtra/index.js [libs], server/libs/recursiveReaddirAsync/index.js [libs], server/Logger.js [js-not-in-run], server/utils/constants.ts [ts]
+    required by (37): server/controllers/BackupController.ts, server/controllers/FileSystemController.ts, server/controllers/LibraryController.ts, server/controllers/LibraryItemController.ts, server/controllers/MiscController.ts, server/controllers/PodcastController.ts, server/controllers/SessionController.js, server/controllers/ShareController.ts, server/finders/AuthorFinder.ts, server/managers/AbMergeManager.js, server/managers/AudioMetadataManager.js, server/managers/BackupManager.js, server/managers/BinaryManager.js, server/managers/CacheManager.js, server/managers/CoverManager.js, server/managers/PodcastManager.js, server/managers/RssFeedManager.js, server/models/LibraryItem.js, server/objects/DailyLog.ts, server/objects/files/LibraryFile.js, server/objects/PodcastEpisodeDownload.js, server/scanner/AbsMetadataFileScanner.js, server/scanner/BookScanner.js, server/scanner/LibraryItemScanner.js, server/scanner/LibraryScanner.js, server/scanner/NfoFileScanner.js, server/scanner/OpfFileScanner.js, server/scanner/PodcastScanner.js, server/Server.js, server/utils/comicBookExtractors.js, server/utils/ffmpegHelpers.js, server/utils/migrations/absMetadataMigration.js, server/utils/scandir.js, server/Watcher.js, test/server/managers/BinaryManager.test.js, test/server/utils/ffmpegHelpers.test.js, test/server/utils/fileUtils.test.js
+    TESTS: test/server/managers/BinaryManager.test.js, test/server/utils/ffmpegHelpers.test.js, test/server/utils/fileUtils.test.js
+    typedefs/callbacks defined here: FilePathItem
+    JSDoc typedef IMPORTERS (become any silently): server/utils/scandir.js -> .FilePathItem, server/utils/scandir.js -> .FilePathItem, server/utils/scandir.js -> .FilePathItem
+
+--- server/utils/ffmpegHelpers.js  lines=523  probeErrors=44
+    codes: TS7006x14 TS7053x12 TS2339x5 TS7017x3 TS2322x3 TS2314x2 TS7016x1 TS2349x1 TS18046x1 TS7034x1 TS7005x1
+    requires: server/libs/fluentFfmpeg/index.js [libs], server/libs/fluentFfmpeg/utils.js [libs], server/libs/fsExtra/index.js [libs], server/Logger.js [js-not-in-run], server/utils/fileUtils.js [set5]
+    required by (7): server/managers/AbMergeManager.js, server/managers/AudioMetadataManager.js, server/managers/CacheManager.js, server/managers/CoverManager.js, server/managers/PodcastManager.js, server/objects/Stream.js, test/server/utils/ffmpegHelpers.test.js
+    TESTS: test/server/utils/ffmpegHelpers.test.js
+
+--- server/utils/podcastUtils.js  lines=457  probeErrors=70
+    codes: TS7006x28 TS2339x22 TS7005x4 TS2322x4 TS7034x3 TS7017x3 TS2538x2 TS2345x2 TS7016x1 TS2349x1
+    requires: server/Logger.js [js-not-in-run], server/utils/index.js [set5], server/utils/htmlSanitizer.ts [ts], server/libs/fusejs/index.js [libs]
+    required by (3): server/controllers/PodcastController.ts, server/managers/PodcastManager.js, server/scanner/Scanner.js
+    typedefs/callbacks defined here: RssPodcastChapter, RssPodcastEpisode, RssPodcastMetadata, RssPodcast
+    JSDoc typedef IMPORTERS (become any silently): server/controllers/PodcastController.ts -> .RssPodcastEpisode, server/managers/PodcastManager.js -> .RssPodcastEpisode, server/managers/PodcastManager.js -> .RssPodcastEpisode, server/managers/PodcastManager.js -> .RssPodcastEpisode, server/models/Podcast.ts -> .RssPodcastEpisode, server/models/Podcast.ts -> .RssPodcastEpisode, server/models/PodcastEpisode.ts -> .RssPodcastEpisode, server/models/PodcastEpisode.ts -> .RssPodcastEpisode, server/objects/PodcastEpisodeDownload.js -> .RssPodcastEpisode, server/objects/PodcastEpisodeDownload.js -> .RssPodcastEpisode, server/scanner/Scanner.js -> .RssPodcastEpisode
+
+--- server/utils/index.js  lines=344  probeErrors=30
+    codes: TS7006x20 TS2322x5 TS7053x2 TS7016x1 TS7023x1 TS7017x1
+    requires: server/Logger.js [js-not-in-run], server/utils/areEquivalent.js [set5]
+    required by (40): server/Auth.js, server/controllers/AuthorController.ts, server/controllers/CustomMetadataProviderController.ts, server/controllers/FileSystemController.ts, server/controllers/LibraryItemController.ts, server/controllers/MeController.ts, server/controllers/MiscController.ts, server/controllers/PodcastController.ts, server/controllers/SearchController.ts, server/controllers/SessionController.js, server/controllers/UserController.js, server/finders/BookFinder.ts, server/libs/nodeCron/background-scheduled-task/index.js, server/libs/nodeCron/scheduled-task.js, server/managers/CacheManager.js, server/managers/PodcastManager.js, server/managers/ShareManager.ts, server/models/Book.ts, server/models/FeedEpisode.ts, server/models/MediaProgress.ts, server/models/Podcast.ts, server/models/Series.ts, server/models/User.ts, server/objects/settings/EmailSettings.ts, server/objects/settings/NotificationSettings.ts, server/objects/Stream.js, server/providers/Audible.js, server/providers/Audnexus.js, server/providers/MusicBrainz.js, server/scanner/BookScanner.js, server/scanner/LibraryScan.js, server/scanner/PodcastScanner.js, server/scanner/Scanner.js, server/Server.js, server/utils/libraryHelpers.js, server/utils/parsers/parseComicMetadata.js, server/utils/parsers/parseEpubMetadata.js, server/utils/parsers/parseOpfMetadata.js, server/utils/podcastUtils.js, test/server/finders/BookFinder.test.js
+    TESTS: test/server/finders/BookFinder.test.js
+
+--- server/utils/prober.js  lines=343  probeErrors=63
+    codes: TS2339x31 TS7006x27 TS7053x2 TS7019x1 TS2538x1 TS2322x1
+    requires: server/libs/nodeFfprobe/index.js [libs], server/scanner/MediaProbeData.js [set4], server/Logger.js [js-not-in-run]
+    required by (2): server/managers/PodcastManager.js, server/scanner/AudioFileScanner.js
+
+--- server/utils/scandir.js  lines=318  probeErrors=37
+    codes: TS2322x10 TS18048x9 TS7053x7 TS2345x5 TS7006x4 TS2740x1 TS7017x1
+    requires: server/utils/fileUtils.js [set5], server/utils/globals.ts [ts], server/objects/files/LibraryFile.js [set4], server/utils/parsers/parseNameString.js [set6]
+    required by (3): server/scanner/LibraryItemScanner.js, server/scanner/LibraryScanner.js, test/server/utils/scandir.test.js
+    TESTS: test/server/utils/scandir.test.js
+    typedefs/callbacks defined here: LibraryItemFilenameMetadata
+    JSDoc typedef IMPORTERS (become any silently): server/scanner/LibraryItemScanData.js -> .LibraryItemFilenameMetadata
+
+--- server/utils/libraryHelpers.js  lines=267  probeErrors=48
+    codes: TS7006x19 TS2339x17 TS7053x5 TS18046x2 TS7034x1 TS7005x1 TS1064x1 TS2790x1 TS2345x1
+    requires: server/libs/fastSort/index.js [libs], server/Database.js [js-not-in-run], server/Logger.js [js-not-in-run], server/utils/index.js [set5]
+    required by (1): server/controllers/LibraryController.ts
+
+--- server/utils/comicBookExtractors.js  lines=241  probeErrors=33
+    codes: TS7006x20 TS2416x5 TS2339x4 TS7017x2 TS2345x2
+    requires: server/Logger.js [js-not-in-run], server/libs/fsExtra/index.js [libs], server/libs/nodeStreamZip/index.js [libs], server/libs/libarchive/archive.js [libs], server/utils/fileUtils.js [set5], server/libs/archiver/archiverUtils/index.js [libs]
+    required by (1): server/utils/parsers/parseComicMetadata.js
+
+--- server/utils/areEquivalent.js  lines=157  probeErrors=4
+    codes: TS7006x3 TS2367x1
+    requires: (no relative require)
+    required by (1): server/utils/index.js
+
+--- server/utils/zipHelpers.js  lines=138  probeErrors=11
+    codes: TS7006x7 TS2348x2 TS18042x1 TS2810x1
+    requires: server/Logger.js [js-not-in-run], server/libs/archiver/index.js [libs]
+    required by (4): server/controllers/LibraryController.ts, server/controllers/LibraryItemController.ts, server/controllers/ShareController.ts, test/server/controllers/LibraryController.test.js
+    TESTS: test/server/controllers/LibraryController.test.js
+
+--- server/utils/rateLimiterFactory.js  lines=83  probeErrors=12
+    codes: TS2322x4 TS2345x4 TS7006x3 TS18042x1
+    requires: server/Logger.js [js-not-in-run], server/libs/requestIp/index.js [libs]
+    required by (1): server/Auth.js
+
+--- server/utils/profiler.js  lines=42  probeErrors=5
+    codes: TS7006x3 TS2339x1 TS7019x1
+    requires: server/Logger.js [js-not-in-run]
+    required by (3): server/utils/queries/libraryFilters.js, server/utils/queries/libraryItemsBookFilters.js, server/utils/queries/libraryItemsPodcastFilters.js
+
+set5 TOTAL: files=12 lines=3492 probeErrors=412
+suggested order (fewest errors first): areEquivalent.js(4e/157l) > profiler.js(5e/42l) > zipHelpers.js(11e/138l) > rateLimiterFactory.js(12e/83l) > index.js(30e/344l) > comicBookExtractors.js(33e/241l) > scandir.js(37e/318l) > ffmpegHelpers.js(44e/523l) > libraryHelpers.js(48e/267l) > fileUtils.js(55e/579l) > prober.js(63e/343l) > podcastUtils.js(70e/457l)
+
+================ set6 ================
+
+--- server/providers/Audible.js  lines=176  probeErrors=13
+    codes: TS7006x2 TS7034x2 TS7031x2 TS7005x2 TS2322x2 TS7053x2 TS2339x1
+    requires: server/Logger.js [js-not-in-run], server/utils/index.js [set5]
+    required by (2): server/finders/BookFinder.ts, test/server/providers/Audible.test.js
+    TESTS: test/server/providers/Audible.test.js
+
+--- server/providers/Audnexus.js  lines=188  probeErrors=26
+    codes: TS2322x7 TS7006x7 TS2339x4 TS2722x3 TS18046x2 TS7034x1 TS7005x1 TS7023x1
+    requires: server/Logger.js [js-not-in-run], server/utils/index.js [set5]
+    required by (2): server/finders/AuthorFinder.ts, server/finders/BookFinder.ts
+    typedefs/callbacks defined here: AuthorSearchObj
+    JSDoc typedef IMPORTERS (become any silently): server/finders/AuthorFinder.ts -> .AuthorSearchObj, server/finders/AuthorFinder.ts -> .AuthorSearchObj
+
+--- server/providers/CustomProviderAdapter.js  lines=149  probeErrors=12
+    codes: TS2339x4 TS7006x3 TS2322x3 TS7053x2
+    requires: server/Database.js [js-not-in-run], server/Logger.js [js-not-in-run], server/utils/htmlSanitizer.ts [ts]
+    required by (1): server/finders/BookFinder.ts
+
+--- server/providers/FantLab.js  lines=205  probeErrors=36
+    codes: TS2339x14 TS7006x14 TS2322x5 TS7053x2 TS1005x1
+    requires: server/Logger.js [js-not-in-run]
+    required by (1): server/finders/BookFinder.ts
+
+--- server/providers/GoogleBooks.js  lines=78  probeErrors=9
+    codes: TS7006x7 TS2538x1 TS2339x1
+    requires: server/Logger.js [js-not-in-run]
+    required by (1): server/finders/BookFinder.ts
+
+--- server/providers/iTunes.js  lines=171  probeErrors=23
+    codes: TS2339x14 TS7006x4 TS2345x2 TS2739x1 TS2353x1 TS2741x1
+    requires: server/Logger.js [js-not-in-run], server/utils/htmlSanitizer.ts [ts]
+    required by (2): server/finders/BookFinder.ts, server/finders/PodcastFinder.ts
+    typedefs/callbacks defined here: iTunesSearchParams, iTunesPodcastSearchResult
+    JSDoc typedef IMPORTERS (become any silently): server/finders/PodcastFinder.ts -> .iTunesPodcastSearchResult, server/finders/PodcastFinder.ts -> .iTunesPodcastSearchResult
+
+--- server/providers/MusicBrainz.js  lines=51  probeErrors=4
+    codes: TS7006x3 TS2339x1
+    requires: package.json [json], server/Logger.js [js-not-in-run], server/utils/index.js [set5]
+    required by (0): -
+
+--- server/utils/parsers/parseComicMetadata.js  lines=94  probeErrors=6
+    codes: TS18047x3 TS2339x1 TS2741x1 TS2322x1
+    requires: server/Logger.js [js-not-in-run], server/utils/parsers/parseComicInfoMetadata.ts [ts], server/utils/globals.ts [ts], server/utils/index.js [set5], server/utils/comicBookExtractors.js [set5]
+    required by (1): server/utils/parsers/parseEbookMetadata.js
+
+--- server/utils/parsers/parseEbookMetadata.js  lines=47  probeErrors=2
+    codes: TS2322x2
+    requires: server/utils/parsers/parseEpubMetadata.js [set6], server/utils/parsers/parseComicMetadata.js [set6]
+    required by (2): server/managers/CoverManager.js, server/scanner/BookScanner.js
+    typedefs/callbacks defined here: EBookFileScanData
+    JSDoc typedef IMPORTERS (become any silently): server/managers/CoverManager.js -> .EBookFileScanData, server/scanner/BookScanner.js -> .EBookFileScanData, server/scanner/BookScanner.js -> .EBookFileScanData, server/utils/parsers/parseComicMetadata.js -> .EBookFileScanData, server/utils/parsers/parseEpubMetadata.js -> .EBookFileScanData
+
+--- server/utils/parsers/parseEpubMetadata.js  lines=140  probeErrors=16
+    codes: TS2339x6 TS2322x5 TS7006x4 TS2741x1
+    requires: server/Logger.js [js-not-in-run], server/libs/nodeStreamZip/index.js [libs], server/utils/parsers/parseOpfMetadata.js [set6], server/utils/index.js [set5]
+    required by (1): server/utils/parsers/parseEbookMetadata.js
+
+--- server/utils/parsers/parseNameString.js  lines=111  probeErrors=19
+    codes: TS18048x5 TS2339x5 TS7005x4 TS7006x3 TS2322x1 TS7034x1
+    requires: server/utils/parsers/parseFullName.ts [ts]
+    required by (7): server/models/Author.ts, server/models/Book.ts, server/scanner/AudioFileScanner.js, server/scanner/BookScanner.js, server/utils/migrations/dbMigration.js, server/utils/scandir.js, test/server/utils/parsers/parseNameString.test.js
+    TESTS: test/server/utils/parsers/parseNameString.test.js
+
+--- server/utils/parsers/parseOpfMetadata.js  lines=253  probeErrors=46
+    codes: TS7006x34 TS7053x4 TS2322x2 TS2339x2 TS2345x1 TS7034x1 TS7005x1 TS2531x1
+    requires: server/utils/index.js [set5], server/utils/htmlSanitizer.ts [ts]
+    required by (3): server/scanner/OpfFileScanner.js, server/utils/parsers/parseEpubMetadata.js, test/server/utils/parsers/parseOpfMetadata.test.js
+    TESTS: test/server/utils/parsers/parseOpfMetadata.test.js
+    typedefs/callbacks defined here: MetadataCreatorObject
+
+--- server/utils/parsers/parseOverdriveMediaMarkers.js  lines=152  probeErrors=29
+    codes: TS7006x22 TS7034x3 TS7005x3 TS7016x1
+    requires: server/Logger.js [js-not-in-run]
+    required by (1): server/scanner/AudioFileScanner.js
+
+--- server/utils/generators/abmetadataGenerator.js  lines=182  probeErrors=26
+    codes: TS2339x18 TS2322x5 TS7053x2 TS7006x1
+    requires: server/Logger.js [js-not-in-run], server/utils/parsers/parseSeriesString.ts [ts]
+    required by (1): server/scanner/AbsMetadataFileScanner.js
+
+--- server/utils/generators/opmlGenerator.js  lines=59  probeErrors=5
+    codes: TS2339x3 TS7034x1 TS7005x1
+    requires: server/libs/xml/index.js [libs], server/libs/xml/escapeForXML.js [libs]
+    required by (1): server/managers/PodcastManager.js
+
+--- server/auth/TokenManager.js  lines=549  probeErrors=36
+    codes: TS2339x12 TS2345x7 TS18046x6 TS18047x5 TS2322x4 TS2497x1 TS18048x1
+    requires: server/Database.js [js-not-in-run], server/Logger.js [js-not-in-run], server/libs/requestIp/index.js [libs], server/libs/jsonwebtoken/index.js [libs], server/utils/requestUtils.ts [ts]
+    required by (4): server/Auth.js, server/models/User.ts, server/SocketAuthority.js, test/server/auth/TokenManager.test.js
+    TESTS: test/server/auth/TokenManager.test.js
+
+--- server/auth/OidcAuthStrategy.js  lines=553  probeErrors=66
+    codes: TS2339x22 TS7017x19 TS2345x8 TS7053x7 TS18042x2 TS18047x2 TS2497x1 TS2707x1 TS7006x1 TS2353x1 TS18046x1 TS2322x1
+    requires: server/Database.js [js-not-in-run], server/Logger.js [js-not-in-run], server/utils/requestUtils.ts [ts]
+    required by (2): server/Auth.js, test/server/auth/OidcAuthStrategy.test.js
+    TESTS: test/server/auth/OidcAuthStrategy.test.js
+    typedefs/callbacks defined here: OpenIdIssuerConfig
+
+set6 TOTAL: files=17 lines=3158 probeErrors=374
+suggested order (fewest errors first): parseEbookMetadata.js(2e/47l) > MusicBrainz.js(4e/51l) > opmlGenerator.js(5e/59l) > parseComicMetadata.js(6e/94l) > GoogleBooks.js(9e/78l) > CustomProviderAdapter.js(12e/149l) > Audible.js(13e/176l) > parseEpubMetadata.js(16e/140l) > parseNameString.js(19e/111l) > iTunes.js(23e/171l) > abmetadataGenerator.js(26e/182l) > Audnexus.js(26e/188l) > parseOverdriveMediaMarkers.js(29e/152l) > FantLab.js(36e/205l) > TokenManager.js(36e/549l) > parseOpfMetadata.js(46e/253l) > OidcAuthStrategy.js(66e/553l)
+
+{"set1":{"files":5,"lines":2146,"errors":180},"set2":{"files":8,"lines":2658,"errors":368},"set3":{"files":3,"lines":2352,"errors":254},"set4":{"files":15,"lines":3220,"errors":359},"set5":{"files":12,"lines":3492,"errors":412},"set6":{"files":17,"lines":3158,"errors":374}}
+Sun, 11 Oct, 2026  4:51:16 PM
