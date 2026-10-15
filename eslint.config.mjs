@@ -1,6 +1,11 @@
+import tseslint from 'typescript-eslint'
+
 const nodeGlobals = {
   AbortController: 'readonly',
   Buffer: 'readonly',
+  Blob: 'readonly',
+  FormData: 'readonly',
+  fetch: 'readonly',
   TextDecoder: 'readonly',
   URL: 'readonly',
   URLSearchParams: 'readonly',
@@ -55,5 +60,26 @@ export default [
       }
     },
     rules
+  },
+  {
+    // TypeScript files: tsc covers undefined/redeclared names, so only the TS-specific escape hatches are linted here
+    files: ['index.ts', 'dev.ts', 'server/**/*.ts', 'test/**/*.ts'],
+    languageOptions: {
+      parser: tseslint.parser,
+      ecmaVersion: 'latest',
+      sourceType: 'commonjs',
+      globals: {
+        ...nodeGlobals,
+        ...mochaGlobals
+      }
+    },
+    plugins: { '@typescript-eslint': tseslint.plugin },
+    rules: {
+      '@typescript-eslint/ban-ts-comment': ['error', { 'ts-expect-error': 'allow-with-description', 'ts-ignore': true, 'ts-nocheck': true, 'ts-check': false, minimumDescriptionLength: 10 }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      // With target ES2022 a plain class field is emitted as `title;` and shadows the accessor Sequelize installs for the attribute,
+      // so `model.title` silently becomes undefined. Fields on Sequelize models must be `declare`d.
+      'no-restricted-syntax': ['error', { selector: "ClassDeclaration[superClass.name='Model'] > ClassBody > PropertyDefinition[static!=true]:not([declare=true])", message: 'Sequelize model fields must use `declare` (a plain class field shadows the attribute accessor)' }]
+    }
   }
 ]

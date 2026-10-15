@@ -37,5 +37,14 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      # The scanner, server-boot and rate-limit characterization suites skip themselves without ffmpeg/ffprobe
+      # (about 130 tests), which would leave CI green while they prove nothing.
+      - name: Ensure ffmpeg is available
+        run: command -v ffmpeg && command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
       - name: Run tests
         run: npm test
+
+      # Re-runs the suite and fails if a snapshot entry was not compared (a skipped suite), a route is unhit, etc.
+      - name: Characterization audit
+        run: npm run audit:characterization

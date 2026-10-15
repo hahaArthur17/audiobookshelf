@@ -1,0 +1,304 @@
+{
+  "PodcastManager (characterization) > GET /api/podcasts/:id/checknew (manual check and download) > uses the last check time (not the latest episode), skips known episodes, honours limit and records the check > checknew response": [
+    {
+      "title": "Feed Ep 5",
+      "subtitle": "",
+      "description": "Description of Feed Ep 5",
+      "descriptionPlain": "Description of Feed Ep 5",
+      "pubDate": "Sun, 05 Jan 2020 10:00:00 GMT",
+      "episodeType": "",
+      "season": "",
+      "episode": "",
+      "author": "",
+      "duration": "",
+      "durationSeconds": null,
+      "explicit": "",
+      "enclosure": {
+        "url": "https://cdn.test/ep5.mp3",
+        "length": "1234",
+        "type": "audio/mpeg"
+      },
+      "guid": "feed-guid-5",
+      "chaptersUrl": null,
+      "chaptersType": null,
+      "chapters": []
+    },
+    {
+      "title": "Feed Ep 3",
+      "subtitle": "",
+      "description": "Description of Feed Ep 3",
+      "descriptionPlain": "Description of Feed Ep 3",
+      "pubDate": "Fri, 03 Jan 2020 10:00:00 GMT",
+      "episodeType": "",
+      "season": "",
+      "episode": "",
+      "author": "",
+      "duration": "",
+      "durationSeconds": null,
+      "explicit": "",
+      "enclosure": {
+        "url": "https://cdn.test/ep3.mp3",
+        "length": "1234",
+        "type": "audio/mpeg"
+      },
+      "guid": "feed-guid-3",
+      "chaptersUrl": null,
+      "chaptersType": null,
+      "chapters": []
+    },
+    {
+      "title": "Feed Ep 2",
+      "subtitle": "",
+      "description": "Description of Feed Ep 2",
+      "descriptionPlain": "Description of Feed Ep 2",
+      "pubDate": "Thu, 02 Jan 2020 10:00:00 GMT",
+      "episodeType": "",
+      "season": "",
+      "episode": "",
+      "author": "",
+      "duration": "",
+      "durationSeconds": null,
+      "explicit": "",
+      "enclosure": {
+        "url": "https://cdn.test/ep2.mp3",
+        "length": "1234",
+        "type": "audio/mpeg"
+      },
+      "guid": "feed-guid-2",
+      "chaptersUrl": null,
+      "chaptersType": null,
+      "chapters": []
+    }
+  ],
+  "PodcastManager (characterization) > createPodcastsFromFeedUrls (OPML import) > creates a podcast folder, podcast and library item per feed, with cover, and reports the failures as tasks > tasks": {
+    "started": [
+      {
+        "action": "opml-import",
+        "data": {},
+        "title": "OPML import",
+        "titleKey": "MessageTaskOpmlImport",
+        "titleSubs": null,
+        "description": "Creating podcasts from 5 RSS feeds",
+        "descriptionKey": "MessageTaskOpmlImportDescription",
+        "descriptionSubs": [
+          5
+        ],
+        "error": null,
+        "errorKey": null,
+        "errorSubs": null,
+        "showSuccess": true,
+        "isFailed": false,
+        "isFinished": false,
+        "startedAt": "<timestamp>",
+        "finishedAt": null
+      },
+      {
+        "action": "opml-import-feed",
+        "data": {},
+        "title": "OPML import feed",
+        "titleKey": "MessageTaskOpmlImportFeed",
+        "titleSubs": null,
+        "description": "Importing RSS feed \"https://feeds.test/missing.xml\"",
+        "descriptionKey": "MessageTaskOpmlImportFeedDescription",
+        "descriptionSubs": [
+          "https://feeds.test/missing.xml"
+        ],
+        "error": "Failed to get podcast feed",
+        "errorKey": "MessageTaskOpmlImportFeedFailed",
+        "errorSubs": null,
+        "showSuccess": false,
+        "isFailed": true,
+        "isFinished": true,
+        "startedAt": "<timestamp>",
+        "finishedAt": "<timestamp>"
+      },
+      {
+        "action": "opml-import-feed",
+        "data": {},
+        "title": "OPML import feed",
+        "titleKey": "MessageTaskOpmlImportFeed",
+        "titleSubs": null,
+        "description": "Creating podcast \"Local Pod\"",
+        "descriptionKey": "MessageTaskOpmlImportFeedPodcastDescription",
+        "descriptionSubs": [
+          "Local Pod"
+        ],
+        "error": "Podcast already exists at path",
+        "errorKey": "MessageTaskOpmlImportFeedPodcastExists",
+        "errorSubs": null,
+        "showSuccess": false,
+        "isFailed": true,
+        "isFinished": true,
+        "startedAt": "<timestamp>",
+        "finishedAt": "<timestamp>"
+      },
+      {
+        "action": "opml-import-feed",
+        "data": {},
+        "title": "OPML import feed",
+        "titleKey": "MessageTaskOpmlImportFeed",
+        "titleSubs": null,
+        "description": "Creating podcast \"Blocked\"",
+        "descriptionKey": "MessageTaskOpmlImportFeedPodcastDescription",
+        "descriptionSubs": [
+          "Blocked"
+        ],
+        "error": "Failed to create podcast folder",
+        "errorKey": "MessageTaskOpmlImportFeedPodcastFailed",
+        "errorSubs": null,
+        "showSuccess": false,
+        "isFailed": true,
+        "isFinished": true,
+        "startedAt": "<timestamp>",
+        "finishedAt": "<timestamp>"
+      }
+    ],
+    "done": {
+      "action": "opml-import",
+      "data": {},
+      "title": "OPML import",
+      "titleKey": "MessageTaskOpmlImport",
+      "titleSubs": null,
+      "description": "Added 2 podcasts",
+      "descriptionKey": "MessageTaskOpmlImportFinished",
+      "descriptionSubs": [
+        2
+      ],
+      "error": null,
+      "errorKey": null,
+      "errorSubs": null,
+      "showSuccess": true,
+      "isFailed": false,
+      "isFinished": true,
+      "startedAt": "<timestamp>",
+      "finishedAt": "<timestamp>"
+    }
+  },
+  "PodcastManager (characterization) > download queue > runs one download at a time, queues the rest in order and drops duplicates > downloads route": [
+    {
+      "episodeDisplayTitle": "Second",
+      "url": "https://cdn.test/ep2.mp3",
+      "libraryItemId": "<uuid-1>",
+      "libraryId": "<uuid-2>",
+      "isFinished": false,
+      "failed": false,
+      "appendRandomId": false,
+      "startedAt": null,
+      "createdAt": "<timestamp>",
+      "finishedAt": null,
+      "podcastTitle": "Local Pod",
+      "podcastExplicit": false,
+      "season": "2",
+      "episode": "5",
+      "episodeType": "full",
+      "publishedAt": "<timestamp>",
+      "guid": "g2"
+    },
+    {
+      "episodeDisplayTitle": "Third",
+      "url": "https://cdn.test/ep3.mp3",
+      "libraryItemId": "<uuid-1>",
+      "libraryId": "<uuid-2>",
+      "isFinished": false,
+      "failed": false,
+      "appendRandomId": false,
+      "startedAt": null,
+      "createdAt": "<timestamp>",
+      "finishedAt": null,
+      "podcastTitle": "Local Pod",
+      "podcastExplicit": false,
+      "season": "2",
+      "episode": "5",
+      "episodeType": "full",
+      "publishedAt": "<timestamp>",
+      "guid": "g3"
+    }
+  ],
+  "PodcastManager (characterization) > episode download through POST /download-episodes > downloads, tags, probes and adds an episode > downloaded episode": {
+    "emitted": [
+      "task_started",
+      "episode_download_started",
+      "libraryItemEmitter:item_updated",
+      "episode_added",
+      "task_finished",
+      "episode_download_finished"
+    ],
+    "episode": {
+      "index": null,
+      "season": "2",
+      "episode": "5",
+      "episodeType": "full",
+      "title": "New Ep",
+      "subtitle": "A subtitle",
+      "description": "A description",
+      "pubDate": "Wed, 15 Jan 2020 10:00:00 GMT",
+      "enclosureURL": "https://cdn.test/ep9.mp3",
+      "enclosureSize": 1234,
+      "enclosureType": "audio/mpeg",
+      "publishedAt": "<iso-date>",
+      "audioFile": {
+        "index": 1,
+        "addedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "trackNumFromMeta": null,
+        "discNumFromMeta": null,
+        "trackNumFromFilename": null,
+        "discNumFromFilename": null,
+        "manuallyVerified": false,
+        "exclude": false,
+        "error": null,
+        "language": null,
+        "codec": "mp3",
+        "channels": 1,
+        "chapters": [],
+        "embeddedCoverArt": null,
+        "mimeType": "audio/mpeg",
+        "metaTags": {
+          "tagAlbum": "Local Pod",
+          "tagAlbumSort": "Local Pod",
+          "tagArtist": "Pod Author",
+          "tagArtistSort": "Pod Author",
+          "tagGenre": "Tech;News",
+          "tagTitle": "New Ep",
+          "tagTitleSort": "New Ep",
+          "tagSeries": "Local Pod",
+          "tagSeriesPart": "5",
+          "tagTrack": "5",
+          "tagDisc": "2",
+          "tagSubtitle": "A subtitle",
+          "tagDate": "Wed, 15 Jan 2020 10:00:00 GMT",
+          "tagComment": "A description",
+          "tagLanguage": "en",
+          "tagItunesId": "12345",
+          "tagPodcastType": "episodic",
+          "tagEpisodeType": "full"
+        },
+        "duration": 1,
+        "metadata": {
+          "filename": "New Ep.mp3",
+          "ext": ".mp3",
+          "path": "<tmp>/podcasts/Local Pod/New Ep.mp3",
+          "relPath": "New Ep.mp3"
+        }
+      },
+      "chapters": [],
+      "extraData": {
+        "guid": "guid-new"
+      },
+      "createdAt": "<iso-date>",
+      "updatedAt": "<iso-date>"
+    },
+    "files": [
+      "New Ep.mp3",
+      "old1.mp3",
+      "old2.mp3",
+      "old3.mp3"
+    ]
+  },
+  "PodcastManager (characterization) > target file name and location > sanitises the title for the file name > sanitised file names": [
+    "A b c.mp3",
+    "Ep - OneTwo Q.mp3",
+    "Padded.mp3",
+    "Trailing dots....mp3"
+  ]
+}

@@ -1,0 +1,498 @@
+{
+  "Auth rate limit (characterization) > client identity > keys the limit on the X-Forwarded-For address, so each forwarded address has its own budget (and the header can be spoofed) > a1": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "2;w=600",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "1",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > client identity > keys the limit on the X-Forwarded-For address, so each forwarded address has its own budget (and the header can be spoofed) > a2": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "2;w=600",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > client identity > keys the limit on the X-Forwarded-For address, so each forwarded address has its own budget (and the header can be spoofed) > a3": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "2;w=600",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > client identity > keys the limit on the X-Forwarded-For address, so each forwarded address has its own budget (and the header can be spoofed) > b1": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "2;w=600",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "1",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > client identity > keys the limit on the X-Forwarded-For address, so each forwarded address has its own budget (and the header can be spoofed) > direct": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "2;w=600",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "1",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > client identity > keys the limit on the X-Forwarded-For address, so each forwarded address has its own budget (and the header can be spoofed) > directAgain": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "2;w=600",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > client identity > keys the limit on the X-Forwarded-For address, so each forwarded address has its own budget (and the header can be spoofed) > directBlocked": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "2;w=600",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > client identity > keys the limit on the X-Forwarded-For address, so each forwarded address has its own budget (and the header can be spoofed) > spoofed": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "2;w=600",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "1",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > answers 429 with a json error after RATE_LIMIT_AUTH_MAX requests, and reports the budget in the headers > lines": [
+    "INFO: [RateLimiterFactory] Authentication rate limiting max set to 3 by ENV variable",
+    "WARN: [RateLimiter] Rate limit exceeded - IP: 127.0.0.1, Endpoint: POST /login, User-Agent: node",
+    "WARN: [RateLimiter] Rate limit exceeded - IP: 127.0.0.1, Endpoint: POST /login, User-Agent: node"
+  ],
+  "Auth rate limit (characterization) > limit and message > answers 429 with a json error after RATE_LIMIT_AUTH_MAX requests, and reports the budget in the headers > results[0]": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "3;w=600",
+        "ratelimit-limit": "3",
+        "ratelimit-remaining": "2",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > answers 429 with a json error after RATE_LIMIT_AUTH_MAX requests, and reports the budget in the headers > results[1]": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "3;w=600",
+        "ratelimit-limit": "3",
+        "ratelimit-remaining": "1",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > answers 429 with a json error after RATE_LIMIT_AUTH_MAX requests, and reports the budget in the headers > results[2]": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "3;w=600",
+        "ratelimit-limit": "3",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > answers 429 with a json error after RATE_LIMIT_AUTH_MAX requests, and reports the budget in the headers > results[3]": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "3;w=600",
+        "ratelimit-limit": "3",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > answers 429 with a json error after RATE_LIMIT_AUTH_MAX requests, and reports the budget in the headers > results[4]": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "3;w=600",
+        "ratelimit-limit": "3",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > counts successful logins too, and blocks even the correct password once the budget is used > #1": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "ratelimit-policy": "3;w=600",
+        "ratelimit-limit": "3",
+        "ratelimit-remaining": "2",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": {
+        "user": "root"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > counts successful logins too, and blocks even the correct password once the budget is used > #2": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "ratelimit-policy": "3;w=600",
+        "ratelimit-limit": "3",
+        "ratelimit-remaining": "1",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": {
+        "user": "root"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > counts successful logins too, and blocks even the correct password once the budget is used > #3": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "ratelimit-policy": "3;w=600",
+        "ratelimit-limit": "3",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": {
+        "user": "root"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > counts successful logins too, and blocks even the correct password once the budget is used > #4": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "3;w=600",
+        "ratelimit-limit": "3",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > defaults to 40 requests per window > count401": 40,
+  "Auth rate limit (characterization) > limit and message > defaults to 40 requests per window > count429": 2,
+  "Auth rate limit (characterization) > limit and message > defaults to 40 requests per window > first429": 40,
+  "Auth rate limit (characterization) > limit and message > ignores a RATE_LIMIT_AUTH_MAX that is not a positive number and keeps the default > res": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "40;w=600",
+        "ratelimit-limit": "40",
+        "ratelimit-remaining": "39",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > is disabled by RATE_LIMIT_AUTH_MAX=0 > distinct": [
+    401
+  ],
+  "Auth rate limit (characterization) > limit and message > is disabled by RATE_LIMIT_AUTH_MAX=0 > lines": [
+    "INFO: [RateLimiterFactory] Authentication rate limiting disabled by ENV variable"
+  ],
+  "Auth rate limit (characterization) > limit and message > uses RATE_LIMIT_AUTH_MESSAGE as the error text > blocked": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "1;w=600",
+        "ratelimit-limit": "1",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "slow down"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > limit and message > uses RATE_LIMIT_AUTH_MESSAGE as the error text > lines": [
+    "INFO: [RateLimiterFactory] Authentication rate limiting max set to 1 by ENV variable"
+  ],
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > blockedLogin": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "4;w=600",
+        "ratelimit-limit": "4",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > blockedOpenidConfig": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "4;w=600",
+        "ratelimit-limit": "4",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > blockedPassword": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "4;w=600",
+        "ratelimit-limit": "4",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > blockedRefresh": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "4;w=600",
+        "ratelimit-limit": "4",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > login": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "ratelimit-policy": "4;w=600",
+        "ratelimit-limit": "4",
+        "ratelimit-remaining": "3",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": {
+        "user": "root"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > openid": {
+    "res": {
+      "status": 500,
+      "headers": {
+        "ratelimit-policy": "4;w=600",
+        "ratelimit-limit": "4",
+        "ratelimit-remaining": "1",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Internal Server Error</pre>\n</body>\n</html>\n"
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > password": {
+    "res": {
+      "status": 200,
+      "headers": {
+        "ratelimit-policy": "4;w=600",
+        "ratelimit-limit": "4",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "OK"
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > refresh": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "4;w=600",
+        "ratelimit-limit": "4",
+        "ratelimit-remaining": "2",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": {
+        "error": "No refresh token provided"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > stillFree": {
+    "res": {
+      "status": 200,
+      "headers": {},
+      "body": {
+        "libraries": []
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > stillPing": {
+    "res": {
+      "status": 200,
+      "headers": {},
+      "body": {
+        "success": true
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > counts /login, /auth/refresh, /auth/openid and PATCH /me/password against one budget; other routes are not limited > unlimitedStatuses": [
+    200
+  ],
+  "Auth rate limit (characterization) > which routes share the budget > limits before authentication is checked (/login, /auth/refresh) but not /logout > badLogin": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "1;w=600",
+        "ratelimit-limit": "1",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > limits before authentication is checked (/login, /auth/refresh) but not /logout > logout": {
+    "res": {
+      "status": 200,
+      "headers": {},
+      "body": {
+        "redirect_url": null
+      }
+    }
+  },
+  "Auth rate limit (characterization) > which routes share the budget > limits before authentication is checked (/login, /auth/refresh) but not /logout > refreshNoToken": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "1;w=600",
+        "ratelimit-limit": "1",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > window > lets requests through again once RATE_LIMIT_AUTH_WINDOW (ms) has passed > after": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "2;w=3",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "1",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > window > lets requests through again once RATE_LIMIT_AUTH_WINDOW (ms) has passed > before[0]": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "2;w=3",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "1",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > window > lets requests through again once RATE_LIMIT_AUTH_WINDOW (ms) has passed > before[1]": {
+    "res": {
+      "status": 401,
+      "headers": {
+        "ratelimit-policy": "2;w=3",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>"
+      },
+      "body": "Unauthorized"
+    }
+  },
+  "Auth rate limit (characterization) > window > lets requests through again once RATE_LIMIT_AUTH_WINDOW (ms) has passed > before[2]": {
+    "res": {
+      "status": 429,
+      "headers": {
+        "ratelimit-policy": "2;w=3",
+        "ratelimit-limit": "2",
+        "ratelimit-remaining": "0",
+        "ratelimit-reset": "<seconds>",
+        "retry-after": "<seconds>"
+      },
+      "body": {
+        "error": "Too many authentication requests"
+      }
+    }
+  },
+  "Auth rate limit (characterization) > window > lets requests through again once RATE_LIMIT_AUTH_WINDOW (ms) has passed > lines": [
+    "INFO: [RateLimiterFactory] Authentication rate limiting window set to 2500ms by ENV variable",
+    "INFO: [RateLimiterFactory] Authentication rate limiting max set to 2 by ENV variable"
+  ]
+}

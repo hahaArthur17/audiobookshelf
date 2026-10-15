@@ -1,0 +1,180 @@
+{
+  "ApiCacheManager (characterization) > default construction > uses a 30 minute TTL and the documented LRU limits and invalidation sets": {
+    "ttlOptions": {
+      "ttl": 1800000
+    },
+    "max": 1000,
+    "maxSize": 10000000,
+    "highChurn": [
+      "session",
+      "mediaProgress",
+      "playbackSession",
+      "device"
+    ],
+    "invalidatesPersonalized": [
+      "mediaProgress"
+    ],
+    "invalidatesMe": [
+      "session",
+      "mediaProgress",
+      "playbackSession",
+      "device"
+    ]
+  },
+  "ApiCacheManager (characterization) > invalidation by model events (real Database hooks) > a device create, update and destroy each clear cached /me responses (all users) and nothing else": {
+    "result": {
+      "/me": "rebuilt",
+      "/me/listening-stats": "rebuilt",
+      "/libraries/lib-1/personalized": "cached",
+      "/libraries/lib-1/items": "cached"
+    }
+  },
+  "ApiCacheManager (characterization) > middleware > bypasses the cache for ?sort=random: the handler runs every time and nothing is stored": {
+    "a": {
+      "status": 200,
+      "body": {
+        "n": 1,
+        "user": "alice",
+        "url": "/libraries/lib-1/items?sort=random"
+      }
+    },
+    "b": {
+      "status": 200,
+      "body": {
+        "n": 2,
+        "user": "alice",
+        "url": "/libraries/lib-1/items?sort=random"
+      }
+    },
+    "c": {
+      "status": 200,
+      "body": {
+        "n": 3,
+        "user": "alice",
+        "url": "/libraries/lib-1/items?sort=random"
+      }
+    },
+    "keys": [
+      {
+        "user": "alice",
+        "url": "/libraries/lib-1/items?sort=title"
+      }
+    ]
+  },
+  "ApiCacheManager (characterization) > middleware > keeps one entry per user: users never share cached responses": {
+    "alice1": {
+      "status": 200,
+      "body": {
+        "n": 1,
+        "user": "alice",
+        "url": "/libraries/lib-1/items"
+      }
+    },
+    "bob1": {
+      "status": 200,
+      "body": {
+        "n": 2,
+        "user": "bob",
+        "url": "/libraries/lib-1/items"
+      }
+    },
+    "alice2": {
+      "status": 200,
+      "body": {
+        "n": 1,
+        "user": "alice",
+        "url": "/libraries/lib-1/items"
+      }
+    },
+    "bob2": {
+      "status": 200,
+      "body": {
+        "n": 2,
+        "user": "bob",
+        "url": "/libraries/lib-1/items"
+      }
+    },
+    "keys": [
+      {
+        "user": "bob",
+        "url": "/libraries/lib-1/items"
+      },
+      {
+        "user": "alice",
+        "url": "/libraries/lib-1/items"
+      }
+    ]
+  },
+  "ApiCacheManager (characterization) > middleware > records that error responses are cached too (a 404 is served from cache)": {
+    "a": {
+      "status": 404,
+      "body": {
+        "n": 1,
+        "user": "alice",
+        "url": "/libraries/lib-1/items?fail=1"
+      }
+    },
+    "b": {
+      "status": 404,
+      "body": {
+        "n": 1,
+        "user": "alice",
+        "url": "/libraries/lib-1/items?fail=1"
+      }
+    }
+  },
+  "ApiCacheManager (characterization) > middleware > serves two identical GETs from one handler call": {
+    "a": {
+      "status": 200,
+      "body": {
+        "n": 1,
+        "user": "alice",
+        "url": "/libraries/lib-1/items?limit=5"
+      }
+    },
+    "b": {
+      "status": 200,
+      "body": {
+        "n": 1,
+        "user": "alice",
+        "url": "/libraries/lib-1/items?limit=5"
+      }
+    },
+    "keys": [
+      {
+        "user": "alice",
+        "url": "/libraries/lib-1/items?limit=5"
+      }
+    ]
+  },
+  "ApiCacheManager (characterization) > through the real ApiRouter (harness wiring) > caches GET /api/libraries/* responses in the router manager, per user, and never /api/me": {
+    "keys": [
+      {
+        "user": "user",
+        "url": "/libraries/<library>/items"
+      },
+      {
+        "user": "admin",
+        "url": "/libraries/<library>/items"
+      }
+    ]
+  },
+  "ApiCacheManager (characterization) > ttl through the middleware (fake time) > serves a personalized response from cache at 29 minutes and rebuilds it after 31 minutes": {
+    "first": {
+      "status": 200,
+      "body": {
+        "n": 1,
+        "user": "alice",
+        "url": "/libraries/lib-1/personalized"
+      }
+    },
+    "rebuilt": {
+      "status": 200,
+      "body": {
+        "n": 2,
+        "user": "alice",
+        "url": "/libraries/lib-1/personalized"
+      }
+    }
+  }
+}

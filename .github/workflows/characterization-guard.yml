@@ -1,0 +1,64 @@
+name: Characterization Guard
+
+# Cheap, no dependencies: the characterization tests/snapshots define "no behaviour change" for the TS migration,
+# so they may only change in a deliberate commit marked [oracle-update], and must always match their manifest.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'test/characterization/**'
+      - 'scripts/characterization-audit/**'
+      - '.github/workflows/characterization-guard.yml'
+      - '.github/workflows/unit-tests.yml'
+  push:
+    paths:
+      - 'test/characterization/**'
+      - 'scripts/characterization-audit/**'
+      - '.github/workflows/characterization-guard.yml'
+      - '.github/workflows/unit-tests.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    name: oracle integrity
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Files match the manifest
+        run: node scripts/characterization-audit/oracle.js
+
+      - name: Changes to the oracle need an [oracle-update] marker
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          BASE="$PUSH_BEFORE"
+          if [ "$EVENT" = "pull_request" ]; then BASE="$PR_BASE"; fi
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BASE" 2>/dev/null; then
+            echo "no comparable base commit, skipping"; exit 0
+          fi
+          GUARDED="test/characterization scripts/characterization-audit .github/workflows/characterization-guard.yml .github/workflows/unit-tests.yml"
+          CHANGED=$(git diff --name-only "$BASE" HEAD -- $GUARDED)
+          if [ -z "$CHANGED" ]; then echo "oracle unchanged"; exit 0; fi
+          # every commit that touches the oracle, the audit or these workflows needs its own marker
+          BAD=""
+          for C in $(git rev-list "$BASE"..HEAD); do
+            if [ -n "$(git diff-tree --no-commit-id --name-only -r -m --first-parent "$C" -- $GUARDED)" ] && ! git log -1 --format=%B "$C" | grep -q '\[oracle-update\]'; then
+              BAD="$BAD $C"
+            fi
+          done
+          if [ -z "$BAD" ]; then
+            echo "oracle changed, every touching commit carries [oracle-update]:"; echo "$CHANGED"; exit 0
+          fi
+          echo "::error::these commits change the oracle, the audit or its workflows without [oracle-update]:$BAD"
+          echo "$CHANGED"
+          exit 1

@@ -1,0 +1,1129 @@
+{
+  "PlaybackSessionManager (characterization) > closeSession > with sync data does a final sync, saves, emits and removes the session > close with sync data": {
+    "ev": [
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-1>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-2>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-3>",
+          "libraryItemId": "<uuid-4>",
+          "episodeId": null,
+          "currentTime": 400,
+          "duration": 3600,
+          "isFinished": false
+        }
+      },
+      {
+        "method": "adminEmitter",
+        "event": "user_stream_update",
+        "username": "user",
+        "sessionId": "<uuid-2>"
+      },
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-1>",
+        "event": "user_session_closed",
+        "data": "<uuid-2>"
+      }
+    ],
+    "finalRow": {
+      "currentTime": 400,
+      "timeListening": 30
+    }
+  },
+  "PlaybackSessionManager (characterization) > closeStaleOpenSessions (36 hour cutoff) > removes open sessions last updated more than 36 hours ago, keeps a session exactly at the cutoff, and does not save or emit for them > stale cleanup": {
+    "remaining": [
+      "<uuid-1>",
+      "<uuid-2>",
+      "<uuid-3>"
+    ],
+    "emitted": [
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-4>",
+        "event": "stream_closed",
+        "data": "<uuid-5>"
+      }
+    ]
+  },
+  "PlaybackSessionManager (characterization) > getDeviceInfo > builds the device from the request headers when the client sends no details > device from headers": {
+    "id": "<uuid-1>",
+    "userId": "<uuid-2>",
+    "deviceId": "<uuid-1>",
+    "ipAddress": "203.0.113.7",
+    "browserName": "Chrome",
+    "browserVersion": "120.0.0.0",
+    "osName": "Linux",
+    "osVersion": "x86_64",
+    "clientVersion": "2.37.0",
+    "clientName": "Abs Web",
+    "deviceName": "Linux x86_64 Chrome"
+  },
+  "PlaybackSessionManager (characterization) > open session lookup through the API > GET /api/session/:id and /api/sessions/open expose the open sessions of the manager > open sessions": {
+    "one": {
+      "id": "<uuid-1>",
+      "userId": "<uuid-2>",
+      "libraryId": "<uuid-3>",
+      "libraryItemId": "<uuid-4>",
+      "bookId": "<uuid-5>",
+      "episodeId": null,
+      "mediaType": "book",
+      "mediaMetadata": {
+        "title": "Played Book",
+        "subtitle": null,
+        "authors": [
+          {
+            "id": "<uuid-6>",
+            "name": "Ann Author"
+          }
+        ],
+        "narrators": [],
+        "series": [],
+        "genres": [],
+        "publishedYear": null,
+        "publishedDate": null,
+        "publisher": null,
+        "description": null,
+        "isbn": null,
+        "asin": null,
+        "language": null,
+        "explicit": false,
+        "abridged": null
+      },
+      "chapters": [],
+      "displayTitle": "Played Book",
+      "displayAuthor": "Ann Author",
+      "coverPath": null,
+      "duration": 3600,
+      "playMethod": 0,
+      "mediaPlayer": "test-player",
+      "deviceInfo": {
+        "id": "<uuid-7>",
+        "userId": "<uuid-2>",
+        "deviceId": "dev-A",
+        "ipAddress": "198.51.100.9",
+        "browserName": "Chrome",
+        "browserVersion": "120.0.0.0",
+        "osName": "Linux",
+        "osVersion": "x86_64",
+        "clientVersion": "2.37.0",
+        "clientName": "Abs Web",
+        "deviceName": "Linux x86_64 Chrome"
+      },
+      "serverVersion": "2.37.0",
+      "date": "2026-10-12",
+      "dayOfWeek": "Monday",
+      "timeListening": 0,
+      "startTime": 0,
+      "currentTime": 0,
+      "startedAt": "<timestamp>",
+      "updatedAt": "<timestamp>",
+      "audioTracks": [
+        {
+          "index": 1,
+          "ino": "ino1",
+          "metadata": {
+            "filename": "part1.mp3",
+            "ext": ".mp3",
+            "path": "<tmp>/books/Played Book/part1.mp3",
+            "relPath": "part1.mp3",
+            "size": 15,
+            "mtimeMs": 1000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 1000
+          },
+          "addedAt": 2000,
+          "updatedAt": 2000,
+          "trackNumFromMeta": 1,
+          "discNumFromMeta": null,
+          "trackNumFromFilename": null,
+          "discNumFromFilename": null,
+          "manuallyVerified": false,
+          "exclude": false,
+          "format": "MP2/3 (MPEG audio layer 2/3)",
+          "duration": 3600,
+          "bitRate": 64000,
+          "language": null,
+          "codec": "mp3",
+          "timeBase": "1/14112000",
+          "channels": 2,
+          "channelLayout": "stereo",
+          "chapters": [],
+          "metaTags": {},
+          "mimeType": "audio/mpeg",
+          "title": "part1.mp3",
+          "startOffset": 0,
+          "contentUrl": "/api/items/<uuid-4>/file/ino1"
+        }
+      ],
+      "libraryItem": {
+        "id": "<uuid-4>",
+        "mediaType": "book"
+      }
+    },
+    "list": [
+      {
+        "id": "<uuid-1>",
+        "userId": "<uuid-2>",
+        "libraryId": "<uuid-3>",
+        "libraryItemId": "<uuid-4>",
+        "bookId": "<uuid-5>",
+        "episodeId": null,
+        "mediaType": "book",
+        "mediaMetadata": {
+          "title": "Played Book",
+          "subtitle": null,
+          "authors": [
+            {
+              "id": "<uuid-6>",
+              "name": "Ann Author"
+            }
+          ],
+          "narrators": [],
+          "series": [],
+          "genres": [],
+          "publishedYear": null,
+          "publishedDate": null,
+          "publisher": null,
+          "description": null,
+          "isbn": null,
+          "asin": null,
+          "language": null,
+          "explicit": false,
+          "abridged": null
+        },
+        "chapters": [],
+        "displayTitle": "Played Book",
+        "displayAuthor": "Ann Author",
+        "coverPath": null,
+        "duration": 3600,
+        "playMethod": 0,
+        "mediaPlayer": "test-player",
+        "deviceInfo": {
+          "id": "<uuid-7>",
+          "userId": "<uuid-2>",
+          "deviceId": "dev-A",
+          "ipAddress": "198.51.100.9",
+          "browserName": "Chrome",
+          "browserVersion": "120.0.0.0",
+          "osName": "Linux",
+          "osVersion": "x86_64",
+          "clientVersion": "2.37.0",
+          "clientName": "Abs Web",
+          "deviceName": "Linux x86_64 Chrome"
+        },
+        "serverVersion": "2.37.0",
+        "date": "2026-10-12",
+        "dayOfWeek": "Monday",
+        "timeListening": 0,
+        "startTime": 0,
+        "currentTime": 0,
+        "startedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "user": {
+          "id": "<uuid-2>",
+          "username": "user"
+        }
+      },
+      {
+        "id": "<uuid-8>",
+        "userId": "<uuid-9>",
+        "libraryId": "<uuid-10>",
+        "libraryItemId": "<uuid-11>",
+        "bookId": null,
+        "episodeId": "<uuid-12>",
+        "mediaType": "podcast",
+        "mediaMetadata": {
+          "title": "Played Pod",
+          "author": "The Host",
+          "description": null,
+          "releaseDate": null,
+          "genres": [],
+          "feedUrl": null,
+          "imageUrl": null,
+          "itunesPageUrl": null,
+          "itunesId": null,
+          "itunesArtistId": null,
+          "explicit": null,
+          "language": null,
+          "type": null
+        },
+        "chapters": [],
+        "displayTitle": "Ep One",
+        "displayAuthor": "The Host",
+        "coverPath": null,
+        "duration": 1800,
+        "playMethod": 0,
+        "mediaPlayer": "test-player",
+        "deviceInfo": {
+          "id": "<uuid-13>",
+          "userId": "<uuid-9>",
+          "deviceId": "dev-B",
+          "ipAddress": "198.51.100.9",
+          "browserName": "Chrome",
+          "browserVersion": "120.0.0.0",
+          "osName": "Linux",
+          "osVersion": "x86_64",
+          "clientVersion": "2.37.0",
+          "clientName": "Abs Web",
+          "deviceName": "Linux x86_64 Chrome"
+        },
+        "serverVersion": "2.37.0",
+        "date": "2026-10-12",
+        "dayOfWeek": "Monday",
+        "timeListening": 0,
+        "startTime": 0,
+        "currentTime": 0,
+        "startedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "user": {
+          "id": "<uuid-9>",
+          "username": "admin"
+        }
+      }
+    ]
+  },
+  "PlaybackSessionManager (characterization) > startSession: closing sessions already open for the user and device > closes the open session of the same user and device, and keeps the others > same device replaced": {
+    "remaining": [
+      "<uuid-1>",
+      "<uuid-2>",
+      "<uuid-3>"
+    ],
+    "ev": [
+      {
+        "method": "adminEmitter",
+        "event": "user_stream_update",
+        "username": "user",
+        "sessionId": "<uuid-4>"
+      },
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-5>",
+        "event": "user_session_closed",
+        "data": "<uuid-4>"
+      },
+      {
+        "method": "adminEmitter",
+        "event": "user_stream_update",
+        "username": "user",
+        "sessionId": "<uuid-1>"
+      }
+    ]
+  },
+  "PlaybackSessionManager (characterization) > startSession: closing sessions already open for the user and device > reuses the stored device and updates it when the client details changed > device update": {
+    "versions": [
+      "1.0.0",
+      "2.0.0"
+    ],
+    "device": {
+      "id": "<uuid-1>",
+      "userId": "<uuid-2>",
+      "deviceId": "dev-A",
+      "ipAddress": "198.51.100.9",
+      "browserName": "Chrome",
+      "browserVersion": "120.0.0.0",
+      "osName": "Linux",
+      "osVersion": "x86_64",
+      "clientVersion": "2.0.0",
+      "manufacturer": "",
+      "model": "",
+      "sdkVersion": "",
+      "clientName": "Abs Web",
+      "deviceName": "Linux x86_64 Chrome"
+    }
+  },
+  "PlaybackSessionManager (characterization) > startSession: direct play or transcode > a transcode session owns a Stream with a generated playlist, and closing it removes the stream directory > transcode session": {
+    "response": {
+      "id": "<uuid-1>",
+      "userId": "<uuid-2>",
+      "libraryId": "<uuid-3>",
+      "libraryItemId": "<uuid-4>",
+      "bookId": "<uuid-5>",
+      "episodeId": null,
+      "mediaType": "book",
+      "mediaMetadata": {
+        "title": "Played Book",
+        "subtitle": null,
+        "authors": [
+          {
+            "id": "<uuid-6>",
+            "name": "Ann Author"
+          }
+        ],
+        "narrators": [],
+        "series": [],
+        "genres": [],
+        "publishedYear": null,
+        "publishedDate": null,
+        "publisher": null,
+        "description": null,
+        "isbn": null,
+        "asin": null,
+        "language": null,
+        "explicit": false,
+        "abridged": null
+      },
+      "chapters": [],
+      "displayTitle": "Played Book",
+      "displayAuthor": "Ann Author",
+      "coverPath": null,
+      "duration": 3600,
+      "playMethod": 2,
+      "mediaPlayer": "unknown",
+      "deviceInfo": {
+        "id": "<uuid-7>",
+        "userId": "<uuid-2>",
+        "deviceId": "dev-1",
+        "ipAddress": "198.51.100.9",
+        "browserName": "Chrome",
+        "browserVersion": "120.0.0.0",
+        "osName": "Linux",
+        "osVersion": "x86_64",
+        "clientVersion": "1.2.3",
+        "clientName": "Abs Web",
+        "deviceName": "Linux x86_64 Chrome"
+      },
+      "serverVersion": "2.37.0",
+      "date": "2026-10-12",
+      "dayOfWeek": "Monday",
+      "timeListening": 0,
+      "startTime": 0,
+      "currentTime": 0,
+      "startedAt": "<timestamp>",
+      "updatedAt": "<timestamp>",
+      "audioTracks": [
+        {
+          "index": 1,
+          "startOffset": 0,
+          "duration": 3600,
+          "title": "Played Book",
+          "contentUrl": "/hls/<uuid-1>/output.m3u8",
+          "mimeType": "application/vnd.apple.mpegurl",
+          "codec": null,
+          "metadata": null
+        }
+      ],
+      "libraryItem": {
+        "id": "<uuid-4>",
+        "mediaType": "book"
+      }
+    },
+    "playlist": "#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-ALLOW-CACHE:NO\n#EXT-X-TARGETDURATION:6\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:VOD\n#EXTINF:6,\noutput-0.ts\n#EXTINF:6,\noutput-1.ts\n#EXTINF:6,\noutput-2.ts\n#EXTINF:6,\noutput-3.ts\n#EXTINF:6,\noutput-4.ts\n#EXTINF:6,\noutput-5.ts\n#EXTINF:6,\noutput-6.ts\n#EXTINF:6,\noutput-7.ts\n#EXTINF:6,\noutput-8.ts\n#EXTINF:6,\noutput-9.ts\n#EXTINF:6,\noutput-10.ts\n#EXTINF:6,\noutput-11.ts\n#EXTINF:6,\noutput-12.ts\n#EXTINF:6,\noutput-13.ts\n#EXTINF:6,\noutput-14.ts\n#EXTINF:6,\noutput-15.ts\n#EXTINF:6,\noutput-16.ts\n#EXTINF:6,\noutput-17.ts\n#EXTINF:6,\noutput-18.ts\n#EXTINF:6,\noutput-19.ts\n#EXTINF:6,\noutput-20.ts\n#EXTINF:6,\noutput-21.ts\n#EXTINF:6,\noutput-22.ts\n#EXTINF:6,\noutput-23.ts\n#EXTINF:6,\noutput-24.ts\n#EXTINF:6,\noutput-25.ts\n#EXTINF:6,\noutput-26.ts\n#EXTINF:6,\noutput-27.ts\n#EXTINF:6,\noutput-28.ts\n#EXTINF:6,\noutput-29.ts\n#EXTINF:6,\noutput-30.ts\n#EXTINF:6,\noutput-31.ts\n#EXTINF:6,\noutput-32.ts\n#EXTINF:6,\noutput-33.ts\n#EXTINF:6,\noutput-34.ts\n#EXTINF:6,\noutput-35.ts\n#EXTINF:6,\noutput-36.ts\n#EXTINF:6,\noutput-37.ts\n#EXTINF:6,\noutput-38.ts\n#EXTINF:6,\noutput-39.ts\n#EXTINF:6,\noutput-40.ts\n#EXTINF:6,\noutput-41.ts\n#EXTINF:6,\noutput-42.ts\n#EXTINF:6,\noutput-43.ts\n#EXTINF:6,\noutput-44.ts\n#EXTINF:6,\noutput-45.ts\n#EXTINF:6,\noutput-46.ts\n#EXTINF:6,\noutput-47.ts\n#EXTINF:6,\noutput-48.ts\n#EXTINF:6,\noutput-49.ts\n#EXTINF:6,\noutput-50.ts\n#EXTINF:6,\noutput-51.ts\n#EXTINF:6,\noutput-52.ts\n#EXTINF:6,\noutput-53.ts\n#EXTINF:6,\noutput-54.ts\n#EXTINF:6,\noutput-55.ts\n#EXTINF:6,\noutput-56.ts\n#EXTINF:6,\noutput-57.ts\n#EXTINF:6,\noutput-58.ts\n#EXTINF:6,\noutput-59.ts\n#EXTINF:6,\noutput-60.ts\n#EXTINF:6,\noutput-61.ts\n#EXTINF:6,\noutput-62.ts\n#EXTINF:6,\noutput-63.ts\n#EXTINF:6,\noutput-64.ts\n#EXTINF:6,\noutput-65.ts\n#EXTINF:6,\noutput-66.ts\n#EXTINF:6,\noutput-67.ts\n#EXTINF:6,\noutput-68.ts\n#EXTINF:6,\noutput-69.ts\n#EXTINF:6,\noutput-70.ts\n#EXTINF:6,\noutput-71.ts\n#EXTINF:6,\noutput-72.ts\n#EXTINF:6,\noutput-73.ts\n#EXTINF:6,\noutput-74.ts\n#EXTINF:6,\noutput-75.ts\n#EXTINF:6,\noutput-76.ts\n#EXTINF:6,\noutput-77.ts\n#EXTINF:6,\noutput-78.ts\n#EXTINF:6,\noutput-79.ts\n#EXTINF:6,\noutput-80.ts\n#EXTINF:6,\noutput-81.ts\n#EXTINF:6,\noutput-82.ts\n#EXTINF:6,\noutput-83.ts\n#EXTINF:6,\noutput-84.ts\n#EXTINF:6,\noutput-85.ts\n#EXTINF:6,\noutput-86.ts\n#EXTINF:6,\noutput-87.ts\n#EXTINF:6,\noutput-88.ts\n#EXTINF:6,\noutput-89.ts\n#EXTINF:6,\noutput-90.ts\n#EXTINF:6,\noutput-91.ts\n#EXTINF:6,\noutput-92.ts\n#EXTINF:6,\noutput-93.ts\n#EXTINF:6,\noutput-94.ts\n#EXTINF:6,\noutput-95.ts\n#EXTINF:6,\noutput-96.ts\n#EXTINF:6,\noutput-97.ts\n#EXTINF:6,\noutput-98.ts\n#EXTINF:6,\noutput-99.ts\n#EXTINF:6,\noutput-100.ts\n#EXTINF:6,\noutput-101.ts\n#EXTINF:6,\noutput-102.ts\n#EXTINF:6,\noutput-103.ts\n#EXTINF:6,\noutput-104.ts\n#EXTINF:6,\noutput-105.ts\n#EXTINF:6,\noutput-106.ts\n#EXTINF:6,\noutput-107.ts\n#EXTINF:6,\noutput-108.ts\n#EXTINF:6,\noutput-109.ts\n#EXTINF:6,\noutput-110.ts\n#EXTINF:6,\noutput-111.ts\n#EXTINF:6,\noutput-112.ts\n#EXTINF:6,\noutput-113.ts\n#EXTINF:6,\noutput-114.ts\n#EXTINF:6,\noutput-115.ts\n#EXTINF:6,\noutput-116.ts\n#EXTINF:6,\noutput-117.ts\n#EXTINF:6,\noutput-118.ts\n#EXTINF:6,\noutput-119.ts\n#EXTINF:6,\noutput-120.ts\n#EXTINF:6,\noutput-121.ts\n#EXTINF:6,\noutput-122.ts\n#EXTINF:6,\noutput-123.ts\n#EXTINF:6,\noutput-124.ts\n#EXTINF:6,\noutput-125.ts\n#EXTINF:6,\noutput-126.ts\n#EXTINF:6,\noutput-127.ts\n#EXTINF:6,\noutput-128.ts\n#EXTINF:6,\noutput-129.ts\n#EXTINF:6,\noutput-130.ts\n#EXTINF:6,\noutput-131.ts\n#EXTINF:6,\noutput-132.ts\n#EXTINF:6,\noutput-133.ts\n#EXTINF:6,\noutput-134.ts\n#EXTINF:6,\noutput-135.ts\n#EXTINF:6,\noutput-136.ts\n#EXTINF:6,\noutput-137.ts\n#EXTINF:6,\noutput-138.ts\n#EXTINF:6,\noutput-139.ts\n#EXTINF:6,\noutput-140.ts\n#EXTINF:6,\noutput-141.ts\n#EXTINF:6,\noutput-142.ts\n#EXTINF:6,\noutput-143.ts\n#EXTINF:6,\noutput-144.ts\n#EXTINF:6,\noutput-145.ts\n#EXTINF:6,\noutput-146.ts\n#EXTINF:6,\noutput-147.ts\n#EXTINF:6,\noutput-148.ts\n#EXTINF:6,\noutput-149.ts\n#EXTINF:6,\noutput-150.ts\n#EXTINF:6,\noutput-151.ts\n#EXTINF:6,\noutput-152.ts\n#EXTINF:6,\noutput-153.ts\n#EXTINF:6,\noutput-154.ts\n#EXTINF:6,\noutput-155.ts\n#EXTINF:6,\noutput-156.ts\n#EXTINF:6,\noutput-157.ts\n#EXTINF:6,\noutput-158.ts\n#EXTINF:6,\noutput-159.ts\n#EXTINF:6,\noutput-160.ts\n#EXTINF:6,\noutput-161.ts\n#EXTINF:6,\noutput-162.ts\n#EXTINF:6,\noutput-163.ts\n#EXTINF:6,\noutput-164.ts\n#EXTINF:6,\noutput-165.ts\n#EXTINF:6,\noutput-166.ts\n#EXTINF:6,\noutput-167.ts\n#EXTINF:6,\noutput-168.ts\n#EXTINF:6,\noutput-169.ts\n#EXTINF:6,\noutput-170.ts\n#EXTINF:6,\noutput-171.ts\n#EXTINF:6,\noutput-172.ts\n#EXTINF:6,\noutput-173.ts\n#EXTINF:6,\noutput-174.ts\n#EXTINF:6,\noutput-175.ts\n#EXTINF:6,\noutput-176.ts\n#EXTINF:6,\noutput-177.ts\n#EXTINF:6,\noutput-178.ts\n#EXTINF:6,\noutput-179.ts\n#EXTINF:6,\noutput-180.ts\n#EXTINF:6,\noutput-181.ts\n#EXTINF:6,\noutput-182.ts\n#EXTINF:6,\noutput-183.ts\n#EXTINF:6,\noutput-184.ts\n#EXTINF:6,\noutput-185.ts\n#EXTINF:6,\noutput-186.ts\n#EXTINF:6,\noutput-187.ts\n#EXTINF:6,\noutput-188.ts\n#EXTINF:6,\noutput-189.ts\n#EXTINF:6,\noutput-190.ts\n#EXTINF:6,\noutput-191.ts\n#EXTINF:6,\noutput-192.ts\n#EXTINF:6,\noutput-193.ts\n#EXTINF:6,\noutput-194.ts\n#EXTINF:6,\noutput-195.ts\n#EXTINF:6,\noutput-196.ts\n#EXTINF:6,\noutput-197.ts\n#EXTINF:6,\noutput-198.ts\n#EXTINF:6,\noutput-199.ts\n#EXTINF:6,\noutput-200.ts\n#EXTINF:6,\noutput-201.ts\n#EXTINF:6,\noutput-202.ts\n#EXTINF:6,\noutput-203.ts\n#EXTINF:6,\noutput-204.ts\n#EXTINF:6,\noutput-205.ts\n#EXTINF:6,\noutput-206.ts\n#EXTINF:6,\noutput-207.ts\n#EXTINF:6,\noutput-208.ts\n#EXTINF:6,\noutput-209.ts\n#EXTINF:6,\noutput-210.ts\n#EXTINF:6,\noutput-211.ts\n#EXTINF:6,\noutput-212.ts\n#EXTINF:6,\noutput-213.ts\n#EXTINF:6,\noutput-214.ts\n#EXTINF:6,\noutput-215.ts\n#EXTINF:6,\noutput-216.ts\n#EXTINF:6,\noutput-217.ts\n#EXTINF:6,\noutput-218.ts\n#EXTINF:6,\noutput-219.ts\n#EXTINF:6,\noutput-220.ts\n#EXTINF:6,\noutput-221.ts\n#EXTINF:6,\noutput-222.ts\n#EXTINF:6,\noutput-223.ts\n#EXTINF:6,\noutput-224.ts\n#EXTINF:6,\noutput-225.ts\n#EXTINF:6,\noutput-226.ts\n#EXTINF:6,\noutput-227.ts\n#EXTINF:6,\noutput-228.ts\n#EXTINF:6,\noutput-229.ts\n#EXTINF:6,\noutput-230.ts\n#EXTINF:6,\noutput-231.ts\n#EXTINF:6,\noutput-232.ts\n#EXTINF:6,\noutput-233.ts\n#EXTINF:6,\noutput-234.ts\n#EXTINF:6,\noutput-235.ts\n#EXTINF:6,\noutput-236.ts\n#EXTINF:6,\noutput-237.ts\n#EXTINF:6,\noutput-238.ts\n#EXTINF:6,\noutput-239.ts\n#EXTINF:6,\noutput-240.ts\n#EXTINF:6,\noutput-241.ts\n#EXTINF:6,\noutput-242.ts\n#EXTINF:6,\noutput-243.ts\n#EXTINF:6,\noutput-244.ts\n#EXTINF:6,\noutput-245.ts\n#EXTINF:6,\noutput-246.ts\n#EXTINF:6,\noutput-247.ts\n#EXTINF:6,\noutput-248.ts\n#EXTINF:6,\noutput-249.ts\n#EXTINF:6,\noutput-250.ts\n#EXTINF:6,\noutput-251.ts\n#EXTINF:6,\noutput-252.ts\n#EXTINF:6,\noutput-253.ts\n#EXTINF:6,\noutput-254.ts\n#EXTINF:6,\noutput-255.ts\n#EXTINF:6,\noutput-256.ts\n#EXTINF:6,\noutput-257.ts\n#EXTINF:6,\noutput-258.ts\n#EXTINF:6,\noutput-259.ts\n#EXTINF:6,\noutput-260.ts\n#EXTINF:6,\noutput-261.ts\n#EXTINF:6,\noutput-262.ts\n#EXTINF:6,\noutput-263.ts\n#EXTINF:6,\noutput-264.ts\n#EXTINF:6,\noutput-265.ts\n#EXTINF:6,\noutput-266.ts\n#EXTINF:6,\noutput-267.ts\n#EXTINF:6,\noutput-268.ts\n#EXTINF:6,\noutput-269.ts\n#EXTINF:6,\noutput-270.ts\n#EXTINF:6,\noutput-271.ts\n#EXTINF:6,\noutput-272.ts\n#EXTINF:6,\noutput-273.ts\n#EXTINF:6,\noutput-274.ts\n#EXTINF:6,\noutput-275.ts\n#EXTINF:6,\noutput-276.ts\n#EXTINF:6,\noutput-277.ts\n#EXTINF:6,\noutput-278.ts\n#EXTINF:6,\noutput-279.ts\n#EXTINF:6,\noutput-280.ts\n#EXTINF:6,\noutput-281.ts\n#EXTINF:6,\noutput-282.ts\n#EXTINF:6,\noutput-283.ts\n#EXTINF:6,\noutput-284.ts\n#EXTINF:6,\noutput-285.ts\n#EXTINF:6,\noutput-286.ts\n#EXTINF:6,\noutput-287.ts\n#EXTINF:6,\noutput-288.ts\n#EXTINF:6,\noutput-289.ts\n#EXTINF:6,\noutput-290.ts\n#EXTINF:6,\noutput-291.ts\n#EXTINF:6,\noutput-292.ts\n#EXTINF:6,\noutput-293.ts\n#EXTINF:6,\noutput-294.ts\n#EXTINF:6,\noutput-295.ts\n#EXTINF:6,\noutput-296.ts\n#EXTINF:6,\noutput-297.ts\n#EXTINF:6,\noutput-298.ts\n#EXTINF:6,\noutput-299.ts\n#EXTINF:6,\noutput-300.ts\n#EXTINF:6,\noutput-301.ts\n#EXTINF:6,\noutput-302.ts\n#EXTINF:6,\noutput-303.ts\n#EXTINF:6,\noutput-304.ts\n#EXTINF:6,\noutput-305.ts\n#EXTINF:6,\noutput-306.ts\n#EXTINF:6,\noutput-307.ts\n#EXTINF:6,\noutput-308.ts\n#EXTINF:6,\noutput-309.ts\n#EXTINF:6,\noutput-310.ts\n#EXTINF:6,\noutput-311.ts\n#EXTINF:6,\noutput-312.ts\n#EXTINF:6,\noutput-313.ts\n#EXTINF:6,\noutput-314.ts\n#EXTINF:6,\noutput-315.ts\n#EXTINF:6,\noutput-316.ts\n#EXTINF:6,\noutput-317.ts\n#EXTINF:6,\noutput-318.ts\n#EXTINF:6,\noutput-319.ts\n#EXTINF:6,\noutput-320.ts\n#EXTINF:6,\noutput-321.ts\n#EXTINF:6,\noutput-322.ts\n#EXTINF:6,\noutput-323.ts\n#EXTINF:6,\noutput-324.ts\n#EXTINF:6,\noutput-325.ts\n#EXTINF:6,\noutput-326.ts\n#EXTINF:6,\noutput-327.ts\n#EXTINF:6,\noutput-328.ts\n#EXTINF:6,\noutput-329.ts\n#EXTINF:6,\noutput-330.ts\n#EXTINF:6,\noutput-331.ts\n#EXTINF:6,\noutput-332.ts\n#EXTINF:6,\noutput-333.ts\n#EXTINF:6,\noutput-334.ts\n#EXTINF:6,\noutput-335.ts\n#EXTINF:6,\noutput-336.ts\n#EXTINF:6,\noutput-337.ts\n#EXTINF:6,\noutput-338.ts\n#EXTINF:6,\noutput-339.ts\n#EXTINF:6,\noutput-340.ts\n#EXTINF:6,\noutput-341.ts\n#EXTINF:6,\noutput-342.ts\n#EXTINF:6,\noutput-343.ts\n#EXTINF:6,\noutput-344.ts\n#EXTINF:6,\noutput-345.ts\n#EXTINF:6,\noutput-346.ts\n#EXTINF:6,\noutput-347.ts\n#EXTINF:6,\noutput-348.ts\n#EXTINF:6,\noutput-349.ts\n#EXTINF:6,\noutput-350.ts\n#EXTINF:6,\noutput-351.ts\n#EXTINF:6,\noutput-352.ts\n#EXTINF:6,\noutput-353.ts\n#EXTINF:6,\noutput-354.ts\n#EXTINF:6,\noutput-355.ts\n#EXTINF:6,\noutput-356.ts\n#EXTINF:6,\noutput-357.ts\n#EXTINF:6,\noutput-358.ts\n#EXTINF:6,\noutput-359.ts\n#EXTINF:6,\noutput-360.ts\n#EXTINF:6,\noutput-361.ts\n#EXTINF:6,\noutput-362.ts\n#EXTINF:6,\noutput-363.ts\n#EXTINF:6,\noutput-364.ts\n#EXTINF:6,\noutput-365.ts\n#EXTINF:6,\noutput-366.ts\n#EXTINF:6,\noutput-367.ts\n#EXTINF:6,\noutput-368.ts\n#EXTINF:6,\noutput-369.ts\n#EXTINF:6,\noutput-370.ts\n#EXTINF:6,\noutput-371.ts\n#EXTINF:6,\noutput-372.ts\n#EXTINF:6,\noutput-373.ts\n#EXTINF:6,\noutput-374.ts\n#EXTINF:6,\noutput-375.ts\n#EXTINF:6,\noutput-376.ts\n#EXTINF:6,\noutput-377.ts\n#EXTINF:6,\noutput-378.ts\n#EXTINF:6,\noutput-379.ts\n#EXTINF:6,\noutput-380.ts\n#EXTINF:6,\noutput-381.ts\n#EXTINF:6,\noutput-382.ts\n#EXTINF:6,\noutput-383.ts\n#EXTINF:6,\noutput-384.ts\n#EXTINF:6,\noutput-385.ts\n#EXTINF:6,\noutput-386.ts\n#EXTINF:6,\noutput-387.ts\n#EXTINF:6,\noutput-388.ts\n#EXTINF:6,\noutput-389.ts\n#EXTINF:6,\noutput-390.ts\n#EXTINF:6,\noutput-391.ts\n#EXTINF:6,\noutput-392.ts\n#EXTINF:6,\noutput-393.ts\n#EXTINF:6,\noutput-394.ts\n#EXTINF:6,\noutput-395.ts\n#EXTINF:6,\noutput-396.ts\n#EXTINF:6,\noutput-397.ts\n#EXTINF:6,\noutput-398.ts\n#EXTINF:6,\noutput-399.ts\n#EXTINF:6,\noutput-400.ts\n#EXTINF:6,\noutput-401.ts\n#EXTINF:6,\noutput-402.ts\n#EXTINF:6,\noutput-403.ts\n#EXTINF:6,\noutput-404.ts\n#EXTINF:6,\noutput-405.ts\n#EXTINF:6,\noutput-406.ts\n#EXTINF:6,\noutput-407.ts\n#EXTINF:6,\noutput-408.ts\n#EXTINF:6,\noutput-409.ts\n#EXTINF:6,\noutput-410.ts\n#EXTINF:6,\noutput-411.ts\n#EXTINF:6,\noutput-412.ts\n#EXTINF:6,\noutput-413.ts\n#EXTINF:6,\noutput-414.ts\n#EXTINF:6,\noutput-415.ts\n#EXTINF:6,\noutput-416.ts\n#EXTINF:6,\noutput-417.ts\n#EXTINF:6,\noutput-418.ts\n#EXTINF:6,\noutput-419.ts\n#EXTINF:6,\noutput-420.ts\n#EXTINF:6,\noutput-421.ts\n#EXTINF:6,\noutput-422.ts\n#EXTINF:6,\noutput-423.ts\n#EXTINF:6,\noutput-424.ts\n#EXTINF:6,\noutput-425.ts\n#EXTINF:6,\noutput-426.ts\n#EXTINF:6,\noutput-427.ts\n#EXTINF:6,\noutput-428.ts\n#EXTINF:6,\noutput-429.ts\n#EXTINF:6,\noutput-430.ts\n#EXTINF:6,\noutput-431.ts\n#EXTINF:6,\noutput-432.ts\n#EXTINF:6,\noutput-433.ts\n#EXTINF:6,\noutput-434.ts\n#EXTINF:6,\noutput-435.ts\n#EXTINF:6,\noutput-436.ts\n#EXTINF:6,\noutput-437.ts\n#EXTINF:6,\noutput-438.ts\n#EXTINF:6,\noutput-439.ts\n#EXTINF:6,\noutput-440.ts\n#EXTINF:6,\noutput-441.ts\n#EXTINF:6,\noutput-442.ts\n#EXTINF:6,\noutput-443.ts\n#EXTINF:6,\noutput-444.ts\n#EXTINF:6,\noutput-445.ts\n#EXTINF:6,\noutput-446.ts\n#EXTINF:6,\noutput-447.ts\n#EXTINF:6,\noutput-448.ts\n#EXTINF:6,\noutput-449.ts\n#EXTINF:6,\noutput-450.ts\n#EXTINF:6,\noutput-451.ts\n#EXTINF:6,\noutput-452.ts\n#EXTINF:6,\noutput-453.ts\n#EXTINF:6,\noutput-454.ts\n#EXTINF:6,\noutput-455.ts\n#EXTINF:6,\noutput-456.ts\n#EXTINF:6,\noutput-457.ts\n#EXTINF:6,\noutput-458.ts\n#EXTINF:6,\noutput-459.ts\n#EXTINF:6,\noutput-460.ts\n#EXTINF:6,\noutput-461.ts\n#EXTINF:6,\noutput-462.ts\n#EXTINF:6,\noutput-463.ts\n#EXTINF:6,\noutput-464.ts\n#EXTINF:6,\noutput-465.ts\n#EXTINF:6,\noutput-466.ts\n#EXTINF:6,\noutput-467.ts\n#EXTINF:6,\noutput-468.ts\n#EXTINF:6,\noutput-469.ts\n#EXTINF:6,\noutput-470.ts\n#EXTINF:6,\noutput-471.ts\n#EXTINF:6,\noutput-472.ts\n#EXTINF:6,\noutput-473.ts\n#EXTINF:6,\noutput-474.ts\n#EXTINF:6,\noutput-475.ts\n#EXTINF:6,\noutput-476.ts\n#EXTINF:6,\noutput-477.ts\n#EXTINF:6,\noutput-478.ts\n#EXTINF:6,\noutput-479.ts\n#EXTINF:6,\noutput-480.ts\n#EXTINF:6,\noutput-481.ts\n#EXTINF:6,\noutput-482.ts\n#EXTINF:6,\noutput-483.ts\n#EXTINF:6,\noutput-484.ts\n#EXTINF:6,\noutput-485.ts\n#EXTINF:6,\noutput-486.ts\n#EXTINF:6,\noutput-487.ts\n#EXTINF:6,\noutput-488.ts\n#EXTINF:6,\noutput-489.ts\n#EXTINF:6,\noutput-490.ts\n#EXTINF:6,\noutput-491.ts\n#EXTINF:6,\noutput-492.ts\n#EXTINF:6,\noutput-493.ts\n#EXTINF:6,\noutput-494.ts\n#EXTINF:6,\noutput-495.ts\n#EXTINF:6,\noutput-496.ts\n#EXTINF:6,\noutput-497.ts\n#EXTINF:6,\noutput-498.ts\n#EXTINF:6,\noutput-499.ts\n#EXTINF:6,\noutput-500.ts\n#EXTINF:6,\noutput-501.ts\n#EXTINF:6,\noutput-502.ts\n#EXTINF:6,\noutput-503.ts\n#EXTINF:6,\noutput-504.ts\n#EXTINF:6,\noutput-505.ts\n#EXTINF:6,\noutput-506.ts\n#EXTINF:6,\noutput-507.ts\n#EXTINF:6,\noutput-508.ts\n#EXTINF:6,\noutput-509.ts\n#EXTINF:6,\noutput-510.ts\n#EXTINF:6,\noutput-511.ts\n#EXTINF:6,\noutput-512.ts\n#EXTINF:6,\noutput-513.ts\n#EXTINF:6,\noutput-514.ts\n#EXTINF:6,\noutput-515.ts\n#EXTINF:6,\noutput-516.ts\n#EXTINF:6,\noutput-517.ts\n#EXTINF:6,\noutput-518.ts\n#EXTINF:6,\noutput-519.ts\n#EXTINF:6,\noutput-520.ts\n#EXTINF:6,\noutput-521.ts\n#EXTINF:6,\noutput-522.ts\n#EXTINF:6,\noutput-523.ts\n#EXTINF:6,\noutput-524.ts\n#EXTINF:6,\noutput-525.ts\n#EXTINF:6,\noutput-526.ts\n#EXTINF:6,\noutput-527.ts\n#EXTINF:6,\noutput-528.ts\n#EXTINF:6,\noutput-529.ts\n#EXTINF:6,\noutput-530.ts\n#EXTINF:6,\noutput-531.ts\n#EXTINF:6,\noutput-532.ts\n#EXTINF:6,\noutput-533.ts\n#EXTINF:6,\noutput-534.ts\n#EXTINF:6,\noutput-535.ts\n#EXTINF:6,\noutput-536.ts\n#EXTINF:6,\noutput-537.ts\n#EXTINF:6,\noutput-538.ts\n#EXTINF:6,\noutput-539.ts\n#EXTINF:6,\noutput-540.ts\n#EXTINF:6,\noutput-541.ts\n#EXTINF:6,\noutput-542.ts\n#EXTINF:6,\noutput-543.ts\n#EXTINF:6,\noutput-544.ts\n#EXTINF:6,\noutput-545.ts\n#EXTINF:6,\noutput-546.ts\n#EXTINF:6,\noutput-547.ts\n#EXTINF:6,\noutput-548.ts\n#EXTINF:6,\noutput-549.ts\n#EXTINF:6,\noutput-550.ts\n#EXTINF:6,\noutput-551.ts\n#EXTINF:6,\noutput-552.ts\n#EXTINF:6,\noutput-553.ts\n#EXTINF:6,\noutput-554.ts\n#EXTINF:6,\noutput-555.ts\n#EXTINF:6,\noutput-556.ts\n#EXTINF:6,\noutput-557.ts\n#EXTINF:6,\noutput-558.ts\n#EXTINF:6,\noutput-559.ts\n#EXTINF:6,\noutput-560.ts\n#EXTINF:6,\noutput-561.ts\n#EXTINF:6,\noutput-562.ts\n#EXTINF:6,\noutput-563.ts\n#EXTINF:6,\noutput-564.ts\n#EXTINF:6,\noutput-565.ts\n#EXTINF:6,\noutput-566.ts\n#EXTINF:6,\noutput-567.ts\n#EXTINF:6,\noutput-568.ts\n#EXTINF:6,\noutput-569.ts\n#EXTINF:6,\noutput-570.ts\n#EXTINF:6,\noutput-571.ts\n#EXTINF:6,\noutput-572.ts\n#EXTINF:6,\noutput-573.ts\n#EXTINF:6,\noutput-574.ts\n#EXTINF:6,\noutput-575.ts\n#EXTINF:6,\noutput-576.ts\n#EXTINF:6,\noutput-577.ts\n#EXTINF:6,\noutput-578.ts\n#EXTINF:6,\noutput-579.ts\n#EXTINF:6,\noutput-580.ts\n#EXTINF:6,\noutput-581.ts\n#EXTINF:6,\noutput-582.ts\n#EXTINF:6,\noutput-583.ts\n#EXTINF:6,\noutput-584.ts\n#EXTINF:6,\noutput-585.ts\n#EXTINF:6,\noutput-586.ts\n#EXTINF:6,\noutput-587.ts\n#EXTINF:6,\noutput-588.ts\n#EXTINF:6,\noutput-589.ts\n#EXTINF:6,\noutput-590.ts\n#EXTINF:6,\noutput-591.ts\n#EXTINF:6,\noutput-592.ts\n#EXTINF:6,\noutput-593.ts\n#EXTINF:6,\noutput-594.ts\n#EXTINF:6,\noutput-595.ts\n#EXTINF:6,\noutput-596.ts\n#EXTINF:6,\noutput-597.ts\n#EXTINF:6,\noutput-598.ts\n#EXTINF:6,\noutput-599.ts\n#EXT-X-ENDLIST",
+    "closeEvents": [
+      {
+        "method": "adminEmitter",
+        "event": "user_stream_update",
+        "username": "user",
+        "sessionId": "<uuid-1>"
+      },
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-2>",
+        "event": "user_session_closed",
+        "data": "<uuid-1>"
+      },
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-2>",
+        "event": "stream_closed",
+        "data": "<uuid-1>"
+      }
+    ]
+  },
+  "PlaybackSessionManager (characterization) > startSession: direct play or transcode > records the device from the request and the client device info > device info": {
+    "deviceInfo": {
+      "id": "<uuid-1>",
+      "userId": "<uuid-2>",
+      "deviceId": "phone-1",
+      "ipAddress": "198.51.100.9",
+      "browserName": "Chrome",
+      "browserVersion": "120.0.0.0",
+      "osName": "Linux",
+      "osVersion": "x86_64",
+      "clientVersion": "0.10.0",
+      "manufacturer": "Google",
+      "model": "Pixel 6",
+      "sdkVersion": "34",
+      "clientName": "Abs Android",
+      "deviceName": "Google Pixel 6"
+    },
+    "sessionDevice": "Pixel 6 SDK 34 / v0.10.0"
+  },
+  "PlaybackSessionManager (characterization) > startSession: direct play or transcode > rejects items that cannot be played, episodes that do not exist and unauthenticated requests > rejections": {
+    "noAudioTracks": 404,
+    "unknownItem": 404,
+    "episodeOfBook": 400,
+    "unknownEpisode": 404,
+    "unauthenticated": 401
+  },
+  "PlaybackSessionManager (characterization) > startSession: direct play or transcode > resumes at the stored progress, but restarts a finished item at 0 > start times": {
+    "resumed": [
+      123.5,
+      123.5
+    ],
+    "otherUser": [
+      0
+    ],
+    "finished": [
+      0
+    ]
+  },
+  "PlaybackSessionManager (characterization) > startSession: direct play or transcode > starts a direct play session for a client that supports the file type > direct play response and emits": {
+    "res": {
+      "status": 200,
+      "body": {
+        "id": "<uuid-1>",
+        "userId": "<uuid-2>",
+        "libraryId": "<uuid-3>",
+        "libraryItemId": "<uuid-4>",
+        "bookId": "<uuid-5>",
+        "episodeId": null,
+        "mediaType": "book",
+        "mediaMetadata": {
+          "title": "Played Book",
+          "subtitle": null,
+          "authors": [
+            {
+              "id": "<uuid-6>",
+              "name": "Ann Author"
+            }
+          ],
+          "narrators": [],
+          "series": [],
+          "genres": [],
+          "publishedYear": null,
+          "publishedDate": null,
+          "publisher": null,
+          "description": null,
+          "isbn": null,
+          "asin": null,
+          "language": null,
+          "explicit": false,
+          "abridged": null
+        },
+        "chapters": [],
+        "displayTitle": "Played Book",
+        "displayAuthor": "Ann Author",
+        "coverPath": null,
+        "duration": 3600,
+        "playMethod": 0,
+        "mediaPlayer": "html5",
+        "deviceInfo": {
+          "id": "<uuid-7>",
+          "userId": "<uuid-2>",
+          "deviceId": "dev-1",
+          "ipAddress": "198.51.100.9",
+          "browserName": "Chrome",
+          "browserVersion": "120.0.0.0",
+          "osName": "Linux",
+          "osVersion": "x86_64",
+          "clientVersion": "1.2.3",
+          "clientName": "Abs Web",
+          "deviceName": "Linux x86_64 Chrome"
+        },
+        "serverVersion": "2.37.0",
+        "date": "2026-10-12",
+        "dayOfWeek": "Monday",
+        "timeListening": 0,
+        "startTime": 0,
+        "currentTime": 0,
+        "startedAt": "<timestamp>",
+        "updatedAt": "<timestamp>",
+        "audioTracks": [
+          {
+            "index": 1,
+            "ino": "ino1",
+            "metadata": {
+              "filename": "part1.mp3",
+              "ext": ".mp3",
+              "path": "<tmp>/books/Played Book/part1.mp3",
+              "relPath": "part1.mp3",
+              "size": 15,
+              "mtimeMs": 1000,
+              "ctimeMs": 1000,
+              "birthtimeMs": 1000
+            },
+            "addedAt": 2000,
+            "updatedAt": 2000,
+            "trackNumFromMeta": 1,
+            "discNumFromMeta": null,
+            "trackNumFromFilename": null,
+            "discNumFromFilename": null,
+            "manuallyVerified": false,
+            "exclude": false,
+            "format": "MP2/3 (MPEG audio layer 2/3)",
+            "duration": 3600,
+            "bitRate": 64000,
+            "language": null,
+            "codec": "mp3",
+            "timeBase": "1/14112000",
+            "channels": 2,
+            "channelLayout": "stereo",
+            "chapters": [],
+            "metaTags": {},
+            "mimeType": "audio/mpeg",
+            "title": "part1.mp3",
+            "startOffset": 0,
+            "contentUrl": "/api/items/<uuid-4>/file/ino1"
+          }
+        ],
+        "libraryItem": {
+          "id": "<uuid-4>",
+          "mediaType": "book"
+        }
+      }
+    },
+    "ev": [
+      {
+        "method": "adminEmitter",
+        "event": "user_stream_update",
+        "username": "user",
+        "sessionId": "<uuid-1>"
+      }
+    ]
+  },
+  "PlaybackSessionManager (characterization) > startSession: direct play or transcode > starts a podcast episode session with the episode track, no book id and the episode progress > podcast episode": {
+    "episode": {
+      "id": "<uuid-1>",
+      "userId": "<uuid-2>",
+      "libraryId": "<uuid-3>",
+      "libraryItemId": "<uuid-4>",
+      "bookId": null,
+      "episodeId": "<uuid-5>",
+      "mediaType": "podcast",
+      "mediaMetadata": {
+        "title": "Played Pod",
+        "author": "The Host",
+        "description": null,
+        "releaseDate": null,
+        "genres": [],
+        "feedUrl": null,
+        "imageUrl": null,
+        "itunesPageUrl": null,
+        "itunesId": null,
+        "itunesArtistId": null,
+        "explicit": null,
+        "language": null,
+        "type": null
+      },
+      "chapters": [],
+      "displayTitle": "Ep Two",
+      "displayAuthor": "The Host",
+      "coverPath": null,
+      "duration": 900,
+      "playMethod": 0,
+      "mediaPlayer": "test-player",
+      "deviceInfo": {
+        "id": "<uuid-6>",
+        "userId": "<uuid-2>",
+        "deviceId": "dev-1",
+        "ipAddress": "198.51.100.9",
+        "browserName": "Chrome",
+        "browserVersion": "120.0.0.0",
+        "osName": "Linux",
+        "osVersion": "x86_64",
+        "clientVersion": "1.2.3",
+        "clientName": "Abs Web",
+        "deviceName": "Linux x86_64 Chrome"
+      },
+      "serverVersion": "2.37.0",
+      "date": "2026-10-12",
+      "dayOfWeek": "Monday",
+      "timeListening": 0,
+      "startTime": 77,
+      "currentTime": 77,
+      "startedAt": "<timestamp>",
+      "updatedAt": "<timestamp>",
+      "audioTracks": [
+        {
+          "index": 1,
+          "ino": "epino2",
+          "metadata": {
+            "filename": "ep2.mp3",
+            "ext": ".mp3",
+            "path": "<tmp>/pods/Played Pod/ep2.mp3",
+            "relPath": "ep2.mp3",
+            "size": 15,
+            "mtimeMs": 1000,
+            "ctimeMs": 1000,
+            "birthtimeMs": 1000
+          },
+          "addedAt": 2000,
+          "updatedAt": 2000,
+          "trackNumFromMeta": 1,
+          "discNumFromMeta": null,
+          "trackNumFromFilename": null,
+          "discNumFromFilename": null,
+          "manuallyVerified": false,
+          "exclude": false,
+          "format": "MP2/3 (MPEG audio layer 2/3)",
+          "duration": 900,
+          "bitRate": 64000,
+          "language": null,
+          "codec": "mp3",
+          "timeBase": "1/14112000",
+          "channels": 2,
+          "channelLayout": "stereo",
+          "chapters": [],
+          "metaTags": {},
+          "mimeType": "audio/mpeg",
+          "startOffset": 0,
+          "title": "ep2.mp3",
+          "contentUrl": "/api/items/<uuid-4>/file/epino2"
+        }
+      ],
+      "libraryItem": {
+        "id": "<uuid-4>",
+        "mediaType": "podcast"
+      }
+    },
+    "other": [
+      0,
+      1800
+    ],
+    "transcodeTracks": [
+      {
+        "index": 1,
+        "startOffset": 0,
+        "duration": 1800,
+        "title": "Ep One",
+        "contentUrl": "/hls/<uuid-7>/output.m3u8",
+        "mimeType": "application/vnd.apple.mpegurl",
+        "codec": null,
+        "metadata": null
+      }
+    ]
+  },
+  "PlaybackSessionManager (characterization) > startSession: direct play or transcode > transcodes when the client cannot play the file, when forced, or when it sends no supported types > play method decisions": {
+    "unsupportedType": {
+      "playMethod": 2,
+      "tracks": [
+        {
+          "contentUrl": "/hls/<uuid-1>/output.m3u8",
+          "mimeType": "application/vnd.apple.mpegurl",
+          "duration": 3600,
+          "title": "Played Book"
+        }
+      ],
+      "hasStream": true
+    },
+    "noSupportedTypes": {
+      "playMethod": 2,
+      "tracks": [
+        {
+          "contentUrl": "/hls/<uuid-2>/output.m3u8",
+          "mimeType": "application/vnd.apple.mpegurl",
+          "duration": 3600,
+          "title": "Played Book"
+        }
+      ],
+      "hasStream": true
+    },
+    "forceTranscode": {
+      "playMethod": 2,
+      "tracks": [
+        {
+          "contentUrl": "/hls/<uuid-3>/output.m3u8",
+          "mimeType": "application/vnd.apple.mpegurl",
+          "duration": 3600,
+          "title": "Played Book"
+        }
+      ],
+      "hasStream": true
+    },
+    "forceDirectPlayWins": {
+      "playMethod": 0,
+      "tracks": [
+        {
+          "contentUrl": "/api/items/<uuid-4>/file/ino1",
+          "mimeType": "audio/mpeg",
+          "duration": 3600,
+          "title": "part1.mp3"
+        }
+      ],
+      "hasStream": false
+    },
+    "forceDirectPlay": {
+      "playMethod": 0,
+      "tracks": [
+        {
+          "contentUrl": "/api/items/<uuid-4>/file/ino1",
+          "mimeType": "audio/mpeg",
+          "duration": 3600,
+          "title": "part1.mp3"
+        }
+      ],
+      "hasStream": false
+    }
+  },
+  "PlaybackSessionManager (characterization) > syncLocalSession (offline listening from the apps) > inserts a new session, fills missing details from the library item and creates the progress > new local session": {
+    "row": {
+      "id": "<uuid-1>",
+      "mediaItemId": "<uuid-2>",
+      "mediaItemType": "book",
+      "displayTitle": "Played Book",
+      "displayAuthor": "Ann Author",
+      "duration": 3600,
+      "playMethod": 3,
+      "mediaPlayer": "abs-android",
+      "startTime": 10,
+      "currentTime": 500,
+      "serverVersion": "2.37.0",
+      "coverPath": null,
+      "timeListening": 60,
+      "mediaMetadata": {
+        "title": "Played Book",
+        "subtitle": null,
+        "authors": [
+          {
+            "id": "<uuid-3>",
+            "name": "Ann Author"
+          }
+        ],
+        "narrators": [],
+        "series": [],
+        "genres": [],
+        "publishedYear": null,
+        "publishedDate": null,
+        "publisher": null,
+        "description": null,
+        "isbn": null,
+        "asin": null,
+        "language": null,
+        "explicit": false,
+        "abridged": null
+      },
+      "date": "2100-03-05",
+      "dayOfWeek": "Friday",
+      "extraData": {
+        "libraryItemId": "<uuid-4>"
+      },
+      "createdAt": "<iso-date>",
+      "updatedAt": "<iso-date>",
+      "userId": "<uuid-5>",
+      "deviceId": "<uuid-6>",
+      "libraryId": "<uuid-7>"
+    },
+    "ev": [
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-5>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-1>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-8>",
+          "libraryItemId": "<uuid-4>",
+          "episodeId": null,
+          "currentTime": 500,
+          "duration": 3600,
+          "isFinished": false
+        }
+      }
+    ],
+    "mp": {
+      "currentTime": 500,
+      "duration": 3600
+    }
+  },
+  "PlaybackSessionManager (characterization) > syncLocalSession (offline listening from the apps) > local-all syncs several sessions in order and reports a result for each > local-all": {
+    "results": [
+      {
+        "id": "<uuid-1>",
+        "success": true,
+        "progressSynced": true
+      },
+      {
+        "id": "play_local_missing",
+        "success": false,
+        "error": "Media item not found"
+      },
+      {
+        "id": "<uuid-2>",
+        "success": true,
+        "progressSynced": true
+      },
+      {
+        "id": "<uuid-1>",
+        "success": true,
+        "progressSynced": false
+      }
+    ],
+    "events": [
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-3>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-1>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-4>",
+          "libraryItemId": "<uuid-5>",
+          "episodeId": null,
+          "currentTime": 500,
+          "duration": 3600,
+          "isFinished": false
+        }
+      },
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-3>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-2>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-4>",
+          "libraryItemId": "<uuid-5>",
+          "episodeId": null,
+          "currentTime": 800,
+          "duration": 3600,
+          "isFinished": false
+        }
+      }
+    ]
+  },
+  "PlaybackSessionManager (characterization) > syncLocalSession (offline listening from the apps) > syncs a podcast episode session, mapping the ids and taking the duration from the episode > local episode session": {
+    "row": {
+      "id": "<uuid-1>",
+      "mediaItemId": "<uuid-2>",
+      "mediaItemType": "podcastEpisode",
+      "displayTitle": "Played Pod",
+      "displayAuthor": "The Host",
+      "duration": 1800,
+      "playMethod": 3,
+      "mediaPlayer": "abs-android",
+      "startTime": 0,
+      "currentTime": 600,
+      "serverVersion": "2.37.0",
+      "coverPath": null,
+      "timeListening": 40,
+      "mediaMetadata": {
+        "title": "Played Pod",
+        "author": "The Host",
+        "description": null,
+        "releaseDate": null,
+        "genres": [],
+        "feedUrl": null,
+        "imageUrl": null,
+        "itunesPageUrl": null,
+        "itunesId": null,
+        "itunesArtistId": null,
+        "explicit": null,
+        "language": null,
+        "type": null
+      },
+      "date": "2100-03-05",
+      "dayOfWeek": "Friday",
+      "extraData": {
+        "libraryItemId": "<uuid-3>"
+      },
+      "createdAt": "<iso-date>",
+      "updatedAt": "<iso-date>",
+      "userId": "<uuid-4>",
+      "deviceId": "<uuid-5>",
+      "libraryId": "<uuid-6>"
+    }
+  },
+  "PlaybackSessionManager (characterization) > syncSession > a progress created by the sync itself is not checked against the finish thresholds (only later syncs finish the book) > progress events": [
+    {
+      "id": "<uuid-1>",
+      "libraryItemId": "<uuid-2>",
+      "episodeId": null,
+      "currentTime": 3599,
+      "duration": 3600,
+      "isFinished": false
+    },
+    {
+      "id": "<uuid-1>",
+      "libraryItemId": "<uuid-2>",
+      "episodeId": null,
+      "currentTime": 3599,
+      "duration": 3600,
+      "isFinished": true
+    }
+  ],
+  "PlaybackSessionManager (characterization) > syncSession > accumulates listening time, tracks the current time, writes progress and saves the session > several syncs": {
+    "final": {
+      "currentTime": 330,
+      "timeListening": 15.5
+    },
+    "events": [
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-1>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-2>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-3>",
+          "libraryItemId": "<uuid-4>",
+          "episodeId": null,
+          "currentTime": 250,
+          "duration": 3600,
+          "isFinished": false
+        }
+      },
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-1>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-2>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-3>",
+          "libraryItemId": "<uuid-4>",
+          "episodeId": null,
+          "currentTime": 300,
+          "duration": 3600,
+          "isFinished": false
+        }
+      },
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-1>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-2>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-3>",
+          "libraryItemId": "<uuid-4>",
+          "episodeId": null,
+          "currentTime": 310,
+          "duration": 3600,
+          "isFinished": false
+        }
+      },
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-1>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-2>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-3>",
+          "libraryItemId": "<uuid-4>",
+          "episodeId": null,
+          "currentTime": 320,
+          "duration": 3600,
+          "isFinished": false
+        }
+      },
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-1>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-2>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-3>",
+          "libraryItemId": "<uuid-4>",
+          "episodeId": null,
+          "currentTime": 330,
+          "duration": 3600,
+          "isFinished": false
+        }
+      }
+    ],
+    "session": {
+      "id": "<uuid-2>",
+      "userId": "<uuid-1>",
+      "libraryId": "<uuid-5>",
+      "libraryItemId": "<uuid-4>",
+      "bookId": "<uuid-6>",
+      "episodeId": null,
+      "mediaType": "book",
+      "mediaMetadata": {
+        "title": "Played Book",
+        "subtitle": null,
+        "authors": [
+          {
+            "id": "<uuid-7>",
+            "name": "Ann Author"
+          }
+        ],
+        "narrators": [],
+        "series": [],
+        "genres": [],
+        "publishedYear": null,
+        "publishedDate": null,
+        "publisher": null,
+        "description": null,
+        "isbn": null,
+        "asin": null,
+        "language": null,
+        "explicit": false,
+        "abridged": null
+      },
+      "chapters": [],
+      "displayTitle": "Played Book",
+      "displayAuthor": "Ann Author",
+      "coverPath": null,
+      "duration": 3600,
+      "playMethod": 0,
+      "mediaPlayer": "test-player",
+      "deviceInfo": {
+        "id": "<uuid-8>",
+        "userId": "<uuid-1>",
+        "deviceId": "dev-1",
+        "ipAddress": "198.51.100.9",
+        "browserName": "Chrome",
+        "browserVersion": "120.0.0.0",
+        "osName": "Linux",
+        "osVersion": "x86_64",
+        "clientVersion": "1.2.3",
+        "clientName": "Abs Web",
+        "deviceName": "Linux x86_64 Chrome"
+      },
+      "serverVersion": "2.37.0",
+      "date": "2026-10-12",
+      "dayOfWeek": "Monday",
+      "timeListening": 15.5,
+      "startTime": 0,
+      "currentTime": 330,
+      "startedAt": "<timestamp>",
+      "updatedAt": "<timestamp>"
+    }
+  },
+  "PlaybackSessionManager (characterization) > syncSession > marks the book finished by remaining time (library default 10 seconds) > finish by remaining time": {
+    "finishedEvents": [
+      {
+        "id": "<uuid-1>",
+        "libraryItemId": "<uuid-2>",
+        "episodeId": null,
+        "currentTime": 3589,
+        "duration": 3600,
+        "isFinished": false
+      },
+      {
+        "id": "<uuid-1>",
+        "libraryItemId": "<uuid-2>",
+        "episodeId": null,
+        "currentTime": 3595,
+        "duration": 3600,
+        "isFinished": true
+      }
+    ]
+  },
+  "PlaybackSessionManager (characterization) > syncSession > syncs a podcast episode session against the episode progress > episode sync": {
+    "ev": [
+      {
+        "method": "clientEmitter",
+        "userId": "<uuid-1>",
+        "event": "user_item_progress_updated",
+        "sessionId": "<uuid-2>",
+        "deviceDescription": "Linux x86_64 / Chrome",
+        "progress": {
+          "id": "<uuid-3>",
+          "libraryItemId": "<uuid-4>",
+          "episodeId": "<uuid-5>",
+          "currentTime": 900,
+          "duration": 1800,
+          "isFinished": false
+        }
+      }
+    ]
+  }
+}
